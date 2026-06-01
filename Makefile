@@ -33,7 +33,7 @@ help: ## Show this help message
 
 ##@ Common
 
-setup: tailwind-install ## One-time setup: install Tailwind CLI, configure git hooks
+setup: ## One-time setup: install Tailwind CLI, configure git hooks
 	git config core.hooksPath githooks
 
 run: ## Start dev server with live reload (uses 1Password CLI if available)
