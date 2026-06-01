@@ -57,7 +57,7 @@ jobs:
       #   with:
       #     egress-policy: audit   # switch to 'block' once you've reviewed the audit
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0 # full history; required by the commented full-history secret scan below
           # ENABLE WHEN PUBLIC: don't leave the checkout token in the local git config.
@@ -161,7 +161,7 @@ jobs:
   #     contents: read
   #     security-events: write
   #   steps:
-  #     - uses: actions/checkout@v4
+  #     - uses: actions/checkout@v6
   #     - uses: actions/setup-go@v5
   #       with:
   #         go-version-file: go.mod
@@ -192,7 +192,7 @@ jobs:
       id-token: write # keyless cosign signing via OIDC
       attestations: write # build-provenance attestation
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0 # tags needed for `git describe`
 
