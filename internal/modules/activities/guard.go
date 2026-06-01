@@ -16,6 +16,7 @@ import (
 )
 
 type activityCtxKey struct{}
+
 var errMissingLoadedActivity = errors.New("missing loaded activity in context")
 
 func activityFromContext(ctx context.Context) (db.GetActivityRow, bool) {

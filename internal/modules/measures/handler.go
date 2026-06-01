@@ -11,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/3lbits/vigil/internal/audit"
 	"github.com/3lbits/vigil/internal/authz"
 	"github.com/3lbits/vigil/internal/db"
@@ -19,6 +18,7 @@ import (
 	"github.com/3lbits/vigil/internal/middleware"
 	measurestemplates "github.com/3lbits/vigil/internal/modules/measures/templates"
 	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/google/uuid"
 )
 
 type Handler struct {

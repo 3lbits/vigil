@@ -10,11 +10,11 @@ import (
 
 // Config holds all application configuration loaded from environment variables.
 type Config struct {
-	Port        string
-	AppEnv      string
-	DatabaseURL string
-	DevStubAuth bool
-	DevSeed     bool
+	Port         string
+	AppEnv       string
+	DatabaseURL  string
+	DevStubAuth  bool
+	DevSeed      bool
 	AvvikEnabled bool
 
 	// AuthProviders is the list of enabled auth providers (e.g. ["github", "entra"]).
@@ -61,11 +61,11 @@ type Config struct {
 // Load reads config from environment variables and validates required fields.
 func Load() *Config {
 	cfg := &Config{
-		Port:        getEnvWithDefault("PORT", "8080"),
-		AppEnv:      getEnvWithDefault("APP_ENV", "development"),
-		DatabaseURL: os.Getenv("DATABASE_URL"),
-		DevStubAuth: os.Getenv("DEV_STUB_AUTH") == "true",
-		DevSeed:     os.Getenv("DEV_SEED") == "true",
+		Port:         getEnvWithDefault("PORT", "8080"),
+		AppEnv:       getEnvWithDefault("APP_ENV", "development"),
+		DatabaseURL:  os.Getenv("DATABASE_URL"),
+		DevStubAuth:  os.Getenv("DEV_STUB_AUTH") == "true",
+		DevSeed:      os.Getenv("DEV_SEED") == "true",
 		AvvikEnabled: os.Getenv("AVVIK_ENABLED") == "true",
 
 		AuthProviders: parseProviders(

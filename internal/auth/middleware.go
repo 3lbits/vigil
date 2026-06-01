@@ -4,10 +4,10 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/alexedwards/scs/v2"
-	"github.com/google/uuid"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/middleware"
+	"github.com/alexedwards/scs/v2"
+	"github.com/google/uuid"
 )
 
 // UserMiddleware reads the authenticated user ID from the SCS session and

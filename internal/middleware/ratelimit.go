@@ -18,10 +18,10 @@ type ipEntry struct {
 
 // IPRateLimiter is a fixed-window per-IP rate limiter with no external dependencies.
 type IPRateLimiter struct {
-	entries     sync.Map
-	limit       int
-	window      time.Duration
-	requestKey  func(*http.Request) string
+	entries    sync.Map
+	limit      int
+	window     time.Duration
+	requestKey func(*http.Request) string
 }
 
 func NewIPRateLimiter(limit int, window time.Duration) *IPRateLimiter {

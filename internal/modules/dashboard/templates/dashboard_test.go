@@ -5,8 +5,8 @@ import (
 	"io"
 	"testing"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/3lbits/vigil/internal/middleware"
+	"github.com/PuerkitoBio/goquery"
 )
 
 func renderToDoc(t *testing.T, comp interface {

@@ -4,8 +4,8 @@ package testutil
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/3lbits/vigil/internal/db"
+	"github.com/google/uuid"
 )
 
 // StubQuerier implements db.Querier with zero-value returns.
@@ -111,7 +111,7 @@ func (StubQuerier) ListRequirementsByFramework(_ context.Context, _ uuid.UUID) (
 func (StubQuerier) ListRequirementsForMeasure(_ context.Context, _ uuid.UUID) ([]db.ListRequirementsForMeasureRow, error) {
 	return nil, nil
 }
-func (StubQuerier) ListUsers(_ context.Context) ([]db.User, error) { return nil, nil }
+func (StubQuerier) ListUsers(_ context.Context) ([]db.User, error)        { return nil, nil }
 func (StubQuerier) ListDevStubUsers(_ context.Context) ([]db.User, error) { return nil, nil }
 func (StubQuerier) SetUserRole(_ context.Context, _ db.SetUserRoleParams) (db.User, error) {
 	return db.User{}, nil

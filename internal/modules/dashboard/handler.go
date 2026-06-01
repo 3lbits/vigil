@@ -8,13 +8,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/httputil"
 	"github.com/3lbits/vigil/internal/locale"
 	"github.com/3lbits/vigil/internal/middleware"
 	dashboardtemplates "github.com/3lbits/vigil/internal/modules/dashboard/templates"
 	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -324,19 +324,19 @@ func (h *Handler) buildRiskStats(r *http.Request) dashboardtemplates.RiskStats {
 	matrixCounts, topRisks, redCount, yellowCount, greenCount := aggregateRiskStats(allRisks, assessmentOrg, allowedOrgIDs, thresholds)
 	total := redCount + yellowCount + greenCount
 	return dashboardtemplates.RiskStats{
-		Total:       total,
-		RedCount:    redCount,
-		YellowCount: yellowCount,
-		GreenCount:  greenCount,
-		Matrix:      layout.BuildRiskMatrixCellsT(matrixCounts, thresholds),
-		TopRisks:    topRisks,
+		Total:             total,
+		RedCount:          redCount,
+		YellowCount:       yellowCount,
+		GreenCount:        greenCount,
+		Matrix:            layout.BuildRiskMatrixCellsT(matrixCounts, thresholds),
+		TopRisks:          topRisks,
 		ReviewNeededCount: reviewNeededCount,
 		ReviewQueue:       reviewQueue,
-		LowMax:      thresholds.LowMax,
-		HighMin:     thresholds.HighMin,
-		OrgOptions:  orgOptions,
-		OrgSelected: selectedOrgFilter,
-		OrgName:     selectedOrgName,
+		LowMax:            thresholds.LowMax,
+		HighMin:           thresholds.HighMin,
+		OrgOptions:        orgOptions,
+		OrgSelected:       selectedOrgFilter,
+		OrgName:           selectedOrgName,
 	}
 }
 

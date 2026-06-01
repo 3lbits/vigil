@@ -52,7 +52,7 @@ func decodeOne(t *testing.T, buf *bytes.Buffer) map[string]any {
 func TestRedact_DenyKey_Direct(t *testing.T) {
 	tests := []struct{ key, val string }{
 		{"password", "s3cr3t"},
-		{"token", "tok_live_abc123"},
+		{"token", "tok_live_abc123"}, // gitleaks:allow nosemgrep
 		{"access_token", "at_xyz"},
 		{"cookie", "vigil_session=abc"},
 		{"session", "sess-id-123"},

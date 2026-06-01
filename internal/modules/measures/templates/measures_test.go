@@ -6,10 +6,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/PuerkitoBio/goquery"
-	"github.com/google/uuid"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
+	"github.com/PuerkitoBio/goquery"
+	"github.com/google/uuid"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 

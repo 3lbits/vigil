@@ -216,40 +216,40 @@ func injectSourceIP(parent context.Context, ip string) context.Context {
 // ── RecordOrWarn ──────────────────────────────────────────────────────────────
 
 func TestRecordOrWarn_SuccessDoesNotLog(t *testing.T) {
-buf := captureLogger(t)
-q := &recordingQuerier{}
-ctx := context.Background()
+	buf := captureLogger(t)
+	q := &recordingQuerier{}
+	ctx := context.Background()
 
-RecordOrWarn(ctx, q, Event{
-Event: "test.event",
-Attrs: map[string]any{"id": "abc"},
-})
+	RecordOrWarn(ctx, q, Event{
+		Event: "test.event",
+		Attrs: map[string]any{"id": "abc"},
+	})
 
-if len(q.calls) != 1 {
-t.Fatalf("expected 1 InsertAuditLog call, got %d", len(q.calls))
-}
-// Record always emits one INFO line; it must not emit a WARN on success.
-m := decodeLastLine(t, buf)
-if level, _ := m["level"].(string); level == "WARN" {
-t.Errorf("expected no WARN log on success, got: %s", buf.String())
-}
+	if len(q.calls) != 1 {
+		t.Fatalf("expected 1 InsertAuditLog call, got %d", len(q.calls))
+	}
+	// Record always emits one INFO line; it must not emit a WARN on success.
+	m := decodeLastLine(t, buf)
+	if level, _ := m["level"].(string); level == "WARN" {
+		t.Errorf("expected no WARN log on success, got: %s", buf.String())
+	}
 }
 
 func TestRecordOrWarn_DBErrorLogsWarning(t *testing.T) {
-buf := captureLogger(t)
-q := &recordingQuerier{err: errors.New("db down")}
-ctx := context.Background()
+	buf := captureLogger(t)
+	q := &recordingQuerier{err: errors.New("db down")}
+	ctx := context.Background()
 
-RecordOrWarn(ctx, q, Event{
-Event: "test.event",
-})
+	RecordOrWarn(ctx, q, Event{
+		Event: "test.event",
+	})
 
-logOutput := buf.String()
-if logOutput == "" {
-t.Fatal("expected a warning log when DB write fails, got nothing")
-}
-m := decodeLastLine(t, buf)
-if level, _ := m["level"].(string); level != "WARN" {
-t.Errorf("expected WARN log level, got %q", level)
-}
+	logOutput := buf.String()
+	if logOutput == "" {
+		t.Fatal("expected a warning log when DB write fails, got nothing")
+	}
+	m := decodeLastLine(t, buf)
+	if level, _ := m["level"].(string); level != "WARN" {
+		t.Errorf("expected WARN log level, got %q", level)
+	}
 }

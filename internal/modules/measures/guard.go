@@ -16,6 +16,7 @@ import (
 )
 
 type measureCtxKey struct{}
+
 var errMissingLoadedMeasure = errors.New("missing loaded measure in context")
 
 func measureFromContext(ctx context.Context) (db.Measure, bool) {

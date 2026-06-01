@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/3lbits/vigil/internal/locale"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 // localeCtx returns a context with a localizer for the given language.
