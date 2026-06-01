@@ -1,0 +1,93 @@
+# .golangci.yml
+version: "2"
+
+linters:
+  default: none
+  enable:
+    # default linters (keeping explicit)
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+
+    # error handling
+    - errorlint        # wrapping scheme issues
+    - nilnil           # simultaneous nil error + invalid value
+    - nilerr           # returns nil despite error check
+    - wrapcheck        # errors from external packages wrapped
+    - err113           # error expression hygiene
+
+    # complexity / maintainability
+    - gocognit
+    - cyclop
+    - maintidx
+    - nestif
+    - funlen
+
+    # dead code / unused
+    - unparam
+    - wastedassign
+
+    # duplication
+    - dupl
+
+    # security
+    - gosec
+
+    # correctness
+    - bodyclose
+    - contextcheck
+    - exhaustive
+    - forcetypeassert
+    - makezero
+    - sqlclosecheck    # relevant given sqlc/pgx usage
+    - rowserrcheck     # same
+    - fatcontext       # nested contexts in loops
+
+    # style / hygiene
+    - gocritic
+    - misspell
+    - nolintlint
+    - sloglint         # if using slog
+    - loggercheck
+    - prealloc
+    - unconvert
+    - usestdlibvars
+
+  settings:
+    dupl:
+      threshold: 100
+    gocognit:
+      min-complexity: 15
+    cyclop:
+      max-complexity: 15
+    maintidx:
+      under: 20
+    funlen:
+      lines: 150
+      statements: 80
+    wrapcheck:
+      ignorePackageGlobs:
+        - "github.com/3lbits/vigil/**"
+    govet:
+      enable:
+        - shadow
+    sloglint:
+      no-mixed-args: true
+      key-naming-case: snake
+
+  exclusions:
+    rules:
+      - path: "_test.go"
+        linters:
+          - dupl
+          - wrapcheck
+          - funlen
+          - err113
+      # contextcheck false-positive: templ components pass ctx via .Render(ctx, w),
+      # not as a constructor argument — the linter can't follow this pattern.
+      - text: "should pass the context parameter"
+        linters:
+          - contextcheck
+        path: "handler\\.go"

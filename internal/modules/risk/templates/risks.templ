@@ -1,0 +1,480 @@
+package risktemplates
+
+import (
+	"database/sql"
+	"fmt"
+	"strings"
+	"github.com/3lbits/vigil/internal/csrf"
+	"github.com/3lbits/vigil/internal/db"
+	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui"
+	"github.com/3lbits/vigil/internal/ui/layout"
+)
+
+func assessmentRef(n sql.NullInt32) string {
+	if !n.Valid { return "" }
+	return fmt.Sprintf("RA-%03d", n.Int32)
+}
+
+func riskRef(n sql.NullInt32) string {
+	if !n.Valid { return "" }
+	return fmt.Sprintf("R-%03d", n.Int32)
+}
+
+templ AssessmentList(vm AssessmentListPageVM) {
+	@ui.Flash(vm.Flash, vm.FlashType)
+	<div class="flex items-center justify-between mb-4">
+		<p class="text-[13px] text-sand-700">
+			{ locale.TN(ctx, "assessment_count", len(vm.Assessments), map[string]any{"Count": len(vm.Assessments)}) }
+		</p>
+		<a href="/risks/new" class="inline-flex items-center gap-1.5 text-xs font-medium py-1.5 px-3.5 rounded-md bg-sand-900 text-white hover:bg-sand-800 transition-colors focus:ring-2 focus:ring-sand-700 focus:ring-offset-2 outline-none">
+			@ui.IconSVG("plus", 13)
+			{ locale.T(ctx, "action_new_assessment") }
+		</a>
+	</div>
+	// Pending-acceptance callout for the risk owner
+	if pendingCount := countPendingForOwner(vm.Assessments, vm.CurrentUserID); pendingCount > 0 {
+		<div class="mb-4 rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 text-[13px] text-orange-800">
+			<span class="font-semibold">{ fmt.Sprint(pendingCount) } assessment(s) await your acceptance.</span>
+			<span class="text-orange-600 ml-1">Open each assessment below to accept or decline.</span>
+		</div>
+	}
+	if len(vm.Assessments) == 0 {
+		@ui.EmptyState(ui.EmptyStateProps{
+			Class: "p-10",
+		}) {
+			<div class="text-[13px] text-sand-700 mb-3">{ locale.T(ctx, "assessment_none_yet") }</div>
+			<a href="/risks/new" class="text-[13px] font-medium text-blue-600 hover:underline">{ locale.T(ctx, "assessment_start_first") }</a>
+		}
+	} else {
+		@ui.Card(ui.CardProps{
+			Class:   "overflow-hidden",
+			Padding: "p-0",
+		}) {
+			<div class="grid grid-cols-[1fr_55px_55px_90px_110px_100px] gap-2 px-4 py-2.5 bg-sand-50 text-[10px] font-semibold text-sand-700 uppercase tracking-wide">
+				<span>{ locale.T(ctx, "label_name") }</span>
+				<span>{ locale.T(ctx, "label_risks") }</span>
+				<span>{ locale.T(ctx, "risk_level_high") }</span>
+				<span>{ locale.T(ctx, "label_status") }</span>
+				<span>{ locale.T(ctx, "label_updated") }</span>
+				<span>{ locale.T(ctx, "label_progress") }</span>
+			</div>
+			for i, a := range vm.Assessments {
+				<a
+					href={ templ.SafeURL("/risks/" + a.Assessment.ID.String()) }
+					class={ "grid grid-cols-[1fr_55px_55px_90px_110px_100px] gap-2 px-4 py-3 items-center border-t border-sand-200 hover:bg-sand-50 transition-colors", templ.KV("bg-sand-50/50", i%2 != 0) }
+				>
+					<div class="min-w-0">
+						<div class="flex items-center gap-2">
+							if a.Assessment.RefNum.Valid {
+								<span class="font-mono text-[11px] text-sand-700 dark:text-zinc-400 shrink-0">{ assessmentRef(a.Assessment.RefNum) }</span>
+							}
+							<span class="text-[13px] font-medium text-sand-900 truncate">{ a.Assessment.Name }</span>
+							if a.Assessment.IsPublic {
+								<span class="inline-flex items-center text-[9px] font-semibold px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-200 shrink-0">Public</span>
+							}
+						</div>
+						if a.Assessment.Scope != "" {
+							<div class="text-[11px] text-sand-700 dark:text-zinc-400 truncate">{ a.Assessment.Scope }</div>
+						}
+					</div>
+					<span class="text-[12px] font-mono text-sand-700">{ fmt.Sprint(a.RiskCount) }</span>
+					if a.RedCount > 0 {
+						<span class="text-[12px] font-mono text-red-600 font-semibold">{ fmt.Sprint(a.RedCount) }</span>
+					} else {
+						<span class="text-[12px] font-mono text-sand-700">—</span>
+					}
+					@assessmentStatusBadge(a.Assessment.Status)
+					<span class="text-[11px] text-sand-700 dark:text-zinc-400 font-mono" title={ a.Assessment.UpdatedAt.Format("2006-01-02 15:04") }>{ a.Assessment.UpdatedAt.Format("2 Jan 2006") }</span>
+					@wizardStepProgress(int(a.Assessment.CurrentStep))
+					</a>
+				}
+		}
+	}
+}
+
+
+templ assessmentStatusBadge(status string) {
+	switch status {
+		case "active":
+			<span class="inline-flex items-center text-[10px] font-semibold px-1.5 py-0.5 rounded bg-green-50 text-green-700 border border-green-200">{ locale.T(ctx, "assessment_status_active") }</span>
+		case "archived":
+			<span class="inline-flex items-center text-[10px] font-semibold px-1.5 py-0.5 rounded bg-sand-100 text-sand-700 border border-sand-200">{ locale.T(ctx, "assessment_status_archived") }</span>
+		case "pending_acceptance":
+			<span class="inline-flex items-center text-[10px] font-semibold px-1.5 py-0.5 rounded bg-orange-50 text-orange-700 border border-orange-200">{ locale.T(ctx, "assessment_status_pending_acceptance") }</span>
+		default:
+			<span class="inline-flex items-center text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">{ locale.T(ctx, "assessment_status_draft") }</span>
+	}
+}
+
+templ wizardStepProgress(step int) {
+	<div class="flex items-center gap-0.5">
+		for i := 1; i <= 4; i++ {
+			<div class={ "h-1.5 flex-1 rounded-full", wizardStepDotClass(i, step) }></div>
+		}
+	</div>
+}
+
+func wizardStepDotClass(i, current int) string {
+	if i <= current {
+		return "bg-blue-500"
+	}
+	return "bg-sand-200"
+}
+
+templ AssessmentDetail(vm AssessmentDetailVM) {
+	@ui.Flash(vm.Flash, vm.FlashType)
+	// Accept/decline panel for risk owner when assessment is pending acceptance
+	if vm.Assessment.Status == "pending_acceptance" && vm.Assessment.RiskOwnerID.UUID.String() == vm.CurrentUserID {
+		<div
+			x-data="{ showDecline: false }"
+			class="mb-5 rounded-xl border border-orange-200 bg-orange-50 p-4"
+		>
+			<div class="text-[13px] font-semibold text-orange-800 mb-3">{ locale.T(ctx, "assessment_pending_acceptance_msg") }</div>
+			<div class="flex items-center gap-3">
+				<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/accept") }>
+					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+					<button type="submit" class="inline-flex items-center gap-1.5 text-xs font-medium py-1.5 px-3.5 rounded-md bg-green-700 text-white hover:bg-green-800 transition-colors">
+						{ locale.T(ctx, "action_accept") }
+					</button>
+				</form>
+				<button
+					type="button"
+					@click="showDecline = !showDecline"
+					class="inline-flex items-center gap-1.5 text-xs font-medium py-1.5 px-3.5 rounded-md border border-orange-300 text-orange-800 hover:bg-orange-100 transition-colors"
+				>
+					{ locale.T(ctx, "action_decline") }
+				</button>
+			</div>
+			<div x-show="showDecline" x-cloak class="mt-3">
+				<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/decline") }>
+					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+					<textarea
+						name="note"
+						rows="3"
+						placeholder="Reason for declining (optional)"
+						class="w-full text-[12px] border border-orange-300 rounded-md px-3 py-2 bg-white text-sand-900 focus:outline-none focus:ring-2 focus:ring-orange-400 mb-2"
+					></textarea>
+					<button type="submit" class="inline-flex items-center gap-1.5 text-xs font-medium py-1.5 px-3.5 rounded-md bg-orange-700 text-white hover:bg-orange-800 transition-colors">
+						{ locale.T(ctx, "action_return_to_draft") }
+					</button>
+				</form>
+			</div>
+		</div>
+	}
+	if vm.Assessment.Status == "draft" && vm.Assessment.AcceptanceNote != "" {
+		<div class="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-800">
+			<span class="font-semibold">{ locale.T(ctx, "assessment_returned_by") }:</span>
+			<span class="ml-1">{ vm.Assessment.AcceptanceNote }</span>
+		</div>
+	}
+	<!-- Header actions -->
+	<div class="flex items-center justify-between mb-5">
+		<div class="flex items-center gap-3">
+			@assessmentStatusBadge(vm.Assessment.Status)
+			if vm.OrgName != "" {
+				<span class="text-[12px] text-sand-700">· { vm.OrgName }</span>
+			}
+		</div>
+		<div class="flex items-center gap-2">
+			if vm.CanTogglePublic {
+				<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/toggle-public") }>
+					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+					if vm.Assessment.IsPublic {
+						<button type="submit" class="inline-flex items-center gap-1.5 text-[12px] py-1.5 px-3 rounded-md border border-blue-300 text-blue-700 hover:bg-blue-50 transition-colors" title="Make private">
+							@ui.IconSVG("eye", 12)
+							Public
+						</button>
+					} else {
+						<button type="submit" class="inline-flex items-center gap-1.5 text-[12px] py-1.5 px-3 rounded-md border border-sand-300 text-sand-700 hover:bg-sand-50 transition-colors" title="Make public">
+							@ui.IconSVG("shield", 12)
+							Private
+						</button>
+					}
+				</form>
+			}
+			<a
+				href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/review") }
+				class="inline-flex items-center gap-1.5 text-[12px] py-1.5 px-3 rounded-md border border-sand-300 text-sand-700 hover:bg-sand-50 transition-colors"
+			>
+				{ locale.T(ctx, "action_review") }
+				@ui.IconSVG("arrow-up-right", 11)
+			</a>
+			<a
+				href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") }
+				class="inline-flex items-center gap-1.5 text-[12px] py-1.5 px-3 rounded-md bg-sand-900 text-white hover:bg-sand-800 transition-colors"
+			>
+				{ locale.T(ctx, "action_continue_wizard") }
+			</a>
+		</div>
+	</div>
+	@assessmentRecentChanges(vm.AuditLog, "mb-5")
+	<!-- Two risk matrices side by side -->
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+		<div class="border border-sand-200 rounded-xl p-5 bg-white">
+			<div class="text-[12px] font-semibold text-sand-700 mb-3">{ locale.T(ctx, "risk_current_map_title") }</div>
+			@layout.RiskMatrix(vm.CurrentMatrix)
+			<div class="flex gap-4 mt-3 text-[11px] text-sand-700">
+				<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-red-500 inline-block"></span>{ fmt.Sprintf("%s (\u2265%d)", locale.T(ctx, "risk_level_high"), vm.HighMin) }</span>
+				<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-amber-400 inline-block"></span>{ fmt.Sprintf("%s (%d\u2013%d)", locale.T(ctx, "risk_level_medium"), vm.LowMax+1, vm.HighMin-1) }</span>
+				<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-green-500 inline-block"></span>{ fmt.Sprintf("%s (\u2264%d)", locale.T(ctx, "risk_level_low"), vm.LowMax) }</span>
+			</div>
+			<div class="text-[10px] text-sand-700 dark:text-zinc-400 mt-1">{ locale.T(ctx, "risk_map_subtitle_current") }</div>
+		</div>
+		<div class="border border-sand-200 rounded-xl p-5 bg-white">
+			<div class="text-[12px] font-semibold text-sand-700 mb-3">{ locale.T(ctx, "risk_target_map_title") }</div>
+			@layout.RiskMatrix(vm.TargetMatrix)
+			<div class="flex gap-4 mt-3 text-[11px] text-sand-700">
+				<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-red-500 inline-block"></span>{ fmt.Sprintf("%s (\u2265%d)", locale.T(ctx, "risk_level_high"), vm.HighMin) }</span>
+				<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-amber-400 inline-block"></span>{ fmt.Sprintf("%s (%d\u2013%d)", locale.T(ctx, "risk_level_medium"), vm.LowMax+1, vm.HighMin-1) }</span>
+				<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-green-500 inline-block"></span>{ fmt.Sprintf("%s (\u2264%d)", locale.T(ctx, "risk_level_low"), vm.LowMax) }</span>
+			</div>
+			<div class="text-[10px] text-sand-700 dark:text-zinc-400 mt-1">{ locale.T(ctx, "risk_map_subtitle_target") }</div>
+		</div>
+	</div>
+	<!-- Assessment metadata -->
+	<div class="border border-sand-200 rounded-xl p-5 bg-white mb-6">
+		<dl class="grid grid-cols-[140px_1fr] gap-x-4 gap-y-2 text-[12px]">
+			if vm.OwnerName != "" {
+				<dt class="text-sand-700">{ locale.T(ctx, "label_risk_owner") }</dt>
+				<dd class="text-sand-900">{ vm.OwnerName }</dd>
+			}
+			if vm.OrgName != "" {
+				<dt class="text-sand-700">{ locale.T(ctx, "label_organisation") }</dt>
+				<dd class="text-sand-900">{ vm.OrgName }</dd>
+			}
+			if vm.Assessment.Scope != "" {
+				<dt class="text-sand-700">{ locale.T(ctx, "label_scope") }</dt>
+				<dd class="text-sand-900 whitespace-pre-wrap">{ vm.Assessment.Scope }</dd>
+			}
+			if vm.Assessment.SecurityObjectives != "" {
+				<dt class="text-sand-700">{ locale.T(ctx, "label_objectives") }</dt>
+				<dd class="text-sand-900 whitespace-pre-wrap">{ vm.Assessment.SecurityObjectives }</dd>
+			}
+			if len(vm.Participants) > 0 {
+				<dt class="text-sand-700">{ locale.T(ctx, "label_participants") }</dt>
+				<dd class="text-sand-900">{ participantNames(vm.Participants) }</dd>
+			}
+			<dt class="text-sand-700">{ locale.T(ctx, "label_created") }</dt>
+			<dd class="text-sand-900" title={ vm.Assessment.CreatedAt.Format("2006-01-02 15:04") }>{ vm.Assessment.CreatedAt.Format("2 Jan 2006") }</dd>
+			<dt class="text-sand-700">{ locale.T(ctx, "label_updated") }</dt>
+			<dd class="text-sand-900" title={ vm.Assessment.UpdatedAt.Format("2006-01-02 15:04") }>{ vm.Assessment.UpdatedAt.Format("2 Jan 2006") }</dd>
+			if vm.Assessment.LastReviewedAt.Valid {
+				<dt class="text-sand-700">{ locale.T(ctx, "label_last_reviewed") }</dt>
+				<dd class="text-sand-900" title={ vm.Assessment.LastReviewedAt.Time.Format("2006-01-02 15:04") }>{ vm.Assessment.LastReviewedAt.Time.Format("2 Jan 2006") }</dd>
+			}
+		</dl>
+	</div>
+	<!-- Risk register table -->
+	<div class="border border-sand-200 rounded-xl overflow-hidden">
+		<div class="flex items-center justify-between px-4 py-3 bg-sand-50 border-b border-sand-200">
+			<div class="text-[12px] font-semibold text-sand-700">{ locale.TN(ctx, "risk_register_count", len(vm.Risks), map[string]any{"Count": len(vm.Risks)}) }</div>
+		</div>
+		if len(vm.Risks) == 0 {
+			<div class="px-4 py-8 text-center text-[13px] text-sand-700">
+				{ locale.T(ctx, "risk_none_identified") }
+				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") } class="text-blue-600 hover:underline ml-1">{ locale.T(ctx, "action_goto_identification") }</a>
+			</div>
+		} else {
+			<div class="grid grid-cols-[1fr_80px_80px_100px] gap-2 px-4 py-2 bg-sand-50 text-[10px] font-semibold text-sand-700 uppercase tracking-wide border-b border-sand-200">
+				<span>{ locale.T(ctx, "label_risk") }</span>
+				<span class="text-center">{ locale.T(ctx, "label_current") }</span>
+				<span class="text-center">{ locale.T(ctx, "label_target") }</span>
+				<span>{ locale.T(ctx, "label_decision") }</span>
+			</div>
+			for _, risk := range vm.Risks {
+				<a
+					href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + risk.ID.String()) }
+					class="grid grid-cols-[1fr_80px_80px_100px] gap-2 px-4 py-3 items-center border-t border-sand-200 hover:bg-sand-50 transition-colors"
+				>
+					<div class="min-w-0">
+						<div class="flex items-center gap-2 min-w-0">
+							if risk.RefNum.Valid {
+								<span class="font-mono text-[11px] text-sand-700 dark:text-zinc-400 shrink-0">{ riskRef(risk.RefNum) }</span>
+							}
+							<span class="text-[13px] font-medium text-sand-900 truncate">{ risk.Name }</span>
+						</div>
+						if risk.Description != "" {
+							<div class="text-[11px] text-sand-700 dark:text-zinc-400 truncate">{ risk.Description }</div>
+						}
+					</div>
+					@scoreCellInline(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, risk.LikelihoodCurrent.Valid, vm.LowMax, vm.HighMin)
+					@scoreCellInline(risk.LikelihoodTarget.Int32, risk.ConsequenceTarget.Int32, risk.LikelihoodTarget.Valid, vm.LowMax, vm.HighMin)
+					@decisionBadge(risk.RiskDecision)
+				</a>
+			}
+		}
+	</div>
+	<!-- Delete form -->
+	<div class="mt-8 pt-4 border-t border-sand-200">
+		<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/delete") } onsubmit="return confirm('Delete this assessment and all risks?')">
+			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			<button type="submit" class="text-[12px] text-red-600 hover:text-red-800 hover:underline">
+				{ locale.T(ctx, "action_delete_assessment") }
+			</button>
+		</form>
+	</div>
+}
+
+templ assessmentRecentChanges(auditLog []db.ListAuditLogForAssessmentRow, wrapperClass string) {
+	<details class={ wrapperClass }>
+		<summary class="cursor-pointer text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3 list-none">Last 5 changes (click to expand)</summary>
+		<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
+			@ui.Table(ui.TableProps{}) {
+				<caption class="sr-only">Last 5 changes</caption>
+				@ui.THead(ui.THeadProps{
+					Attrs: templ.Attributes{
+						"class": "bg-sand-100 dark:bg-zinc-800",
+					},
+				}) {
+					@ui.Tr(ui.TrProps{}) {
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px] uppercase tracking-wider"}}) { Event }
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { By }
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { When }
+					}
+				}
+				<tbody>
+					if len(auditLog) == 0 {
+						@ui.Tr(ui.TrProps{
+							Attrs: templ.Attributes{
+								"class": "border-sand-300/60 dark:border-zinc-700/60",
+							},
+						}) {
+							@ui.Td(ui.TdProps{
+								Attrs: templ.Attributes{
+									"colspan": "3",
+									"class":   "px-4 text-sand-700",
+								},
+							}) { No changes yet. }
+						}
+					} else {
+						for i, entry := range auditLog {
+							if i < 5 {
+								@ui.Tr(ui.TrProps{
+									Attrs: templ.Attributes{
+										"class": "border-sand-300/60 dark:border-zinc-700/60",
+									},
+								}) {
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-medium"}}) { riskAuditEventLabel(entry.Event) }
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) {
+										if entry.UserName != "" {
+											{ entry.UserName }
+										} else {
+											<span class="text-sand-700">—</span>
+										}
+									}
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700 font-mono text-[11px]"}}) { entry.EventTime.Format("2 Jan 2006 15:04") }
+								}
+							}
+						}
+					}
+				</tbody>
+			}
+		</div>
+	</details>
+}
+
+templ scoreCellInline(l, c int32, valid bool, lowMax, highMin int) {
+	if valid {
+		<div class={ "mx-auto w-10 h-7 rounded flex items-center justify-center text-[10px] font-bold text-white", bgClassT(l, c, lowMax, highMin) }>
+			{ fmt.Sprint(int(l) * int(c)) }
+		</div>
+	} else {
+		<div class="text-center text-[11px] text-sand-300">—</div>
+	}
+}
+
+func bgClassT(l, c int32, lowMax, highMin int) string {
+	score := int(l) * int(c)
+	switch {
+	case score >= highMin:
+		return "bg-red-500"
+	case score > lowMax:
+		return "bg-amber-400"
+	default:
+		return "bg-green-500"
+	}
+}
+
+func ns5814BgClass(l, c int32) string {
+	return bgClassT(l, c, 5, 12)
+}
+
+templ decisionBadge(decision string) {
+	switch decision {
+		case "accept":
+			<span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-green-50 text-green-700 border border-green-200">{ locale.T(ctx, "decision_accept") }</span>
+		case "treat":
+			<span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">{ locale.T(ctx, "decision_treat") }</span>
+		case "document":
+			<span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-sand-100 text-sand-700 border border-sand-200">{ locale.T(ctx, "decision_document") }</span>
+		default:
+			<span class="text-[11px] text-sand-300">—</span>
+	}
+}
+
+func countPendingForOwner(assessments []AssessmentListVM, userID string) int {
+	n := 0
+	for _, a := range assessments {
+		if a.Assessment.Status == "pending_acceptance" && a.Assessment.RiskOwnerID.UUID.String() == userID {
+			n++
+		}
+	}
+	return n
+}
+
+func participantNames(users []db.User) string {
+	names := make([]string, 0, len(users))
+	for _, u := range users {
+		names = append(names, u.Name)
+	}
+	return strings.Join(names, ", ")
+}
+
+// ── Risk register (flat list across all assessments) ─────────────────────────
+
+templ RiskRegister(risks []db.ListAllRisksRow, lowMax, highMin int) {
+	if len(risks) == 0 {
+		@ui.EmptyState(ui.EmptyStateProps{
+			Class: "p-10",
+		}) {
+			<div class="text-[13px] text-sand-700 mb-3">{ locale.T(ctx, "risk_none_identified") }</div>
+			<a href="/risks" class="text-[13px] font-medium text-blue-600 hover:underline">Start a risk assessment →</a>
+		}
+	} else {
+		@ui.Card(ui.CardProps{
+			Class:   "overflow-hidden",
+			Padding: "p-0",
+		}) {
+			<div class="grid grid-cols-[80px_1fr_160px_80px_100px] gap-2 px-4 py-2.5 bg-sand-50 text-[10px] font-semibold text-sand-700 uppercase tracking-wide">
+				<span>Ref</span>
+				<span>Risk</span>
+				<span>Assessment</span>
+				<span class="text-center">Score</span>
+				<span>Decision</span>
+			</div>
+			for i, risk := range risks {
+				<a
+					href={ templ.SafeURL("/risks/" + risk.AssessmentID.String() + "/risks/" + risk.ID.String()) }
+					class={ "grid grid-cols-[80px_1fr_160px_80px_100px] gap-2 px-4 py-3 items-center border-t border-sand-200 hover:bg-sand-50 transition-colors", templ.KV("bg-sand-50/50", i%2 != 0) }
+				>
+					<span class="font-mono text-[11px] text-sand-700 dark:text-zinc-400">{ riskRef(risk.RefNum) }</span>
+					<div class="min-w-0">
+						<div class="text-[13px] font-medium text-sand-900">{ risk.Name }</div>
+						if risk.Description != "" {
+							<div class="text-[11px] text-sand-700 dark:text-zinc-400 truncate">{ risk.Description }</div>
+						}
+					</div>
+					<div class="min-w-0 text-[11px] text-sand-700 dark:text-zinc-400 truncate">
+						if risk.AssessmentRefNum.Valid {
+							<span class="font-mono text-[10px] text-sand-700 dark:text-zinc-400 mr-1">{ assessmentRef(risk.AssessmentRefNum) }</span>
+						}
+						{ risk.AssessmentName }
+					</div>
+					@scoreCellInline(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, risk.LikelihoodCurrent.Valid, lowMax, highMin)
+					@decisionBadge(risk.RiskDecision)
+					</a>
+				}
+		}
+	}
+}

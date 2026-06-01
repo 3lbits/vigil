@@ -1,0 +1,107 @@
+package ui
+
+import (
+	"fmt"
+)
+
+templ ProgressBar(pct int, colorClass string) {
+	<div role="progressbar" aria-valuenow={ fmt.Sprint(pct) } aria-valuemin="0" aria-valuemax="100" class="h-2.5 bg-sand-200 dark:bg-zinc-700 rounded-full overflow-hidden w-full">
+		<div class={ cx("h-2.5 rounded-full transition-all duration-300", colorClass) } :style={ fmt.Sprintf(`{"width":"%d%%"}`, pct) }></div>
+	</div>
+}
+
+templ CoverageProgressBar(pct int) {
+	@ProgressBar(pct, coverageColor(pct))
+}
+
+func coverageColor(pct int) string {
+	level := "low"
+	if pct >= 70 {
+		level = "high"
+	} else if pct >= 30 {
+		level = "mid"
+	}
+	return pick(map[string]string{
+		"high": "bg-green-500",
+		"mid":  "bg-amber-500",
+		"low":  "bg-red-500",
+	}, level, "low")
+}
+
+templ ProgressBarThin(pct int, colorClass string) {
+	<div role="progressbar" aria-valuenow={ fmt.Sprint(pct) } aria-valuemin="0" aria-valuemax="100" class="h-1.5 bg-sand-200 dark:bg-zinc-700 rounded-full overflow-hidden w-full">
+		<div class={ cx("h-1.5 rounded-full transition-all duration-300", colorClass) } :style={ fmt.Sprintf(`{"width":"%d%%"}`, pct) }></div>
+	</div>
+}
+
+templ MetricCard(label, value, sub, subColor, valueColor string) {
+	<div class="bg-sand-100 dark:bg-zinc-800 rounded-lg p-3.5">
+		<div class="text-xs text-sand-700 dark:text-zinc-400 mb-0.5">{ label }</div>
+		<div class={ "text-[22px] font-medium", valueColor }>{ value }</div>
+		if sub != "" {
+			<div class={ "text-[11px] mt-0.5", subColor }>{ sub }</div>
+		}
+	</div>
+}
+
+templ Flash(flash, flashType string) {
+	if flash != "" {
+		switch flashType {
+			case "success":
+				<div role="status" class="mb-4 px-4 py-2.5 rounded-lg bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 text-[13px]">{ flash }</div>
+			case "error":
+				<div role="alert" class="mb-4 px-4 py-2.5 rounded-lg bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 text-[13px]">{ flash }</div>
+			default:
+				<div role="status" class="mb-4 px-4 py-2.5 rounded-lg bg-sand-100 dark:bg-zinc-800 border border-sand-300 dark:border-zinc-600 text-sand-800 dark:text-zinc-200 text-[13px]">{ flash }</div>
+		}
+	}
+}
+
+templ IconSVG(name string, size int) {
+	switch name {
+		case "dashboard":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+		case "compliance":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path></svg>
+		case "shield":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+		case "eye":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+		case "menu":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>
+		case "x":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+		case "chevron":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18l6-6-6-6"></path></svg>
+		case "plus":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"></path></svg>
+		case "search":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+		case "upload":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+		case "trash":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"></path><path d="M10 11v6M14 11v6"></path><path d="M9 6V4h6v2"></path></svg>
+		case "link":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"></path></svg>
+		case "users":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 00-3-3.87"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg>
+		case "logout":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+		case "calendar":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+		case "clock":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+		case "arrow-up-right":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+		case "risk":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+		case "package":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path><path d="M3.3 7L12 12l8.7-5"></path><path d="M12 22V12"></path></svg>
+		case "info":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+		case "moon":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg>
+		case "sun":
+			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={ fmt.Sprint(size) } height={ fmt.Sprint(size) } viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+	}
+}

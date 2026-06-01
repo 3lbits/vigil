@@ -1,0 +1,836 @@
+package admintemplates
+
+import (
+	"fmt"
+	"strings"
+	"time"
+
+	"github.com/3lbits/vigil/internal/csrf"
+	"github.com/3lbits/vigil/internal/db"
+	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui"
+)
+
+templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, auditLog []db.ListAuditLogAdminRow, version string, startTime time.Time, dbOK bool, flash, flashType, activeTab, auditFilter string, orgs []db.Organization, gs db.RiskGlobalSetting, scaleLabels []db.RiskScaleLabel, appSettings db.AppSetting) {
+	<div>
+		<div
+			role="tablist"
+			aria-label={ locale.T(ctx, "admin_sections") }
+			class="flex flex-wrap border-b border-sand-200 dark:border-zinc-700 mb-5 -mt-1"
+		>
+			@adminTab("users", locale.T(ctx, "tab_users"), activeTab)
+			@adminTab("sessions", locale.T(ctx, "tab_sessions"), activeTab)
+			@adminTab("audit", locale.T(ctx, "tab_audit"), activeTab)
+			@adminTab("status", locale.T(ctx, "tab_status"), activeTab)
+			@adminTab("orgs", locale.T(ctx, "tab_orgs"), activeTab)
+			@adminTab("risk", locale.T(ctx, "tab_risk_settings"), activeTab)
+			@adminTab("modules", locale.T(ctx, "tab_modules"), activeTab)
+		</div>
+		@ui.Flash(flash, flashType)
+		<div id="tab-panel-users" role="tabpanel" aria-labelledby="tab-btn-users" class={ templ.KV("hidden", activeTab != "users") }>
+			<!-- Add user form -->
+			<div class="bg-white border border-sand-200 rounded-xl p-4 mb-4">
+				<div class="text-[12px] font-semibold text-sand-700 mb-3">{ locale.T(ctx, "admin_add_user") }</div>
+				<form method="POST" action="/admin/users" class="flex items-end gap-3 flex-wrap">
+					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+					<div class="flex flex-col gap-1">
+						<label for="add-user-name" class="text-[12px] text-sand-700 font-medium">{ locale.T(ctx, "label_name") }</label>
+						<input
+							id="add-user-name"
+							type="text"
+							name="name"
+							autocomplete="name"
+							placeholder="Jane Smith"
+							class="text-[12px] border border-sand-300 rounded px-2.5 py-1.5 w-40 focus:outline-none focus:ring-2 focus:ring-blue-400"
+						/>
+					</div>
+					<div class="flex flex-col gap-1">
+						<label for="add-user-email" class="text-[12px] text-sand-700 font-medium">{ locale.T(ctx, "label_email") }</label>
+						<input
+							id="add-user-email"
+							type="email"
+							name="email"
+							required
+							autocomplete="email"
+							placeholder="user@example.com"
+							class="text-[12px] border border-sand-300 rounded px-2.5 py-1.5 w-56 focus:outline-none focus:ring-2 focus:ring-blue-400"
+						/>
+					</div>
+					<div class="flex flex-col gap-1">
+						<label for="add-user-role" class="text-[12px] text-sand-700 font-medium">{ locale.T(ctx, "label_role") }</label>
+						<select id="add-user-role" name="role" class="text-[12px] border border-sand-300 rounded px-2.5 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400">
+							<option value="viewer">{ locale.T(ctx, "role_viewer") }</option>
+							<option value="contributor">{ locale.T(ctx, "role_contributor") }</option>
+							<option value="editor">{ locale.T(ctx, "role_editor") }</option>
+							<option value="admin">{ locale.T(ctx, "role_admin") }</option>
+						</select>
+					</div>
+					<button type="submit" class="text-[12px] px-3.5 py-1.5 rounded-md bg-sand-900 text-white hover:bg-sand-800 transition-colors focus:ring-2 focus:ring-sand-700 focus:ring-offset-1 outline-none">
+						{ locale.T(ctx, "action_add") }
+					</button>
+				</form>
+				<p class="text-[11px] text-sand-700 mt-2">{ locale.T(ctx, "admin_add_user_hint") }</p>
+			</div>
+			<div class="bg-white border border-sand-200 rounded-xl overflow-hidden">
+				@ui.Table(ui.TableProps{
+					Attrs: templ.Attributes{
+						"aria-label": locale.T(ctx, "tab_users"),
+						"class":      "text-sm",
+					},
+				}) {
+					<caption class="sr-only">{ locale.T(ctx, "tab_users") }</caption>
+					@ui.THead(ui.THeadProps{
+						Attrs: templ.Attributes{
+							"class": "bg-sand-50 border-b border-sand-200 dark:bg-zinc-900 dark:border-zinc-700",
+						},
+					}) {
+						@ui.Tr(ui.TrProps{}) {
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5 text-xs"}}) { { locale.T(ctx, "label_name") } }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5 text-xs"}}) { { locale.T(ctx, "label_email") } }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5 text-xs"}}) { { locale.T(ctx, "label_provider") } }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5 text-xs"}}) { { locale.T(ctx, "label_role") } }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5 text-xs"}}) { { locale.T(ctx, "label_org_unit") } }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5"}}) { <span class="sr-only">{ locale.T(ctx, "label_actions") }</span> }
+						}
+					}
+					<tbody>
+						for _, u := range users {
+							@ui.Tr(ui.TrProps{
+								Attrs: templ.Attributes{
+									"class": "border-b border-sand-100 dark:border-zinc-800 last:border-0",
+								},
+							}) {
+								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-3 font-medium"}}) {
+									if u.Name == "" {
+										<span class="text-sand-700 italic">—</span>
+									} else {
+										{ u.Name }
+									}
+								}
+								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-3 text-sand-700"}}) { u.Email }
+								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-3"}}) {
+									@ProviderBadge(u.Provider)
+								}
+								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-3"}}) {
+									@RoleBadge(u.Role)
+								}
+								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-3"}}) {
+									<form method="POST" action={ templ.SafeURL("/admin/users/" + u.ID.String() + "/org") } class="flex items-center gap-2">
+										<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+										<label for={ "org-" + u.ID.String() } class="sr-only">{ locale.T(ctx, "label_org_unit") } { u.Email }</label>
+										<select id={ "org-" + u.ID.String() } name="org_id" class="text-xs border border-sand-300 rounded px-2 py-1 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+											<option value="">— { locale.T(ctx, "label_none") } —</option>
+											for _, o := range orgs {
+												<option value={ o.ID.String() } selected?={ u.OrgID.Valid && u.OrgID.UUID == o.ID }>{ o.Name }</option>
+											}
+										</select>
+										<button type="submit" aria-label={ locale.T(ctx, "action_save") + " " + locale.T(ctx, "label_org_unit") + " " + locale.T(ctx, "label_for") + " " + u.Email } class="text-xs px-2.5 py-1 rounded border border-sand-300 hover:bg-sand-50 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 outline-none">
+											{ locale.T(ctx, "action_save") }
+										</button>
+									</form>
+								}
+								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-3"}}) {
+									<div class="flex items-center gap-2 flex-wrap">
+										<form method="POST" action={ templ.SafeURL("/admin/users/" + u.ID.String() + "/role") } class="flex items-center gap-2">
+											<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+											<label for={ "role-" + u.ID.String() } class="sr-only">{ locale.T(ctx, "label_role") } { locale.T(ctx, "label_for") } { u.Email }</label>
+											<select id={ "role-" + u.ID.String() } name="role" class="text-xs border border-sand-300 rounded px-2 py-1 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+												<option value="viewer" selected?={ u.Role == "viewer" }>{ locale.T(ctx, "role_viewer") }</option>
+												<option value="contributor" selected?={ u.Role == "contributor" }>{ locale.T(ctx, "role_contributor") }</option>
+												<option value="editor" selected?={ u.Role == "editor" }>{ locale.T(ctx, "role_editor") }</option>
+												<option value="admin" selected?={ u.Role == "admin" }>{ locale.T(ctx, "role_admin") }</option>
+											</select>
+											<button type="submit" aria-label={ locale.T(ctx, "action_save") + " " + locale.T(ctx, "label_role") + " " + locale.T(ctx, "label_for") + " " + u.Email } class="text-xs px-2.5 py-1 rounded border border-sand-300 hover:bg-sand-50 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 outline-none">
+												{ locale.T(ctx, "action_save") }
+											</button>
+										</form>
+										<form method="POST" action={ templ.SafeURL("/admin/users/" + u.ID.String() + "/delete") } onsubmit="return confirm('Delete this user?')">
+											<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+											<button type="submit" aria-label={ locale.T(ctx, "action_delete") + " " + u.Email } class="text-xs px-2 py-1 rounded border border-red-200 text-red-600 hover:bg-red-50 transition-colors">
+												{ locale.T(ctx, "action_delete") }
+											</button>
+										</form>
+									</div>
+								}
+							}
+						}
+					</tbody>
+				}
+			</div>
+		</div>
+		<div id="tab-panel-sessions" role="tabpanel" aria-labelledby="tab-btn-sessions" class={ templ.KV("hidden", activeTab != "sessions") }>
+			if len(sessions) == 0 {
+				<div class="bg-white border border-sand-200 rounded-xl px-4 py-8 text-center text-sm text-sand-700">
+					{ locale.T(ctx, "admin_no_active_sessions") }
+				</div>
+			} else {
+				<div class="bg-white border border-sand-200 rounded-xl overflow-hidden">
+					@ui.Table(ui.TableProps{
+						Attrs: templ.Attributes{
+							"aria-label": locale.T(ctx, "admin_active_sessions"),
+							"class":      "text-sm",
+						},
+					}) {
+						<caption class="sr-only">{ locale.T(ctx, "admin_active_sessions") }</caption>
+						@ui.THead(ui.THeadProps{
+							Attrs: templ.Attributes{
+								"class": "bg-sand-50 border-b border-sand-200 dark:bg-zinc-900 dark:border-zinc-700",
+							},
+						}) {
+							@ui.Tr(ui.TrProps{}) {
+								@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5 text-xs"}}) { { locale.T(ctx, "label_user") } }
+								@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5 text-xs"}}) { { locale.T(ctx, "label_role") } }
+								@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5 text-xs"}}) { { locale.T(ctx, "label_sessions") } }
+								@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5 text-xs"}}) { { locale.T(ctx, "label_expires") } }
+								@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5"}}) { <span class="sr-only">{ locale.T(ctx, "label_actions") }</span> }
+							}
+						}
+						<tbody>
+							for _, s := range sessions {
+								@ui.Tr(ui.TrProps{
+									Attrs: templ.Attributes{
+										"class": "border-b border-sand-100 dark:border-zinc-800 last:border-0",
+									},
+								}) {
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-3"}}) {
+										<div class="font-medium">{ s.Name }</div>
+										<div class="text-xs text-sand-700">{ s.Email }</div>
+									}
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-3"}}) {
+										@RoleBadge(s.Role)
+									}
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-3 font-mono text-xs"}}) { fmt.Sprint(s.SessionCount) }
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-3 text-xs text-sand-700", "title": s.ExpiresAt.UTC().Format(time.RFC3339)}}) {
+										{ s.ExpiresAt.UTC().Format("2006-01-02 15:04 UTC") }
+									}
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-3"}}) {
+										<form method="POST" action={ templ.SafeURL("/admin/sessions/" + s.UserID.String() + "/revoke") }>
+											<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+											<button
+												type="submit"
+												aria-label={ locale.T(ctx, "admin_revoke_sessions_for") + " " + s.Name }
+												class="text-xs px-2.5 py-1 rounded border border-red-200 text-red-700 hover:bg-red-50 transition-colors focus:ring-2 focus:ring-red-500 focus:ring-offset-1 outline-none"
+											>
+												{ locale.T(ctx, "action_revoke") }
+											</button>
+										</form>
+									}
+								}
+							}
+						</tbody>
+					}
+				</div>
+			}
+		</div>
+		<!-- Audit tab -->
+		<div id="tab-panel-audit" role="tabpanel" aria-labelledby="tab-btn-audit" class={ templ.KV("hidden", activeTab != "audit") }>
+			<div class="flex items-center gap-2 mb-4">
+				<span class="text-xs text-sand-700 dark:text-zinc-400 mr-1">{ locale.T(ctx, "label_filter") }:</span>
+				<a
+					href="/admin?tab=audit&audit=all"
+					class={ "text-xs px-3 py-1 rounded transition-colors", templ.KV("bg-sand-800 dark:bg-zinc-100 text-white dark:text-zinc-900", auditFilter == "all"), templ.KV("border border-sand-300 dark:border-zinc-600 text-sand-700 dark:text-zinc-300 hover:bg-sand-50 dark:hover:bg-zinc-800", auditFilter != "all") }
+				>{ locale.T(ctx, "audit_filter_all") }</a>
+				<a
+					href="/admin?tab=audit&audit=delete"
+					class={ "text-xs px-3 py-1 rounded transition-colors", templ.KV("bg-red-700 text-white", auditFilter == "delete"), templ.KV("border border-sand-300 dark:border-zinc-600 text-sand-700 dark:text-zinc-300 hover:bg-sand-50 dark:hover:bg-zinc-800", auditFilter != "delete") }
+				>{ locale.T(ctx, "audit_filter_deletions") }</a>
+				<a
+					href="/admin?tab=audit&audit=update"
+					class={ "text-xs px-3 py-1 rounded transition-colors", templ.KV("bg-amber-600 text-white", auditFilter == "update"), templ.KV("border border-sand-300 dark:border-zinc-600 text-sand-700 dark:text-zinc-300 hover:bg-sand-50 dark:hover:bg-zinc-800", auditFilter != "update") }
+				>{ locale.T(ctx, "audit_filter_updates") }</a>
+				<span class="text-xs text-sand-700 dark:text-zinc-400 ml-2">{ locale.T(ctx, "audit_last_500") }</span>
+			</div>
+			if len(auditLog) == 0 {
+				<div class="bg-white dark:bg-zinc-900 border border-sand-200 dark:border-zinc-700 rounded-xl px-4 py-8 text-center text-sm text-sand-700 dark:text-zinc-400">
+					{ locale.T(ctx, "admin_no_audit_events") }
+				</div>
+			} else {
+				<div class="bg-white dark:bg-zinc-900 border border-sand-200 dark:border-zinc-700 rounded-xl overflow-hidden">
+					@ui.Table(ui.TableProps{
+						Attrs: templ.Attributes{
+							"aria-label": locale.T(ctx, "tab_audit"),
+							"class":      "text-sm",
+						},
+					}) {
+						<caption class="sr-only">{ locale.T(ctx, "tab_audit") }</caption>
+						@ui.THead(ui.THeadProps{
+							Attrs: templ.Attributes{
+								"class": "border-b border-sand-200 dark:border-zinc-700 bg-sand-50 dark:bg-zinc-800",
+							},
+						}) {
+							@ui.Tr(ui.TrProps{}) {
+								@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5 text-xs"}}) { { locale.T(ctx, "label_when") } }
+								@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5 text-xs"}}) { { locale.T(ctx, "label_user") } }
+								@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5 text-xs"}}) { { locale.T(ctx, "label_event") } }
+								@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5 text-xs"}}) { { locale.T(ctx, "label_detail") } }
+							}
+						}
+						<tbody>
+							for _, e := range auditLog {
+								@ui.Tr(ui.TrProps{
+									Attrs: templ.Attributes{
+										"class": "border-b border-sand-100 dark:border-zinc-800 last:border-0",
+									},
+								}) {
+									@ui.Td(ui.TdProps{
+										Attrs: templ.Attributes{
+											"class": "px-4 py-2.5 font-mono text-xs text-sand-700 dark:text-zinc-400 whitespace-nowrap",
+											"title": e.EventTime.UTC().Format(time.RFC3339),
+										},
+									}) {
+										{ e.EventTime.UTC().Format("2006-01-02 15:04") }
+									}
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-2.5 text-sand-700 dark:text-zinc-300"}}) {
+										if e.UserName != "" {
+											{ e.UserName }
+										} else {
+											<span class="text-sand-700 dark:text-zinc-400">{ locale.T(ctx, "label_system") }</span>
+										}
+									}
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-2.5"}}) {
+										@adminAuditEventBadge(e.Event)
+									}
+									@ui.Td(ui.TdProps{
+										Attrs: templ.Attributes{
+											"class": "px-4 py-2.5 font-mono text-xs text-sand-700 dark:text-zinc-400 max-w-[280px] truncate",
+											"title": string(e.Attrs),
+										},
+									}) {
+										{ auditAttrsPreview(string(e.Attrs)) }
+									}
+								}
+							}
+						</tbody>
+					}
+				</div>
+			}
+		</div>
+
+		<div id="tab-panel-status" role="tabpanel" aria-labelledby="tab-btn-status" class={ templ.KV("hidden", activeTab != "status") }>
+			<div class="space-y-6">
+				<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+					<div class="bg-white border border-sand-200 rounded-xl p-4">
+						<div class="text-xs text-sand-700 mb-1">{ locale.T(ctx, "label_version") }</div>
+						<div class="font-mono text-sm font-medium">{ version }</div>
+					</div>
+					<div class="bg-white border border-sand-200 rounded-xl p-4">
+						<div class="text-xs text-sand-700 mb-1">{ locale.T(ctx, "label_deploy_time") }</div>
+						<div class="font-mono text-sm font-medium" title={ startTime.UTC().Format(time.RFC3339) }>
+							{ startTime.UTC().Format("2006-01-02 15:04:05 UTC") }
+						</div>
+					</div>
+					<div class="bg-white border border-sand-200 rounded-xl p-4">
+						<div class="text-xs text-sand-700 mb-1">{ locale.T(ctx, "label_uptime") }</div>
+						<div class="font-mono text-sm font-medium">{ formatUptime(time.Since(startTime)) }</div>
+					</div>
+				</div>
+				<div class="bg-white border border-sand-200 rounded-xl overflow-hidden">
+					<div class="px-4 py-3 border-b border-sand-100 text-xs font-medium text-sand-700">{ locale.T(ctx, "label_services") }</div>
+					<div class="divide-y divide-sand-100">
+						<div class="flex items-center justify-between px-4 py-3">
+							<span class="text-sm">{ locale.T(ctx, "label_application") }</span>
+							@ui.Badge(ui.BadgeProps{
+								Variant: "success",
+								Class:   "gap-1.5",
+							}) {
+								<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+								{ locale.T(ctx, "status_healthy") }
+							}
+						</div>
+						<div class="flex items-center justify-between px-4 py-3">
+							<span class="text-sm">{ locale.T(ctx, "label_database") }</span>
+							if dbOK {
+								@ui.Badge(ui.BadgeProps{
+									Variant: "success",
+									Class:   "gap-1.5",
+								}) {
+									<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+									{ locale.T(ctx, "status_healthy") }
+								}
+							} else {
+								@ui.Badge(ui.BadgeProps{
+									Variant: "danger",
+									Class:   "gap-1.5",
+								}) {
+									<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+									{ locale.T(ctx, "status_unreachable") }
+								}
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Organisations tab -->
+		<div id="tab-panel-orgs" role="tabpanel" aria-labelledby="tab-btn-orgs" class={ templ.KV("hidden", activeTab != "orgs") }>
+			<div class="flex items-center justify-between mb-4">
+				<p class="text-[13px] text-sand-700">{ locale.T(ctx, "admin_org_tree_help") }</p>
+			</div>
+			<div class="border border-sand-300/60 rounded-[10px] p-4 mb-6 max-w-lg">
+				<h2 class="text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3">{ locale.T(ctx, "action_add_org_unit") }</h2>
+				<form method="POST" action="/admin/orgs" class="flex flex-col gap-3">
+					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+					<div>
+						<label for="org_name" class="block text-[13px] text-sand-700 mb-1">{ locale.T(ctx, "label_name") } <span class="text-red-500">*</span></label>
+						<input
+							id="org_name" name="name" type="text" required
+							placeholder={ locale.T(ctx, "admin_org_placeholder") }
+							class="w-full border border-sand-300 rounded-md px-3 py-1.5 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+						/>
+					</div>
+					<div>
+						<label for="org_key" class="block text-[13px] text-sand-700 mb-1">{ locale.T(ctx, "label_key") }</label>
+						<input
+							id="org_key" name="key" type="text"
+							placeholder="e.g. corp, engineering, platform"
+							class="w-full border border-sand-300 rounded-md px-3 py-1.5 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+						/>
+					</div>
+					<div>
+						<label for="parent_id" class="block text-[13px] text-sand-700 mb-1">{ locale.T(ctx, "admin_parent_unit") }</label>
+						<select id="parent_id" name="parent_id" class="w-full border border-sand-300 rounded-md px-3 py-1.5 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+							<option value="">— { locale.T(ctx, "admin_top_level") } —</option>
+							for _, o := range orgs {
+								if !o.ParentID.Valid {
+									<option value={ o.ID.String() }>{ o.Name }</option>
+									for _, child := range orgs {
+										if child.ParentID.Valid && child.ParentID.UUID == o.ID {
+											<option value={ child.ID.String() }>&nbsp;&nbsp;↳ { child.Name }</option>
+										}
+									}
+								}
+							}
+						</select>
+					</div>
+					<div class="flex justify-end">
+						<button type="submit" class="px-4 py-1.5 rounded-md bg-sand-900 text-white text-[13px] font-medium hover:bg-sand-800 transition-colors">
+							{ locale.T(ctx, "action_add") }
+						</button>
+					</div>
+				</form>
+			</div>
+			if len(orgs) == 0 {
+				<div class="rounded-xl border border-dashed border-sand-300 p-8 text-center text-[13px] text-sand-700 max-w-lg">
+					{ locale.T(ctx, "admin_no_orgs") }
+				</div>
+			} else {
+				<div class="border border-sand-200 rounded-xl overflow-hidden max-w-lg">
+					for _, o := range orgs {
+						if !o.ParentID.Valid {
+							@orgRowInline(o, 0, orgs)
+						}
+					}
+				</div>
+			}
+		</div>
+		<!-- Risk settings tab -->
+		<div id="tab-panel-risk" role="tabpanel" aria-labelledby="tab-btn-risk" class={ templ.KV("hidden", activeTab != "risk") }>
+			<div class="max-w-2xl">
+				<p class="text-[13px] text-sand-700 mb-4">{ locale.T(ctx, "admin_risk_settings_help") }</p>
+				<form method="POST" action="/admin/risk-settings" class="flex flex-col gap-6">
+					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+					<!-- Thresholds -->
+					<div>
+						<label class="block text-[13px] font-medium text-sand-700 mb-2">{ locale.T(ctx, "admin_risk_level_thresholds") }</label>
+						<div class="grid grid-cols-2 gap-3">
+							<div>
+								<label for="low_max" class="block text-[12px] text-sand-700 mb-1">{ locale.T(ctx, "admin_green_lowmax") }</label>
+								<input
+									id="low_max" name="low_max" type="number" min="1" max="24"
+									value={ fmt.Sprint(gs.LowMax) }
+									class="w-full border border-sand-300 rounded-md px-3 py-1.5 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+								/>
+								<p class="text-[11px] text-sand-700 mt-0.5">{ locale.T(ctx, "admin_scores_green_help") }</p>
+							</div>
+							<div>
+								<label for="high_min" class="block text-[12px] text-sand-700 mb-1">{ locale.T(ctx, "admin_red_highmin") }</label>
+								<input
+									id="high_min" name="high_min" type="number" min="2" max="25"
+									value={ fmt.Sprint(gs.HighMin) }
+									class="w-full border border-sand-300 rounded-md px-3 py-1.5 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+								/>
+								<p class="text-[11px] text-sand-700 mt-0.5">{ locale.T(ctx, "admin_scores_red_help") }</p>
+							</div>
+						</div>
+						<p class="text-[11px] text-sand-700 mt-1">{ locale.T(ctx, "admin_ns5814_default_help") }</p>
+					</div>
+					<!-- Acceptance criteria -->
+					<div>
+						<label for="acceptance_criteria" class="block text-[13px] text-sand-700 mb-1">{ locale.T(ctx, "label_acceptance_criteria") }</label>
+						<textarea
+							id="acceptance_criteria" name="acceptance_criteria" rows="4"
+							placeholder={ locale.T(ctx, "admin_acceptance_criteria_placeholder") }
+							class="w-full border border-sand-300 rounded-md px-3 py-1.5 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
+						>{ gs.AcceptanceCriteria }</textarea>
+					</div>
+					<!-- Likelihood scale -->
+					<div>
+						<label class="block text-[13px] font-medium text-sand-700 mb-1">{ locale.T(ctx, "admin_likelihood_scale") }</label>
+						<p class="text-[11px] text-sand-700 mb-2">{ locale.T(ctx, "admin_scale_help") }</p>
+						<div class="border border-sand-200 rounded-lg overflow-hidden">
+							<div class="grid grid-cols-[40px_130px_1fr] gap-3 px-3 py-2 bg-sand-50 text-[10px] font-semibold text-sand-700 uppercase tracking-wide border-b border-sand-200">
+								<span>#</span><span>{ locale.T(ctx, "label_label") }</span><span>{ locale.T(ctx, "label_description") }</span>
+							</div>
+							for _, i := range []int32{1, 2, 3, 4, 5} {
+								@scaleRow("prob", "probability", i, findScaleLabel(scaleLabels, "probability", i))
+							}
+						</div>
+					</div>
+					<!-- Consequence scale -->
+					<div>
+						<label class="block text-[13px] font-medium text-sand-700 mb-1">{ locale.T(ctx, "admin_consequence_scale") }</label>
+						<p class="text-[11px] text-sand-700 mb-2">{ locale.T(ctx, "admin_consequence_scale_help") }</p>
+						<div class="border border-sand-200 rounded-lg overflow-hidden">
+							<div class="grid grid-cols-[40px_130px_1fr] gap-3 px-3 py-2 bg-sand-50 text-[10px] font-semibold text-sand-700 uppercase tracking-wide border-b border-sand-200">
+								<span>#</span><span>{ locale.T(ctx, "label_label") }</span><span>Impact topics</span>
+							</div>
+							for _, i := range []int32{1, 2, 3, 4, 5} {
+								@consequenceScaleRow("cons", i, findScaleLabel(scaleLabels, "consequence", i))
+							}
+						</div>
+					</div>
+					<div class="flex justify-end">
+						@ui.Button(ui.ButtonProps{
+							Attrs: templ.Attributes{
+								"type": "submit",
+							},
+						}) {
+							{ locale.T(ctx, "admin_save_all_settings") }
+						}
+					</div>
+				</form>
+			</div>
+		</div>
+		<!-- Modules tab -->
+		<div id="tab-panel-modules" role="tabpanel" aria-labelledby="tab-btn-modules" class={ templ.KV("hidden", activeTab != "modules") }>
+			<div class="max-w-lg">
+				<p class="text-[13px] text-sand-700 mb-4">{ locale.T(ctx, "admin_modules_help") }</p>
+				<form method="POST" action="/admin/module-settings" class="flex flex-col">
+					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+					<div class="border border-sand-200 rounded-xl overflow-hidden">
+						@moduleToggleRow(locale.T(ctx, "nav_compliance"), "compliance_enabled", appSettings.ComplianceEnabled, locale.T(ctx, "admin_module_compliance_desc"))
+						@moduleToggleRow(locale.T(ctx, "nav_section_risk"), "risk_enabled", appSettings.RiskEnabled, locale.T(ctx, "admin_module_risk_desc"))
+						@moduleToggleRow(locale.T(ctx, "nav_activities"), "activities_enabled", appSettings.ActivitiesEnabled, locale.T(ctx, "admin_module_activities_desc"))
+						@moduleToggleRow(locale.T(ctx, "admin_assets"), "assets_enabled", appSettings.AssetsEnabled, locale.T(ctx, "admin_module_assets_desc"))
+						@moduleToggleRow(locale.T(ctx, "nav_avvik"), "avvik_enabled", appSettings.AvvikEnabled, locale.T(ctx, "admin_module_avvik_desc"))
+					</div>
+					<div class="flex justify-end pt-3">
+						@ui.Button(ui.ButtonProps{
+							Attrs: templ.Attributes{
+								"type": "submit",
+							},
+						}) {
+							{ locale.T(ctx, "action_save") }
+						}
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+}
+
+templ moduleToggleRow(label, name string, checked bool, description string) {
+	<div class="flex items-center justify-between px-4 py-3 border-b border-sand-100 last:border-0">
+		<div>
+			<div class="text-[13px] font-medium text-sand-800">{ label }</div>
+			<div class="text-[11px] text-sand-700">{ description }</div>
+		</div>
+		<label class="relative inline-flex items-center cursor-pointer">
+			<input type="checkbox" name={ name } value="on" checked?={ checked } class="sr-only peer"/>
+			<div class="w-9 h-5 bg-sand-300 rounded-full peer peer-checked:bg-blue-500 peer-focus:ring-2 peer-focus:ring-blue-300 after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full"></div>
+		</label>
+	</div>
+}
+
+templ scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) {
+	<div class={ "grid grid-cols-[40px_130px_1fr] gap-3 px-3 py-2 items-start border-t border-sand-100", scaleRowBg(level) }>
+		<span class="text-[12px] font-mono font-semibold text-sand-700 pt-1.5">{ fmt.Sprint(level) }</span>
+		<label for={ prefix + "-label-" + fmt.Sprint(level) } class="sr-only">{ scale + " label " + fmt.Sprint(level) }</label>
+		<input
+			id={ prefix + "-label-" + fmt.Sprint(level) }
+			type="text"
+			name={ prefix + "_label_" + fmt.Sprint(level) }
+			value={ sl.Label }
+			placeholder={ locale.T(ctx, "admin_short_label_placeholder") }
+			class="border border-sand-300 rounded px-2 py-1 text-[12px] focus:outline-none focus:ring-1 focus:ring-blue-400 w-full"
+		/>
+		<input
+			type="hidden"
+			name={ prefix + "_scale_" + fmt.Sprint(level) }
+			value={ scale }
+		/>
+		<label for={ prefix + "-desc-" + fmt.Sprint(level) } class="sr-only">{ scale + " description " + fmt.Sprint(level) }</label>
+		<textarea
+			id={ prefix + "-desc-" + fmt.Sprint(level) }
+			name={ prefix + "_desc_" + fmt.Sprint(level) }
+			rows="2"
+			placeholder={ locale.T(ctx, "admin_scale_description_placeholder") }
+			class="border border-sand-300 rounded px-2 py-1 text-[12px] focus:outline-none focus:ring-1 focus:ring-blue-400 w-full resize-y"
+		>{ sl.Description }</textarea>
+	</div>
+}
+
+templ consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) {
+	<div class={ "grid grid-cols-[40px_130px_1fr] gap-3 px-3 py-2 items-start border-t border-sand-100", scaleRowBg(level) }>
+		<span class="text-[12px] font-mono font-semibold text-sand-700 pt-1.5">{ fmt.Sprint(level) }</span>
+		<label for={ prefix + "-label-" + fmt.Sprint(level) } class="sr-only">{ "consequence label " + fmt.Sprint(level) }</label>
+		<input
+			id={ prefix + "-label-" + fmt.Sprint(level) }
+			type="text"
+			name={ prefix + "_label_" + fmt.Sprint(level) }
+			value={ sl.Label }
+			placeholder={ locale.T(ctx, "admin_short_label_placeholder") }
+			class="border border-sand-300 rounded px-2 py-1 text-[12px] focus:outline-none focus:ring-1 focus:ring-blue-400 w-full"
+		/>
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+			<div>
+				<label for={ prefix + "-finops-" + fmt.Sprint(level) } class="block text-[10px] text-sand-700 mb-1">Financial / Operational</label>
+				<textarea
+					id={ prefix + "-finops-" + fmt.Sprint(level) }
+					name={ prefix + "_finops_desc_" + fmt.Sprint(level) }
+					rows="2"
+					class="border border-sand-300 rounded px-2 py-1 text-[12px] focus:outline-none focus:ring-1 focus:ring-blue-400 w-full resize-y"
+				>{ consequenceTopicDescription(sl.Description, "Financial / Operational") }</textarea>
+			</div>
+			<div>
+				<label for={ prefix + "-confdata-" + fmt.Sprint(level) } class="block text-[10px] text-sand-700 mb-1">Confidentiality / Data</label>
+				<textarea
+					id={ prefix + "-confdata-" + fmt.Sprint(level) }
+					name={ prefix + "_confdata_desc_" + fmt.Sprint(level) }
+					rows="2"
+					class="border border-sand-300 rounded px-2 py-1 text-[12px] focus:outline-none focus:ring-1 focus:ring-blue-400 w-full resize-y"
+				>{ consequenceTopicDescription(sl.Description, "Confidentiality / Data") }</textarea>
+			</div>
+			<div>
+				<label for={ prefix + "-reglegal-" + fmt.Sprint(level) } class="block text-[10px] text-sand-700 mb-1">Regulatory / Legal</label>
+				<textarea
+					id={ prefix + "-reglegal-" + fmt.Sprint(level) }
+					name={ prefix + "_reglegal_desc_" + fmt.Sprint(level) }
+					rows="2"
+					class="border border-sand-300 rounded px-2 py-1 text-[12px] focus:outline-none focus:ring-1 focus:ring-blue-400 w-full resize-y"
+				>{ consequenceTopicDescription(sl.Description, "Regulatory / Legal") }</textarea>
+			</div>
+			<div>
+				<label for={ prefix + "-reptrust-" + fmt.Sprint(level) } class="block text-[10px] text-sand-700 mb-1">Reputation / Trust</label>
+				<textarea
+					id={ prefix + "-reptrust-" + fmt.Sprint(level) }
+					name={ prefix + "_reptrust_desc_" + fmt.Sprint(level) }
+					rows="2"
+					class="border border-sand-300 rounded px-2 py-1 text-[12px] focus:outline-none focus:ring-1 focus:ring-blue-400 w-full resize-y"
+				>{ consequenceTopicDescription(sl.Description, "Reputation / Trust") }</textarea>
+			</div>
+		</div>
+	</div>
+}
+
+func scaleRowBg(level int32) string {
+	if level%2 == 0 {
+		return "bg-sand-50/40"
+	}
+	return ""
+}
+
+func findScaleLabel(labels []db.RiskScaleLabel, scale string, level int32) db.RiskScaleLabel {
+	for _, l := range labels {
+		if l.Scale == scale && l.Level == level {
+			return l
+		}
+	}
+	return db.RiskScaleLabel{Scale: scale, Level: level}
+}
+
+func consequenceTopicDescription(desc, topic string) string {
+	trimmed := strings.TrimSpace(desc)
+	if trimmed == "" {
+		return ""
+	}
+	for _, line := range strings.Split(trimmed, "\n") {
+		line = strings.TrimSpace(line)
+		if strings.HasPrefix(line, topic+":") {
+			return strings.TrimSpace(strings.TrimPrefix(line, topic+":"))
+		}
+	}
+	// Backward compatibility for old single-field descriptions.
+	if topic == "Financial / Operational" {
+		return trimmed
+	}
+	return ""
+}
+
+templ orgRowInline(o db.Organization, depth int, all []db.Organization) {
+	<div class={ "flex items-center justify-between px-4 py-2.5 border-b border-sand-100 last:border-0", orgRowBgInline(depth) }>
+		<span class="text-[13px] text-sand-800 flex items-center gap-2">
+			if depth == 1 {
+				<span class="text-sand-700 mr-1">↳</span>
+			}
+			if depth == 2 {
+				<span class="text-sand-700 mr-1">&nbsp;&nbsp;↳</span>
+			}
+			<span>{ o.Name }</span>
+			if o.Key.Valid {
+				<code class="text-[10px] px-1.5 py-0.5 rounded bg-sand-100 text-sand-700">{ o.Key.String }</code>
+			}
+		</span>
+		<form method="POST" action={ templ.SafeURL("/admin/orgs/" + o.ID.String() + "/delete") } onsubmit="return confirm('Delete this org unit? This may affect linked assessments.')">
+			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			<button type="submit" aria-label={ "Delete " + o.Name } class="text-sand-300 hover:text-red-500 text-sm transition-colors"><span aria-hidden="true">×</span></button>
+		</form>
+	</div>
+	for _, child := range all {
+		if child.ParentID.Valid && child.ParentID.UUID == o.ID {
+			@orgRowInline(child, depth+1, all)
+		}
+	}
+}
+
+func orgRowBgInline(depth int) string {
+	switch depth {
+	case 1:
+		return "bg-sand-50/50 pl-8"
+	case 2:
+		return "bg-sand-50 pl-14"
+	default:
+		return ""
+	}
+}
+
+templ adminTab(key, label, activeTab string) {
+	<a
+		id={ "tab-btn-" + key }
+		href={ templ.SafeURL("/admin?tab=" + key) }
+		data-tab={ key }
+		role="tab"
+		aria-controls={ "tab-panel-" + key }
+		aria-selected={ fmt.Sprint(activeTab == key) }
+		tabindex="0"
+		class={ "px-4 py-2 text-sm -mb-px transition-colors", templ.KV("border-b-2 border-blue-600 text-blue-700 font-medium", activeTab == key), templ.KV("text-sand-700 hover:text-sand-900", activeTab != key) }
+	>{ label }</a>
+}
+
+templ ProviderBadge(provider string) {
+	switch provider {
+		case "github":
+			@ui.Badge(ui.BadgeProps{
+				Variant: "neutral",
+			}) {GitHub}
+		case "oidc":
+			@ui.Badge(ui.BadgeProps{
+				Variant: "default",
+				Class:   "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
+			}) {SSO}
+		case "pending":
+			@ui.Badge(ui.BadgeProps{
+				Variant: "warning",
+			}) { { locale.T(ctx, "admin_pending_sso") } }
+		default:
+			@ui.Badge(ui.BadgeProps{
+				Variant: "default",
+			}) { { provider } }
+	}
+}
+
+templ RoleBadge(role string) {
+	switch role {
+		case "admin":
+			@ui.Badge(ui.BadgeProps{
+				Variant: "danger",
+			}) { { locale.T(ctx, "role_admin") } }
+		case "editor":
+			@ui.Badge(ui.BadgeProps{
+				Variant: "warning",
+			}) { { locale.T(ctx, "role_editor") } }
+		case "contributor":
+			@ui.Badge(ui.BadgeProps{
+				Variant: "default",
+				Class:   "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-800",
+			}) { { locale.T(ctx, "role_contributor") } }
+		default:
+			@ui.Badge(ui.BadgeProps{
+				Variant: "default",
+			}) { { locale.T(ctx, "role_viewer") } }
+	}
+}
+
+templ adminAuditEventBadge(event string) {
+	switch auditEventAction(event) {
+		case "delete":
+			@ui.Badge(ui.BadgeProps{
+				Variant: "danger",
+			}) { { event } }
+		case "update":
+			@ui.Badge(ui.BadgeProps{
+				Variant: "warning",
+			}) { { event } }
+		case "create":
+			@ui.Badge(ui.BadgeProps{
+				Variant: "success",
+			}) { { event } }
+		default:
+			@ui.Badge(ui.BadgeProps{
+				Variant: "default",
+			}) { { event } }
+	}
+}
+
+func auditEventAction(event string) string {
+	parts := strings.Split(event, ".")
+	return parts[len(parts)-1]
+}
+
+func auditAttrsPreview(attrs string) string {
+	if attrs == "{}" || attrs == "" {
+		return "—"
+	}
+	// Trim braces and show inline
+	s := strings.TrimPrefix(attrs, "{")
+	s = strings.TrimSuffix(s, "}")
+	s = strings.ReplaceAll(s, `"`, "")
+	if len(s) > 80 {
+		return s[:80] + "…"
+	}
+	return s
+}
+
+func relativeTime(t time.Time) string {
+	d := time.Since(t)
+	switch {
+	case d < time.Minute:
+		return "just now"
+	case d < time.Hour:
+		m := int(d.Minutes())
+		if m == 1 {
+			return "1 minute ago"
+		}
+		return fmt.Sprintf("%d minutes ago", m)
+	case d < 24*time.Hour:
+		h := int(d.Hours())
+		if h == 1 {
+			return "1 hour ago"
+		}
+		return fmt.Sprintf("%d hours ago", h)
+	default:
+		days := int(d.Hours() / 24)
+		if days == 1 {
+			return "1 day ago"
+		}
+		return fmt.Sprintf("%d days ago", days)
+	}
+}
+
+func formatUptime(d time.Duration) string {
+	d = d.Round(time.Second)
+	days := int(d.Hours()) / 24
+	hours := int(d.Hours()) % 24
+	minutes := int(d.Minutes()) % 60
+	seconds := int(d.Seconds()) % 60
+	if days > 0 {
+		return fmt.Sprintf("%dd %dh %dm", days, hours, minutes)
+	}
+	if hours > 0 {
+		return fmt.Sprintf("%dh %dm", hours, minutes)
+	}
+	if minutes > 0 {
+		return fmt.Sprintf("%dm %ds", minutes, seconds)
+	}
+	return fmt.Sprintf("%ds", seconds)
+}

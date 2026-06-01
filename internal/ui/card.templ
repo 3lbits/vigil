@@ -1,0 +1,30 @@
+package ui
+
+import "strings"
+
+type CardProps struct {
+	Class   string
+	Padding string
+	Accent  string
+	Attrs   templ.Attributes
+}
+
+templ Card(p CardProps) {
+	<div class={ cx("rounded-xl border border-sand-200 bg-white dark:border-zinc-700 dark:bg-zinc-900", cardPadding(p.Padding), cardAccent(p.Accent), p.Class) } { p.Attrs... }>
+		{ children... }
+	</div>
+}
+
+func cardPadding(padding string) string {
+	if strings.TrimSpace(padding) == "" {
+		return "p-5"
+	}
+	return padding
+}
+
+func cardAccent(accent string) string {
+	if strings.TrimSpace(accent) == "" {
+		return ""
+	}
+	return cx("border-t-4", accent)
+}

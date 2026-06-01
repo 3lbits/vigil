@@ -1,0 +1,13 @@
+package ui
+
+type EmptyStateProps struct {
+	TestID string
+	Class  string
+	Attrs  templ.Attributes
+}
+
+templ EmptyState(p EmptyStateProps) {
+	<div data-testid={ p.TestID } class={ cx("rounded-xl border border-dashed border-sand-300 bg-sand-50 p-6 text-center text-[13px] text-sand-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300", p.Class) } { p.Attrs... }>
+		{ children... }
+	</div>
+}

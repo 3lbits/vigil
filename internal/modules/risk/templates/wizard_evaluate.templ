@@ -1,0 +1,118 @@
+package risktemplates
+
+import (
+	"fmt"
+	"github.com/3lbits/vigil/internal/csrf"
+	"github.com/3lbits/vigil/internal/db"
+	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui"
+)
+
+templ WizardEvaluate(vm EvaluationVM) {
+	@wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, 3, false)
+	if vm.IsReview {
+		@reviewBanner(vm.Assessment)
+	}
+	<div class="max-w-3xl">
+		<div class="mb-5 border border-blue-200 bg-blue-50 rounded-lg px-4 py-3">
+			<div class="text-[13px] font-semibold text-blue-800 mb-0.5">{ locale.T(ctx, "risk_eval_gate_title") }</div>
+			<p class="text-[12px] text-blue-700">{ locale.T(ctx, "text_compare_risks_against_acceptance") }</p>
+			if vm.AcceptanceCriteria != "" {
+				<div class="mt-2 text-[12px] text-blue-800 border-t border-blue-200 pt-2">
+					<span class="font-medium">{ locale.T(ctx, "label_acceptance_criteria") }:</span> { vm.AcceptanceCriteria }
+				</div>
+			}
+		</div>
+		<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/3/evaluate") }>
+			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			<div class="border border-sand-200 rounded-[10px] overflow-hidden mb-5">
+				<div class="grid grid-cols-[1fr_90px_150px] gap-3 px-4 py-2.5 bg-sand-50 text-[10px] font-semibold text-sand-700 uppercase tracking-wide">
+					<span>{ locale.T(ctx, "label_risk") }</span>
+					<span class="text-center">{ locale.T(ctx, "label_current") }</span>
+					<span>{ locale.T(ctx, "label_decision") }</span>
+				</div>
+				for _, risk := range vm.Risks {
+					@evalRow(risk, vm.LowMax, vm.HighMin)
+				}
+			</div>
+			<div class="flex items-center justify-between">
+				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/3") } class="text-[13px] text-sand-700 hover:text-sand-800">← { locale.T(ctx, "action_back_to_scoring") }</a>
+				@ui.Button(ui.ButtonProps{
+					Attrs: templ.Attributes{
+						"type": "submit",
+					},
+				}) {
+					{ locale.T(ctx, "action_confirm_plan_treatment") } →
+				}
+			</div>
+		</form>
+	</div>
+}
+
+templ evalRow(risk db.Risk, lowMax, highMin int) {
+	<div class="border-t border-sand-200">
+		<div class="grid grid-cols-[1fr_90px_150px] gap-3 px-4 py-3 items-start">
+			<div class="min-w-0">
+				<div class="text-[12px] font-medium text-sand-900 truncate">{ risk.Name }</div>
+				if risk.Description != "" {
+					<div class="text-[10px] text-sand-700 dark:text-zinc-400 truncate">{ risk.Description }</div>
+				}
+			</div>
+			@evalScore(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, risk.LikelihoodCurrent.Valid, lowMax, highMin)
+			<fieldset>
+				<legend class="sr-only">{ locale.T(ctx, "label_decision_for") } { risk.Name }</legend>
+				<div class="flex flex-col gap-1">
+					for _, opt := range []struct{ v, key string }{{"accept", "decision_accept"}, {"treat", "decision_treat"}, {"document", "decision_document"}} {
+						<label class="flex items-center gap-1.5 cursor-pointer">
+							<input
+								type="radio"
+								name={ "decision_" + risk.ID.String() }
+								value={ opt.v }
+								class="accent-blue-600"
+								checked?={ risk.RiskDecision == opt.v }
+							/>
+							<span class={ "text-[12px]", decisionOptionColor(opt.v) }>{ locale.T(ctx, opt.key) }</span>
+						</label>
+					}
+				</div>
+			</fieldset>
+		</div>
+		<div class="px-4 pb-3">
+			@ui.Field("notes-"+risk.ID.String(), "label_documentation_notes", false) {
+				@ui.Textarea(ui.TextareaProps{
+					ID:          "notes-" + risk.ID.String(),
+					Name:        "notes_" + risk.ID.String(),
+					Value:       risk.DecisionNotes,
+					Placeholder: locale.T(ctx, "placeholder_decision_notes"),
+					Class:       "py-2 text-[12px] resize-y min-h-0 focus:ring-1",
+					Attrs: templ.Attributes{
+						"rows": "3",
+					},
+				})
+			}
+			<p class="mt-1 text-[11px] text-sand-700">{ locale.T(ctx, "text_used_when_decision_document") }</p>
+		</div>
+	</div>
+}
+
+templ evalScore(l, c int32, valid bool, lowMax, highMin int) {
+	if valid && l > 0 && c > 0 {
+		<div class={ "mx-auto flex flex-col items-center gap-0.5 w-16 py-1 rounded text-white text-center", bgClassT(l, c, lowMax, highMin) }>
+			<span class="text-[13px] font-bold">{ fmt.Sprint(int(l) * int(c)) }</span>
+			<span class="text-[9px] opacity-80">L{ fmt.Sprint(l) }×C{ fmt.Sprint(c) }</span>
+		</div>
+	} else {
+		<div class="text-center text-[12px] text-sand-300">—</div>
+	}
+}
+
+func decisionOptionColor(v string) string {
+	switch v {
+	case "accept":
+		return "text-green-700"
+	case "document":
+		return "text-sand-700"
+	default:
+		return "text-blue-700"
+	}
+}

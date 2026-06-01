@@ -1,0 +1,45 @@
+# Build output
+bin/
+tmp/
+
+# Dev/test artifacts
+*.test
+*.out
+coverage.*
+
+# Generated (will be regenerated during build)
+*_templ.go
+
+# Local config
+.env
+.env.*
+*.hujson
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Claude / git
+.claude/
+.git/
+.github/
+
+# Dev tooling (not needed by go build)
+Makefile
+.air.toml
+sqlc.yaml
+
+# Docs and non-code
+*.md
+docs/
+grafana/
+
+# Licences
+!LICENSE
+!THIRD_PARTY_NOTICES.md
+!THIRD_PARTY_NOTICES_GO.md
+
+# Example subproject
+example/
+.env.elbits

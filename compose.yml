@@ -1,0 +1,60 @@
+# compose.yaml — local development services for Vigil.
+#
+# Spins up PostgreSQL on localhost:5432 with credentials matching
+# .env.example. The Vigil app runs on the host via `air`, not in compose.
+#
+# This file is for local development only. Production deployments point
+# Vigil at an externally-managed PostgreSQL via DATABASE_URL (Azure
+# Database for PostgreSQL, RDS, on-prem, etc.) — there is no production
+# compose file.
+#
+# Optional services live behind profiles:
+#   docker compose --profile pgadmin up -d   # adds pgAdmin on :5050
+
+name: vigil
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: vigil-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: vigil
+      POSTGRES_PASSWORD: vigil
+      POSTGRES_DB: vigil
+      # Local-dev only; production DBs are externally managed.
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - vigil-postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vigil -d vigil"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: vigil-pgadmin
+    profiles: ["pgadmin"]
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@local
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "127.0.0.1:5050:80"
+    volumes:
+      - vigil-pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  vigil-postgres-data:
+    name: vigil-postgres
+  vigil-pgadmin-data:
+    name: vigil-pgadmin

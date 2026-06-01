@@ -1,0 +1,19 @@
+# CODEOWNERS — auto-assigns reviewers based on paths touched.
+# Combined with branch protection's "Require review from Code Owners",
+# the listed owner must approve PRs touching these paths.
+
+# Default: anything not matched below requires a maintainer.
+*                       @3lbits/vigil
+
+# Risk model core — only maintainers review.
+/modules/risk/          @3lbits/vigil
+/internal/authz/        @3lbits/vigil
+/policies/              @3lbits/vigil
+
+# Security-sensitive surfaces.
+/SECURITY.md            @3lbits/vigil
+/.github/               @3lbits/vigil
+/Dockerfile             @3lbits/vigil
+
+# Docs can have broader ownership later.
+/docs/                  @3lbits/vigil

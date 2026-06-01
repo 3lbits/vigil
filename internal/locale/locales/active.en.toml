@@ -1,0 +1,1707 @@
+# Navigation items
+[nav_dashboard]
+other = "Dashboard"
+
+[nav_measures]
+other = "Measures"
+
+[nav_activities]
+other = "Activities"
+
+[nav_risk_assessments]
+other = "Risk assessments"
+
+[nav_risk_register]
+other = "Risk register"
+
+[nav_compliance]
+other = "Compliance"
+
+[nav_about]
+other = "About"
+
+[nav_my_page]
+other = "My page"
+
+[nav_admin]
+other = "Admin"
+
+# Navigation section headers
+[nav_section_overview]
+other = "Overview"
+
+[nav_section_controls]
+other = "Controls"
+
+[nav_section_risk]
+other = "Risk"
+
+[nav_section_compliance]
+other = "Compliance"
+
+[nav_section_info]
+other = "Info"
+
+[nav_section_administration]
+other = "Administration"
+
+# Sidebar UI actions
+[action_skip_to_main]
+other = "Skip to main content"
+
+[action_close_menu]
+other = "Close menu"
+
+[action_open_menu]
+other = "Open menu"
+
+[action_toggle_dark_mode]
+other = "Toggle dark mode"
+
+[action_sign_out]
+other = "Sign out"
+
+# Language toggle
+[lang_switch_nb]
+other = "Switch to Bokmål"
+
+[lang_switch_nn]
+other = "Switch to Nynorsk"
+
+[lang_switch_en]
+other = "Switch to English"
+
+# Login page
+[login_title]
+other = "Sign in to Vigil"
+
+[login_subtitle]
+other = "Governance, Risk & Compliance"
+
+[login_with_provider]
+other = "Sign in with {{.Provider}}"
+
+# Counts with pluralization
+[measures_count]
+one = "{{.Count}} measure"
+other = "{{.Count}} measures"
+
+# Status labels
+[status_completed]
+other = "Completed"
+
+[status_in_progress]
+other = "In progress"
+
+[status_overdue]
+other = "Overdue"
+
+[status_planned]
+other = "Planned"
+
+[status_implemented]
+other = "Implemented"
+
+[status_deprecated]
+other = "Deprecated"
+
+[status_done]
+other = "Done"
+
+[status_cancelled]
+other = "Cancelled"
+
+[status_pending]
+other = "Pending"
+
+[status_healthy]
+other = "healthy"
+
+[status_unreachable]
+other = "unreachable"
+
+# Decision labels
+[decision_accept]
+other = "Accept"
+
+[decision_treat]
+other = "Treat"
+
+[decision_document]
+other = "Document"
+
+[decision_escalate]
+other = "Escalate"
+
+# Risk level labels
+[risk_level_high]
+other = "High"
+
+[risk_level_medium]
+other = "Medium"
+
+[risk_level_low]
+other = "Low"
+
+# Priority labels
+[priority_high]
+other = "High"
+
+[priority_medium]
+other = "Medium"
+
+[priority_low]
+other = "Low"
+
+# Recurrence labels
+[recurrence_monthly]
+other = "Monthly"
+
+[recurrence_tertially]
+other = "Tertially"
+
+[recurrence_annual]
+other = "Annual"
+
+[recurrence_ad_hoc]
+other = "Ad-hoc"
+
+[label_one_off]
+other = "One-off"
+
+# Activity kind labels
+[kind_training]
+other = "Training"
+
+[kind_exercise]
+other = "Exercise"
+
+[kind_assessment]
+other = "Assessment"
+
+[kind_audit]
+other = "Audit"
+
+[kind_remediation]
+other = "Remediation"
+
+[kind_review]
+other = "Review"
+
+# Assessment status labels
+[assessment_status_active]
+other = "Active"
+
+[assessment_status_archived]
+other = "Archived"
+
+[assessment_status_pending_acceptance]
+other = "Pending acceptance"
+
+[assessment_status_draft]
+other = "Draft"
+
+# Common actions
+[action_edit]
+other = "Edit"
+
+[action_delete]
+other = "Delete"
+
+[action_cancel]
+other = "Cancel"
+
+[action_save]
+other = "Save"
+
+[action_save_changes]
+other = "Save changes"
+
+[action_add]
+other = "Add"
+
+[action_remove]
+other = "Remove"
+
+[action_view_all]
+other = "View all"
+
+[action_accept]
+other = "Accept"
+
+[action_decline]
+other = "Decline"
+
+[action_review]
+other = "Review"
+
+[action_switch_role]
+other = "Switch"
+
+[dev_role_switcher_label]
+other = "Dev role"
+
+# Dashboard section labels
+[kpi_frameworks_requirements]
+other = "Frameworks & requirements"
+
+[kpi_requirements_covered]
+other = "Requirements covered"
+
+[kpi_measures_defined]
+other = "Measures defined"
+
+[kpi_risk_register]
+other = "Risk register"
+
+[label_covered]
+other = "covered"
+
+[label_total_controls]
+other = "total security controls"
+
+[label_linked_to_measure]
+other = "linked to a measure"
+
+[label_implementation_confirmed]
+other = "implementation confirmed"
+
+[section_risk_management]
+other = "Risk management"
+
+[section_recent_activity]
+other = "Recent activity"
+
+[section_my_activities]
+other = "My activities"
+
+[section_my_measures]
+other = "My measures"
+
+[section_regulations_standards]
+other = "Regulations & standards"
+
+[section_quick_navigation]
+other = "Quick navigation"
+
+[label_coming]
+other = "Coming"
+
+[risk_none_assessed]
+other = "No risks assessed yet."
+
+[dash_risk_reassessment_count]
+one = "{{.Count}} risk needs reassessment"
+other = "{{.Count}} risks need reassessment"
+
+[dash_start_first_assessment]
+other = "Start first assessment →"
+
+[dash_activities_none_yet]
+other = "No activities yet."
+
+[dash_add_one]
+other = "Add one →"
+
+[activities_none_assigned]
+other = "No activities assigned to you."
+
+[measures_none_assigned]
+other = "No measures assigned to you."
+
+# Compliance labels
+[fw_count]
+one = "{{.Count}} framework registered"
+other = "{{.Count}} frameworks registered"
+
+[action_add_framework]
+other = "Add framework"
+
+[frameworks_none_yet]
+other = "No frameworks yet."
+
+[label_not_relevant]
+other = "Not relevant"
+
+[label_mark_not_relevant]
+other = "Mark as not relevant"
+
+[action_add_requirement]
+other = "Add requirement"
+
+[action_import]
+other = "Import"
+
+[action_import_requirements]
+other = "Import requirements"
+
+[fw_type_regulation]
+other = "Regulation"
+
+[fw_type_standard]
+other = "Standard"
+
+[fw_type_directive]
+other = "Directive"
+
+[action_create_framework]
+other = "Create framework"
+
+[req_none_linked]
+other = "No measures linked yet."
+
+[action_link_measure]
+other = "Link measure"
+
+[section_change_log]
+other = "Change log"
+
+[label_coverage]
+other = "Coverage"
+
+# Measures labels
+[action_add_measure]
+other = "Add measure"
+
+[measures_none_yet]
+other = "No measures yet."
+
+[filter_all_statuses]
+other = "All statuses"
+
+[label_mine_only]
+other = "Mine only"
+
+[action_create_measure]
+other = "Create measure"
+
+[action_link_requirement]
+other = "Link requirement"
+
+[action_add_link]
+other = "Add link"
+
+[section_documentation]
+other = "Documentation"
+
+[section_requirements]
+other = "Requirements"
+
+[section_activities]
+other = "Activities"
+
+[section_linked_risks]
+other = "Linked risks"
+
+[label_now]
+other = "now"
+
+[label_target_score]
+other = "target"
+
+[req_none_linked_yet]
+other = "No requirements linked yet."
+
+[activities_none_linked]
+other = "No activities linked yet."
+
+# Activities labels
+[action_add_activity]
+other = "Add activity"
+
+[activities_none_found]
+other = "No activities found."
+
+[action_create_activity]
+other = "Create activity"
+
+[action_mark_in_progress]
+other = "Mark in progress"
+
+[action_mark_complete]
+other = "Mark as complete"
+
+[action_confirm_completion]
+other = "Confirm completion"
+
+[action_reopen]
+other = "Reopen"
+
+[section_complete_activity]
+other = "Complete activity"
+
+[label_completed_at]
+other = "Completed at"
+
+[label_completed_by]
+other = "Completed by"
+
+[label_notes]
+other = "Notes"
+
+[label_evidence]
+other = "Evidence"
+
+# Admin tab labels
+[tab_users]
+other = "Users"
+
+[tab_sessions]
+other = "Sessions"
+
+[tab_audit]
+other = "Audit log"
+
+[tab_status]
+other = "Status"
+
+[tab_orgs]
+other = "Organisations"
+
+[tab_risk_settings]
+other = "Risk settings"
+
+[tab_modules]
+other = "Modules"
+
+[admin_no_active_sessions]
+other = "No active sessions."
+
+[audit_filter_all]
+other = "All"
+
+[audit_filter_deletions]
+other = "Deletions"
+
+[audit_filter_updates]
+other = "Updates"
+
+[audit_last_500]
+other = "Last 500 events"
+
+[admin_no_audit_events]
+other = "No audit events recorded yet."
+
+[label_version]
+other = "Version"
+
+[label_deploy_time]
+other = "Deploy time"
+
+[label_uptime]
+other = "Uptime"
+
+[label_services]
+other = "Services"
+
+[label_application]
+other = "Application"
+
+[label_database]
+other = "Database"
+
+[admin_no_orgs]
+other = "No organisations defined yet."
+
+[action_add_org_unit]
+other = "Add organisation unit"
+
+# Risk wizard step labels
+[wizard_step_framework]
+other = "Framework"
+
+[wizard_step_identify]
+other = "Identify"
+
+[wizard_step_analyse]
+other = "Analyse"
+
+[wizard_step_treat]
+other = "Treat"
+
+[label_review_mode]
+other = "Review mode"
+
+[label_risk_acceptance_criteria]
+other = "Risk acceptance criteria"
+
+[action_return_to_draft]
+other = "Return to draft"
+
+[action_continue_wizard]
+other = "Continue wizard"
+
+[action_finalise_assessment]
+other = "Finalise assessment →"
+
+[action_delete_assessment]
+other = "Delete assessment"
+
+[action_delete_risk]
+other = "Delete risk"
+
+[action_new_assessment]
+other = "New assessment"
+
+[assessment_none_yet]
+other = "No risk assessments yet."
+
+[assessment_start_first]
+other = "Start first assessment →"
+
+[risk_none_identified]
+other = "No risks identified yet."
+
+[label_current_risk]
+other = "Current risk"
+
+[label_with_existing_controls]
+other = "With existing controls"
+
+[action_go_back_add_risks_first]
+other = "Go back and add risks first"
+
+[text_risk_scoring_guidance]
+other = "Score each risk's current exposure (with existing controls in place). For consequence, consider all four impact topics: Financial / Operational, Confidentiality / Data, Regulatory / Legal, and Reputation / Trust. Add reasoning for your likelihood and consequence judgements. Target scores are set in the treatment step."
+
+[action_back_to_identify]
+other = "Back to Identify"
+
+[action_save_evaluate]
+other = "Save & evaluate"
+
+[action_back_to_evaluation]
+other = "Back to evaluation"
+
+[label_likelihood_reasoning]
+other = "Likelihood reasoning"
+
+[label_consequence_reasoning]
+other = "Consequence reasoning"
+
+[placeholder_likelihood_reasoning]
+other = "Why this likelihood score? What factors drive the likelihood?"
+
+[placeholder_consequence_reasoning]
+other = "Why this consequence score? What is the potential impact?"
+
+[label_likelihood_1_5]
+other = "Likelihood (1–5)"
+
+[label_consequence_1_5]
+other = "Consequence (1–5)"
+
+[label_target_risk]
+other = "Target risk"
+
+[label_after_planned_treatment]
+other = "After planned treatment"
+
+[label_reassessment]
+other = "Reassessment"
+
+[status_review_needed]
+other = "Review needed"
+
+[label_controls_changed_since_last_assessment]
+other = "Controls changed since last assessment"
+
+[label_assessed_likelihood]
+other = "Assessed likelihood"
+
+[label_assessed_consequence]
+other = "Assessed consequence"
+
+[label_assessment_rationale_optional]
+other = "Assessment rationale (optional)"
+
+[action_save_reassessment]
+other = "Save reassessment"
+
+[empty_no_assets_linked_to_this_risk]
+other = "No assets linked to this risk."
+
+[empty_no_risks_marked_treatment]
+other = "No risks marked for treatment."
+
+[text_all_risks_accepted_or_escalated]
+other = "All risks were accepted or escalated in the evaluation step."
+
+[text_link_controls_and_activities_to_treat_risks]
+other = "Link controls and activities to risks marked Treat. Each risk should be covered by at least one measure and/or activity."
+
+[label_search_measures]
+other = "Search measures"
+
+[placeholder_search_measures]
+other = "Search measures…"
+
+[label_search_activities]
+other = "Search activities"
+
+[placeholder_search_activities]
+other = "Search activities…"
+
+[label_not_scored]
+other = "Not scored"
+
+[label_no_measures_linked]
+other = "No measures linked."
+
+[label_no_activities_linked]
+other = "No activities linked."
+
+[label_documentation_notes]
+other = "Documentation notes"
+
+[label_risk_owner]
+other = "Risk owner"
+
+[label_organisation]
+other = "Organisation"
+
+[label_scope]
+other = "Scope"
+
+[label_objectives]
+other = "Objectives"
+
+[label_participants]
+other = "Participants"
+
+[label_created]
+other = "Created"
+
+[label_updated]
+other = "Updated"
+
+[label_last_reviewed]
+other = "Last reviewed"
+
+[assessment_pending_acceptance_msg]
+other = "This assessment is awaiting your acceptance."
+
+[assessment_returned_by]
+other = "Returned by risk owner"
+
+[label_measures]
+other = "Measures"
+
+[label_activities_section]
+other = "Activities"
+
+[risk_eval_gate_title]
+other = "Risk evaluation gate"
+
+[text_compare_risks_against_acceptance]
+other = "Compare each risk against your acceptance criteria and decide: accept, treat, or document."
+
+[action_back_to_scoring]
+other = "Back to scoring"
+
+[action_confirm_plan_treatment]
+other = "Confirm & plan treatment"
+
+[label_decision_for]
+other = "Decision for"
+
+[placeholder_decision_notes]
+other = "Why is this risk acceptable as-is? Reference relevant controls, standards, or decisions."
+
+[text_used_when_decision_document]
+other = "Used when decision is \"Document\"."
+
+[scale_reference]
+other = "Scale reference"
+
+[scale_probability]
+other = "Likelihood"
+
+[scale_consequence]
+other = "Consequence"
+
+[label_acceptance_criteria]
+other = "Acceptance criteria"
+
+# Dashboard labels
+[action_view]
+other = "View →"
+
+[dash_overdue_desc]
+other = "Review and update overdue items in the Activities register"
+
+[dash_zero_coverage_hint]
+other = "No measures mapped — start by adding a measure and linking it to requirements"
+
+[dash_zero_coverage_count]
+one = "{{.Count}} of {{.Total}} framework at 0% coverage"
+other = "{{.Count}} of {{.Total}} frameworks at 0% coverage"
+
+[dash_reqs_mapped]
+other = "Requirements mapped"
+
+[dash_measures_verified]
+other = "Measures verified"
+
+[dash_current_risk_map]
+other = "Current risk heat map"
+
+[dash_top_risks_title]
+other = "Top risks by current score"
+
+[risk_none_scored]
+other = "No scored risks yet."
+
+[risk_none_logged]
+other = "No risks logged"
+
+[risk_level_high_range]
+other = "High (≥12)"
+
+[risk_level_medium_range]
+other = "Medium (6–11)"
+
+[risk_level_low_range]
+other = "Low (≤5)"
+
+[dash_activities_desc]
+other = "Tasks, reviews, and deadlines"
+
+[dash_compliance_desc]
+other = "Browse and map requirements"
+
+[dash_measures_desc]
+other = "View, create, or edit controls"
+
+[dash_overlap_analysis]
+other = "Overlap analysis"
+
+[dash_overlap_desc]
+other = "Find shared requirements"
+
+[fw_filter_all]
+other = "All"
+
+[fw_filter_reg]
+other = "Reg"
+
+[fw_filter_std]
+other = "Std"
+
+[fw_filter_dir]
+other = "Dir"
+
+[label_overdue_count]
+one = "{{.Count}} overdue"
+other = "{{.Count}} overdue"
+
+[label_due_this_week_count]
+one = "{{.Count}} due this week"
+other = "{{.Count}} due this week"
+
+[label_count_defined]
+one = "{{.Count}} defined"
+other = "{{.Count}} defined"
+
+[label_count_unmapped]
+one = "{{.Count}} unmapped"
+other = "{{.Count}} unmapped"
+
+# Assessment / Risk Assessments labels
+[assessment_count]
+one = "{{.Count}} assessment"
+other = "{{.Count}} assessments"
+
+[assessments_awaiting_acceptance]
+one = "{{.Count}} assessment awaits your acceptance."
+other = "{{.Count}} assessments await your acceptance."
+
+[assessment_acceptance_instructions]
+other = "Open each assessment below to accept or decline."
+
+[risk_current_map_title]
+other = "Current risk map"
+
+[risk_target_map_title]
+other = "Target risk map"
+
+[risk_map_subtitle_current]
+other = "NS 5814 · with existing controls"
+
+[risk_map_subtitle_target]
+other = "NS 5814 · after planned treatment"
+
+[risk_register_count]
+one = "Risk register ({{.Count}})"
+other = "Risk register ({{.Count}})"
+
+[action_goto_identification]
+other = "Go to identification step →"
+
+[risk_procurement_tool_title]
+other = "Lightweight procurement assessment tool"
+
+# Table column headers
+[label_risk]
+other = "Risk"
+
+[label_score]
+other = "Score"
+
+[label_assessment]
+other = "Assessment"
+
+[label_assessment_name]
+other = "Assessment name"
+
+[label_organisational_unit]
+other = "Organisational unit"
+
+[label_scope_analysis_object]
+other = "Scope and analysis object"
+
+[placeholder_assessment_scope]
+other = "What is being assessed and what is included/excluded from this assessment?"
+
+[placeholder_assessment_objectives]
+other = "What must be protected and why? Security concerns, business requirements, and compliance obligations."
+
+[label_search_participants]
+other = "Search participants"
+
+[placeholder_search_name_or_email]
+other = "Search by name or email"
+
+[label_search_assets]
+other = "Search assets"
+
+[placeholder_search_name_or_owner]
+other = "Search by name or owner"
+
+[label_assets]
+other = "Assets"
+
+[heading_add_risk]
+other = "Add risk"
+
+[placeholder_risk_title_example]
+other = "e.g. Unauthorised access to patient records"
+
+[placeholder_risk_description_brief]
+other = "Brief description of this risk…"
+
+[placeholder_risk_title]
+other = "Risk title"
+
+[empty_no_risks_yet_add_above]
+other = "No risks yet — add one above."
+
+[empty_no_assets_linked]
+other = "No assets linked."
+
+[empty_no_matching_assets_found]
+other = "No matching assets found."
+
+[label_decision]
+other = "Decision"
+
+[label_risk_decision_treatment]
+other = "Risk decision & treatment"
+
+[text_of]
+other = "of"
+
+[text_ordered_by_current_criticality]
+other = "ordered by current criticality (highest first)."
+
+[label_risks_in_treatment_phase]
+other = "Risks in treatment phase"
+
+[label_identify_details]
+other = "Identify details"
+
+[text_inherited_from_assessment]
+other = "inherited from assessment"
+
+[label_linked_assets]
+other = "Linked assets"
+
+[label_analysis_details]
+other = "Analysis details"
+
+[label_not_decided]
+other = "Not decided"
+
+[help_accept_available_only_low_current]
+other = "Accept is available only for low (green) current risk."
+
+[help_low_risks_only_accepted]
+other = "Low (green) risks can only be accepted."
+
+[placeholder_why_decision_appropriate]
+other = "Why this decision is appropriate."
+
+[action_previous_risk]
+other = "Previous risk"
+
+[action_save_next]
+other = "Save & next"
+
+[label_current]
+other = "Current"
+
+[label_target]
+other = "Target"
+
+[label_likelihood]
+other = "Likelihood"
+
+# KPI subtext format strings
+[dash_fw_type_counts]
+other = "{{.Total}} frameworks · {{.Reg}} reg · {{.Std}} std · {{.Dir}} dir"
+
+[dash_overall_coverage]
+other = "{{.Pct}}% overall coverage"
+
+[dash_reqs_without_measure]
+other = "{{.Count}} reqs without measure"
+
+[dash_risk_level_summary]
+other = "{{.Red}} high · {{.Yellow}} medium · {{.Green}} low"
+
+[dash_risk_total_summary]
+other = "{{.Total}} total · {{.Red}} high · {{.Yellow}} medium · {{.Green}} low"
+
+[dash_risk_org_filter_all]
+other = "All organisational units"
+
+[dash_risk_org_filter_selected]
+other = "Showing risk data for {{.Org}} and sub-units."
+
+# Generic table headers
+[label_name]
+other = "Name"
+
+[label_risks]
+other = "Risks"
+
+[label_status]
+other = "Status"
+
+[label_progress]
+other = "Progress"
+
+# About page
+[about_subtitle]
+other = "About this Vigil instance"
+
+[about_open_source_badge]
+other = "Open source under Apache 2.0"
+
+[about_intro]
+other = "Vigil is an open-source GRC (governance, risk, compliance) toolbox for security and compliance teams. This instance runs the same codebase published at:"
+
+[about_section_includes]
+other = "What this instance includes"
+
+[about_include_1]
+other = "Compliance frameworks and requirement tracking, including CSV import and requirement/measure linking."
+
+[about_include_2]
+other = "Measure and activity management with owners, assignees, priorities, deadlines, and status transitions."
+
+[about_include_3]
+other = "Risk assessment and treatment workflow (including NS 5814-aligned flows), risk register views, and linked assets/measures/activities."
+
+[about_include_4]
+other = "Asset inventory and linkage to assessments and individual risks."
+
+[about_include_5]
+other = "Admin tooling for users, organisations, sessions, audit logs, exports, module settings, and risk settings."
+
+[about_include_6]
+other = "Authentication options for development stub auth, GitHub, Entra ID, and generic OIDC providers."
+
+[about_issues_intro]
+other = "For work in progress and planned changes, use the issue tracker:"
+
+[about_section_approach]
+other = "Technical approach"
+
+[about_approach_1]
+other = "Go + templ keeps rendering server-side and deploys as a single binary."
+
+[about_approach_2]
+other = "htmx + Alpine.js gives interactive behaviour without a heavy SPA."
+
+[about_approach_3]
+other = "PostgreSQL + sqlc + goose keeps data access SQL-first, type-safe, and migration-driven."
+
+[about_approach_4]
+other = "Tailwind CSS CLI compiles styles at build time, with no Node toolchain needed at runtime."
+
+[about_approach_5]
+other = "OPA/Rego keeps authorisation policy-based and centrally enforced."
+
+[about_approach_closing]
+other = "The stack is intentionally boring so a Vigil deployment can be run reliably by one person."
+
+[about_section_security]
+other = "Security"
+
+[about_security_1_intro]
+other = "Vulnerabilities are disclosed privately through GitHub private vulnerability reporting; see"
+
+[about_security_2]
+other = "Container images are distroless, run as non-root, and use digest-pinned base images with build provenance attestation in CI."
+
+[about_security_3]
+other = "Authorisation is policy-based through OPA/Rego; handlers do not implement role checks directly."
+
+[about_security_4]
+other = "The project follows OWASP Top 10 guidance and is regularly audited for security and architecture quality."
+
+[about_section_contributing]
+other = "Contributing"
+
+[about_contributing_1_intro]
+other = "Bug reports and pull requests are welcome. Contribution process and expectations are documented in"
+
+[about_contributing_2_intro]
+other = "AI coding agents (including Claude Code and Copilot CLI) are used in development; conventions for agent-assisted changes are documented in"
+
+[about_section_posture]
+other = "Project posture"
+
+[about_posture_1_intro]
+other = "Vigil is open source under Apache 2.0:"
+
+[about_posture_1_outro]
+other = "It is early software, used in production at ElBits, and interfaces may still change."
+
+[about_posture_2]
+other = "No commercial support, hosted offering, or maintenance commitments are provided."
+
+# Activities form labels
+[filter_all_kinds]
+other = "All kinds"
+
+[label_type]
+other = "Type"
+
+[label_kind]
+other = "Kind"
+
+[label_priority]
+other = "Priority"
+
+[label_recurrence]
+other = "Recurrence"
+
+[recurrence_none]
+other = "None"
+
+[type_recurring]
+other = "Recurring"
+
+[placeholder_filter_owner]
+other = "Filter by owner…"
+
+# Shared labels/actions
+[label_actions]
+other = "Actions"
+
+[label_description]
+other = "Description"
+
+[label_owner]
+other = "Owner"
+
+[label_owner_text_team]
+other = "Owner (text/team)"
+
+[label_owner_free_text_name]
+other = "Owner / free-text name"
+
+[label_assignee_registered]
+other = "Assignee (registered user)"
+
+[label_or_enter_name_below]
+other = "— or enter name below —"
+
+[label_measure]
+other = "Measure"
+
+[label_title]
+other = "Title"
+
+[label_category]
+other = "Category"
+
+[label_short_name]
+other = "Short name"
+
+[label_reference]
+other = "Reference"
+
+[label_sort_order]
+other = "Sort order"
+
+[label_due_date]
+other = "Due date"
+
+[label_due_date_measure_hint]
+other = "optional — auto-creates \"Implement:\" activity"
+
+[label_reason_optional]
+other = "Reason (optional)"
+
+[label_reason_required_if_not_relevant]
+other = "Reason (required if not relevant)"
+
+[label_email]
+other = "Email"
+
+[label_role]
+other = "Role"
+
+[label_provider]
+other = "Provider"
+
+[label_org_unit]
+other = "Org unit"
+
+[label_none]
+other = "none"
+
+[label_for]
+other = "for"
+
+[label_user]
+other = "User"
+
+[label_sessions]
+other = "Sessions"
+
+[label_expires]
+other = "Expires"
+
+[label_filter]
+other = "Filter"
+
+[label_when]
+other = "When"
+
+[label_event]
+other = "Event"
+
+[label_detail]
+other = "Detail"
+
+[label_system]
+other = "system"
+
+[label_label]
+other = "Label"
+
+[action_search]
+other = "Search"
+
+[action_load_more]
+other = "Load more"
+
+[action_revoke]
+other = "Revoke"
+
+[action_edit_lower]
+other = "edit"
+
+[status_active]
+other = "Active"
+
+[status_retired]
+other = "Retired"
+
+[role_viewer]
+other = "viewer"
+
+[role_contributor]
+other = "contributor"
+
+[role_editor]
+other = "editor"
+
+[role_admin]
+other = "admin"
+
+# Assets module
+[assets_inventory]
+other = "Asset inventory"
+
+[action_add_asset]
+other = "Add asset"
+
+[action_create_asset]
+other = "Create asset"
+
+[action_delete_asset]
+other = "Delete asset"
+
+[assets_search_assets]
+other = "Search assets"
+
+[assets_search_name_or_owner]
+other = "Search name or owner"
+
+[assets_filter_status]
+other = "Filter status"
+
+[assets_none_found]
+other = "No assets found."
+
+[assets_add_first]
+other = "Add your first asset →"
+
+[assets_table_aria]
+other = "Assets table"
+
+[assets_table_caption]
+other = "Assets"
+
+[assets_criticality]
+other = "Criticality"
+
+[assets_placeholder_name]
+other = "e.g. Customer portal"
+
+[assets_placeholder_type]
+other = "System, data, process..."
+
+[assets_placeholder_owner]
+other = "Team or person"
+
+[assets_confirm_delete]
+other = "Delete this asset?"
+
+[page_assets_title]
+other = "Assets"
+
+[page_assets_subtitle]
+other = "Asset inventory"
+
+[page_assets_add_title]
+other = "Add asset"
+
+[page_assets_add_subtitle]
+other = "Create a new asset"
+
+[page_assets_detail_subtitle]
+other = "Asset detail"
+
+[page_assets_edit_title]
+other = "Edit asset"
+
+[page_assets_item_subtitle]
+other = "Asset"
+
+[assets_flash_create_failed]
+other = "Failed to create asset."
+
+[assets_flash_created]
+other = "Asset created."
+
+[assets_flash_update_failed]
+other = "Failed to update asset."
+
+[assets_flash_updated]
+other = "Asset updated."
+
+[assets_flash_delete_failed]
+other = "Failed to delete asset."
+
+[assets_flash_deleted]
+other = "Asset deleted."
+
+# Admin module
+[admin_sections]
+other = "Admin sections"
+
+[admin_add_user]
+other = "Add user"
+
+[admin_add_user_hint]
+other = "User can sign in via SSO once added. If they already have an account, their role is updated."
+
+[admin_confirm_delete_user]
+other = "Delete this user?"
+
+[admin_active_sessions]
+other = "Active sessions"
+
+[admin_revoke_sessions_for]
+other = "Revoke all sessions for"
+
+[admin_frameworks]
+other = "Frameworks"
+
+[admin_requirements]
+other = "Requirements"
+
+[admin_org_tree_help]
+other = "Organisation tree — top → department → team (max 3 levels)"
+
+[admin_org_placeholder]
+other = "e.g. Finance Department"
+
+[admin_parent_unit]
+other = "Parent unit"
+
+[admin_top_level]
+other = "top level"
+
+[admin_risk_settings_help]
+other = "Global risk settings — thresholds, acceptance criteria, and scale definitions used across all assessments."
+
+[admin_risk_level_thresholds]
+other = "Risk level thresholds"
+
+[admin_green_lowmax]
+other = "Green ≤ (LowMax)"
+
+[admin_scores_green_help]
+other = "Scores ≤ this value are green"
+
+[admin_red_highmin]
+other = "Red ≥ (HighMin)"
+
+[admin_scores_red_help]
+other = "Scores ≥ this value are red"
+
+[admin_ns5814_default_help]
+other = "Default NS 5814: LowMax=5, HighMin=12. Yellow = scores between."
+
+[admin_acceptance_criteria_placeholder]
+other = "e.g. Risks scoring ≥12 (High) must be treated. Risks scoring 6–11 (Medium) require documented decision. Risks scoring ≤5 (Low) may be accepted."
+
+[admin_likelihood_scale]
+other = "Likelihood scale (1–5)"
+
+[admin_scale_help]
+other = "Short label and description shown to assessors when scoring risks."
+
+[admin_consequence_scale]
+other = "Consequence scale (1–5)"
+
+[admin_consequence_scale_help]
+other = "Short label and description shown to assessors when scoring consequences. Use the highest applicable dimension."
+
+[admin_save_all_settings]
+other = "Save all settings"
+
+[admin_modules_help]
+other = "Enable or disable optional modules. Measures is always on. Changes take effect on next page load."
+
+[admin_module_compliance_desc]
+other = "Frameworks, requirements, and coverage tracking"
+
+[admin_module_risk_desc]
+other = "Risk assessments, register, and heat map"
+
+[admin_module_activities_desc]
+other = "Tasks, reviews, and scheduled controls"
+
+[admin_assets]
+other = "Assets"
+
+[admin_module_assets_desc]
+other = "Asset inventory and risk/assessment asset linking"
+
+[admin_short_label_placeholder]
+other = "Short label"
+
+[admin_scale_description_placeholder]
+other = "Description shown to assessors"
+
+[admin_confirm_delete_org]
+other = "Delete this org unit? This may affect linked assessments."
+
+[admin_pending_sso]
+other = "Pending SSO"
+
+# Additional nav labels
+[nav_section_assets]
+other = "Assets"
+
+[nav_assets_inventory]
+other = "Inventory"
+
+[nav_isms]
+other = "ISMS"
+
+# Legacy page header/subheader literals used by handlers
+["About"]
+other = "About"
+
+["Activities"]
+other = "Activities"
+
+["Add activity"]
+other = "Add activity"
+
+["Add framework"]
+other = "Add framework"
+
+["Add measure"]
+other = "Add measure"
+
+["Add requirement"]
+other = "Add requirement"
+
+["Admin"]
+other = "Admin"
+
+["All risks across assessments"]
+other = "All risks across assessments"
+
+["Compliance"]
+other = "Compliance"
+
+["Compliance activity register"]
+other = "Compliance activity register"
+
+["Create a new compliance activity"]
+other = "Create a new compliance activity"
+
+["Evaluate a new system"]
+other = "Evaluate a new system"
+
+["Feature roadmap"]
+other = "Feature roadmap"
+
+["Frameworks and requirements"]
+other = "Frameworks and requirements"
+
+["ISMS"]
+other = "ISMS"
+
+["Import requirements"]
+other = "Import requirements"
+
+["Lightweight system assessment"]
+other = "Lightweight system assessment"
+
+["Measures"]
+other = "Measures"
+
+["NS 5814 risk assessments"]
+other = "NS 5814 risk assessments"
+
+["New requirement"]
+other = "New requirement"
+
+["New risk assessment"]
+other = "New risk assessment"
+
+["New security measure"]
+other = "New security measure"
+
+["Register a new compliance standard"]
+other = "Register a new compliance standard"
+
+["Review step 1"]
+other = "Review step 1"
+
+["Review step 2"]
+other = "Review step 2"
+
+["Review step 3"]
+other = "Review step 3"
+
+["Review: Analyse"]
+other = "Review: Analyse"
+
+["Review: Framework"]
+other = "Review: Framework"
+
+["Review: Identify"]
+other = "Review: Identify"
+
+["Risk analysis"]
+other = "Risk analysis"
+
+["Risk assessment"]
+other = "Risk assessment"
+
+["Risk assessment result"]
+other = "Risk assessment result"
+
+["Risk assessments"]
+other = "Risk assessments"
+
+["Risk identification"]
+other = "Risk identification"
+
+["Risk register"]
+other = "Risk register"
+
+["Security & risk management system"]
+other = "Security & risk management system"
+
+["Security controls and measures"]
+other = "Security controls and measures"
+
+["Step 1 — Framework"]
+other = "Step 1 — Framework"
+
+["Step 2 — Identify"]
+other = "Step 2 — Identify"
+
+["Step 3 — Analyse"]
+other = "Step 3 — Analyse"
+
+["System administration"]
+other = "System administration"
+
+["Upload CSV"]
+other = "Upload CSV"
+
+[page_dashboard_title]
+other = "Overview"
+
+[dashboard_subtitle_updated]
+other = "last updated"
+
+[nav_security]
+other = "Security"
+
+[nav_security_hub]
+other = "Testing & mockups"
+
+[nav_team_workspace]
+other = "Team workspace"
+
+[nav_area_workspace]
+other = "Area workspace"
+
+[nav_ceo_workspace]
+other = "CEO view"
+
+[page_security_title]
+other = "Security"
+
+[page_security_subtitle]
+other = "How we build trust at ElBits"
+
+[page_team_workspace_title]
+other = "Team workspace"
+
+[page_team_workspace_subtitle]
+other = "Templates and mockups"
+
+[page_area_workspace_title]
+other = "Area workspace"
+
+[page_area_workspace_subtitle]
+other = "Templates and mockups"
+
+[page_ceo_workspace_title]
+other = "CEO view"
+
+[page_ceo_workspace_subtitle]
+other = "Templates and mockups"
+
+[label_key]
+other = "Key"
+
+[nav_avvik]
+other = "Avvik"
+
+[admin_module_avvik_desc]
+other = "Avvik module (nonconformities and security events)"
+
+[error_action_go_home]
+other = "Go to dashboard"
+
+[error_action_go_back]
+other = "Go back"
+
+[error_request_id_label]
+other = "Request ID"
+
+[error_page_title]
+other = "Error"
+
+[error_page_subtitle]
+other = "Something needs your attention"
+
+[error_404_title]
+other = "Page not found"
+
+[error_404_message]
+other = "The page may have moved or the link is wrong."
+
+[error_403_title]
+other = "Access denied"
+
+[error_403_message]
+other = "You do not have permission to access this resource."
+
+[error_429_title]
+other = "Too many requests"
+
+[error_429_message]
+other = "Please wait a moment and try again."
+
+[error_500_title]
+other = "Something went wrong"
+
+[error_500_message]
+other = "An unexpected error occurred. Please try again."
+
+[error_401_title]
+other = "Authentication required"
+
+[error_401_message]
+other = "Please sign in to continue."
+
+[page_my_title]
+other = "My page"
+
+[page_my_subtitle]
+other = "Your profile and owned objects"
+
+[my_profile_heading]
+other = "Profile"
+
+[my_org_label]
+other = "Organization"
+
+[my_provider_label]
+other = "Auth provider"
+
+[my_owned_activities_heading]
+other = "Owned activities"
+
+[my_owned_measures_heading]
+other = "Owned treatments"
+
+[my_owned_risks_heading]
+other = "Owned risks"
+
+[my_empty_activities]
+other = "No owned activities."
+
+[my_empty_measures]
+other = "No owned treatments."
+
+[my_empty_risks]
+other = "No owned risks."
+
+[my_last_changed_label]
+other = "Last changed"
+
+[my_due_label]
+other = "Due"
+
+[my_risk_score_label]
+other = "Risk score"

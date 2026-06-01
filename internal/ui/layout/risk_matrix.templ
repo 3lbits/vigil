@@ -1,0 +1,158 @@
+package layout
+
+import (
+	"fmt"
+	"github.com/3lbits/vigil/internal/locale"
+)
+
+// RiskMatrixCell represents a single cell in the NS 5814 5×5 risk heat map.
+type RiskMatrixCell struct {
+	ColorClass string // Tailwind background color class
+	Count      int    // Number of risks in this cell (0 = empty)
+}
+
+// RiskThresholds holds configurable level boundaries.
+// Scores ≤ LowMax are green, scores ≥ HighMin are red, between is yellow.
+type RiskThresholds struct {
+	LowMax  int // default 5
+	HighMin int // default 12
+}
+
+// DefaultThresholds returns NS 5814 defaults.
+func DefaultThresholds() RiskThresholds { return RiskThresholds{LowMax: 5, HighMin: 12} }
+
+var riskMatrixConsequenceLabels = []string{"5", "4", "3", "2", "1"}
+var riskMatrixLikelihoodLabels = []string{"1", "2", "3", "4", "5"}
+
+// CellColor returns a Tailwind bg class using the given thresholds.
+func CellColor(likelihood, consequence int, t RiskThresholds) string {
+	score := likelihood * consequence
+	switch {
+	case score >= t.HighMin:
+		return "bg-red-500"
+	case score > t.LowMax:
+		return "bg-amber-400"
+	default:
+		return "bg-green-500"
+	}
+}
+
+// CellLevel returns red/yellow/green for a score with given thresholds.
+func CellLevel(likelihood, consequence int, t RiskThresholds) string {
+	score := likelihood * consequence
+	switch {
+	case score >= t.HighMin:
+		return "red"
+	case score > t.LowMax:
+		return "yellow"
+	default:
+		return "green"
+	}
+}
+
+// NS5814CellColor is a backwards-compat wrapper using default thresholds.
+func NS5814CellColor(likelihood, consequence int) string {
+	return CellColor(likelihood, consequence, DefaultThresholds())
+}
+
+// NS5814Level is a backwards-compat wrapper using default thresholds.
+func NS5814Level(likelihood, consequence int) string {
+	return CellLevel(likelihood, consequence, DefaultThresholds())
+}
+
+// BuildRiskMatrixCells builds 25 cells with default thresholds.
+func BuildRiskMatrixCells(counts map[[2]int]int) []RiskMatrixCell {
+	return BuildRiskMatrixCellsT(counts, DefaultThresholds())
+}
+
+// BuildRiskMatrixCellsT builds 25 cells with configurable thresholds.
+func BuildRiskMatrixCellsT(counts map[[2]int]int, t RiskThresholds) []RiskMatrixCell {
+	cells := make([]RiskMatrixCell, 25)
+	for i, c := range []int{5, 4, 3, 2, 1} {
+		for j, l := range []int{1, 2, 3, 4, 5} {
+			cells[i*5+j] = RiskMatrixCell{
+				ColorClass: CellColor(l, c, t),
+				Count:      counts[[2]int{l, c}],
+			}
+		}
+	}
+	return cells
+}
+
+// RiskMatrix renders a 5×5 NS 5814 risk heat map.
+// cells must have exactly 25 elements ordered row-major (consequence desc, likelihood asc).
+templ RiskMatrix(cells []RiskMatrixCell) {
+<div class="flex gap-1.5 items-stretch">
+		<table class="sr-only">
+			<caption>Risk matrix counts by likelihood and consequence</caption>
+			<thead>
+				<tr>
+					<th scope="col">Consequence \\ Likelihood</th>
+					for _, l := range riskMatrixLikelihoodLabels {
+						<th scope="col">{ l }</th>
+					}
+				</tr>
+			</thead>
+			<tbody>
+				for i, c := range riskMatrixConsequenceLabels {
+					<tr>
+						<th scope="row">{ c }</th>
+						for j := range riskMatrixLikelihoodLabels {
+							<td>{ fmt.Sprint(riskMatrixCellAt(cells, i, j).Count) }</td>
+						}
+					</tr>
+				}
+			</tbody>
+		</table>
+    <!-- Consequence axis label -->
+    <div class="flex items-center justify-center w-[14px] rotate-90">
+        <span
+            class="text-[10px] text-sand-700 font-medium tracking-wide"
+            style="writing-mode: vertical-rl"
+        >{ locale.T(ctx, "scale_consequence") }</span>
+    </div>
+		<div>
+			<div class="flex">
+				<!-- Y axis numbers — each rotated vertically -->
+				<div class="flex flex-col gap-[3px] mr-1">
+					for _, n := range riskMatrixConsequenceLabels {
+						<div class="w-3.5 h-8 flex items-center justify-center">
+							<span
+								class="text-[10px] text-sand-700 font-mono"
+								style="writing-mode: vertical-rl; transform: rotate(180deg)"
+							>{ n }</span>
+						</div>
+					}
+				</div>
+				<!-- 5×5 grid -->
+				<div class="grid grid-cols-5 gap-[3px]">
+					for _, cell := range cells {
+						<div class={ "w-8 h-8 rounded flex items-center justify-center", cell.ColorClass }>
+							if cell.Count > 0 {
+								<div class="w-4 h-4 rounded-full bg-black/65 text-white text-[9px] font-bold flex items-center justify-center font-mono">
+									{ fmt.Sprint(cell.Count) }
+								</div>
+							}
+
+						</div>
+					}
+				</div>
+			</div>
+			<!-- X axis numbers + label -->
+			<div class="flex ml-[18px] mt-1">
+				for _, n := range riskMatrixLikelihoodLabels {
+					<div class="w-8 mr-[3px] text-center text-[10px] text-sand-700 font-mono">{ n }</div>
+				}
+			</div>
+			<div class="text-center ml-[18px] text-[10px] text-sand-700 font-medium tracking-wide mt-0.5">{ locale.T(ctx, "label_likelihood") }</div>
+		</div>
+	</div>
+}
+
+func riskMatrixCellAt(cells []RiskMatrixCell, row, col int) RiskMatrixCell {
+	idx := row*5 + col
+	if idx < 0 || idx >= len(cells) {
+		return RiskMatrixCell{}
+	}
+	return cells[idx]
+}

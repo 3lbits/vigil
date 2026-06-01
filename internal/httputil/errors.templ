@@ -1,0 +1,79 @@
+package httputil
+
+import (
+	"fmt"
+
+	"github.com/3lbits/vigil/internal/locale"
+)
+
+type ErrorPageData struct {
+	Status       int
+	Title        string
+	Message      string
+	RequestID    string
+	PrimaryHref  string
+	PrimaryLabel string
+}
+
+templ ErrorPage(data ErrorPageData) {
+	<!DOCTYPE html>
+	<html lang={ locale.LangFromContext(ctx) }>
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>{ data.Title }</title>
+		<link rel="stylesheet" href="/public/css/output.css"/>
+	</head>
+	<body class="font-sans bg-sand-50 dark:bg-zinc-950 text-sand-900 dark:text-zinc-100 antialiased min-h-screen">
+		<header class="border-b border-sand-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 backdrop-blur">
+			<nav aria-label="Error navigation" class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-2">
+				<a href="/" class="inline-flex items-center gap-2 text-sm font-medium hover:underline">
+					<span class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300">V</span>
+					Vigil
+				</a>
+				<div class="ml-auto flex items-center gap-2 text-xs">
+					<a href="/" class="px-2 py-1 rounded border border-sand-300 dark:border-zinc-700 hover:bg-sand-100 dark:hover:bg-zinc-800 transition-colors">{ locale.T(ctx, "error_action_go_home") }</a>
+					<a href="/about" class="px-2 py-1 rounded border border-sand-300 dark:border-zinc-700 hover:bg-sand-100 dark:hover:bg-zinc-800 transition-colors">{ locale.T(ctx, "nav_about") }</a>
+				</div>
+			</nav>
+		</header>
+		<main class="w-full max-w-5xl mx-auto px-4 py-10">
+			<div class="max-w-lg mx-auto">
+				@ErrorPageCard(data)
+			</div>
+		</main>
+	</body>
+	</html>
+}
+
+templ ErrorPageCard(data ErrorPageData) {
+	<div class="bg-white dark:bg-zinc-900 border border-sand-200 dark:border-zinc-700 rounded-xl p-6 shadow-sm">
+		<div class="text-[11px] uppercase tracking-wide font-semibold text-sand-700 dark:text-zinc-400 mb-2">
+			HTTP { fmt.Sprint(data.Status) }
+		</div>
+		<h1 class="text-xl font-medium mb-2">{ data.Title }</h1>
+		<p class="text-sm text-sand-700 dark:text-zinc-300 mb-5">{ data.Message }</p>
+
+		if data.RequestID != "" {
+			<div class="text-[12px] font-mono text-sand-700 dark:text-zinc-300 bg-sand-50 dark:bg-zinc-800 border border-sand-200 dark:border-zinc-700 rounded-md px-3 py-2 mb-5">
+				{ locale.T(ctx, "error_request_id_label") }: { data.RequestID }
+			</div>
+		}
+
+		<div class="flex items-center gap-2">
+			<a href={ templ.SafeURL(data.PrimaryHref) } class="inline-flex items-center text-[12px] py-1.5 px-3 rounded-md bg-sand-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-sand-800 dark:hover:bg-zinc-300 transition-colors">
+				{ data.PrimaryLabel }
+			</a>
+			<button type="button" onclick="history.back()" class="inline-flex items-center text-[12px] py-1.5 px-3 rounded-md border border-sand-300 dark:border-zinc-700 text-sand-700 dark:text-zinc-300 hover:bg-sand-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
+				{ locale.T(ctx, "error_action_go_back") }
+			</button>
+		</div>
+	</div>
+}
+
+templ ErrorInline(status int, title, message string) {
+	<div class="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-[12px] text-amber-900">
+		<span class="font-semibold">HTTP { fmt.Sprint(status) } · { title }</span>
+		<span class="ml-1">{ message }</span>
+	</div>
+}

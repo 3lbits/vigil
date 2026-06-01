@@ -1,0 +1,951 @@
+package activitiestemplates
+
+import (
+	"database/sql"
+	"fmt"
+	"strings"
+	"github.com/google/uuid"
+	"github.com/3lbits/vigil/internal/csrf"
+	"github.com/3lbits/vigil/internal/db"
+	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui"
+	formstemplates "github.com/3lbits/vigil/internal/ui/forms"
+)
+
+func activityRef(n sql.NullInt32) string {
+	if !n.Valid { return "" }
+	return fmt.Sprintf("A-%03d", n.Int32)
+}
+
+// ── Status / type helpers ─────────────────────────────────────────────────────
+
+templ statusBadge(status string) {
+	switch status {
+		case "completed":
+			@ui.Badge(ui.BadgeProps{
+				Variant: "success",
+			}) { { locale.T(ctx, "status_completed") } }
+		case "in_progress":
+			@ui.Badge(ui.BadgeProps{
+				Variant: "default",
+				Class:   "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
+			}) { { locale.T(ctx, "status_in_progress") } }
+		case "overdue":
+			@ui.Badge(ui.BadgeProps{
+				Variant: "danger",
+			}) { { locale.T(ctx, "status_overdue") } }
+		default:
+			@ui.Badge(ui.BadgeProps{
+				Variant: "default",
+			}) { { locale.T(ctx, "status_planned") } }
+	}
+}
+
+templ recurrenceBadge(recurrence string) {
+	if recurrence != "none" {
+		@ui.Badge(ui.BadgeProps{
+			Variant: "default",
+			Class:   "text-[10px] px-1.5 rounded bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950 dark:text-violet-300 dark:border-violet-800",
+		}) {
+			{ locale.T(ctx, "recurrence_" + recurrence) }
+		}
+	}
+}
+
+func recurrenceLabel(r string) string {
+	switch r {
+	case "monthly":
+		return "Monthly"
+	case "tertially":
+		return "Tertially"
+	case "annual":
+		return "Annual"
+	case "ad_hoc":
+		return "Ad-hoc"
+	default:
+		return ""
+	}
+}
+
+templ priorityBadge(priority string) {
+	switch priority {
+		case "high":
+			@ui.Badge(ui.BadgeProps{
+				Variant: "danger",
+				Class:   "text-[10px] px-1.5 rounded",
+			}) { { locale.T(ctx, "priority_high") } }
+		case "low":
+			@ui.Badge(ui.BadgeProps{
+				Variant: "default",
+				Class:   "text-[10px] px-1.5 rounded",
+			}) { { locale.T(ctx, "priority_low") } }
+		default:
+			@ui.Badge(ui.BadgeProps{
+				Variant: "warning",
+				Class:   "text-[10px] px-1.5 rounded",
+			}) { { locale.T(ctx, "priority_medium") } }
+	}
+}
+
+templ kindBadge(kind string) {
+	@ui.Badge(ui.BadgeProps{
+		Variant: "default",
+		Class:   kindBadgeClass(kind),
+	}) {
+		{ locale.T(ctx, "kind_" + kind) }
+	}
+}
+
+func kindBadgeClass(kind string) string {
+	switch kind {
+	case "training":
+		return "text-[10px] px-1.5 rounded bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800"
+	case "exercise":
+		return "text-[10px] px-1.5 rounded bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800"
+	case "assessment":
+		return "text-[10px] px-1.5 rounded bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-800"
+	case "audit":
+		return "text-[10px] px-1.5 rounded bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800"
+	case "remediation":
+		return "text-[10px] px-1.5 rounded bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800"
+	default:
+		return "text-[10px] px-1.5 rounded bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950 dark:text-teal-300 dark:border-teal-800"
+	}
+}
+
+func kindLabel(k string) string {
+	switch k {
+	case "training":
+		return "Training"
+	case "exercise":
+		return "Exercise"
+	case "assessment":
+		return "Assessment"
+	case "audit":
+		return "Audit"
+	case "remediation":
+		return "Remediation"
+	default:
+		return "Review"
+	}
+}
+
+// ── Activity list ─────────────────────────────────────────────────────────────
+
+templ ActivityList(rows []db.FilterActivitiesRow, filter, kind, owner string, mine bool, flash, flashType string, hasMore bool, pageSize int32) {
+	@ui.Flash(flash, flashType)
+
+	<div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+		<p class="text-[13px] text-sand-700">{ locale.T(ctx, "nav_activities") }</p>
+		<a
+			href="/activities/new"
+			class="text-xs font-medium py-1.5 px-3.5 rounded-md border border-sand-400 hover:bg-sand-100 transition-colors flex items-center gap-1.5"
+		>
+			@ui.IconSVG("plus", 13)
+			{ locale.T(ctx, "action_add_activity") }
+		</a>
+	</div>
+
+	@activityFilterForm(filter, kind, owner, mine)
+
+	<div id="activities-table" aria-live="polite" aria-atomic="false">
+		@ActivityTable(rows, hasMore, pageSize, filter, kind, owner, mine)
+	</div>
+}
+
+templ activityFilterForm(filter, kind, owner string, mine bool) {
+	<p class="sr-only" aria-live="polite">Results update automatically when filters change.</p>
+	<form
+		id="activity-filters"
+		method="GET"
+		action="/activities"
+		hx-get="/activities"
+		hx-target="#activities-table"
+		hx-swap="innerHTML"
+		hx-push-url="true"
+		hx-trigger="change"
+		hx-on::after-request="if(event.detail.successful){document.querySelector('#activities-table [role=region]')?.focus()}"
+		class="flex flex-wrap gap-2 mb-4 items-center"
+	>
+		<label for="activity-filter-status" class="sr-only">Filter by status</label>
+		<select
+			id="activity-filter-status"
+			name="filter"
+			class="text-[12px] border border-sand-300 rounded-md px-2.5 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+		>
+			<option value="" selected?={ filter == "" || filter == "all" }>{ locale.T(ctx, "filter_all_statuses") }</option>
+			<option value="planned" selected?={ filter == "planned" }>{ locale.T(ctx, "status_planned") }</option>
+			<option value="in_progress" selected?={ filter == "in_progress" }>{ locale.T(ctx, "status_in_progress") }</option>
+			<option value="overdue" selected?={ filter == "overdue" }>{ locale.T(ctx, "status_overdue") }</option>
+			<option value="completed" selected?={ filter == "completed" }>{ locale.T(ctx, "status_completed") }</option>
+		</select>
+		<label for="activity-filter-kind" class="sr-only">Filter by kind</label>
+		<select
+			id="activity-filter-kind"
+			name="kind"
+			class="text-[12px] border border-sand-300 rounded-md px-2.5 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+		>
+			<option value="" selected?={ kind == "" || kind == "all" }>{ locale.T(ctx, "filter_all_kinds") }</option>
+			<option value="training" selected?={ kind == "training" }>{ locale.T(ctx, "kind_training") }</option>
+			<option value="exercise" selected?={ kind == "exercise" }>{ locale.T(ctx, "kind_exercise") }</option>
+			<option value="assessment" selected?={ kind == "assessment" }>{ locale.T(ctx, "kind_assessment") }</option>
+			<option value="audit" selected?={ kind == "audit" }>{ locale.T(ctx, "kind_audit") }</option>
+			<option value="remediation" selected?={ kind == "remediation" }>{ locale.T(ctx, "kind_remediation") }</option>
+			<option value="review" selected?={ kind == "review" }>{ locale.T(ctx, "kind_review") }</option>
+		</select>
+		<label for="activity-filter-owner" class="sr-only">Filter by owner</label>
+		<input
+			id="activity-filter-owner"
+			name="owner"
+			type="text"
+			value={ owner }
+			placeholder={ locale.T(ctx, "placeholder_filter_owner") }
+			hx-get="/activities"
+			hx-target="#activities-table"
+			hx-swap="innerHTML"
+			hx-push-url="true"
+			hx-include="closest form"
+			hx-trigger="input changed delay:300ms"
+			class="text-[12px] border border-sand-300 rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 w-44"
+		/>
+		<label class="flex items-center gap-1.5 text-[12px] text-sand-700 cursor-pointer select-none">
+			<input type="checkbox" name="mine" checked?={ mine } class="rounded"/>
+			{ locale.T(ctx, "label_mine_only") }
+		</label>
+	</form>
+}
+
+templ ActivityTable(rows []db.FilterActivitiesRow, hasMore bool, pageSize int32, filter, kind, owner string, mine bool) {
+	if len(rows) == 0 {
+		@ui.EmptyState(ui.EmptyStateProps{
+			Class: "border-solid border-sand-300/60 rounded-[10px] p-8 bg-white dark:bg-zinc-900",
+		}) {
+			<div class="text-sand-700 text-[13px]">{ locale.T(ctx, "activities_none_found") }</div>
+			<a href="/activities/new" class="text-blue-600 text-[13px] hover:underline">Add your first activity →</a>
+		}
+	} else {
+		@ui.Card(ui.CardProps{
+			Class:   "border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden",
+			Padding: "p-0",
+		}) {
+			<div role="region" aria-label="Activities table" tabindex="0" class="overflow-x-auto">
+				@ui.Table(ui.TableProps{
+					Attrs: templ.Attributes{
+						"class": "min-w-[900px]",
+					},
+				}) {
+					<caption class="sr-only">Activities</caption>
+					@ui.THead(ui.THeadProps{
+						Attrs: templ.Attributes{
+							"class": "bg-sand-50 border-b border-sand-300/60 dark:bg-zinc-900 dark:border-zinc-700",
+						},
+					}) {
+						@ui.Tr(ui.TrProps{}) {
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5 text-[11px]"}}) { Activity }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { Measure }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { Kind }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { Priority }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { Recurrence }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { Owner }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { Due }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { Status }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5"}}) { <span class="sr-only">Actions</span> }
+						}
+					}
+					<tbody>
+						@ActivityRows(rows, hasMore, pageSize, filter, kind, owner, mine)
+					</tbody>
+				}
+			</div>
+		}
+	}
+}
+
+templ ActivityRows(rows []db.FilterActivitiesRow, hasMore bool, nextOffset int32, filter, kind, owner string, mine bool) {
+	for _, a := range rows {
+		@ui.Tr(ui.TrProps{
+			Attrs: templ.Attributes{
+				"class": "border-sand-300/60 dark:border-zinc-700/60",
+			},
+		}) {
+			@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-medium"}}) {
+				<div class="flex items-center gap-2">
+					if a.RefNum.Valid {
+						<span class="font-mono text-[11px] text-sand-700 dark:text-zinc-400 shrink-0">{ activityRef(a.RefNum) }</span>
+					}
+					<a href={ templ.SafeURL("/activities/" + a.ID.String()) } class="hover:text-blue-700 hover:underline truncate">{ a.Title }</a>
+				</div>
+			}
+			@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700 truncate"}}) {
+				if a.MeasureName == "" {
+					<span class="text-sand-700">—</span>
+				} else {
+					{ a.MeasureName }
+				}
+			}
+			@ui.Td(ui.TdProps{}) {
+				@kindBadge(a.Kind)
+			}
+			@ui.Td(ui.TdProps{}) {
+				@priorityBadge(a.Priority)
+			}
+			@ui.Td(ui.TdProps{}) {
+				@recurrenceBadge(a.Recurrence)
+				if a.Recurrence == "none" {
+					<span class="text-[11px] text-sand-700 dark:text-zinc-400">{ locale.T(ctx, "label_one_off") }</span>
+				}
+			}
+			@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) {
+				if a.Owner == "" {
+					<span class="text-sand-700">—</span>
+				} else {
+					{ a.Owner }
+				}
+			}
+			@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "whitespace-nowrap"}}) {
+				if IsOverdue(a.Status, a.DueDate) && a.Status != "completed" {
+					<span class="text-red-600 font-medium"><span aria-hidden="true">⚠ </span>{ FormatDate(a.DueDate) }</span>
+				} else {
+					<span class="text-sand-700">{ FormatDate(a.DueDate) }</span>
+				}
+			}
+			@ui.Td(ui.TdProps{}) {
+				@statusBadge(a.Status)
+			}
+			@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 text-right"}}) {
+				<a
+					href={ templ.SafeURL("/activities/" + a.ID.String()) }
+					aria-label={ "View activity: " + a.Title }
+					class="text-[11px] text-sand-700 dark:text-zinc-400 hover:text-sand-900 dark:hover:text-zinc-100 py-1 px-2"
+				>view</a>
+			}
+		}
+	}
+	if hasMore {
+		@ui.Tr(ui.TrProps{
+			Attrs: templ.Attributes{
+				"id":    "load-more-row",
+				"class": "border-sand-300/60 dark:border-zinc-700/60",
+			},
+		}) {
+			@ui.Td(ui.TdProps{
+				Attrs: templ.Attributes{
+					"colspan": "9",
+					"class":   "text-center",
+				},
+			}) {
+				<a
+					href={ templ.SafeURL("/activities?offset=" + fmt.Sprint(nextOffset) + "&filter=" + filter + "&kind=" + kind + "&owner=" + owner + "&mine=" + listMineQueryValue(mine)) }
+					hx-get="/activities"
+					hx-include="#activity-filters"
+					hx-vals={ fmt.Sprintf(`{"offset":"%d"}`, nextOffset) }
+					hx-target="#load-more-row"
+					hx-swap="outerHTML"
+					class="text-[12px] text-sand-700 hover:text-sand-900 border border-sand-300 rounded px-3 py-1.5 hover:bg-sand-50 transition-colors"
+				>Load more</a>
+			}
+		}
+	}
+}
+
+func listMineQueryValue(mine bool) string {
+	if mine {
+		return "on"
+	}
+	return ""
+}
+
+// ── Activity form (new / edit) ────────────────────────────────────────────────
+
+templ ActivityForm(measures []db.Measure, users []db.User, a *db.GetActivityRow, preselectedMeasureID string, flash, flashType string, auditLog []db.ListAuditLogForActivityRow) {
+	@ui.Flash(flash, flashType)
+
+	<div class="max-w-lg">
+		<form method="POST" action={ activityFormAction(a) } class="flex flex-col gap-4">
+			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			if a == nil {
+				@formstemplates.ActivityCreateFields(measures, users, "activity-create", "")
+			} else {
+				<!-- Measure selector (optional) -->
+				<div class="flex flex-col gap-1">
+					<label for="measure_id" class="text-xs font-medium text-sand-700">Measure</label>
+					<select
+						id="measure_id"
+						name="measure_id"
+						class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 bg-white"
+					>
+						<option value="">— none —</option>
+						for _, m := range measures {
+							<option
+								value={ m.ID.String() }
+								selected?={ selectedMeasure(a, m.ID.String(), preselectedMeasureID) }
+							>{ m.Name }</option>
+						}
+					</select>
+				</div>
+
+				@activityInputField("Title", "title", "e.g. Annual penetration test", activityFieldVal(a, "title"), true)
+				@activityTextareaField("Description", "description", "Optional context or scope", activityFieldVal(a, "description"))
+
+				<div class="grid grid-cols-2 gap-3">
+				<!-- Type -->
+					<div class="flex flex-col gap-1">
+					<label for="activity_type" class="text-xs font-medium text-sand-700">{ locale.T(ctx, "label_type") }</label>
+					<select
+						id="activity_type"
+						name="activity_type"
+						class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 bg-white"
+					>
+						<option value="one_off" selected?={ activityFieldVal(a, "activity_type") != "recurring" }>{ locale.T(ctx, "label_one_off") }</option>
+						<option value="recurring" selected?={ activityFieldVal(a, "activity_type") == "recurring" }>{ locale.T(ctx, "type_recurring") }</option>
+					</select>
+					</div>
+
+					<!-- Recurrence -->
+					<div class="flex flex-col gap-1">
+					<label for="recurrence" class="text-xs font-medium text-sand-700">{ locale.T(ctx, "label_recurrence") }</label>
+					<select
+						id="recurrence"
+						name="recurrence"
+						class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 bg-white"
+					>
+						<option value="none" selected?={ activityFieldVal(a, "recurrence") == "none" || activityFieldVal(a, "recurrence") == "" }>{ locale.T(ctx, "recurrence_none") }</option>
+						<option value="monthly" selected?={ activityFieldVal(a, "recurrence") == "monthly" }>{ locale.T(ctx, "recurrence_monthly") }</option>
+						<option value="tertially" selected?={ activityFieldVal(a, "recurrence") == "tertially" }>{ locale.T(ctx, "recurrence_tertially") }</option>
+						<option value="annual" selected?={ activityFieldVal(a, "recurrence") == "annual" }>{ locale.T(ctx, "recurrence_annual") }</option>
+						<option value="ad_hoc" selected?={ activityFieldVal(a, "recurrence") == "ad_hoc" }>{ locale.T(ctx, "recurrence_ad_hoc") }</option>
+					</select>
+					</div>
+				</div>
+
+				<div class="grid grid-cols-2 gap-3">
+				<!-- Kind -->
+					<div class="flex flex-col gap-1">
+					<label for="kind" class="text-xs font-medium text-sand-700">{ locale.T(ctx, "label_kind") }</label>
+					<select
+						id="kind"
+						name="kind"
+						class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 bg-white"
+					>
+						<option value="training" selected?={ activityFieldVal(a, "kind") == "training" }>{ locale.T(ctx, "kind_training") }</option>
+						<option value="exercise" selected?={ activityFieldVal(a, "kind") == "exercise" }>{ locale.T(ctx, "kind_exercise") }</option>
+						<option value="assessment" selected?={ activityFieldVal(a, "kind") == "assessment" }>{ locale.T(ctx, "kind_assessment") }</option>
+						<option value="audit" selected?={ activityFieldVal(a, "kind") == "audit" }>{ locale.T(ctx, "kind_audit") }</option>
+						<option value="remediation" selected?={ activityFieldVal(a, "kind") == "remediation" }>{ locale.T(ctx, "kind_remediation") }</option>
+						<option value="review" selected?={ activityFieldVal(a, "kind") == "review" || activityFieldVal(a, "kind") == "" }>{ locale.T(ctx, "kind_review") }</option>
+					</select>
+					</div>
+
+					<!-- Priority -->
+					<div class="flex flex-col gap-1">
+					<label for="priority" class="text-xs font-medium text-sand-700">{ locale.T(ctx, "label_priority") }</label>
+					<select
+						id="priority"
+						name="priority"
+						class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 bg-white"
+					>
+						<option value="low" selected?={ activityFieldVal(a, "priority") == "low" }>{ locale.T(ctx, "priority_low") }</option>
+						<option value="medium" selected?={ activityFieldVal(a, "priority") == "medium" || activityFieldVal(a, "priority") == "" }>{ locale.T(ctx, "priority_medium") }</option>
+						<option value="high" selected?={ activityFieldVal(a, "priority") == "high" }>{ locale.T(ctx, "priority_high") }</option>
+					</select>
+					</div>
+				</div>
+
+				@activityAssigneePicker(a, users)
+
+				<div class="flex flex-col gap-1">
+					@activityInputField("Due date", "due_date", "", activityFieldVal(a, "due_date"), false)
+				</div>
+			}
+
+			<div class="flex gap-2 pt-1">
+				@ui.Button(ui.ButtonProps{
+					Attrs: templ.Attributes{
+						"type": "submit",
+					},
+				}) {
+					if a == nil {
+						{ locale.T(ctx, "action_create_activity") }
+					} else {
+						{ locale.T(ctx, "action_save_changes") }
+					}
+				}
+				<a
+					href="/activities"
+					class="text-[13px] py-2 px-4 rounded-md border border-sand-400 text-sand-700 hover:bg-sand-100 transition-colors"
+				>{ locale.T(ctx, "action_cancel") }</a>
+			</div>
+		</form>
+		if a != nil {
+			@activityRecentChanges(auditLog, "mt-8")
+		}
+	</div>
+}
+
+func activityFormAction(a *db.GetActivityRow) templ.SafeURL {
+	if a == nil {
+		return "/activities"
+	}
+	return templ.SafeURL("/activities/" + a.ID.String())
+}
+
+func activityFieldVal(a *db.GetActivityRow, field string) string {
+	if a == nil {
+		return ""
+	}
+	switch field {
+	case "title":
+		return a.Title
+	case "description":
+		return a.Description
+	case "activity_type":
+		return a.ActivityType
+	case "recurrence":
+		return a.Recurrence
+	case "priority":
+		return a.Priority
+	case "kind":
+		return a.Kind
+	case "owner":
+		return a.Owner
+	case "due_date":
+		return DateInputVal(a.DueDate)
+	case "measure_id":
+		if a.MeasureID.Valid {
+			return a.MeasureID.UUID.String()
+		}
+		return ""
+	}
+	return ""
+}
+
+func selectedMeasure(a *db.GetActivityRow, measureID, preselected string) bool {
+	if a != nil {
+		if !a.MeasureID.Valid {
+			return false
+		}
+		return a.MeasureID.UUID.String() == measureID
+	}
+	return preselected == measureID
+}
+
+templ activityInputField(label, name, placeholder, value string, required bool) {
+	<div class="flex flex-col gap-1">
+		<label for={ name } class="text-xs font-medium text-sand-700">
+			{ label }
+			if required {
+				<span class="text-red-500">*</span>
+			}
+		</label>
+		<input
+			id={ name }
+			name={ name }
+			type={ inputType(name) }
+			placeholder={ placeholder }
+			value={ value }
+			required?={ required }
+			class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400"
+		/>
+	</div>
+}
+
+func inputType(name string) string {
+	if name == "due_date" {
+		return "date"
+	}
+	return "text"
+}
+
+templ activityAssigneePicker(a *db.GetActivityRow, users []db.User) {
+	<div
+		x-data={ activityAssigneePickerData(a) }
+		class="flex flex-col gap-2"
+	>
+		<div class="flex flex-col gap-1">
+			<label for="assignee_id" class="text-xs font-medium text-sand-700">Assignee (registered user)</label>
+			<select
+				id="assignee_id"
+				name="assignee_id"
+				x-model="assigneeID"
+				@change="if (assigneeID !== '') { owner = $el.options[$el.selectedIndex].dataset.name } else { owner = '' }"
+				class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 bg-white"
+			>
+				<option value="">— or enter name below —</option>
+				for _, u := range users {
+					<option value={ u.ID.String() } data-name={ u.Name } selected?={ activityAssigneeSelected(a, u.ID) }>{ u.Name } ({ u.Email })</option>
+				}
+			</select>
+		</div>
+		<div class="flex flex-col gap-1">
+			<label for="owner" class="text-xs font-medium text-sand-700">Owner / free-text name</label>
+			<input
+				id="owner"
+				name="owner"
+				type="text"
+				x-model="owner"
+				:disabled="assigneeID !== ''"
+				value={ activityFieldVal(a, "owner") }
+				placeholder="e.g. security team"
+				class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 disabled:bg-sand-100 disabled:text-sand-400"
+			/>
+		</div>
+	</div>
+}
+
+func activityAssigneeSelected(a *db.GetActivityRow, id uuid.UUID) bool {
+	if a == nil || !a.AssigneeID.Valid {
+		return false
+	}
+	return a.AssigneeID.UUID == id
+}
+
+func activityAssigneePickerData(a *db.GetActivityRow) string {
+	if a != nil && a.AssigneeID.Valid {
+		return fmt.Sprintf(`{ assigneeID: '%s', owner: '%s' }`, a.AssigneeID.UUID.String(), a.Owner)
+	}
+	return `{ assigneeID: '', owner: '' }`
+}
+
+templ activityTextareaField(label, name, placeholder, value string) {
+	<div class="flex flex-col gap-1">
+		<label for={ name } class="text-xs font-medium text-sand-700">{ label }</label>
+		<textarea
+			id={ name }
+			name={ name }
+			placeholder={ placeholder }
+			rows="3"
+			class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 resize-y"
+		>{ value }</textarea>
+	</div>
+}
+
+templ completedByField(users []db.User) {
+	<div
+		x-data="{ selectedUser: '', completedBy: '' }"
+		class="flex flex-col gap-2"
+	>
+		<input type="hidden" name="completed_by" :value="completedBy"/>
+		<div class="flex flex-col gap-1">
+			<label for="completed_by_user" class="text-xs font-medium text-sand-700">Completed by (registered user)</label>
+			<select
+				id="completed_by_user"
+				x-model="selectedUser"
+				@change="if (selectedUser !== '') { completedBy = $el.options[$el.selectedIndex].dataset.name } else { completedBy = '' }"
+				class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 bg-white"
+			>
+				<option value="">— or enter name below —</option>
+				for _, u := range users {
+					<option value={ u.ID.String() } data-name={ u.Name }>{ u.Name } ({ u.Email })</option>
+				}
+			</select>
+		</div>
+		<div class="flex flex-col gap-1">
+			<label for="completed_by" class="text-xs font-medium text-sand-700">Name / free-text</label>
+			<input
+				id="completed_by"
+				type="text"
+				x-model="completedBy"
+				:disabled="selectedUser !== ''"
+				placeholder="Your name or team"
+				class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 disabled:bg-sand-100 disabled:text-sand-400"
+			/>
+		</div>
+	</div>
+}
+
+// ── Activity detail ───────────────────────────────────────────────────────────
+
+templ ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string, users []db.User, auditLog []db.ListAuditLogForActivityRow, linkedRisks []db.Risk) {
+	@ui.Flash(flash, flashType)
+
+	<div class="flex justify-between items-center mb-4">
+		<a href="/activities" class="text-[13px] text-sand-700 dark:text-zinc-400 hover:text-sand-800 dark:hover:text-zinc-100 flex items-center gap-1.5">
+			@ui.IconSVG("chevron", 13)
+			Activities
+		</a>
+		if canEdit {
+			<a href={ templ.SafeURL("/activities/" + a.ID.String() + "/edit") }
+				class="text-xs font-medium py-1.5 px-3.5 rounded-md border border-sand-400 dark:border-zinc-600 hover:bg-sand-100 dark:hover:bg-zinc-800 transition-colors">
+				Edit activity
+			</a>
+		} else {
+			<span class="text-xs font-medium py-1.5 px-3.5 rounded-md border border-sand-300 dark:border-zinc-700 text-sand-700 dark:text-zinc-400 cursor-not-allowed select-none" title="You don't have permission to edit">
+				Edit activity
+			</span>
+		}
+	</div>
+
+	<div class="max-w-2xl flex flex-col gap-4">
+		<!-- Header card -->
+		<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] p-4">
+			<div class="flex items-start justify-between gap-3 mb-3">
+				<div>
+					<div class="flex items-center gap-2 flex-wrap mb-1">
+						@statusBadge(a.Status)
+						@kindBadge(a.Kind)
+						@priorityBadge(a.Priority)
+						@recurrenceBadge(a.Recurrence)
+						if a.Recurrence == "none" {
+							<span class="text-[11px] text-sand-700 dark:text-zinc-400">{ locale.T(ctx, "label_one_off") }</span>
+						}
+					</div>
+					<h2 class="text-[15px] font-medium mt-1">{ a.Title }</h2>
+					if a.MeasureName != "" {
+						<p class="text-[12px] text-sand-700 mt-0.5">Measure: { a.MeasureName }</p>
+					}
+				</div>
+			</div>
+
+			<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-[12px]">
+				<div>
+					<div class="text-sand-700 mb-0.5">Due date</div>
+					<div class={ dueDateClass(a.Status) }>{ FormatDate(a.DueDate) }</div>
+				</div>
+				<div>
+					<div class="text-sand-700 mb-0.5">Owner</div>
+					<div>
+						if a.Owner == "" {
+							<span class="text-sand-700">—</span>
+						} else {
+							{ a.Owner }
+						}
+					</div>
+				</div>
+				<div>
+					<div class="text-sand-700 mb-0.5">Created</div>
+					<div>{ a.CreatedAt.Format("2 Jan 2006") }</div>
+				</div>
+			</div>
+
+			if a.Description != "" {
+				<p class="text-[13px] text-sand-700 mt-3 pt-3 border-t border-sand-300/60 dark:border-zinc-700/60">{ a.Description }</p>
+			}
+		</div>
+
+		<!-- Completion info (if completed) -->
+		if a.Status == "completed" {
+			<div class="border border-green-200 bg-green-50 rounded-[10px] p-4">
+				<div class="text-[13px] font-medium text-green-800 mb-2">{ locale.T(ctx, "status_completed") }</div>
+				<div class="grid grid-cols-2 gap-3 text-[12px] text-green-900">
+					<div>
+						<div class="text-green-700 mb-0.5">{ locale.T(ctx, "label_completed_at") }</div>
+						<div>{ FormatDateTime(a.CompletedAt) }</div>
+					</div>
+					<div>
+						<div class="text-green-700 mb-0.5">{ locale.T(ctx, "label_completed_by") }</div>
+						<div>
+							if a.CompletedBy == "" {
+								<span>—</span>
+							} else {
+								{ a.CompletedBy }
+							}
+						</div>
+					</div>
+				</div>
+				if a.Notes != "" {
+					<div class="mt-2 pt-2 border-t border-green-200">
+						<div class="text-[11px] text-green-700 mb-0.5">Notes</div>
+						<div class="text-[13px] text-green-900">{ a.Notes }</div>
+					</div>
+				}
+				if a.EvidenceUrl != "" {
+					<div class="mt-2 pt-2 border-t border-green-200">
+						<div class="text-[11px] text-green-700 mb-0.5">Evidence</div>
+						<a href={ templ.SafeURL(a.EvidenceUrl) } class="text-[13px] text-blue-700 hover:underline break-all" target="_blank" rel="noopener noreferrer">{ a.EvidenceUrl }</a>
+					</div>
+				}
+				if canEdit {
+					<div class="mt-3 pt-3 border-t border-green-200">
+						<form method="POST" action={ templ.SafeURL("/activities/" + a.ID.String() + "/reopen") } onsubmit="return confirm('Reopen this activity?')">
+							<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+							<button type="submit" class="text-[12px] text-sand-700 hover:text-sand-900 border border-sand-300 rounded px-2.5 py-1 hover:bg-sand-50 transition-colors">{ locale.T(ctx, "action_reopen") }</button>
+						</form>
+					</div>
+				}
+			</div>
+		}
+
+		<!-- Actions -->
+		if canEdit && a.Status != "completed" {
+			<div x-data="activityComplete" @keydown.escape.window="showComplete = false" class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] p-4">
+				<div class="flex gap-2 flex-wrap">
+					if a.Status == "planned" {
+						<form method="POST" action={ templ.SafeURL("/activities/" + a.ID.String() + "/start") }>
+							<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+							<button
+								type="submit"
+								class="text-[13px] py-1.5 px-3.5 rounded-md border border-sand-400 text-sand-700 hover:bg-sand-100 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none"
+							>{ locale.T(ctx, "action_mark_in_progress") }</button>
+						</form>
+					}
+					<button
+						type="button"
+						aria-controls="complete-form-panel"
+						:aria-expanded="showComplete ? 'true' : 'false'"
+						@click="toggle()"
+						class="text-[13px] font-medium py-1.5 px-3.5 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors focus:ring-2 focus:ring-green-500 focus:ring-offset-2 outline-none"
+					>{ locale.T(ctx, "action_mark_complete") }</button>
+					<form
+						method="POST"
+						action={ templ.SafeURL("/activities/" + a.ID.String() + "/delete") }
+						onsubmit="return confirm('Delete this activity?')"
+						class="ml-auto"
+					>
+						<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+						<button
+							type="submit"
+							class="text-[13px] py-1.5 px-3 rounded-md text-red-600 hover:text-red-800 hover:bg-red-50 border border-red-200 transition-colors focus:ring-2 focus:ring-red-500 focus:ring-offset-2 outline-none"
+						>{ locale.T(ctx, "action_delete") }</button>
+					</form>
+				</div>
+
+				<!-- Completion form (toggled) -->
+				<div
+					id="complete-form-panel"
+					x-show="showComplete"
+					:aria-hidden="showComplete ? 'false' : 'true'"
+					x-cloak
+					class="mt-4 pt-4 border-t border-sand-300/60 dark:border-zinc-700/60"
+				>
+					<div class="text-[13px] font-medium mb-3">{ locale.T(ctx, "section_complete_activity") }</div>
+					<form method="POST" action={ templ.SafeURL("/activities/" + a.ID.String() + "/complete") } class="flex flex-col gap-3">
+						<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+						@completedByField(users)
+						@activityTextareaField("Notes", "notes", "What was done, any findings…", "")
+						@activityInputField("Evidence URL", "evidence_url", "https://… or file path", "", false)
+						<div class="flex gap-2 pt-1">
+							<button
+								type="submit"
+								class="text-[13px] font-medium py-2 px-4 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors focus:ring-2 focus:ring-green-500 focus:ring-offset-2 outline-none"
+							>{ locale.T(ctx, "action_confirm_completion") }</button>
+							<button
+								type="button"
+								@click="showComplete = false"
+								class="text-[13px] py-2 px-4 rounded-md border border-sand-400 text-sand-700 hover:bg-sand-100 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none"
+							>{ locale.T(ctx, "action_cancel") }</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		}
+
+		@activityRecentChanges(auditLog, "")
+
+		if len(linkedRisks) > 0 {
+			<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
+				<div class="px-4 py-2.5 bg-sand-50 border-b border-sand-200 text-[11px] font-semibold text-sand-700 uppercase tracking-wide">
+					{ locale.T(ctx, "section_linked_risks") } ({ fmt.Sprint(len(linkedRisks)) })
+				</div>
+				for i, risk := range linkedRisks {
+					<a
+						href={ templ.SafeURL("/risks/" + risk.AssessmentID.String() + "/risks/" + risk.ID.String()) }
+						class={ "flex items-center justify-between px-4 py-3 hover:bg-sand-50 transition-colors text-[13px]", templ.KV("border-t border-sand-200", i > 0) }
+					>
+						<span class="font-medium text-sand-900 flex-1 min-w-0 truncate">{ risk.Name }</span>
+						<div class="flex items-center gap-2 shrink-0 ml-3">
+							if risk.LikelihoodCurrent.Valid && risk.ConsequenceCurrent.Valid {
+								<div class={ "flex flex-col items-center px-2 py-0.5 rounded text-[10px] font-bold text-white leading-tight", activityRiskScoreBgClass(int(risk.LikelihoodCurrent.Int32)*int(risk.ConsequenceCurrent.Int32)) }>
+									<span>{ fmt.Sprint(int(risk.LikelihoodCurrent.Int32)*int(risk.ConsequenceCurrent.Int32)) }</span>
+									<span class="font-normal opacity-80">now</span>
+								</div>
+							}
+							if risk.LikelihoodTarget.Valid && risk.ConsequenceTarget.Valid {
+								<span class="text-sand-300 text-[10px]">→</span>
+								<div class={ "flex flex-col items-center px-2 py-0.5 rounded text-[10px] font-bold text-white leading-tight", activityRiskScoreBgClass(int(risk.LikelihoodTarget.Int32)*int(risk.ConsequenceTarget.Int32)) }>
+									<span>{ fmt.Sprint(int(risk.LikelihoodTarget.Int32)*int(risk.ConsequenceTarget.Int32)) }</span>
+									<span class="font-normal opacity-80">target</span>
+								</div>
+							}
+						</div>
+					</a>
+				}
+			</div>
+		}
+
+	</div>
+}
+
+func auditEventLabel(event string) string {
+	parts := strings.Split(event, ".")
+	label := parts[len(parts)-1]
+	if label == "" {
+		return event
+	}
+	return strings.ToUpper(label[:1]) + strings.ReplaceAll(label[1:], "_", " ")
+}
+
+templ activityRecentChanges(auditLog []db.ListAuditLogForActivityRow, wrapperClass string) {
+	<details class={ wrapperClass }>
+		<summary class="cursor-pointer text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3 list-none">Last 5 changes (click to expand)</summary>
+		<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
+			@ui.Table(ui.TableProps{}) {
+				<caption class="sr-only">Last 5 changes</caption>
+				@ui.THead(ui.THeadProps{
+					Attrs: templ.Attributes{
+						"class": "bg-sand-100 dark:bg-zinc-800",
+					},
+				}) {
+					@ui.Tr(ui.TrProps{}) {
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px] uppercase tracking-wider"}}) { Event }
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { By }
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { When }
+					}
+				}
+				<tbody>
+					if len(auditLog) == 0 {
+						@ui.Tr(ui.TrProps{
+							Attrs: templ.Attributes{
+								"class": "border-sand-300/60 dark:border-zinc-700/60",
+							},
+						}) {
+							@ui.Td(ui.TdProps{
+								Attrs: templ.Attributes{
+									"colspan": "3",
+									"class":   "px-4 text-sand-700",
+								},
+							}) { No changes yet. }
+						}
+					} else {
+						for i, entry := range auditLog {
+							if i < 5 {
+								@ui.Tr(ui.TrProps{
+									Attrs: templ.Attributes{
+										"class": "border-sand-300/60 dark:border-zinc-700/60",
+									},
+								}) {
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-medium"}}) { auditEventLabel(entry.Event) }
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) {
+										if entry.UserName != "" {
+											{ entry.UserName }
+										} else {
+											<span class="text-sand-700">—</span>
+										}
+									}
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700 font-mono text-[11px]"}}) { entry.EventTime.Format("2 Jan 2006 15:04") }
+								}
+							}
+						}
+					}
+				</tbody>
+			}
+		</div>
+	</details>
+}
+
+func dueDateClass(status string) string {
+	if status == "overdue" {
+		return "font-medium text-red-600"
+	}
+	return "font-medium"
+}
+
+func activityRiskScoreBgClass(score int) string {
+	switch {
+	case score >= 12:
+		return "bg-red-500"
+	case score >= 6:
+		return "bg-amber-400"
+	default:
+		return "bg-green-500"
+	}
+}

@@ -1,0 +1,398 @@
+package risktemplates
+
+import (
+	"fmt"
+	"strings"
+	"github.com/3lbits/vigil/internal/csrf"
+	"github.com/3lbits/vigil/internal/db"
+	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui"
+)
+
+templ RiskDetail(vm RiskDetailVM) {
+	<!-- Back link -->
+	<div class="mb-4">
+		<a
+			href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String()) }
+			class="text-[12px] text-sand-700 hover:text-sand-800 flex items-center gap-1"
+		>
+			← { vm.Assessment.Name }
+		</a>
+	</div>
+	<!-- Header -->
+	<div class="flex items-start justify-between mb-5">
+		<div>
+			<h2 class="text-[18px] font-semibold text-sand-900 mb-1">
+				if vm.Risk.RefNum.Valid {
+					<span class="font-mono text-sand-700 font-normal text-[14px] mr-1">{ riskRef(vm.Risk.RefNum) } ·</span>
+				}
+				{ vm.Risk.Name }
+			</h2>
+			if vm.Risk.Description != "" {
+				<p class="text-[13px] text-sand-700">{ vm.Risk.Description }</p>
+			}
+		</div>
+		<div class="flex items-center gap-2 shrink-0 ml-4">
+			@decisionBadge(vm.Risk.RiskDecision)
+			<a
+				href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/decision/" + vm.Risk.ID.String()) }
+				class="inline-flex items-center gap-1.5 text-[12px] py-1.5 px-3 rounded-md border border-sand-300 text-sand-700 hover:bg-sand-50 transition-colors"
+			>
+				Edit decision
+			</a>
+		</div>
+	</div>
+	<!-- Scores -->
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+		<div class="border border-sand-200 rounded-xl p-4 bg-white">
+			<div class="text-[11px] font-semibold text-sand-700 uppercase tracking-wide mb-3">{ locale.T(ctx, "label_current_risk") }</div>
+			if vm.Risk.AssessedAt.Valid {
+				<div class="text-[11px] text-sand-700 mb-2">
+					Assessed { vm.Risk.AssessedAt.Time.Format("2 Jan 2006 15:04") }
+					if vm.AssessedByName != "" {
+						<span> · by { vm.AssessedByName }</span>
+					}
+				</div>
+			} else {
+				<div class="text-[11px] text-sand-700 mb-2">Assessment date not recorded yet.</div>
+			}
+			if vm.Risk.LikelihoodCurrent.Valid && vm.Risk.ConsequenceCurrent.Valid {
+				<div class="flex items-center gap-3 mb-2">
+					<div class={ "w-12 h-10 rounded flex items-center justify-center text-[13px] font-bold text-white", bgClassT(vm.Risk.LikelihoodCurrent.Int32, vm.Risk.ConsequenceCurrent.Int32, vm.LowMax, vm.HighMin) }>
+						{ fmt.Sprint(int(vm.Risk.LikelihoodCurrent.Int32) * int(vm.Risk.ConsequenceCurrent.Int32)) }
+					</div>
+					<div class="text-[12px] text-sand-700">
+						L{ fmt.Sprint(vm.Risk.LikelihoodCurrent.Int32) } × C{ fmt.Sprint(vm.Risk.ConsequenceCurrent.Int32) }
+					</div>
+				</div>
+				if vm.Risk.LikelihoodReasoning != "" || vm.Risk.ConsequenceReasoning != "" {
+					<div class="text-[11px] text-sand-700 space-y-1 border-t border-sand-100 pt-2">
+						if vm.Risk.LikelihoodReasoning != "" {
+							<div><span class="font-medium">Likelihood:</span> { vm.Risk.LikelihoodReasoning }</div>
+						}
+						if vm.Risk.ConsequenceReasoning != "" {
+							<div><span class="font-medium">Consequence:</span> { vm.Risk.ConsequenceReasoning }</div>
+						}
+					</div>
+				}
+			} else {
+				<div class="text-[12px] text-sand-700 dark:text-zinc-400">{ locale.T(ctx, "label_not_scored") }</div>
+			}
+		</div>
+		<div class="border border-sand-200 rounded-xl p-4 bg-white">
+			<div class="text-[11px] font-semibold text-sand-700 uppercase tracking-wide mb-3">{ locale.T(ctx, "label_target_risk") }</div>
+			if vm.Risk.LikelihoodTarget.Valid && vm.Risk.ConsequenceTarget.Valid {
+				<div class="flex items-center gap-3 mb-2">
+					<div class={ "w-12 h-10 rounded flex items-center justify-center text-[13px] font-bold text-white", bgClassT(vm.Risk.LikelihoodTarget.Int32, vm.Risk.ConsequenceTarget.Int32, vm.LowMax, vm.HighMin) }>
+						{ fmt.Sprint(int(vm.Risk.LikelihoodTarget.Int32) * int(vm.Risk.ConsequenceTarget.Int32)) }
+					</div>
+					<div class="text-[12px] text-sand-700">
+						L{ fmt.Sprint(vm.Risk.LikelihoodTarget.Int32) } × C{ fmt.Sprint(vm.Risk.ConsequenceTarget.Int32) }
+					</div>
+				</div>
+			} else {
+				<div class="text-[12px] text-sand-700 dark:text-zinc-400">{ locale.T(ctx, "label_not_scored") }</div>
+			}
+		</div>
+	</div>
+	if vm.Risk.ReviewNeeded || len(vm.ReviewEvents) > 0 || vm.ReviewRationale != "" {
+		<div class="border border-sand-200 rounded-xl p-4 bg-white mb-5">
+			<div class="flex items-center justify-between gap-3 mb-2">
+				<div class="text-[11px] font-semibold text-sand-700 uppercase tracking-wide">{ locale.T(ctx, "label_reassessment") }</div>
+				if vm.Risk.ReviewNeeded {
+					<span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">{ locale.T(ctx, "status_review_needed") }</span>
+				}
+			</div>
+			if vm.ReassessmentMessage != "" {
+				<div class={ "mb-3 text-[12px] rounded-md px-3 py-2 border", templ.KV("bg-red-50 text-red-700 border-red-200", vm.ReassessmentError), templ.KV("bg-green-50 text-green-700 border-green-200", !vm.ReassessmentError) }>{ vm.ReassessmentMessage }</div>
+			}
+			if len(vm.ReviewEvents) > 0 {
+				<div class="mb-3">
+					<div class="text-[11px] font-semibold text-sand-700 mb-1">{ locale.T(ctx, "label_controls_changed_since_last_assessment") }</div>
+					<ul class="text-[12px] text-sand-700 space-y-1">
+						for _, ev := range vm.ReviewEvents {
+							<li class="flex items-center justify-between gap-2 border border-sand-200 rounded px-2 py-1.5">
+								<span>
+									{ ev.MeasureName }
+									<span class="text-sand-700">· { ev.TriggerStatus }</span>
+								</span>
+								<span class="text-[11px] text-sand-700">{ ev.TriggeredAt.Format("2 Jan 2006") }</span>
+							</li>
+						}
+					</ul>
+				</div>
+			}
+			<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + vm.Risk.ID.String() + "/reassess") }>
+				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+					@ui.Field("assessed-likelihood", "label_assessed_likelihood", false) {
+						@ui.Select(ui.SelectProps{
+							ID:    "assessed-likelihood",
+							Name:  "assessed_likelihood",
+							Class: "px-2 py-1.5 text-[12px] focus:ring-1",
+						}) {
+							<option value="">—</option>
+							for i := 1; i <= 5; i++ {
+								<option value={ fmt.Sprint(i) } selected?={ vm.Risk.LikelihoodCurrent.Valid && int(vm.Risk.LikelihoodCurrent.Int32) == i }>{ fmt.Sprint(i) }</option>
+							}
+						}
+					}
+					@ui.Field("assessed-consequence", "label_assessed_consequence", false) {
+						@ui.Select(ui.SelectProps{
+							ID:    "assessed-consequence",
+							Name:  "assessed_consequence",
+							Class: "px-2 py-1.5 text-[12px] focus:ring-1",
+						}) {
+							<option value="">—</option>
+							for i := 1; i <= 5; i++ {
+								<option value={ fmt.Sprint(i) } selected?={ vm.Risk.ConsequenceCurrent.Valid && int(vm.Risk.ConsequenceCurrent.Int32) == i }>{ fmt.Sprint(i) }</option>
+							}
+						}
+					}
+				</div>
+				@ui.Field("assessment-rationale", "label_assessment_rationale_optional", false) {
+					@ui.Textarea(ui.TextareaProps{
+						ID:    "assessment-rationale",
+						Name:  "assessment_rationale",
+						Value: vm.ReviewRationale,
+						Class: "px-2 py-1.5 text-[12px] min-h-0 focus:ring-1",
+						Attrs: templ.Attributes{
+							"rows": "3",
+						},
+					})
+				}
+				@ui.Button(ui.ButtonProps{
+					Size: "sm",
+					Attrs: templ.Attributes{
+						"type": "submit",
+					},
+				}) { { locale.T(ctx, "action_save_reassessment") } }
+			</form>
+		</div>
+	}
+	@riskRecentChanges(vm.AuditLog, "mb-5")
+	<!-- Decision notes (document) -->
+	if vm.Risk.RiskDecision == "document" && vm.Risk.DecisionNotes != "" {
+		<div class="border border-sand-200 rounded-xl p-4 bg-white mb-5">
+			<div class="text-[11px] font-semibold text-sand-700 uppercase tracking-wide mb-2">{ locale.T(ctx, "label_documentation_notes") }</div>
+			<p class="text-[13px] text-sand-700 whitespace-pre-wrap">{ vm.Risk.DecisionNotes }</p>
+		</div>
+	}
+	<!-- Linked measures -->
+	<div class="border border-sand-200 rounded-xl overflow-hidden mb-4">
+		<div class="px-4 py-3 bg-sand-50 border-b border-sand-200">
+			<div class="text-[12px] font-semibold text-sand-700">{ locale.T(ctx, "label_measures") } ({ fmt.Sprint(len(vm.Measures)) })</div>
+		</div>
+		if len(vm.Measures) == 0 {
+			<div class="px-4 py-6 text-center text-[13px] text-sand-700 dark:text-zinc-400">{ locale.T(ctx, "label_no_measures_linked") }</div>
+		} else {
+			for _, m := range vm.Measures {
+				<a
+					href={ templ.SafeURL("/measures/" + m.ID.String()) }
+					class="flex items-center justify-between px-4 py-3 border-t border-sand-200 hover:bg-sand-50 transition-colors"
+				>
+					<div>
+						<div class="text-[13px] font-medium text-sand-900">{ m.Name }</div>
+						if m.Category != "" {
+							<div class="text-[11px] text-sand-700 dark:text-zinc-400">{ m.Category }</div>
+						}
+					</div>
+					@measureStatusBadge(m.Status)
+				</a>
+			}
+		}
+	</div>
+	<!-- Linked assets -->
+	<div class="border border-sand-200 rounded-xl overflow-hidden mb-4">
+		<div class="px-4 py-3 bg-sand-50 border-b border-sand-200">
+			<div class="text-[12px] font-semibold text-sand-700">{ locale.T(ctx, "label_assets") } ({ fmt.Sprint(len(vm.Assets)) })</div>
+		</div>
+		if len(vm.Assets) == 0 {
+			<div class="px-4 py-6 text-center text-[13px] text-sand-700">{ locale.T(ctx, "empty_no_assets_linked_to_this_risk") }</div>
+		} else {
+			for _, a := range vm.Assets {
+				<div class="flex items-center justify-between px-4 py-3 border-t border-sand-200">
+					<div>
+						<div class="text-[13px] font-medium text-sand-900">{ a.Name }</div>
+						if a.Owner != "" {
+							<div class="text-[11px] text-sand-700">{ a.Owner }</div>
+						}
+					</div>
+					<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + vm.Risk.ID.String() + "/assets/" + a.ID.String() + "/remove") }>
+						<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+						<input type="hidden" name="asset_q" value={ vm.AssetQuery }/>
+						<button type="submit" class="text-[11px] px-2 py-1 rounded border border-sand-300 hover:bg-sand-50 transition-colors">{ locale.T(ctx, "action_remove") }</button>
+					</form>
+				</div>
+			}
+		}
+		<div class="px-4 py-3 border-t border-sand-200">
+			<form method="GET" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + vm.Risk.ID.String()) } class="flex items-center gap-2">
+				<label for="asset-q" class="sr-only">{ locale.T(ctx, "label_search_assets") }</label>
+				@ui.Input(ui.InputProps{
+					ID:          "asset-q",
+					Name:        "asset_q",
+					Type:        "search",
+					Value:       vm.AssetQuery,
+					Placeholder: locale.T(ctx, "placeholder_search_name_or_owner"),
+					Class:       "text-[12px]",
+				})
+				<button type="submit" class="text-[12px] px-3 py-1.5 rounded border border-sand-300 hover:bg-sand-50 transition-colors">{ locale.T(ctx, "action_search") }</button>
+			</form>
+			if vm.AssetQuery != "" {
+				<div class="mt-2 rounded-md border border-sand-200 divide-y divide-sand-100">
+					if len(vm.AssetResults) == 0 {
+						<div class="px-3 py-2 text-[12px] text-sand-700">{ locale.T(ctx, "empty_no_matching_assets_found") }</div>
+					} else {
+						for _, a := range vm.AssetResults {
+							<div class="px-3 py-2 flex items-center justify-between gap-2">
+								<div class="min-w-0">
+									<div class="text-[12px] text-sand-900 truncate">{ a.Name }</div>
+									if a.Owner != "" {
+										<div class="text-[11px] text-sand-700 truncate">{ a.Owner }</div>
+									}
+								</div>
+								<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + vm.Risk.ID.String() + "/assets/" + a.ID.String() + "/add") }>
+									<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+									<input type="hidden" name="asset_q" value={ vm.AssetQuery }/>
+									<button type="submit" class="text-[11px] px-2.5 py-1 rounded border border-sand-300 hover:bg-sand-50 transition-colors">{ locale.T(ctx, "action_add") }</button>
+								</form>
+							</div>
+						}
+					}
+				</div>
+			}
+		</div>
+	</div>
+	<!-- Linked activities -->
+	<div class="border border-sand-200 rounded-xl overflow-hidden">
+		<div class="px-4 py-3 bg-sand-50 border-b border-sand-200">
+			<div class="text-[12px] font-semibold text-sand-700">{ locale.T(ctx, "label_activities_section") } ({ fmt.Sprint(len(vm.Activities)) })</div>
+		</div>
+		if len(vm.Activities) == 0 {
+			<div class="px-4 py-6 text-center text-[13px] text-sand-700 dark:text-zinc-400">{ locale.T(ctx, "label_no_activities_linked") }</div>
+		} else {
+			for _, a := range vm.Activities {
+				<a
+					href={ templ.SafeURL("/activities/" + a.ID.String()) }
+					class="flex items-center justify-between px-4 py-3 border-t border-sand-200 hover:bg-sand-50 transition-colors"
+				>
+					<div>
+						<div class="text-[13px] font-medium text-sand-900">{ a.Title }</div>
+						if a.Owner != "" {
+							<div class="text-[11px] text-sand-700 dark:text-zinc-400">{ a.Owner }</div>
+						}
+					</div>
+					<div class="flex items-center gap-3 shrink-0 ml-3">
+						if a.DueDate.Valid {
+							<span class="text-[11px] text-sand-700 dark:text-zinc-400 font-mono">{ a.DueDate.Time.Format("2 Jan 2006") }</span>
+						}
+						@activityStatusBadge(a.Status)
+					</div>
+				</a>
+			}
+		}
+	</div>
+	<!-- Delete risk -->
+	<div class="mt-6 pt-4 border-t border-sand-200">
+		<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + vm.Risk.ID.String() + "/delete") } onsubmit="return confirm('Delete this risk and all its links?')">
+			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			<button type="submit" class="text-[12px] text-red-600 hover:text-red-800 hover:underline">
+				{ locale.T(ctx, "action_delete_risk") }
+			</button>
+		</form>
+	</div>
+}
+
+templ riskRecentChanges(auditLog []db.ListAuditLogForRiskRow, wrapperClass string) {
+	<details class={ wrapperClass }>
+		<summary class="cursor-pointer text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3 list-none">Last 5 changes (click to expand)</summary>
+		<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
+			@ui.Table(ui.TableProps{}) {
+				<caption class="sr-only">Last 5 changes</caption>
+				@ui.THead(ui.THeadProps{
+					Attrs: templ.Attributes{
+						"class": "bg-sand-100 dark:bg-zinc-800",
+					},
+				}) {
+					@ui.Tr(ui.TrProps{}) {
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px] uppercase tracking-wider"}}) { Event }
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { By }
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { When }
+					}
+				}
+				<tbody>
+					if len(auditLog) == 0 {
+						@ui.Tr(ui.TrProps{
+							Attrs: templ.Attributes{
+								"class": "border-sand-300/60 dark:border-zinc-700/60",
+							},
+						}) {
+							@ui.Td(ui.TdProps{
+								Attrs: templ.Attributes{
+									"colspan": "3",
+									"class":   "px-4 text-sand-700",
+								},
+							}) { No changes yet. }
+						}
+					} else {
+						for i, entry := range auditLog {
+							if i < 5 {
+								@ui.Tr(ui.TrProps{
+									Attrs: templ.Attributes{
+										"class": "border-sand-300/60 dark:border-zinc-700/60",
+									},
+								}) {
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-medium"}}) { riskAuditEventLabel(entry.Event) }
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) {
+										if entry.UserName != "" {
+											{ entry.UserName }
+										} else {
+											<span class="text-sand-700">—</span>
+										}
+									}
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700 font-mono text-[11px]"}}) { entry.EventTime.Format("2 Jan 2006 15:04") }
+								}
+							}
+						}
+					}
+				</tbody>
+			}
+		</div>
+	</details>
+}
+
+func riskAuditEventLabel(event string) string {
+	parts := strings.Split(event, ".")
+	label := parts[len(parts)-1]
+	if label == "" {
+		return event
+	}
+	return strings.ToUpper(label[:1]) + strings.ReplaceAll(label[1:], "_", " ")
+}
+
+templ measureStatusBadge(status string) {
+	switch status {
+		case "implemented":
+			<span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-green-50 text-green-700 border border-green-200">{ locale.T(ctx, "status_implemented") }</span>
+		case "in_progress":
+			<span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">{ locale.T(ctx, "status_in_progress") }</span>
+		case "deprecated":
+			<span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-sand-100 text-sand-700 border border-sand-200">{ locale.T(ctx, "status_deprecated") }</span>
+		default:
+			<span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">{ locale.T(ctx, "status_planned") }</span>
+	}
+}
+
+templ activityStatusBadge(status string) {
+	switch status {
+		case "done":
+			<span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-green-50 text-green-700 border border-green-200">{ locale.T(ctx, "status_done") }</span>
+		case "in_progress":
+			<span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">{ locale.T(ctx, "status_in_progress") }</span>
+		case "cancelled":
+			<span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-sand-100 text-sand-700 border border-sand-200">{ locale.T(ctx, "status_cancelled") }</span>
+		default:
+			<span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">{ locale.T(ctx, "status_pending") }</span>
+	}
+}

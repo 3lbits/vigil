@@ -1,0 +1,111 @@
+package metemplates
+
+import (
+	"fmt"
+
+	"github.com/3lbits/vigil/internal/db"
+	"github.com/3lbits/vigil/internal/locale"
+)
+
+type ProfileVM struct {
+	Name     string
+	Email    string
+	Role     string
+	Provider string
+	OrgName  string
+}
+
+type PageVM struct {
+	Profile    ProfileVM
+	Activities []db.ListOwnedActivitiesRow
+	Measures   []db.ListOwnedMeasuresRow
+	Risks      []db.ListOwnedRisksRow
+}
+
+templ Page(vm PageVM) {
+	<div class="w-full max-w-6xl space-y-6">
+		<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] p-4 bg-white dark:bg-zinc-900">
+			<h2 class="text-[13px] font-medium mb-3">{ locale.T(ctx, "my_profile_heading") }</h2>
+			<div class="grid md:grid-cols-2 gap-3 text-[13px]">
+				<div class="text-sand-700 dark:text-zinc-300">{ locale.T(ctx, "label_name") }: <span class="text-sand-900 dark:text-zinc-100">{ vm.Profile.Name }</span></div>
+				<div class="text-sand-700 dark:text-zinc-300">{ locale.T(ctx, "label_email") }: <span class="text-sand-900 dark:text-zinc-100">{ vm.Profile.Email }</span></div>
+				<div class="text-sand-700 dark:text-zinc-300">{ locale.T(ctx, "label_role") }: <span class="text-sand-900 dark:text-zinc-100">{ vm.Profile.Role }</span></div>
+				<div class="text-sand-700 dark:text-zinc-300">{ locale.T(ctx, "my_org_label") }: <span class="text-sand-900 dark:text-zinc-100">{ vm.Profile.OrgName }</span></div>
+				<div class="text-sand-700 dark:text-zinc-300">{ locale.T(ctx, "my_provider_label") }: <span class="text-sand-900 dark:text-zinc-100">{ vm.Profile.Provider }</span></div>
+			</div>
+		</div>
+
+		<div class="grid xl:grid-cols-3 gap-4">
+			@ownedActivitiesCard(vm.Activities)
+			@ownedMeasuresCard(vm.Measures)
+			@ownedRisksCard(vm.Risks)
+		</div>
+	</div>
+}
+
+templ ownedActivitiesCard(rows []db.ListOwnedActivitiesRow) {
+	<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] p-4 bg-white dark:bg-zinc-900">
+		<h3 class="text-[13px] font-medium mb-3">{ locale.T(ctx, "my_owned_activities_heading") }</h3>
+		if len(rows) == 0 {
+			<div class="text-[12px] text-sand-700 dark:text-zinc-300">{ locale.T(ctx, "my_empty_activities") }</div>
+		} else {
+			<div class="space-y-2">
+				for _, row := range rows {
+					<div class="text-[12px] border border-sand-200 dark:border-zinc-700 rounded-md p-2">
+						<a class="font-medium hover:underline" href={ templ.SafeURL("/activities/" + row.ID.String()) }>{ row.Title }</a>
+						<div class="text-sand-700 dark:text-zinc-300">{ row.Status } · { row.Priority }</div>
+						if row.MeasureName != "" {
+							<div class="text-sand-700 dark:text-zinc-300">{ row.MeasureName }</div>
+						}
+						if row.DueDate != "" {
+							<div class="text-sand-700 dark:text-zinc-300">{ locale.T(ctx, "my_due_label") }: { row.DueDate }</div>
+						}
+					</div>
+				}
+			</div>
+		}
+	</div>
+}
+
+templ ownedMeasuresCard(rows []db.ListOwnedMeasuresRow) {
+	<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] p-4 bg-white dark:bg-zinc-900">
+		<h3 class="text-[13px] font-medium mb-3">{ locale.T(ctx, "my_owned_measures_heading") }</h3>
+		if len(rows) == 0 {
+			<div class="text-[12px] text-sand-700 dark:text-zinc-300">{ locale.T(ctx, "my_empty_measures") }</div>
+		} else {
+			<div class="space-y-2">
+				for _, row := range rows {
+					<div class="text-[12px] border border-sand-200 dark:border-zinc-700 rounded-md p-2">
+						<a class="font-medium hover:underline" href={ templ.SafeURL("/measures/" + row.ID.String()) }>{ row.Name }</a>
+						<div class="text-sand-700 dark:text-zinc-300">{ row.Status }</div>
+						<div class="text-sand-700 dark:text-zinc-300">{ locale.T(ctx, "my_last_changed_label") }: { row.UpdatedAt }</div>
+					</div>
+				}
+			</div>
+		}
+	</div>
+}
+
+templ ownedRisksCard(rows []db.ListOwnedRisksRow) {
+	<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] p-4 bg-white dark:bg-zinc-900">
+		<h3 class="text-[13px] font-medium mb-3">{ locale.T(ctx, "my_owned_risks_heading") }</h3>
+		if len(rows) == 0 {
+			<div class="text-[12px] text-sand-700 dark:text-zinc-300">{ locale.T(ctx, "my_empty_risks") }</div>
+		} else {
+			<div class="space-y-2">
+				for _, row := range rows {
+					<div class="text-[12px] border border-sand-200 dark:border-zinc-700 rounded-md p-2">
+						<a class="font-medium hover:underline" href={ templ.SafeURL("/risks/" + row.AssessmentID.String() + "/risks/" + row.ID.String()) }>{ row.Name }</a>
+						<div class="text-sand-700 dark:text-zinc-300">
+							{ fmt.Sprintf("%s #%03d", row.AssessmentName, row.AssessmentRefNum) }
+						</div>
+						<div class="text-sand-700 dark:text-zinc-300">
+							{ locale.T(ctx, "my_risk_score_label") }: { fmt.Sprintf("%d", row.LikelihoodCurrent*row.ConsequenceCurrent) }
+						</div>
+						<div class="text-sand-700 dark:text-zinc-300">{ locale.T(ctx, "my_last_changed_label") }: { row.UpdatedAt }</div>
+					</div>
+				}
+			</div>
+		}
+	</div>
+}

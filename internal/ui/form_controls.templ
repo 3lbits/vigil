@@ -1,0 +1,75 @@
+package ui
+
+const formControlClass = "w-full text-[13px] border border-sand-300 rounded-md py-2 px-3 bg-white dark:bg-zinc-900 text-sand-900 dark:text-zinc-100 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition-colors"
+
+type InputProps struct {
+	ID          string
+	Name        string
+	Type        string
+	Placeholder string
+	Value       string
+	Required    bool
+	Class       string
+	Attrs       templ.Attributes
+}
+
+type TextareaProps struct {
+	ID          string
+	Name        string
+	Placeholder string
+	Value       string
+	Required    bool
+	Class       string
+	Attrs       templ.Attributes
+}
+
+type SelectProps struct {
+	ID       string
+	Name     string
+	Required bool
+	Class    string
+	Attrs    templ.Attributes
+}
+
+templ Input(p InputProps) {
+	<input
+		id={ p.ID }
+		name={ p.Name }
+		type={ inputType(p.Type) }
+		placeholder={ p.Placeholder }
+		value={ p.Value }
+		required?={ p.Required }
+		class={ cx(formControlClass, p.Class) }
+		{ p.Attrs... }
+	/>
+}
+
+templ Textarea(p TextareaProps) {
+	<textarea
+		id={ p.ID }
+		name={ p.Name }
+		placeholder={ p.Placeholder }
+		required?={ p.Required }
+		class={ cx(formControlClass, "min-h-[96px]", p.Class) }
+		{ p.Attrs... }
+	>{ p.Value }</textarea>
+}
+
+templ Select(p SelectProps) {
+	<select
+		id={ p.ID }
+		name={ p.Name }
+		required?={ p.Required }
+		class={ cx(formControlClass, p.Class) }
+		{ p.Attrs... }
+	>
+		{ children... }
+	</select>
+}
+
+func inputType(value string) string {
+	if value == "" {
+		return "text"
+	}
+	return value
+}

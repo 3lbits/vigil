@@ -1,0 +1,716 @@
+package dashboardtemplates
+
+import (
+	"fmt"
+	"strings"
+	"time"
+
+	"github.com/3lbits/vigil/internal/db"
+	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/middleware"
+	"github.com/3lbits/vigil/internal/ui"
+	"github.com/3lbits/vigil/internal/ui/layout"
+)
+
+type Stats struct {
+	FrameworksCount            int64
+	RequirementsCount          int64
+	MeasuresCount              int64
+	ImplementedCount           int64
+	CoveredRequirementsCount   int64
+	OverdueActivitiesCount     int64
+	ActivitiesDueThisWeekCount int64
+}
+
+type FrameworkSummary struct {
+	ID       string
+	Name     string // Short display name (short_name or fallback)
+	Ref      string // Full name / version as subtitle (may be empty)
+	Type     string // "regulation" | "standard" | "directive"
+	Total    int64
+	Coverage int
+}
+
+func (s Stats) ImplementedPct() int {
+	if s.MeasuresCount == 0 {
+		return 0
+	}
+	return int(s.ImplementedCount * 100 / s.MeasuresCount)
+}
+
+func (s Stats) CoveredPct() int {
+	if s.RequirementsCount == 0 {
+		return 0
+	}
+	return int(s.CoveredRequirementsCount * 100 / s.RequirementsCount)
+}
+
+func (s Stats) UncoveredRequirementsCount() int64 {
+	return s.RequirementsCount - s.CoveredRequirementsCount
+}
+
+func kpiTopColor(pct int) string {
+	if pct >= 70 {
+		return "border-t-green-500"
+	}
+	if pct >= 30 {
+		return "border-t-amber-500"
+	}
+	return "border-t-red-500"
+}
+
+func typeBadgeLabel(t string) string {
+	switch t {
+	case "standard":
+		return "Std"
+	case "directive":
+		return "Dir"
+	default:
+		return "Reg"
+	}
+}
+
+func typeBadgeVariant(t string) string {
+	switch t {
+	case "regulation":
+		return "warning"
+	default:
+		return "default"
+	}
+}
+
+func typeBadgeClass(t string) string {
+	switch t {
+	case "standard":
+		return "bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-950 dark:text-violet-300 dark:border-violet-800"
+	case "directive":
+		return "bg-sky-100 text-sky-700 border-sky-200 dark:bg-sky-950 dark:text-sky-300 dark:border-sky-800"
+	default:
+		return ""
+	}
+}
+
+func typeCount(fws []FrameworkSummary, t string) int {
+	n := 0
+	for _, fw := range fws {
+		if fw.Type == t {
+			n++
+		}
+	}
+	return n
+}
+
+func zeroFrameworkCount(fws []FrameworkSummary) int {
+	n := 0
+	for _, fw := range fws {
+		if fw.Coverage == 0 {
+			n++
+		}
+	}
+	return n
+}
+
+// coverageArc returns SVG stroke-dasharray for the donut chart (r=34, circumference≈213.63).
+func coverageArc(pct int) string {
+	const circ = 213.63
+	arc := float64(pct) / 100.0 * circ
+	return fmt.Sprintf("%.1f %.1f", arc, circ)
+}
+
+func activityDotColor(status string) string {
+	switch status {
+	case "completed":
+		return "bg-green-500"
+	case "overdue":
+		return "bg-red-500"
+	case "in_progress":
+		return "bg-blue-500"
+	default:
+		return "bg-sand-400"
+	}
+}
+
+func formatActivityTime(t time.Time) string {
+	return t.Format("2 Jan")
+}
+
+type RiskStats struct {
+	Total       int64
+	RedCount    int64
+	YellowCount int64
+	GreenCount  int64
+	Matrix      []layout.RiskMatrixCell
+	TopRisks    []db.ListTopRisksRow
+	ReviewNeededCount int64
+	ReviewQueue       []RiskReviewItem
+	LowMax      int
+	HighMin     int
+	OrgOptions  []OrgFilterOption
+	OrgSelected string
+	OrgName     string
+}
+
+type RiskReviewItem struct {
+	RiskID          string
+	AssessmentID    string
+	Name            string
+	AssessmentName  string
+	CurrentScore    int
+	HasCurrentScore bool
+	ReviewDue       time.Time
+	HasReviewDue    bool
+}
+
+type OrgFilterOption struct {
+	ID    string
+	Name  string
+	Depth int
+}
+
+func riskKpiTopColor(redCount, total int64) string {
+	if total == 0 {
+		return "border-t-sand-300"
+	}
+	pct := int(redCount * 100 / total)
+	if pct >= 30 {
+		return "border-t-red-500"
+	}
+	if pct >= 10 {
+		return "border-t-amber-400"
+	}
+	return "border-t-green-500"
+}
+
+func riskScoreBgClass(l, c int32, lowMax, highMin int) string {
+	score := int(l) * int(c)
+	switch {
+	case score >= highMin:
+		return "bg-red-500"
+	case score > lowMax:
+		return "bg-amber-400"
+	default:
+		return "bg-green-500"
+	}
+}
+
+func orgFilterOptionLabel(opt OrgFilterOption) string {
+	if opt.Depth <= 0 {
+		return opt.Name
+	}
+	return strings.Repeat("↳ ", opt.Depth) + opt.Name
+}
+
+templ dashDecisionBadge(decision string) {
+	switch decision {
+		case "accept":
+			@ui.Badge(ui.BadgeProps{Variant: "success", Class: "text-[10px] font-semibold"}) {
+				{ locale.T(ctx, "decision_accept") }
+			}
+		case "treat":
+			@ui.Badge(ui.BadgeProps{Variant: "default", Class: "text-[10px] font-semibold bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800"}) {
+				{ locale.T(ctx, "decision_treat") }
+			}
+		case "escalate":
+			@ui.Badge(ui.BadgeProps{Variant: "danger", Class: "text-[10px] font-semibold"}) {
+				{ locale.T(ctx, "decision_escalate") }
+			}
+		default:
+			<span class="text-[11px] text-sand-300">—</span>
+	}
+}
+
+templ DashboardContent(stats Stats, frameworks []FrameworkSummary, frameworkFilter string, frameworkTotal, frameworkRegCount, frameworkStdCount, frameworkDirCount int, recentActivities []db.ListRecentActivitiesRow, myActivities []db.ListActivitiesForUserRow, myMeasures []db.Measure, riskStats RiskStats, flags middleware.ModuleFlags) {
+	<!-- Alert banner -->
+	if (flags.ComplianceEnabled && zeroFrameworkCount(frameworks) > 0) || (flags.ActivitiesEnabled && stats.OverdueActivitiesCount > 0) {
+		<div x-data="{ dismissed: [] }" class="mb-5 flex flex-col gap-2">
+			if flags.ActivitiesEnabled && stats.OverdueActivitiesCount > 0 {
+				<div
+					x-show="!dismissed.includes('overdue')"
+					class="flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 border-l-4 border-l-blue-500 dark:border-l-blue-500"
+				>
+					<div class="w-7 h-7 rounded-md bg-blue-100 dark:bg-blue-900/80 flex items-center justify-center text-blue-600 dark:text-blue-300 shrink-0">
+						@ui.IconSVG("clock", 13)
+					</div>
+					<div class="flex-1 min-w-0">
+						<div class="text-[13px] font-semibold text-blue-800 dark:text-blue-300">
+							{ locale.TN(ctx, "label_overdue_count", int(stats.OverdueActivitiesCount), map[string]any{"Count": stats.OverdueActivitiesCount}) }
+						</div>
+						<div class="text-[12px] text-blue-700/70 dark:text-blue-300/80">{ locale.T(ctx, "dash_overdue_desc") }</div>
+					</div>
+					<a href="/activities?filter=overdue" class="text-[12px] font-semibold text-blue-600 dark:text-blue-300 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 bg-white/60 dark:bg-zinc-900/60 whitespace-nowrap shrink-0 hover:bg-white dark:hover:bg-zinc-900 transition-colors">{ locale.T(ctx, "action_view") }</a>
+					<button type="button" @click="dismissed.push('overdue')" aria-label="Dismiss overdue alert" class="text-blue-400 dark:text-blue-500 hover:text-blue-600 dark:hover:text-blue-300 text-lg leading-none p-1.5 min-w-[24px] min-h-[24px] flex items-center justify-center shrink-0">×</button>
+				</div>
+			}
+			if zeroFrameworkCount(frameworks) > 0 {
+				<div
+					x-show="!dismissed.includes('coverage')"
+					class="flex items-center gap-3 px-4 py-3 rounded-lg bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 border-l-4 border-l-amber-500 dark:border-l-amber-500"
+				>
+					<div class="w-7 h-7 rounded-md bg-amber-100 dark:bg-amber-900/80 flex items-center justify-center text-amber-600 dark:text-amber-300 shrink-0">
+						@ui.IconSVG("risk", 13)
+					</div>
+					<div class="flex-1 min-w-0">
+						<div class="text-[13px] font-semibold text-amber-800 dark:text-amber-300">
+							{ locale.TN(ctx, "dash_zero_coverage_count", zeroFrameworkCount(frameworks), map[string]any{"Count": zeroFrameworkCount(frameworks), "Total": len(frameworks)}) }
+						</div>
+						<div class="text-[12px] text-amber-700/70 dark:text-amber-300/80">{ locale.T(ctx, "dash_zero_coverage_hint") }</div>
+					</div>
+					<a href="/compliance" class="text-[12px] font-semibold text-amber-600 dark:text-amber-300 px-3 py-1.5 rounded-md border border-amber-200 dark:border-amber-800 bg-white/60 dark:bg-zinc-900/60 whitespace-nowrap shrink-0 hover:bg-white dark:hover:bg-zinc-900 transition-colors">{ locale.T(ctx, "action_view") }</a>
+					<button type="button" @click="dismissed.push('coverage')" aria-label="Dismiss coverage alert" class="text-amber-400 dark:text-amber-500 hover:text-amber-600 dark:hover:text-amber-300 text-lg leading-none p-1.5 min-w-[24px] min-h-[24px] flex items-center justify-center shrink-0">×</button>
+				</div>
+			}
+		</div>
+	}
+	<!-- KPI row -->
+	<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+		@ui.Card(ui.CardProps{}) {
+			<div class="text-xs text-sand-700 dark:text-zinc-400 mb-2">{ locale.T(ctx, "kpi_frameworks_requirements") }</div>
+			<div class="text-[30px] font-bold text-sand-900 dark:text-zinc-100 font-mono leading-none">{ fmt.Sprint(stats.RequirementsCount) }</div>
+			<div class="text-[11px] text-sand-700 dark:text-zinc-400 mt-2">
+				{ locale.T(ctx, "dash_fw_type_counts", map[string]any{
+					"Total": stats.FrameworksCount,
+					"Reg":   typeCount(frameworks, "regulation"),
+					"Std":   typeCount(frameworks, "standard"),
+					"Dir":   typeCount(frameworks, "directive"),
+				}) }
+			</div>
+		}
+		@ui.Card(ui.CardProps{
+			Accent: kpiTopColor(stats.CoveredPct()),
+		}) {
+			<div class="text-xs text-sand-700 dark:text-zinc-400 mb-2">{ locale.T(ctx, "kpi_requirements_covered") }</div>
+			<div class="text-[30px] font-bold text-sand-900 dark:text-zinc-100 font-mono leading-none">{ fmt.Sprint(stats.CoveredRequirementsCount) }</div>
+			<div class="text-[11px] text-sand-700 dark:text-zinc-400 mt-2">{ locale.T(ctx, "dash_overall_coverage", map[string]any{"Pct": stats.CoveredPct()}) }</div>
+		}
+		@ui.Card(ui.CardProps{
+			Accent: kpiTopColor(stats.ImplementedPct()),
+		}) {
+			<div class="text-xs text-sand-700 dark:text-zinc-400 mb-2">{ locale.T(ctx, "kpi_measures_defined") }</div>
+			<div class="text-[30px] font-bold text-sand-900 dark:text-zinc-100 font-mono leading-none">{ fmt.Sprint(stats.MeasuresCount) }</div>
+			<div class="text-[11px] text-sand-700 dark:text-zinc-400 mt-2">{ locale.T(ctx, "dash_reqs_without_measure", map[string]any{"Count": stats.UncoveredRequirementsCount()}) }</div>
+		}
+		if flags.RiskEnabled {
+		@ui.Card(ui.CardProps{
+			Accent: riskKpiTopColor(riskStats.RedCount, riskStats.Total),
+		}) {
+			<div class="text-xs text-sand-700 dark:text-zinc-400 mb-2">{ locale.T(ctx, "kpi_risk_register") }</div>
+			if riskStats.Total == 0 {
+				<div class="text-[30px] font-bold text-sand-300 font-mono leading-none">—</div>
+				<div class="text-[11px] text-sand-700 mt-2"><a href="/risks" class="hover:underline">{ locale.T(ctx, "risk_none_logged") }</a></div>
+			} else {
+				<div class="text-[30px] font-bold text-sand-900 dark:text-zinc-100 font-mono leading-none">{ fmt.Sprint(riskStats.Total) }</div>
+				<div class="text-[11px] text-sand-700 mt-2">
+					{ locale.T(ctx, "dash_risk_level_summary", map[string]any{"Red": riskStats.RedCount, "Yellow": riskStats.YellowCount, "Green": riskStats.GreenCount}) }
+				</div>
+			}
+		}
+		}
+	</div>
+	<!-- Coverage progress strip -->
+	<div class="border border-sand-200 dark:border-zinc-700 rounded-xl bg-white dark:bg-zinc-900 px-6 py-5 mb-5 flex items-center gap-6 flex-wrap">
+		<div class="shrink-0 text-center">
+			<svg width="80" height="80" viewBox="0 0 80 80" aria-hidden="true">
+				<circle cx="40" cy="40" r="34" fill="none" class="stroke-sand-200 dark:stroke-zinc-700" stroke-width="7"></circle>
+				<circle
+					cx="40"
+					cy="40"
+					r="34"
+					fill="none"
+					stroke="#22c55e"
+					stroke-width="7"
+					stroke-dasharray={ coverageArc(stats.CoveredPct()) }
+					stroke-linecap="round"
+					transform="rotate(-90 40 40)"
+				></circle>
+				<text x="40" y="38" text-anchor="middle" font-size="18" font-weight="700" class="fill-sand-900 dark:fill-zinc-100" font-family="JetBrains Mono, monospace">{ fmt.Sprintf("%d%%", stats.CoveredPct()) }</text>
+				<text x="40" y="52" text-anchor="middle" font-size="9" class="fill-sand-700 dark:fill-zinc-400" font-family="Inter, sans-serif">{ locale.T(ctx, "label_covered") }</text>
+			</svg>
+		</div>
+		<div class="flex gap-10 flex-wrap">
+			<div>
+				<div class="text-xs text-sand-700 dark:text-zinc-400 mb-1">{ locale.T(ctx, "kpi_measures_defined") }</div>
+				<div class="text-xl font-bold font-mono">{ fmt.Sprint(stats.MeasuresCount) }</div>
+				<div class="text-[11px] text-sand-700">{ locale.T(ctx, "label_total_controls") }</div>
+			</div>
+			<div>
+				<div class="text-xs text-sand-700 dark:text-zinc-400 mb-1">{ locale.T(ctx, "dash_reqs_mapped") }</div>
+				<div class="text-xl font-bold font-mono">
+					{ fmt.Sprint(stats.CoveredRequirementsCount) }
+					<span class="text-[13px] font-normal text-sand-700">of { fmt.Sprint(stats.RequirementsCount) }</span>
+				</div>
+				<div class="text-[11px] text-sand-700">{ locale.T(ctx, "label_linked_to_measure") }</div>
+			</div>
+			<div>
+				<div class="text-xs text-sand-700 dark:text-zinc-400 mb-1">{ locale.T(ctx, "dash_measures_verified") }</div>
+				<div class="text-xl font-bold font-mono">
+					{ fmt.Sprint(stats.ImplementedCount) }
+					<span class="text-[13px] font-normal text-sand-700">of { fmt.Sprint(stats.MeasuresCount) }</span>
+				</div>
+				<div class="text-[11px] text-sand-700">{ locale.T(ctx, "label_implementation_confirmed") }</div>
+			</div>
+		</div>
+	</div>
+	<!-- Risk management -->
+	if flags.RiskEnabled {
+	@ui.Card(ui.CardProps{
+		Class:   "mb-5",
+		Padding: "p-6",
+	}) {
+		<div class="flex items-center justify-between mb-4">
+			<h2 class="text-[15px] font-bold">{ locale.T(ctx, "section_risk_management") }</h2>
+			<div class="flex items-center gap-2">
+				<form method="GET" action="/" class="flex items-center gap-1.5">
+					<input type="hidden" name="framework_type" value={ frameworkFilter }/>
+					<label for="risk-org-filter" class="sr-only">{ locale.T(ctx, "label_organisation") }</label>
+					@ui.Select(ui.SelectProps{
+						ID:    "risk-org-filter",
+						Name:  "risk_org_id",
+						Class: "text-[12px] px-2 py-1.5 max-w-[220px]",
+					}) {
+						<option value="">{ locale.T(ctx, "dash_risk_org_filter_all") }</option>
+						for _, opt := range riskStats.OrgOptions {
+							<option value={ opt.ID } selected?={ riskStats.OrgSelected == opt.ID }>{ orgFilterOptionLabel(opt) }</option>
+						}
+					}
+					@ui.Button(ui.ButtonProps{
+						Variant: "secondary",
+						Size:    "sm",
+						Attrs: templ.Attributes{
+							"type": "submit",
+						},
+					}) {
+						{ locale.T(ctx, "action_search") }
+					}
+				</form>
+				<a href="/risks" class="text-[13px] text-sand-700 hover:text-sand-900 flex items-center gap-1">
+					{ locale.T(ctx, "nav_risk_register") }
+					@ui.IconSVG("arrow-up-right", 12)
+				</a>
+			</div>
+		</div>
+		if riskStats.OrgName != "" {
+			<div class="text-[11px] text-sand-700 mb-3">{ locale.T(ctx, "dash_risk_org_filter_selected", map[string]any{"Org": riskStats.OrgName}) }</div>
+		}
+		if riskStats.ReviewNeededCount > 0 {
+			<div class="mb-4 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950 p-3">
+				<div class="flex items-center justify-between gap-2 mb-2">
+					<div class="text-[12px] font-semibold text-amber-800 dark:text-amber-300">
+						{ locale.TN(ctx, "dash_risk_reassessment_count", int(riskStats.ReviewNeededCount), map[string]any{"Count": riskStats.ReviewNeededCount}) }
+					</div>
+					<a href="/risks" class="text-[11px] text-amber-700 dark:text-amber-300 hover:underline">{ locale.T(ctx, "action_view_all") }</a>
+				</div>
+				<ul class="space-y-1.5">
+					for _, item := range riskStats.ReviewQueue {
+						<li class="flex items-center justify-between gap-2 text-[12px] bg-white dark:bg-zinc-900 border border-amber-200 dark:border-amber-800 rounded px-2.5 py-1.5">
+							<a href={ templ.SafeURL("/risks/" + item.AssessmentID + "/risks/" + item.RiskID + "/reassess") } class="min-w-0 flex-1 text-amber-800 dark:text-amber-300 hover:text-blue-700 dark:hover:text-blue-300 hover:underline truncate">
+								{ item.Name }
+								<span class="text-amber-700 dark:text-amber-400"> · { item.AssessmentName }</span>
+							</a>
+							<div class="flex items-center gap-2 shrink-0">
+								if item.HasCurrentScore {
+									<span class="font-mono text-[11px] text-amber-700 dark:text-amber-300">{ fmt.Sprint(item.CurrentScore) }</span>
+								}
+								if item.HasReviewDue {
+									<span class="text-[11px] text-amber-700 dark:text-amber-300">{ item.ReviewDue.Format("2 Jan") }</span>
+								}
+							</div>
+						</li>
+					}
+				</ul>
+			</div>
+		}
+		if riskStats.Total == 0 {
+			<div class="py-6 text-center text-[13px] text-sand-700">
+				{ locale.T(ctx, "risk_none_assessed") } <a href="/risks/new" class="text-blue-600 hover:underline">{ locale.T(ctx, "dash_start_first_assessment") }</a>
+			</div>
+		} else {
+			<div class="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-8">
+				<!-- Risk heat map -->
+				<div>
+					<div class="text-xs font-semibold text-sand-700 mb-3">{ locale.T(ctx, "dash_current_risk_map") }</div>
+					@layout.RiskMatrix(riskStats.Matrix)
+					<div class="flex gap-4 mt-3 text-[11px] text-sand-700">
+						<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-red-500 inline-block"></span>{ fmt.Sprintf("%s (\u2265%d)", locale.T(ctx, "risk_level_high"), riskStats.HighMin) }</span>
+						<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-amber-400 inline-block"></span>{ fmt.Sprintf("%s (%d\u2013%d)", locale.T(ctx, "risk_level_medium"), riskStats.LowMax+1, riskStats.HighMin-1) }</span>
+						<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-green-500 inline-block"></span>{ fmt.Sprintf("%s (\u2264%d)", locale.T(ctx, "risk_level_low"), riskStats.LowMax) }</span>
+					</div>
+					<div class="text-[10px] text-sand-700 mt-1">NS 5814</div>
+				</div>
+				<!-- Top risks table -->
+				<div>
+					<div class="text-xs font-semibold text-sand-700 mb-3">{ locale.T(ctx, "dash_top_risks_title") }</div>
+					if len(riskStats.TopRisks) == 0 {
+						<p class="text-[13px] text-sand-700 py-4">{ locale.T(ctx, "risk_none_scored") }</p>
+					} else {
+						<div class="rounded-lg border border-sand-200 dark:border-zinc-700 overflow-hidden">
+							<div class="grid grid-cols-[1fr_70px_80px_70px] gap-2 px-3 py-2 bg-sand-50 dark:bg-zinc-800 text-[10px] font-semibold text-sand-700 dark:text-zinc-400 uppercase tracking-wide">
+								<span>{ locale.T(ctx, "label_risk") }</span>
+								<span class="text-center">{ locale.T(ctx, "label_score") }</span>
+								<span>{ locale.T(ctx, "label_assessment") }</span>
+								<span>{ locale.T(ctx, "label_decision") }</span>
+							</div>
+							for i, risk := range riskStats.TopRisks {
+								<div class={ "grid grid-cols-[1fr_70px_80px_70px] gap-2 px-3 py-2.5 items-center border-t border-sand-200 dark:border-zinc-700", templ.KV("bg-sand-50/50 dark:bg-zinc-800/50", i%2 != 0) }>
+									<span class="text-[12px] text-sand-800 dark:text-zinc-200 font-medium truncate">{ risk.Name }</span>
+									if risk.LikelihoodCurrent.Valid && risk.ConsequenceCurrent.Valid {
+										<div class={ "mx-auto w-8 h-6 rounded text-[10px] font-bold text-white flex items-center justify-center", riskScoreBgClass(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, riskStats.LowMax, riskStats.HighMin) }>
+											{ fmt.Sprint(int(risk.LikelihoodCurrent.Int32) * int(risk.ConsequenceCurrent.Int32)) }
+										</div>
+									} else {
+										<span class="text-[11px] text-sand-300 text-center">—</span>
+									}
+									<span class="text-[10px] text-sand-700 truncate">{ risk.AssessmentName }</span>
+									@dashDecisionBadge(risk.RiskDecision)
+								</div>
+							}
+						</div>
+						<div class="text-[11px] text-sand-700 dark:text-zinc-400 mt-2">
+							{ locale.T(ctx, "dash_risk_total_summary", map[string]any{"Total": riskStats.Total, "Red": riskStats.RedCount, "Yellow": riskStats.YellowCount, "Green": riskStats.GreenCount}) }
+						</div>
+					}
+				</div>
+			</div>
+		}
+	}
+	}
+	<!-- Recent activity -->
+	if flags.ActivitiesEnabled {
+	@ui.Card(ui.CardProps{
+		Class: "mb-5",
+	}) {
+		<div class="flex items-center justify-between mb-3">
+			<h2 class="text-[14px] font-bold">{ locale.T(ctx, "section_recent_activity") }</h2>
+			<div class="flex items-center gap-3">
+				if stats.OverdueActivitiesCount > 0 {
+					<a href="/activities?filter=overdue" class="text-[12px] font-medium text-red-600 hover:underline">
+						{ locale.TN(ctx, "label_overdue_count", int(stats.OverdueActivitiesCount), map[string]any{"Count": stats.OverdueActivitiesCount}) }
+					</a>
+				}
+				if stats.ActivitiesDueThisWeekCount > 0 {
+					<a href="/activities?filter=planned" class="text-[12px] text-amber-700 hover:underline">
+						{ locale.TN(ctx, "label_due_this_week_count", int(stats.ActivitiesDueThisWeekCount), map[string]any{"Count": stats.ActivitiesDueThisWeekCount}) }
+					</a>
+				}
+				<a href="/activities" class="text-[12px] text-sand-700 dark:text-zinc-400 hover:text-sand-900 dark:hover:text-zinc-100 flex items-center gap-1">
+					{ locale.T(ctx, "action_view_all") }
+					@ui.IconSVG("arrow-up-right", 11)
+				</a>
+			</div>
+		</div>
+		<ul class="flex flex-col divide-y divide-sand-200/60 dark:divide-zinc-700/60">
+			if len(recentActivities) == 0 {
+				<li class="py-3.5 text-[13px] text-sand-700">
+					{ locale.T(ctx, "dash_activities_none_yet") } <a href="/activities/new" class="text-blue-600 hover:underline">{ locale.T(ctx, "dash_add_one") }</a>
+				</li>
+			} else {
+				for _, a := range recentActivities {
+					<li class="flex items-center gap-3 py-3">
+						<div aria-label={ a.Status } class={ "w-2 h-2 rounded-full shrink-0", activityDotColor(a.Status) }></div>
+						<div class="flex-1 min-w-0">
+							<a href={ templ.SafeURL("/activities/" + a.ID.String()) } class="text-[13px] font-medium hover:text-blue-700 hover:underline truncate block">{ a.Title }</a>
+							<div class="text-[11px] text-sand-700 flex items-center gap-2">
+								if a.MeasureName != "" {
+									<span class="truncate">{ a.MeasureName }</span>
+								}
+								if a.Owner != "" {
+									<span class="shrink-0 text-[10px] bg-sand-100 dark:bg-zinc-800 px-1.5 rounded text-sand-700 dark:text-zinc-400">{ a.Owner }</span>
+								}
+							</div>
+						</div>
+						<div class="shrink-0 text-[11px] text-sand-700 dark:text-zinc-400 font-mono">
+							if a.Status == "completed" && a.CompletedAt.Valid {
+								{ formatActivityTime(a.CompletedAt.Time) }
+							} else if a.DueDate.Valid {
+								{ formatActivityTime(a.DueDate.Time) }
+							} else {
+								{ formatActivityTime(a.UpdatedAt) }
+							}
+						</div>
+					</li>
+				}
+			}
+		</ul>
+	}
+	}
+	<!-- My work -->
+	if (flags.ActivitiesEnabled && len(myActivities) > 0) || len(myMeasures) > 0 {
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5">
+			if flags.ActivitiesEnabled {
+			@ui.Card(ui.CardProps{}) {
+				<div class="flex items-center justify-between mb-3">
+					<h2 class="text-[14px] font-bold">{ locale.T(ctx, "section_my_activities") }</h2>
+					<a href="/activities" class="text-[12px] text-sand-700 dark:text-zinc-400 hover:text-sand-900 dark:hover:text-zinc-100 flex items-center gap-1">
+						{ locale.T(ctx, "action_view_all") }
+						@ui.IconSVG("arrow-up-right", 11)
+					</a>
+				</div>
+				if len(myActivities) == 0 {
+					<p class="text-[13px] text-sand-700 py-2">{ locale.T(ctx, "activities_none_assigned") }</p>
+				} else {
+					<ul class="flex flex-col divide-y divide-sand-200/60 dark:divide-zinc-700/60">
+						for _, a := range myActivities {
+							<li class="flex items-center gap-3 py-2.5">
+								<div aria-label={ a.Status } class={ "w-2 h-2 rounded-full shrink-0", activityDotColor(a.Status) }></div>
+								<div class="flex-1 min-w-0">
+									<a href={ templ.SafeURL("/activities/" + a.ID.String()) } class="text-[12px] font-medium hover:text-blue-700 hover:underline truncate block">{ a.Title }</a>
+									if a.MeasureName != "" {
+										<div class="text-[10px] text-sand-700 dark:text-zinc-400 truncate">{ a.MeasureName }</div>
+									}
+								</div>
+								if a.DueDate.Valid {
+									<div class="shrink-0 text-[11px] text-sand-700 dark:text-zinc-400 font-mono">{ formatActivityTime(a.DueDate.Time) }</div>
+								}
+							</li>
+						}
+					</ul>
+				}
+			}
+			}
+			@ui.Card(ui.CardProps{}) {
+				<div class="flex items-center justify-between mb-3">
+					<h2 class="text-[14px] font-bold">{ locale.T(ctx, "section_my_measures") }</h2>
+					<a href="/measures" class="text-[12px] text-sand-700 dark:text-zinc-400 hover:text-sand-900 dark:hover:text-zinc-100 flex items-center gap-1">
+						{ locale.T(ctx, "action_view_all") }
+						@ui.IconSVG("arrow-up-right", 11)
+					</a>
+				</div>
+				if len(myMeasures) == 0 {
+					<p class="text-[13px] text-sand-700 py-2">{ locale.T(ctx, "measures_none_assigned") }</p>
+				} else {
+					<ul class="flex flex-col divide-y divide-sand-200/60 dark:divide-zinc-700/60">
+						for _, m := range myMeasures {
+							<li class="flex items-center gap-3 py-2.5">
+								<div class="flex-1 min-w-0">
+									<a href={ templ.SafeURL("/measures/" + m.ID.String()) } class="text-[12px] font-medium hover:text-blue-700 hover:underline truncate block">{ m.Name }</a>
+									if m.Category != "" {
+										<div class="text-[10px] text-sand-700 dark:text-zinc-400 truncate">{ m.Category }</div>
+									}
+								</div>
+								@ui.StatusBadge(m.Status)
+							</li>
+						}
+					</ul>
+				}
+			}
+		</div>
+	}
+	<!-- Regulations + Quick nav -->
+	<div class="grid grid-cols-1 lg:grid-cols-[7fr_3fr] gap-4 mb-5">
+		<!-- Framework list -->
+		if flags.ComplianceEnabled {
+		@ui.Card(ui.CardProps{}) {
+			<div class="flex items-center justify-between mb-3">
+				<h2 class="text-[14px] font-bold">{ locale.T(ctx, "section_regulations_standards") }</h2>
+				<a href="/compliance/frameworks/new" class="text-[12px] text-sand-700 hover:text-sand-700 flex items-center gap-1 transition-colors">
+					{ locale.T(ctx, "action_add") }
+					@ui.IconSVG("plus", 11)
+				</a>
+			</div>
+			<div class="flex gap-1.5 flex-wrap mb-3">
+				<a href="/" class={ "text-[11px] px-2.5 py-1 rounded-md transition-colors", templ.KV("bg-sand-900 dark:bg-zinc-100 text-white dark:text-zinc-900", frameworkFilter == "all"), templ.KV("text-sand-700 dark:text-zinc-300 hover:text-sand-800 dark:hover:text-zinc-100 hover:bg-sand-100 dark:hover:bg-zinc-800", frameworkFilter != "all") }>{ locale.T(ctx, "fw_filter_all") + fmt.Sprintf(" (%d)", frameworkTotal) }</a>
+				<a href="/?framework_type=regulation" class={ "text-[11px] px-2.5 py-1 rounded-md transition-colors", templ.KV("bg-sand-900 dark:bg-zinc-100 text-white dark:text-zinc-900", frameworkFilter == "regulation"), templ.KV("text-sand-700 dark:text-zinc-300 hover:text-sand-800 dark:hover:text-zinc-100 hover:bg-sand-100 dark:hover:bg-zinc-800", frameworkFilter != "regulation") }>{ locale.T(ctx, "fw_filter_reg") + fmt.Sprintf(" (%d)", frameworkRegCount) }</a>
+				<a href="/?framework_type=standard" class={ "text-[11px] px-2.5 py-1 rounded-md transition-colors", templ.KV("bg-sand-900 dark:bg-zinc-100 text-white dark:text-zinc-900", frameworkFilter == "standard"), templ.KV("text-sand-700 dark:text-zinc-300 hover:text-sand-800 dark:hover:text-zinc-100 hover:bg-sand-100 dark:hover:bg-zinc-800", frameworkFilter != "standard") }>{ locale.T(ctx, "fw_filter_std") + fmt.Sprintf(" (%d)", frameworkStdCount) }</a>
+				<a href="/?framework_type=directive" class={ "text-[11px] px-2.5 py-1 rounded-md transition-colors", templ.KV("bg-sand-900 dark:bg-zinc-100 text-white dark:text-zinc-900", frameworkFilter == "directive"), templ.KV("text-sand-700 dark:text-zinc-300 hover:text-sand-800 dark:hover:text-zinc-100 hover:bg-sand-100 dark:hover:bg-zinc-800", frameworkFilter != "directive") }>{ locale.T(ctx, "fw_filter_dir") + fmt.Sprintf(" (%d)", frameworkDirCount) }</a>
+			</div>
+			if len(frameworks) == 0 {
+				<div data-testid="no-frameworks-message" class="text-[13px] text-sand-700 py-4 text-center">
+					{ locale.T(ctx, "frameworks_none_yet") } <a href="/compliance/frameworks/new" class="text-blue-600 hover:underline">{ locale.T(ctx, "action_add") } →</a>
+				</div>
+			} else {
+				<ul class="flex flex-col gap-2">
+					for _, fw := range frameworks {
+						<li data-testid="framework-coverage-row">
+							<a
+								href={ templ.SafeURL("/compliance?expand=" + fw.ID) }
+								class="grid grid-cols-[32px_1fr_36px_2fr] items-center gap-2.5 px-2 py-2.5 rounded-lg hover:bg-sand-50 transition-colors"
+							>
+								@ui.Badge(ui.BadgeProps{
+									Variant: typeBadgeVariant(fw.Type),
+									Class:   "text-[10px] font-semibold " + typeBadgeClass(fw.Type),
+								}) { { typeBadgeLabel(fw.Type) } }
+								<span class="text-[12px] font-mono font-medium text-sand-800 truncate">{ fw.Name }</span>
+								<span class="text-[11px] text-sand-700 dark:text-zinc-400 font-mono text-right">{ fmt.Sprint(fw.Total) }</span>
+								<div class="flex items-center gap-2">
+									<div class="flex-1">
+										@ui.CoverageProgressBar(fw.Coverage)
+									</div>
+									<span class="text-[11px] font-medium w-7 text-right shrink-0 font-mono">{ fmt.Sprintf("%d%%", fw.Coverage) }</span>
+								</div>
+							</a>
+						</li>
+					}
+				</ul>
+			}
+		}
+		}
+		<!-- Quick navigation -->
+		@ui.Card(ui.CardProps{}) {
+			<h2 class="text-[14px] font-bold mb-3">{ locale.T(ctx, "section_quick_navigation") }</h2>
+			<div class="flex flex-col gap-2.5">
+				if flags.ComplianceEnabled {
+					@quickLink("compliance", locale.T(ctx, "nav_compliance"), locale.T(ctx, "dash_compliance_desc"), "/compliance", locale.TN(ctx, "label_count_unmapped", int(stats.UncoveredRequirementsCount()), map[string]any{"Count": stats.UncoveredRequirementsCount()}), "")
+				}
+				@quickLink("shield", locale.T(ctx, "nav_measures"), locale.T(ctx, "dash_measures_desc"), "/measures", locale.TN(ctx, "label_count_defined", int(stats.MeasuresCount), map[string]any{"Count": stats.MeasuresCount}), "")
+				if flags.ActivitiesEnabled {
+					@activitiesQuickLink(stats)
+				}
+				@quickLink("link", locale.T(ctx, "dash_overlap_analysis"), locale.T(ctx, "dash_overlap_desc"), "/compliance", "", locale.T(ctx, "label_coming"))
+			</div>
+		}
+	</div>
+}
+
+templ quickLink(icon, label, description, href, badge, comingBadge string) {
+	<a
+		href={ templ.SafeURL(href) }
+		class="flex items-center gap-3 p-3.5 rounded-xl border border-sand-200 dark:border-zinc-700 hover:border-sand-400 dark:hover:border-zinc-500 hover:bg-sand-50 dark:hover:bg-zinc-800 transition-all group"
+	>
+		<div class="w-9 h-9 rounded-lg bg-sand-100 dark:bg-zinc-800 group-hover:bg-sand-200 dark:group-hover:bg-zinc-700 flex items-center justify-center text-sand-700 dark:text-zinc-300 shrink-0 transition-colors">
+			@ui.IconSVG(icon, 16)
+		</div>
+		<div class="flex-1 min-w-0">
+			<div class="text-[13px] font-semibold text-sand-800 dark:text-zinc-200">{ label }</div>
+			<div class="text-[11px] text-sand-700 dark:text-zinc-400">{ description }</div>
+		</div>
+		if comingBadge != "" {
+			<span class="text-[9px] font-bold uppercase tracking-wide text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 px-1.5 py-0.5 rounded shrink-0">{ comingBadge }</span>
+		} else if badge != "" {
+			@ui.Badge(ui.BadgeProps{
+				Variant: "default",
+				Class:   "font-semibold font-mono",
+			}) { { badge } }
+		}
+		<span class="text-sand-300 dark:text-zinc-600 group-hover:text-sand-600 dark:group-hover:text-zinc-300 shrink-0 transition-colors">
+			@ui.IconSVG("arrow-up-right", 12)
+		</span>
+	</a>
+}
+
+templ activitiesQuickLink(stats Stats) {
+	<a
+		href="/activities"
+		class="flex items-center gap-3 p-3.5 rounded-xl border border-sand-200 dark:border-zinc-700 hover:border-sand-400 dark:hover:border-zinc-500 hover:bg-sand-50 dark:hover:bg-zinc-800 transition-all group"
+	>
+		<div class="w-9 h-9 rounded-lg bg-sand-100 dark:bg-zinc-800 group-hover:bg-sand-200 dark:group-hover:bg-zinc-700 flex items-center justify-center text-sand-700 dark:text-zinc-300 shrink-0 transition-colors">
+			@ui.IconSVG("calendar", 16)
+		</div>
+		<div class="flex-1 min-w-0">
+			<div class="text-[13px] font-semibold text-sand-800 dark:text-zinc-200">{ locale.T(ctx, "nav_activities") }</div>
+			<div class="text-[11px] text-sand-700 dark:text-zinc-400">{ locale.T(ctx, "dash_activities_desc") }</div>
+		</div>
+		if stats.OverdueActivitiesCount > 0 {
+			@ui.Badge(ui.BadgeProps{
+				Variant: "danger",
+				Class:   "font-semibold font-mono",
+			}) { { locale.TN(ctx, "label_overdue_count", int(stats.OverdueActivitiesCount), map[string]any{"Count": stats.OverdueActivitiesCount}) } }
+		} else {
+			@ui.Badge(ui.BadgeProps{
+				Variant: "default",
+				Class:   "font-semibold font-mono",
+			}) { { locale.TN(ctx, "label_count_defined", int(stats.MeasuresCount), map[string]any{"Count": stats.MeasuresCount}) } }
+		}
+		<span class="text-sand-300 dark:text-zinc-600 group-hover:text-sand-600 dark:group-hover:text-zinc-300 shrink-0 transition-colors">
+			@ui.IconSVG("arrow-up-right", 12)
+		</span>
+	</a>
+}

@@ -1,0 +1,230 @@
+package forms
+
+import (
+	"github.com/3lbits/vigil/internal/db"
+	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui"
+)
+
+templ MeasureCreateFields(users []db.User, idPrefix string) {
+	@ui.Field(sharedFieldID(idPrefix, "measure-name"), "label_name", true) {
+		@ui.Input(ui.InputProps{
+			ID:          sharedFieldID(idPrefix, "measure-name"),
+			Name:        "name",
+			Placeholder: "e.g. Patch management process",
+			Required:    true,
+		})
+	}
+	@ui.Field(sharedFieldID(idPrefix, "measure-category"), "label_category", false) {
+		@ui.Input(ui.InputProps{
+			ID:          sharedFieldID(idPrefix, "measure-category"),
+			Name:        "category",
+			Placeholder: "e.g. Technical, Organisational",
+		})
+	}
+	@ui.Field(sharedFieldID(idPrefix, "measure-owner"), "label_owner_text_team", false) {
+		@ui.Input(ui.InputProps{
+			ID:          sharedFieldID(idPrefix, "measure-owner"),
+			Name:        "owner",
+			Type:        "search",
+			Placeholder: "Search user or enter custom owner",
+			Attrs: templ.Attributes{
+				"list": sharedFieldID(idPrefix, "measure-owner-list"),
+			},
+		})
+		<datalist id={ sharedFieldID(idPrefix, "measure-owner-list") }>
+			for _, u := range users {
+				<option value={ measureUserLookupValue(u) } label={ u.Email }></option>
+			}
+		</datalist>
+	}
+	@ui.Field(sharedFieldID(idPrefix, "measure-assignee-lookup"), "label_assignee_registered", false) {
+		@ui.Input(ui.InputProps{
+			ID:          sharedFieldID(idPrefix, "measure-assignee-lookup"),
+			Name:        "assignee_lookup",
+			Type:        "search",
+			Placeholder: "Search user by name or email",
+			Attrs: templ.Attributes{
+				"list": sharedFieldID(idPrefix, "measure-assignee-list"),
+			},
+		})
+		<datalist id={ sharedFieldID(idPrefix, "measure-assignee-list") }>
+			for _, u := range users {
+				<option value={ measureUserLookupValue(u) }></option>
+			}
+		</datalist>
+	}
+	<div>
+		<label for={ sharedFieldID(idPrefix, "measure-due-date") } class="mb-1 block text-[13px] font-medium text-sand-800 dark:text-zinc-200">
+			{ locale.T(ctx, "label_due_date") }
+			<span class="text-[11px] font-normal text-sand-700 dark:text-zinc-400">({ locale.T(ctx, "label_due_date_measure_hint") })</span>
+		</label>
+		@ui.Input(ui.InputProps{
+			ID:   sharedFieldID(idPrefix, "measure-due-date"),
+			Name: "due_date",
+			Type: "date",
+		})
+	</div>
+	@ui.Field(sharedFieldID(idPrefix, "measure-description"), "label_description", false) {
+		@ui.Textarea(ui.TextareaProps{
+			ID:          sharedFieldID(idPrefix, "measure-description"),
+			Name:        "description",
+			Placeholder: "Optional detailed description",
+		})
+	}
+}
+
+templ ActivityCreateFields(measures []db.Measure, users []db.User, idPrefix, defaultTitle string) {
+	<div class="grid grid-cols-2 gap-3">
+		<div class="flex flex-col gap-1 col-span-2">
+			@ui.Field(sharedFieldID(idPrefix, "measure_id"), "label_measure", false) {
+				@ui.Select(ui.SelectProps{
+					ID:   sharedFieldID(idPrefix, "measure_id"),
+					Name: "measure_id",
+				}) {
+					<option value="">— { locale.T(ctx, "label_none") } —</option>
+					for _, m := range measures {
+						<option value={ m.ID.String() }>{ m.Name }</option>
+					}
+				}
+			}
+		</div>
+		<div class="col-span-2">
+			@activityCreateInputField("label_title", "title", "e.g. Annual penetration test", defaultTitle, true, idPrefix)
+		</div>
+		<div class="col-span-2">
+			@activityCreateTextareaField("label_description", "description", "Optional context or scope", "", idPrefix)
+		</div>
+		<div class="flex flex-col gap-1">
+			@ui.Field(sharedFieldID(idPrefix, "activity_type"), "label_type", false) {
+				@ui.Select(ui.SelectProps{
+					ID:   sharedFieldID(idPrefix, "activity_type"),
+					Name: "activity_type",
+				}) {
+					<option value="one_off" selected>{ locale.T(ctx, "label_one_off") }</option>
+					<option value="recurring">{ locale.T(ctx, "type_recurring") }</option>
+				}
+			}
+		</div>
+		<div class="flex flex-col gap-1">
+			@ui.Field(sharedFieldID(idPrefix, "recurrence"), "label_recurrence", false) {
+				@ui.Select(ui.SelectProps{
+					ID:   sharedFieldID(idPrefix, "recurrence"),
+					Name: "recurrence",
+				}) {
+					<option value="none" selected>{ locale.T(ctx, "recurrence_none") }</option>
+					<option value="monthly">{ locale.T(ctx, "recurrence_monthly") }</option>
+					<option value="tertially">{ locale.T(ctx, "recurrence_tertially") }</option>
+					<option value="annual">{ locale.T(ctx, "recurrence_annual") }</option>
+					<option value="ad_hoc">{ locale.T(ctx, "recurrence_ad_hoc") }</option>
+				}
+			}
+		</div>
+		<div class="flex flex-col gap-1">
+			@ui.Field(sharedFieldID(idPrefix, "kind"), "label_kind", false) {
+				@ui.Select(ui.SelectProps{
+					ID:   sharedFieldID(idPrefix, "kind"),
+					Name: "kind",
+				}) {
+					<option value="training">{ locale.T(ctx, "kind_training") }</option>
+					<option value="exercise">{ locale.T(ctx, "kind_exercise") }</option>
+					<option value="assessment">{ locale.T(ctx, "kind_assessment") }</option>
+					<option value="audit">{ locale.T(ctx, "kind_audit") }</option>
+					<option value="remediation">{ locale.T(ctx, "kind_remediation") }</option>
+					<option value="review" selected>{ locale.T(ctx, "kind_review") }</option>
+				}
+			}
+		</div>
+		<div class="flex flex-col gap-1">
+			@ui.Field(sharedFieldID(idPrefix, "priority"), "label_priority", false) {
+				@ui.Select(ui.SelectProps{
+					ID:   sharedFieldID(idPrefix, "priority"),
+					Name: "priority",
+				}) {
+					<option value="low">{ locale.T(ctx, "priority_low") }</option>
+					<option value="medium" selected>{ locale.T(ctx, "priority_medium") }</option>
+					<option value="high">{ locale.T(ctx, "priority_high") }</option>
+				}
+			}
+		</div>
+		<div class="col-span-2">
+			@activityCreateAssigneePicker(users, idPrefix)
+		</div>
+		<div class="col-span-2 flex flex-col gap-1">
+			@activityCreateInputField("label_due_date", "due_date", "", "", false, idPrefix)
+		</div>
+	</div>
+}
+
+func sharedFieldID(prefix, suffix string) string { return prefix + "-" + suffix }
+func measureUserLookupValue(u db.User) string { return u.Name + " (" + u.Email + ")" }
+
+templ activityCreateInputField(labelKey, name, placeholder, value string, required bool, idPrefix string) {
+	@ui.Field(sharedFieldID(idPrefix, name), labelKey, required) {
+		@ui.Input(ui.InputProps{
+			ID:          sharedFieldID(idPrefix, name),
+			Name:        name,
+			Type:        createInputType(name),
+			Value:       value,
+			Placeholder: placeholder,
+			Required:    required,
+		})
+	}
+}
+
+func createInputType(name string) string {
+	if name == "due_date" {
+		return "date"
+	}
+	return "text"
+}
+
+templ activityCreateAssigneePicker(users []db.User, idPrefix string) {
+	<div x-data="{ assigneeID: '', owner: '' }" class="flex flex-col gap-2">
+		<div class="flex flex-col gap-1">
+			@ui.Field(sharedFieldID(idPrefix, "assignee_id"), "label_assignee_registered", false) {
+				@ui.Select(ui.SelectProps{
+					ID:   sharedFieldID(idPrefix, "assignee_id"),
+					Name: "assignee_id",
+					Attrs: templ.Attributes{
+						"x-model":  "assigneeID",
+						"@change": "if (assigneeID !== '') { owner = $el.options[$el.selectedIndex].dataset.name } else { owner = '' }",
+					},
+				}) {
+					<option value="">{ locale.T(ctx, "label_or_enter_name_below") }</option>
+					for _, u := range users {
+						<option value={ u.ID.String() } data-name={ u.Name }>{ u.Name } ({ u.Email })</option>
+					}
+				}
+			}
+		</div>
+		<div class="flex flex-col gap-1">
+			@ui.Field(sharedFieldID(idPrefix, "owner"), "label_owner_free_text_name", false) {
+				@ui.Input(ui.InputProps{
+					ID:          sharedFieldID(idPrefix, "owner"),
+					Name:        "owner",
+					Type:        "text",
+					Placeholder: "e.g. security team",
+					Attrs: templ.Attributes{
+						"x-model":   "owner",
+						":disabled": "assigneeID !== ''",
+					},
+				})
+			}
+		</div>
+	</div>
+}
+
+templ activityCreateTextareaField(labelKey, name, placeholder, value, idPrefix string) {
+	@ui.Field(sharedFieldID(idPrefix, name), labelKey, false) {
+		@ui.Textarea(ui.TextareaProps{
+			ID:          sharedFieldID(idPrefix, name),
+			Name:        name,
+			Placeholder: placeholder,
+			Value:       value,
+			Attrs: templ.Attributes{
+				"rows": "3",
+			},
+		})
+	}
+}

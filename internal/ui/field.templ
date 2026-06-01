@@ -1,0 +1,15 @@
+package ui
+
+import "github.com/3lbits/vigil/internal/locale"
+
+templ Field(id, labelKey string, required bool) {
+	<div>
+		<label for={ id } class="mb-1 block text-[13px] font-medium text-sand-800 dark:text-zinc-200">
+			{ locale.T(ctx, labelKey) }
+			if required {
+				<span class="text-red-500">*</span>
+			}
+		</label>
+		{ children... }
+	</div>
+}

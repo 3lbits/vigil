@@ -1,0 +1,658 @@
+package avviktemplates
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/3lbits/vigil/internal/csrf"
+	"github.com/3lbits/vigil/internal/db"
+	"github.com/3lbits/vigil/internal/ui"
+	formstemplates "github.com/3lbits/vigil/internal/ui/forms"
+)
+
+type DetailData struct {
+	Avvik         db.Avvik
+	Tab           string
+	Events        []db.AvvikEvent
+	Measures      []db.Measure
+	Activities    []db.Activity
+	Attachments   []db.AvvikAttachment
+	Notifications []db.AvvikNotification
+	AllMeasures   []db.Measure
+	AllActivities []db.ListActivitiesRow
+	AllUsers      []db.User
+	CanClose      bool
+	CanManage     bool
+	CanContribute bool
+}
+
+templ AvvikList(items []db.Avvik, orgs []db.Organization, status, risk, orgUnit string, mine bool) {
+	<div class="flex items-center justify-between mb-4">
+		<p class="text-[13px] text-sand-700">{ fmt.Sprintf("%d avvik", len(items)) }</p>
+		<a href="/avvik/new" class="text-xs font-medium py-1.5 px-3.5 rounded-md border border-sand-400 hover:bg-sand-100 transition-colors flex items-center gap-1.5">
+			@ui.IconSVG("plus", 13)
+			New Avvik
+		</a>
+	</div>
+	<form method="GET" action="/avvik" class="flex flex-wrap gap-2 mb-4 items-center">
+		@ui.Select(ui.SelectProps{
+			Name:  "status",
+			Class: "text-[12px] px-2.5 py-1.5",
+		}) {
+			<option value="" selected?={ status == "" }>All status</option>
+			<option value="new" selected?={ status == "new" }>new</option>
+			<option value="triaging" selected?={ status == "triaging" }>triaging</option>
+			<option value="investigating" selected?={ status == "investigating" }>investigating</option>
+			<option value="mitigating" selected?={ status == "mitigating" }>mitigating</option>
+			<option value="closed" selected?={ status == "closed" }>closed</option>
+		}
+		@ui.Select(ui.SelectProps{
+			Name:  "risk",
+			Class: "text-[12px] px-2.5 py-1.5",
+		}) {
+			<option value="" selected?={ risk == "" }>All risk</option>
+			<option value="low" selected?={ risk == "low" }>low</option>
+			<option value="medium" selected?={ risk == "medium" }>medium</option>
+			<option value="high" selected?={ risk == "high" }>high</option>
+		}
+		@ui.Select(ui.SelectProps{
+			Name:  "org_unit",
+			Class: "text-[12px] px-2.5 py-1.5",
+		}) {
+			<option value="" selected?={ orgUnit == "" }>All org units</option>
+			for _, org := range orgs {
+				<option value={ org.ID.String() } selected?={ orgUnit == org.ID.String() }>{ org.Name }</option>
+			}
+		}
+		<label class="flex items-center gap-1.5 text-[12px] text-sand-700 cursor-pointer select-none">
+			<input type="checkbox" name="mine" checked?={ mine } class="rounded"/>
+			Mine
+		</label>
+		<button type="submit" class="text-xs border border-sand-300 rounded-md px-3 py-1.5 hover:bg-sand-100">Filter</button>
+	</form>
+	<div id="avvik-table">
+		@AvvikTable(items)
+	</div>
+}
+
+templ AvvikTable(items []db.Avvik) {
+	if len(items) == 0 {
+		@ui.EmptyState(ui.EmptyStateProps{
+			Class: "border-solid border-sand-300/60 rounded-[10px] p-8 bg-white dark:bg-zinc-900",
+		}) {
+			No avvik yet.
+		}
+	} else {
+		@ui.Card(ui.CardProps{
+			Class:   "border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden",
+			Padding: "p-0",
+		}) {
+			@ui.Table(ui.TableProps{}) {
+				@ui.THead(ui.THeadProps{}) {
+					@ui.Tr(ui.TrProps{
+						Attrs: templ.Attributes{
+							"class": "bg-sand-100",
+						},
+					}) {
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"class": "text-[11px] px-4"}}) {Avvik}
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"class": "text-[11px]"}}) {Status}
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"class": "text-[11px]"}}) {Risk}
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"class": "text-[11px]"}}) {Flags}
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"class": "text-[11px]"}}) {Age}
+					}
+				}
+				<tbody>
+					for _, a := range items {
+						@ui.Tr(ui.TrProps{
+							Attrs: templ.Attributes{
+								"class": "border-sand-300/60",
+							},
+						}) {
+							@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4"}}) {
+								<a href={ "/avvik/" + a.ID.String() } class="font-medium hover:text-blue-700 hover:underline">{ a.Title }</a>
+								if a.GdprDeadlineAt.Valid && a.Status != "closed" && time.Now().UTC().After(a.GdprDeadlineAt.Time.Add(-24*time.Hour)) {
+									<div class="text-[11px] text-red-700">GDPR clock</div>
+								}
+							}
+							@ui.Td(ui.TdProps{}) {
+								@ui.Badge(ui.BadgeProps{Variant: statusBadgeVariant(a.Status)}) {
+									{ a.Status }
+								}
+							}
+							@ui.Td(ui.TdProps{}) {
+								@ui.Badge(ui.BadgeProps{Variant: riskBadgeVariant(a.RiskLevel)}) {
+									{ a.RiskLevel }
+								}
+							}
+							@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-[11px]"}}) {
+								if a.PersonalData {
+									@ui.Badge(ui.BadgeProps{Variant: "danger", Attrs: templ.Attributes{"class": "mr-1"}}) {PD}
+								}
+								if a.Ksi {
+									@ui.Badge(ui.BadgeProps{Variant: "warning", Attrs: templ.Attributes{"class": "mr-1"}}) {KSI}
+								}
+								if a.MarketSensitive {
+									@ui.Badge(ui.BadgeProps{Variant: "neutral"}) {MS}
+								}
+							}
+							@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-[11px] text-sand-700"}}) {
+								{ ageText(a.DiscoveredAt) }
+							}
+						}
+					}
+				</tbody>
+			}
+		}
+	}
+}
+
+templ NewAvvikForm(orgs []db.Organization, users []db.User) {
+	<form method="POST" action="/avvik" class="max-w-3xl space-y-4">
+		<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+		@ui.Field("avvik-title", "label_title", true) {
+			@ui.Input(ui.InputProps{
+				ID:       "avvik-title",
+				Name:     "title",
+				Type:     "text",
+				Required: true,
+				Class:    "py-2 text-[13px]",
+			})
+		}
+		@ui.Field("avvik-description", "label_description", false) {
+			@ui.Textarea(ui.TextareaProps{
+				ID:    "avvik-description",
+				Name:  "description",
+				Class: "py-2 text-[13px] min-h-0",
+				Attrs: templ.Attributes{
+					"rows": "4",
+				},
+			})
+		}
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+			@ui.Field("avvik-discovered-at", "label_when", false) {
+				@ui.Input(ui.InputProps{
+					ID:    "avvik-discovered-at",
+					Name:  "discovered_at",
+					Type:  "date",
+					Class: "py-2 text-[13px]",
+				})
+			}
+			@ui.Field("avvik-risk-level", "label_risk", false) {
+				@ui.Select(ui.SelectProps{
+					ID:    "avvik-risk-level",
+					Name:  "risk_level",
+					Class: "py-2 text-[13px]",
+				}) {
+					<option value="low">low</option>
+					<option value="medium" selected>medium</option>
+					<option value="high">high</option>
+				}
+			}
+		</div>
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+			<div class="flex flex-col gap-1">
+				<label for="avvik-reporter-name" class="block text-[13px] font-medium text-sand-800 mb-1">Reporter name</label>
+				@ui.Input(ui.InputProps{
+					ID:   "avvik-reporter-name",
+					Name: "reporter_name",
+					Type: "search",
+					Class: "py-2 text-[13px]",
+					Attrs: templ.Attributes{
+						"list":        "reporter_name_list",
+						"placeholder": "Search user by name/email or enter custom",
+					},
+				})
+				<datalist id="reporter_name_list">
+					for _, u := range users {
+						<option value={ u.Name } label={ u.Email }></option>
+						<option value={ u.Email } label={ u.Name }></option>
+					}
+				</datalist>
+			</div>
+			@ui.Field("avvik-reporter-email", "label_email", false) {
+				@ui.Input(ui.InputProps{
+					ID:    "avvik-reporter-email",
+					Name:  "reporter_email",
+					Type:  "email",
+					Class: "py-2 text-[13px]",
+				})
+			}
+		</div>
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+			<div class="flex flex-col gap-1">
+				<label for="avvik-assigned-to" class="block text-[13px] font-medium text-sand-800 mb-1">Assigned to</label>
+				@ui.Select(ui.SelectProps{
+					ID:    "avvik-assigned-to",
+					Name:  "assigned_to",
+					Class: "py-2 text-[13px]",
+				}) {
+					<option value="">Unassigned</option>
+					for _, u := range users {
+						<option value={ u.ID.String() }>{ u.Name }</option>
+					}
+				}
+			</div>
+			@ui.Field("avvik-org-unit", "label_org_unit", false) {
+				@ui.Select(ui.SelectProps{
+					ID:    "avvik-org-unit",
+					Name:  "org_unit_id",
+					Class: "py-2 text-[13px]",
+				}) {
+					<option value="">Not set</option>
+					for _, org := range orgs {
+						<option value={ org.ID.String() }>{ org.Name }</option>
+					}
+				}
+			}
+		</div>
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+			<label class="flex items-center gap-2 text-[13px]"><input type="checkbox" name="personal_data" class="rounded"/> Personal data</label>
+			<label class="flex items-center gap-2 text-[13px]"><input type="checkbox" name="ksi" class="rounded"/> KSI</label>
+			<label class="flex items-center gap-2 text-[13px]"><input type="checkbox" name="market_sensitive" class="rounded"/> Market sensitive</label>
+		</div>
+		<div class="flex justify-end">
+			@ui.Button(ui.ButtonProps{
+				Attrs: templ.Attributes{
+					"type": "submit",
+				},
+			}) {
+				Create Avvik
+			}
+		</div>
+	</form>
+}
+
+templ AvvikDetail(d DetailData) {
+	<div class="space-y-4">
+		if d.Avvik.PersonalData && d.Avvik.Status != "closed" && d.Avvik.GdprDeadlineAt.Valid {
+			<div class="sticky top-2 z-10 bg-red-700 text-white px-4 py-2 rounded-md text-[13px]">
+				GDPR deadline: { deadlineText(d.Avvik.GdprDeadlineAt.Time) } until Datatilsynet notification.
+			</div>
+		}
+		if d.Avvik.Status == "new" {
+			<div class="rounded-lg border border-blue-200 bg-blue-50 p-4 text-[13px] text-blue-900">
+				<div class="font-medium mb-1">Recommended next steps</div>
+				if d.CanManage {
+					<div>1) Triage details tab. 2) Link follow-up in measures or activities. 3) Keep timeline updated, then close in closure tab.</div>
+				} else if d.CanContribute {
+					<div>You can track status and send updates in timeline/evidence tabs. Admins handle triage and closure.</div>
+				} else {
+					<div>Avvik registered. An admin will triage and follow up. You can track status in the timeline.</div>
+				}
+			</div>
+		}
+		@avvikRecentChanges(d.Events)
+		<div class="flex flex-wrap gap-2 border-b border-sand-200 pb-2">
+			@tabLink(d.Avvik.ID.String(), "details", d.Tab)
+			@tabLink(d.Avvik.ID.String(), "timeline", d.Tab)
+			@tabLink(d.Avvik.ID.String(), "measures", d.Tab)
+			@tabLink(d.Avvik.ID.String(), "activities", d.Tab)
+			@tabLink(d.Avvik.ID.String(), "evidence", d.Tab)
+			@tabLink(d.Avvik.ID.String(), "notifications", d.Tab)
+			@tabLink(d.Avvik.ID.String(), "closure", d.Tab)
+		</div>
+		<div id="avvik-tab-panel">
+			@AvvikTabPanel(d)
+		</div>
+	</div>
+}
+
+templ avvikRecentChanges(events []db.AvvikEvent) {
+	<details>
+		<summary class="cursor-pointer text-sm font-semibold text-sand-800 mb-3 list-none">Last 5 changes (click to expand)</summary>
+		<div class="border border-sand-300/60 rounded-[10px] overflow-hidden bg-white">
+			@ui.Table(ui.TableProps{}) {
+				<caption class="sr-only">Last 5 changes</caption>
+				@ui.THead(ui.THeadProps{}) {
+					@ui.Tr(ui.TrProps{
+						Attrs: templ.Attributes{
+							"class": "bg-sand-100",
+						},
+					}) {
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px] uppercase tracking-wider"}}) {Event}
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) {By}
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) {When}
+					}
+				}
+				<tbody>
+					if len(events) == 0 {
+						@ui.Tr(ui.TrProps{
+							Attrs: templ.Attributes{
+								"class": "border-sand-300/60",
+							},
+						}) {
+							@ui.Td(ui.TdProps{Attrs: templ.Attributes{"colspan": "3", "class": "px-4 text-sand-700"}}) {No changes yet.}
+						}
+					} else {
+						for i, e := range events {
+							if i < 5 {
+								@ui.Tr(ui.TrProps{
+									Attrs: templ.Attributes{
+										"class": "border-sand-300/60",
+									},
+								}) {
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-medium"}}) { { e.EventType } }
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) { { e.ActorLabel } }
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700 font-mono text-[11px]"}}) { { e.OccurredAt.Format("2 Jan 2006 15:04") } }
+								}
+							}
+						}
+					}
+				</tbody>
+			}
+		</div>
+	</details>
+}
+
+templ AvvikTabPanel(d DetailData) {
+	switch d.Tab {
+		case "timeline":
+			@timelineTab(d)
+		case "measures":
+			@measuresTab(d)
+		case "activities":
+			@activitiesTab(d)
+		case "evidence":
+			@evidenceTab(d)
+		case "notifications":
+			@notificationsTab(d)
+		case "closure":
+			@closureTab(d)
+		default:
+			@detailsTab(d)
+	}
+}
+
+templ detailsTab(d DetailData) {
+	<div class="space-y-4">
+		<div class="rounded-lg border border-sand-200 p-4 bg-white">
+			<div class="text-[13px] font-medium mb-2">{ d.Avvik.Title }</div>
+			<p class="text-[13px] text-sand-700 whitespace-pre-wrap">{ d.Avvik.Description }</p>
+			<div class="mt-3 text-[12px] text-sand-700">Status: { d.Avvik.Status } · Risk: { d.Avvik.RiskLevel }</div>
+		</div>
+		if !d.CanManage {
+			<div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-[12px] text-amber-900">Only admins can triage or update status.</div>
+		} else {
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/triage" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-3">
+			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+				<select name="risk_level" class="text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-white">
+					<option value="low" selected?={ d.Avvik.RiskLevel == "low" }>low</option>
+					<option value="medium" selected?={ d.Avvik.RiskLevel == "medium" }>medium</option>
+					<option value="high" selected?={ d.Avvik.RiskLevel == "high" }>high</option>
+				</select>
+				<input type="text" name="ksi_information_owner" value={ d.Avvik.KsiInformationOwner } placeholder="KSI information owner" class="text-[13px] border border-sand-400 rounded-md py-2 px-3"/>
+			</div>
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+				<label class="flex items-center gap-2 text-[13px]"><input type="checkbox" name="personal_data" checked?={ d.Avvik.PersonalData } class="rounded"/> Personal data</label>
+				<label class="flex items-center gap-2 text-[13px]"><input type="checkbox" name="ksi" checked?={ d.Avvik.Ksi } class="rounded"/> KSI</label>
+				<label class="flex items-center gap-2 text-[13px]"><input type="checkbox" name="market_sensitive" checked?={ d.Avvik.MarketSensitive } class="rounded"/> Market sensitive</label>
+			</div>
+			<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Save triage</button></div>
+			</form>
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/status" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-3">
+			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+				<select name="status" class="text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-white">
+					<option value="new" selected?={ d.Avvik.Status == "new" }>new</option>
+					<option value="triaging" selected?={ d.Avvik.Status == "triaging" }>triaging</option>
+					<option value="investigating" selected?={ d.Avvik.Status == "investigating" }>investigating</option>
+					<option value="mitigating" selected?={ d.Avvik.Status == "mitigating" }>mitigating</option>
+				</select>
+				<div class="text-[12px] text-sand-700 py-2">Use closure tab for final close.</div>
+			</div>
+			<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Update status</button></div>
+			</form>
+		}
+	</div>
+}
+
+templ timelineTab(d DetailData) {
+	<div class="space-y-3">
+		if d.CanContribute {
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/notes" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-3">
+				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+				<textarea name="note" rows="3" placeholder="Append timeline note..." class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3"></textarea>
+				<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Add note</button></div>
+			</form>
+		}
+		for _, e := range d.Events {
+			<div class="rounded-lg border border-sand-200 p-3 bg-white">
+				<div class="text-[12px] text-sand-700">{ e.OccurredAt.Format(time.RFC3339) } · { e.EventType } · { e.ActorLabel }</div>
+				<pre class="mt-1 text-[11px] text-sand-700 whitespace-pre-wrap">{ string(e.Payload) }</pre>
+			</div>
+		}
+	</div>
+}
+
+templ measuresTab(d DetailData) {
+	<div class="space-y-3">
+		if d.CanManage {
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/measures" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-4">
+				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+				<div class="text-[12px] text-sand-700 font-medium">Link existing measure</div>
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+					<select name="measure_id" class="text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-white">
+						<option value="">Create new measure below</option>
+						for _, m := range d.AllMeasures {
+							<option value={ m.ID.String() }>{ m.Name }</option>
+						}
+					</select>
+					<select name="relationship" class="text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-white">
+						<option value="corrective">corrective</option>
+						<option value="preventive">preventive</option>
+						<option value="compensating">compensating</option>
+					</select>
+				</div>
+				<div class="text-[12px] text-sand-700 font-medium">Or create new measure</div>
+				@formstemplates.MeasureCreateFields(d.AllUsers, "avvik-measure-create")
+				<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Link measure</button></div>
+			</form>
+		}
+		for _, m := range d.Measures {
+			<div class="rounded-lg border border-sand-200 p-3 bg-white">
+				<div class="flex items-center justify-between">
+					<a href={ "/measures/" + m.ID.String() } class="font-medium text-[13px] hover:underline">{ m.Name }</a>
+					if d.CanManage {
+						<button
+							hx-delete={ "/avvik/" + d.Avvik.ID.String() + "/measures/" + m.ID.String() }
+							hx-target="#avvik-tab-panel"
+							hx-swap="outerHTML"
+							hx-headers='{"X-CSRF-Token": "{{ csrf.TokenFromContext(ctx) }}"}'
+							class="text-[11px] text-red-700 hover:underline"
+						>unlink</button>
+					}
+				</div>
+			</div>
+		}
+	</div>
+}
+
+templ activitiesTab(d DetailData) {
+	<div class="space-y-3">
+		if d.CanManage {
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/activities" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-4">
+				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+				<div class="text-[12px] text-sand-700 font-medium">Link existing activity</div>
+				<select name="activity_id" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-white">
+					<option value="">Create new activity below</option>
+					for _, a := range d.AllActivities {
+						<option value={ a.ID.String() }>{ a.Title }</option>
+					}
+				</select>
+				<div class="text-[12px] text-sand-700 font-medium">Or create new activity</div>
+				@formstemplates.ActivityCreateFields(d.AllMeasures, d.AllUsers, "avvik-activity-create", "Oppfølging avvik #"+d.Avvik.ID.String()[:8])
+				<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Link activity</button></div>
+			</form>
+		}
+		for _, a := range d.Activities {
+			<div class="rounded-lg border border-sand-200 p-3 bg-white">
+				<div class="flex items-center justify-between">
+					<a href={ "/activities/" + a.ID.String() } class="font-medium text-[13px] hover:underline">{ a.Title }</a>
+					if d.CanManage {
+						<button
+							hx-delete={ "/avvik/" + d.Avvik.ID.String() + "/activities/" + a.ID.String() }
+							hx-target="#avvik-tab-panel"
+							hx-swap="outerHTML"
+							hx-headers='{"X-CSRF-Token": "{{ csrf.TokenFromContext(ctx) }}"}'
+							class="text-[11px] text-red-700 hover:underline"
+						>unlink</button>
+					}
+				</div>
+			</div>
+		}
+	</div>
+}
+
+templ evidenceTab(d DetailData) {
+	<div class="space-y-3">
+		if d.CanContribute {
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/attachments" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-3">
+				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+				<input type="text" name="filename" placeholder="Label / filename" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3"/>
+				<input type="url" name="storage_key" placeholder="External URL (Confluence etc.)" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3"/>
+				<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Add evidence link</button></div>
+			</form>
+		}
+		for _, a := range d.Attachments {
+			<div class="rounded-lg border border-sand-200 p-3 bg-white text-[13px]">
+				<a href={ a.StorageKey } class="font-medium text-blue-700 hover:underline">{ a.Filename }</a>
+				<div class="text-[11px] text-sand-700">{ a.UploadedAt.Format(time.RFC3339) }</div>
+			</div>
+		}
+	</div>
+}
+
+templ notificationsTab(d DetailData) {
+	<div class="space-y-3">
+		if d.CanManage {
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/notifications" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-3">
+				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+				<select name="audience" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-white">
+					<option value="reporter">reporter</option>
+					<option value="management">management</option>
+					<option value="organisation">organisation</option>
+					<option value="exposed_employees">exposed_employees</option>
+					<option value="datatilsynet">datatilsynet</option>
+					<option value="nve">nve</option>
+					<option value="finanstilsynet">finanstilsynet</option>
+					<option value="bors">bors</option>
+				</select>
+				<textarea name="notes" rows="2" placeholder="Notes" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3"></textarea>
+				<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Record notification</button></div>
+			</form>
+		}
+		for _, n := range d.Notifications {
+			<div class="rounded-lg border border-sand-200 p-3 bg-white text-[13px]">
+				<div class="font-medium">{ n.Audience }</div>
+				<div class="text-[11px] text-sand-700">{ n.SentAt.Format(time.RFC3339) }</div>
+				if n.Notes != "" {
+					<div class="text-[12px] text-sand-700 mt-1">{ n.Notes }</div>
+				}
+			</div>
+		}
+	</div>
+}
+
+templ closureTab(d DetailData) {
+	<div class="space-y-3">
+		if !d.CanManage {
+			<div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-[12px] text-amber-900">Only admins can close avvik.</div>
+		} else {
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/closure-flags" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-3">
+			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			@closureCheckbox("log_qa_done", "Log QA done", d.Avvik.LogQaDone)
+			@closureCheckbox("followups_delegated", "Followups delegated", d.Avvik.FollowupsDelegated)
+			@closureCheckbox("reporter_informed", "Reporter informed", d.Avvik.ReporterInformed)
+			@closureCheckbox("org_informed", "Organisation informed", d.Avvik.OrgInformed)
+			@closureCheckbox("mgmt_informed", "Management informed", d.Avvik.MgmtInformed)
+			@closureCheckbox("decisions_anchored", "Decisions anchored", d.Avvik.DecisionsAnchored)
+			@closureCheckbox("implementation_deadline_set", "Implementation deadline set", d.Avvik.ImplementationDeadlineSet)
+			<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Save checklist</button></div>
+			</form>
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/close" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-3">
+			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			<textarea name="closure_summary" rows="2" placeholder="Closure summary" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3"></textarea>
+			<textarea name="root_cause" rows="2" placeholder="Root cause" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3"></textarea>
+			<textarea name="lessons_learned" rows="2" placeholder="Lessons learned" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3"></textarea>
+			<div class="flex justify-end">
+				<button type="submit" disabled?={ !d.CanClose } class={ "px-3 py-1.5 rounded-md text-[12px] border", buttonCloseClass(d.CanClose) }>Close Avvik</button>
+			</div>
+			</form>
+		}
+	</div>
+}
+
+templ closureCheckbox(name, label string, checked bool) {
+	<label class="flex items-center gap-2 text-[13px]">
+		<input type="checkbox" name={ name } checked?={ checked } class="rounded"/>
+		{ label }
+	</label>
+}
+
+templ tabLink(id, tab, current string) {
+	<a
+		href={ "/avvik/" + id + "?tab=" + tab }
+		hx-get={ "/avvik/" + id + "?tab=" + tab }
+		hx-target="#avvik-tab-panel"
+		hx-swap="innerHTML"
+		class={ "text-[12px] px-2.5 py-1 rounded border", tabClass(tab == current) }
+	>{ tab }</a>
+}
+
+func tabClass(active bool) string {
+	if active {
+		return "bg-sand-900 text-white border-sand-900"
+	}
+	return "bg-white text-sand-700 border-sand-300 hover:bg-sand-100"
+}
+
+func statusBadgeVariant(status string) string {
+	switch status {
+	case "new":
+		return "neutral"
+	case "triaging", "investigating", "mitigating":
+		return "warning"
+	case "closed":
+		return "success"
+	default:
+		return "default"
+	}
+}
+
+func riskBadgeVariant(level string) string {
+	switch level {
+	case "high":
+		return "danger"
+	case "medium":
+		return "warning"
+	default:
+		return "success"
+	}
+}
+
+func ageText(discoveredAt time.Time) string {
+	d := time.Since(discoveredAt)
+	if d < 24*time.Hour {
+		return fmt.Sprintf("%dh", int(d.Hours()))
+	}
+	return fmt.Sprintf("%dd", int(d.Hours()/24))
+}
+
+func deadlineText(deadline time.Time) string {
+	remaining := time.Until(deadline)
+	if remaining <= 0 {
+		return "overdue"
+	}
+	if remaining < 24*time.Hour {
+		return fmt.Sprintf("%d hours left", int(remaining.Hours()))
+	}
+	return fmt.Sprintf("%d days left", int(remaining.Hours()/24))
+}
+
+func buttonCloseClass(enabled bool) string {
+	if enabled {
+		return "bg-sand-900 text-white border-sand-900 hover:bg-sand-800"
+	}
+	return "bg-sand-100 text-sand-400 border-sand-200 cursor-not-allowed"
+}

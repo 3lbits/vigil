@@ -1,0 +1,30 @@
+package ui
+
+type ButtonProps struct {
+	Variant string
+	Size    string
+	Attrs   templ.Attributes
+}
+
+var buttonVariants = map[string]string{
+	"primary":   "bg-blue-600 text-white hover:bg-blue-700",
+	"secondary": "border border-sand-400 bg-white text-sand-800 hover:bg-sand-100 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800",
+	"ghost":     "text-sand-700 hover:bg-sand-100 dark:text-zinc-200 dark:hover:bg-zinc-800",
+}
+
+var buttonSizes = map[string]string{
+	"sm": "text-xs px-2.5 py-1.5",
+	"md": "text-[13px] px-3 py-2",
+}
+
+templ Button(p ButtonProps) {
+	<button
+		class={ cx(
+			"inline-flex items-center gap-1.5 rounded-md font-medium transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none",
+			pick(buttonVariants, p.Variant, "primary"),
+			pick(buttonSizes, p.Size, "md")) }
+		{ p.Attrs... }
+	>
+		{ children... }
+	</button>
+}

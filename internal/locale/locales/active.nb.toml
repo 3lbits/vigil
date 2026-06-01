@@ -1,0 +1,1707 @@
+# Navigation items
+[nav_dashboard]
+other = "Oversikt"
+
+[nav_measures]
+other = "Tiltak"
+
+[nav_activities]
+other = "Aktiviteter"
+
+[nav_risk_assessments]
+other = "Risikovurderinger"
+
+[nav_risk_register]
+other = "Risikoregister"
+
+[nav_compliance]
+other = "Samsvar"
+
+[nav_about]
+other = "Om"
+
+[nav_my_page]
+other = "Min side"
+
+[nav_admin]
+other = "Administrasjon"
+
+# Navigation section headers
+[nav_section_overview]
+other = "Oversikt"
+
+[nav_section_controls]
+other = "Kontroller"
+
+[nav_section_risk]
+other = "Risiko"
+
+[nav_section_compliance]
+other = "Samsvar"
+
+[nav_section_info]
+other = "Info"
+
+[nav_section_administration]
+other = "Administrasjon"
+
+# Sidebar UI actions
+[action_skip_to_main]
+other = "Hopp til hovedinnhold"
+
+[action_close_menu]
+other = "Lukk meny"
+
+[action_open_menu]
+other = "Åpne meny"
+
+[action_toggle_dark_mode]
+other = "Bytt visningsmodus"
+
+[action_sign_out]
+other = "Logg ut"
+
+# Language toggle
+[lang_switch_nb]
+other = "Bytt til bokmål"
+
+[lang_switch_nn]
+other = "Bytt til nynorsk"
+
+[lang_switch_en]
+other = "Switch to English"
+
+# Login page
+[login_title]
+other = "Logg inn på Vigil"
+
+[login_subtitle]
+other = "Styring, risiko og samsvar"
+
+[login_with_provider]
+other = "Logg inn med {{.Provider}}"
+
+# Counts with pluralization
+[measures_count]
+one = "{{.Count}} tiltak"
+other = "{{.Count}} tiltak"
+
+# Status labels
+[status_completed]
+other = "Fullført"
+
+[status_in_progress]
+other = "Pågår"
+
+[status_overdue]
+other = "Forfalt"
+
+[status_planned]
+other = "Planlagt"
+
+[status_implemented]
+other = "Implementert"
+
+[status_deprecated]
+other = "Utfaset"
+
+[status_done]
+other = "Ferdig"
+
+[status_cancelled]
+other = "Kansellert"
+
+[status_pending]
+other = "Venter"
+
+[status_healthy]
+other = "sunn"
+
+[status_unreachable]
+other = "utilgjengelig"
+
+# Decision labels
+[decision_accept]
+other = "Godta"
+
+[decision_treat]
+other = "Behandle"
+
+[decision_document]
+other = "Dokumenter"
+
+[decision_escalate]
+other = "Eskalere"
+
+# Risk level labels
+[risk_level_high]
+other = "Høy"
+
+[risk_level_medium]
+other = "Middels"
+
+[risk_level_low]
+other = "Lav"
+
+# Priority labels
+[priority_high]
+other = "Høy"
+
+[priority_medium]
+other = "Middels"
+
+[priority_low]
+other = "Lav"
+
+# Recurrence labels
+[recurrence_monthly]
+other = "Månedlig"
+
+[recurrence_tertially]
+other = "Tertialt"
+
+[recurrence_annual]
+other = "Årlig"
+
+[recurrence_ad_hoc]
+other = "Ad-hoc"
+
+[label_one_off]
+other = "Engangs"
+
+# Activity kind labels
+[kind_training]
+other = "Opplæring"
+
+[kind_exercise]
+other = "Øvelse"
+
+[kind_assessment]
+other = "Vurdering"
+
+[kind_audit]
+other = "Revisjon"
+
+[kind_remediation]
+other = "Utbedring"
+
+[kind_review]
+other = "Gjennomgang"
+
+# Assessment status labels
+[assessment_status_active]
+other = "Aktiv"
+
+[assessment_status_archived]
+other = "Arkivert"
+
+[assessment_status_pending_acceptance]
+other = "Avventer aksept"
+
+[assessment_status_draft]
+other = "Utkast"
+
+# Common actions
+[action_edit]
+other = "Rediger"
+
+[action_delete]
+other = "Slett"
+
+[action_cancel]
+other = "Avbryt"
+
+[action_save]
+other = "Lagre"
+
+[action_save_changes]
+other = "Lagre endringer"
+
+[action_add]
+other = "Legg til"
+
+[action_remove]
+other = "Fjern"
+
+[action_view_all]
+other = "Se alle"
+
+[action_accept]
+other = "Godta"
+
+[action_decline]
+other = "Avslå"
+
+[action_review]
+other = "Gjennomgå"
+
+[action_switch_role]
+other = "Bytt"
+
+[dev_role_switcher_label]
+other = "Utviklerrolle"
+
+# Dashboard section labels
+[kpi_frameworks_requirements]
+other = "Rammeverk og krav"
+
+[kpi_requirements_covered]
+other = "Krav dekket"
+
+[kpi_measures_defined]
+other = "Tiltak definert"
+
+[kpi_risk_register]
+other = "Risikoregister"
+
+[label_covered]
+other = "dekket"
+
+[label_total_controls]
+other = "totalt sikkerhetstiltak"
+
+[label_linked_to_measure]
+other = "koblet til et tiltak"
+
+[label_implementation_confirmed]
+other = "implementering bekreftet"
+
+[section_risk_management]
+other = "Risikostyring"
+
+[section_recent_activity]
+other = "Nylig aktivitet"
+
+[section_my_activities]
+other = "Mine aktiviteter"
+
+[section_my_measures]
+other = "Mine tiltak"
+
+[section_regulations_standards]
+other = "Regelverk og standarder"
+
+[section_quick_navigation]
+other = "Hurtignavigasjon"
+
+[label_coming]
+other = "Kommer"
+
+[risk_none_assessed]
+other = "Ingen risikoer vurdert ennå."
+
+[dash_risk_reassessment_count]
+one = "{{.Count}} risiko trenger ny vurdering"
+other = "{{.Count}} risikoer trenger ny vurdering"
+
+[dash_start_first_assessment]
+other = "Start første vurdering →"
+
+[dash_activities_none_yet]
+other = "Ingen aktiviteter ennå."
+
+[dash_add_one]
+other = "Legg til en →"
+
+[activities_none_assigned]
+other = "Ingen aktiviteter tildelt til deg."
+
+[measures_none_assigned]
+other = "Ingen tiltak tildelt til deg."
+
+# Compliance labels
+[fw_count]
+one = "{{.Count}} rammeverk registrert"
+other = "{{.Count}} rammeverk registrert"
+
+[action_add_framework]
+other = "Legg til rammeverk"
+
+[frameworks_none_yet]
+other = "Ingen rammeverk ennå."
+
+[label_not_relevant]
+other = "Ikke relevant"
+
+[label_mark_not_relevant]
+other = "Merk som ikke relevant"
+
+[action_add_requirement]
+other = "Legg til krav"
+
+[action_import]
+other = "Importer"
+
+[action_import_requirements]
+other = "Importer krav"
+
+[fw_type_regulation]
+other = "Regulering"
+
+[fw_type_standard]
+other = "Standard"
+
+[fw_type_directive]
+other = "Direktiv"
+
+[action_create_framework]
+other = "Opprett rammeverk"
+
+[req_none_linked]
+other = "Ingen tiltak koblet ennå."
+
+[action_link_measure]
+other = "Koble tiltak"
+
+[section_change_log]
+other = "Endringslogg"
+
+[label_coverage]
+other = "Dekning"
+
+# Measures labels
+[action_add_measure]
+other = "Legg til tiltak"
+
+[measures_none_yet]
+other = "Ingen tiltak ennå."
+
+[filter_all_statuses]
+other = "Alle statuser"
+
+[label_mine_only]
+other = "Bare mine"
+
+[action_create_measure]
+other = "Opprett tiltak"
+
+[action_link_requirement]
+other = "Koble krav"
+
+[action_add_link]
+other = "Legg til lenke"
+
+[section_documentation]
+other = "Dokumentasjon"
+
+[section_requirements]
+other = "Krav"
+
+[section_activities]
+other = "Aktiviteter"
+
+[section_linked_risks]
+other = "Koblede risikoer"
+
+[label_now]
+other = "nå"
+
+[label_target_score]
+other = "mål"
+
+[req_none_linked_yet]
+other = "Ingen krav koblet ennå."
+
+[activities_none_linked]
+other = "Ingen aktiviteter koblet ennå."
+
+# Activities labels
+[action_add_activity]
+other = "Legg til aktivitet"
+
+[activities_none_found]
+other = "Ingen aktiviteter funnet."
+
+[action_create_activity]
+other = "Opprett aktivitet"
+
+[action_mark_in_progress]
+other = "Merk som pågår"
+
+[action_mark_complete]
+other = "Merk som fullført"
+
+[action_confirm_completion]
+other = "Bekreft fullføring"
+
+[action_reopen]
+other = "Gjenåpne"
+
+[section_complete_activity]
+other = "Fullfør aktivitet"
+
+[label_completed_at]
+other = "Fullført"
+
+[label_completed_by]
+other = "Fullført av"
+
+[label_notes]
+other = "Notater"
+
+[label_evidence]
+other = "Bevis"
+
+# Admin tab labels
+[tab_users]
+other = "Brukere"
+
+[tab_sessions]
+other = "Sesjoner"
+
+[tab_audit]
+other = "Revisjonslogg"
+
+[tab_status]
+other = "Status"
+
+[tab_orgs]
+other = "Organisasjoner"
+
+[tab_risk_settings]
+other = "Risikoinnstillinger"
+
+[tab_modules]
+other = "Moduler"
+
+[admin_no_active_sessions]
+other = "Ingen aktive sesjoner."
+
+[audit_filter_all]
+other = "Alle"
+
+[audit_filter_deletions]
+other = "Slettinger"
+
+[audit_filter_updates]
+other = "Oppdateringer"
+
+[audit_last_500]
+other = "Siste 500 hendelser"
+
+[admin_no_audit_events]
+other = "Ingen revisjonshendelser registrert ennå."
+
+[label_version]
+other = "Versjon"
+
+[label_deploy_time]
+other = "Distribusjonstid"
+
+[label_uptime]
+other = "Oppetid"
+
+[label_services]
+other = "Tjenester"
+
+[label_application]
+other = "Applikasjon"
+
+[label_database]
+other = "Database"
+
+[admin_no_orgs]
+other = "Ingen organisasjoner definert ennå."
+
+[action_add_org_unit]
+other = "Legg til organisasjonsenhet"
+
+# Risk wizard step labels
+[wizard_step_framework]
+other = "Rammeverk"
+
+[wizard_step_identify]
+other = "Identifiser"
+
+[wizard_step_analyse]
+other = "Analyser"
+
+[wizard_step_treat]
+other = "Behandle"
+
+[label_review_mode]
+other = "Gjennomgangsmodus"
+
+[label_risk_acceptance_criteria]
+other = "Risikoakseptansekriterier"
+
+[action_return_to_draft]
+other = "Returner til utkast"
+
+[action_continue_wizard]
+other = "Fortsett veiviser"
+
+[action_finalise_assessment]
+other = "Fullfør vurdering →"
+
+[action_delete_assessment]
+other = "Slett vurdering"
+
+[action_delete_risk]
+other = "Slett risiko"
+
+[action_new_assessment]
+other = "Ny vurdering"
+
+[assessment_none_yet]
+other = "Ingen risikovurderinger ennå."
+
+[assessment_start_first]
+other = "Start første vurdering →"
+
+[risk_none_identified]
+other = "Ingen risikoer identifisert ennå."
+
+[label_current_risk]
+other = "Aktuell risiko"
+
+[label_with_existing_controls]
+other = "Med eksisterende kontroller"
+
+[action_go_back_add_risks_first]
+other = "Gå tilbake og legg til risikoer først"
+
+[text_risk_scoring_guidance]
+other = "Poengsett hver risikos nåværende eksponering (med eksisterende kontroller på plass). For konsekvens, vurder alle fire påvirkningstemaer: Finansiell / Operasjonell, Konfidensialitet / Data, Regulatorisk / Juridisk og Omdømme / Tillit. Legg til begrunnelse for vurderingene av sannsynlighet og konsekvens. Målscorer settes i behandlingstrinnet."
+
+[action_back_to_identify]
+other = "Tilbake til identifisering"
+
+[action_save_evaluate]
+other = "Lagre og evaluer"
+
+[action_back_to_evaluation]
+other = "Tilbake til evaluering"
+
+[label_likelihood_reasoning]
+other = "Begrunnelse for sannsynlighet"
+
+[label_consequence_reasoning]
+other = "Begrunnelse for konsekvens"
+
+[placeholder_likelihood_reasoning]
+other = "Hvorfor denne sannsynlighetsscoren? Hvilke faktorer driver sannsynligheten?"
+
+[placeholder_consequence_reasoning]
+other = "Hvorfor denne konsekvensscoren? Hva er den potensielle påvirkningen?"
+
+[label_likelihood_1_5]
+other = "Sannsynlighet (1–5)"
+
+[label_consequence_1_5]
+other = "Konsekvens (1–5)"
+
+[label_target_risk]
+other = "Målrisiko"
+
+[label_after_planned_treatment]
+other = "Etter planlagt behandling"
+
+[label_reassessment]
+other = "Revurdering"
+
+[status_review_needed]
+other = "Revurdering nødvendig"
+
+[label_controls_changed_since_last_assessment]
+other = "Kontroller endret siden forrige vurdering"
+
+[label_assessed_likelihood]
+other = "Vurdert sannsynlighet"
+
+[label_assessed_consequence]
+other = "Vurdert konsekvens"
+
+[label_assessment_rationale_optional]
+other = "Vurderingsbegrunnelse (valgfritt)"
+
+[action_save_reassessment]
+other = "Lagre revurdering"
+
+[empty_no_assets_linked_to_this_risk]
+other = "Ingen eiendeler koblet til denne risikoen."
+
+[empty_no_risks_marked_treatment]
+other = "Ingen risikoer markert for behandling."
+
+[text_all_risks_accepted_or_escalated]
+other = "Alle risikoer ble akseptert eller eskalert i evalueringstrinnet."
+
+[text_link_controls_and_activities_to_treat_risks]
+other = "Koble kontroller og aktiviteter til risikoer markert Behandle. Hver risiko bør dekkes av minst ett tiltak og/eller én aktivitet."
+
+[label_search_measures]
+other = "Søk tiltak"
+
+[placeholder_search_measures]
+other = "Søk tiltak…"
+
+[label_search_activities]
+other = "Søk aktiviteter"
+
+[placeholder_search_activities]
+other = "Søk aktiviteter…"
+
+[label_not_scored]
+other = "Ikke scoret"
+
+[label_no_measures_linked]
+other = "Ingen tiltak koblet."
+
+[label_no_activities_linked]
+other = "Ingen aktiviteter koblet."
+
+[label_documentation_notes]
+other = "Dokumentasjonsnotater"
+
+[label_risk_owner]
+other = "Risikoansvarlig"
+
+[label_organisation]
+other = "Organisasjon"
+
+[label_scope]
+other = "Omfang"
+
+[label_objectives]
+other = "Mål"
+
+[label_participants]
+other = "Deltakere"
+
+[label_created]
+other = "Opprettet"
+
+[label_updated]
+other = "Oppdatert"
+
+[label_last_reviewed]
+other = "Sist gjennomgått"
+
+[assessment_pending_acceptance_msg]
+other = "Denne vurderingen avventer din aksept."
+
+[assessment_returned_by]
+other = "Returnert av risikoansvarlig"
+
+[label_measures]
+other = "Tiltak"
+
+[label_activities_section]
+other = "Aktiviteter"
+
+[risk_eval_gate_title]
+other = "Risikoevalueringsport"
+
+[text_compare_risks_against_acceptance]
+other = "Sammenlign hver risiko med akseptansekriteriene og velg: aksepter, behandle eller dokumenter."
+
+[action_back_to_scoring]
+other = "Tilbake til scoring"
+
+[action_confirm_plan_treatment]
+other = "Bekreft og planlegg behandling"
+
+[label_decision_for]
+other = "Beslutning for"
+
+[placeholder_decision_notes]
+other = "Hvorfor er denne risikoen akseptabel som den er? Referer til relevante kontroller, standarder eller beslutninger."
+
+[text_used_when_decision_document]
+other = "Brukes når beslutningen er \"Dokumenter\"."
+
+[scale_reference]
+other = "Skalereferanse"
+
+[scale_probability]
+other = "Sannsynlighet"
+
+[scale_consequence]
+other = "Konsekvens"
+
+[label_acceptance_criteria]
+other = "Akseptansekriterier"
+
+# Dashboard labels
+[action_view]
+other = "Se →"
+
+[dash_overdue_desc]
+other = "Gjennomgå og oppdater forfalne aktiviteter i aktivitetsregisteret"
+
+[dash_zero_coverage_hint]
+other = "Ingen tiltak koblet — start ved å legge til et tiltak og koble det til krav"
+
+[dash_zero_coverage_count]
+one = "{{.Count}} av {{.Total}} rammeverk med 0% dekning"
+other = "{{.Count}} av {{.Total}} rammeverk med 0% dekning"
+
+[dash_reqs_mapped]
+other = "Krav kartlagt"
+
+[dash_measures_verified]
+other = "Tiltak verifisert"
+
+[dash_current_risk_map]
+other = "Aktuelt risikokart"
+
+[dash_top_risks_title]
+other = "Topp risikoer etter aktuell poengsum"
+
+[risk_none_scored]
+other = "Ingen scorede risikoer ennå."
+
+[risk_none_logged]
+other = "Ingen risikoer registrert"
+
+[risk_level_high_range]
+other = "Høy (≥12)"
+
+[risk_level_medium_range]
+other = "Middels (6–11)"
+
+[risk_level_low_range]
+other = "Lav (≤5)"
+
+[dash_activities_desc]
+other = "Oppgaver, gjennomganger og frister"
+
+[dash_compliance_desc]
+other = "Bla gjennom og kartlegg krav"
+
+[dash_measures_desc]
+other = "Se, opprett eller rediger tiltak"
+
+[dash_overlap_analysis]
+other = "Overlappanalyse"
+
+[dash_overlap_desc]
+other = "Finn delte krav"
+
+[fw_filter_all]
+other = "Alle"
+
+[fw_filter_reg]
+other = "Reg"
+
+[fw_filter_std]
+other = "Std"
+
+[fw_filter_dir]
+other = "Dir"
+
+[label_overdue_count]
+one = "{{.Count}} forfalt"
+other = "{{.Count}} forfalt"
+
+[label_due_this_week_count]
+one = "{{.Count}} forfaller denne uken"
+other = "{{.Count}} forfaller denne uken"
+
+[label_count_defined]
+one = "{{.Count}} definert"
+other = "{{.Count}} definert"
+
+[label_count_unmapped]
+one = "{{.Count}} ukoblet"
+other = "{{.Count}} ukoblet"
+
+# Assessment / Risk Assessments labels
+[assessment_count]
+one = "{{.Count}} vurdering"
+other = "{{.Count}} vurderinger"
+
+[assessments_awaiting_acceptance]
+one = "{{.Count}} vurdering avventer din aksept."
+other = "{{.Count}} vurderinger avventer din aksept."
+
+[assessment_acceptance_instructions]
+other = "Åpne hver vurdering nedenfor for å akseptere eller avslå."
+
+[risk_current_map_title]
+other = "Aktuelt risikokart"
+
+[risk_target_map_title]
+other = "Målrisikokart"
+
+[risk_map_subtitle_current]
+other = "NS 5814 · med eksisterende kontroller"
+
+[risk_map_subtitle_target]
+other = "NS 5814 · etter planlagt behandling"
+
+[risk_register_count]
+one = "Risikoregister ({{.Count}})"
+other = "Risikoregister ({{.Count}})"
+
+[action_goto_identification]
+other = "Gå til identifisering →"
+
+[risk_procurement_tool_title]
+other = "Enkel vurderingsverktøy for innkjøp"
+
+# Table column headers
+[label_risk]
+other = "Risiko"
+
+[label_score]
+other = "Poengsum"
+
+[label_assessment]
+other = "Vurdering"
+
+[label_assessment_name]
+other = "Vurderingsnavn"
+
+[label_organisational_unit]
+other = "Organisasjonsenhet"
+
+[label_scope_analysis_object]
+other = "Omfang og analyseobjekt"
+
+[placeholder_assessment_scope]
+other = "Hva vurderes, og hva er inkludert/ekskludert fra denne vurderingen?"
+
+[placeholder_assessment_objectives]
+other = "Hva må beskyttes og hvorfor? Sikkerhetshensyn, forretningskrav og etterlevelsesforpliktelser."
+
+[label_search_participants]
+other = "Søk deltakere"
+
+[placeholder_search_name_or_email]
+other = "Søk etter navn eller e-post"
+
+[label_search_assets]
+other = "Søk eiendeler"
+
+[placeholder_search_name_or_owner]
+other = "Søk etter navn eller eier"
+
+[label_assets]
+other = "Eiendeler"
+
+[heading_add_risk]
+other = "Legg til risiko"
+
+[placeholder_risk_title_example]
+other = "f.eks. Uautorisert tilgang til pasientjournaler"
+
+[placeholder_risk_description_brief]
+other = "Kort beskrivelse av denne risikoen…"
+
+[placeholder_risk_title]
+other = "Risikotittel"
+
+[empty_no_risks_yet_add_above]
+other = "Ingen risikoer ennå — legg til en over."
+
+[empty_no_assets_linked]
+other = "Ingen eiendeler koblet."
+
+[empty_no_matching_assets_found]
+other = "Ingen matchende eiendeler funnet."
+
+[label_decision]
+other = "Beslutning"
+
+[label_risk_decision_treatment]
+other = "Risikobeslutning og behandling"
+
+[text_of]
+other = "av"
+
+[text_ordered_by_current_criticality]
+other = "sortert etter nåværende kritikalitet (høyest først)."
+
+[label_risks_in_treatment_phase]
+other = "Risikoer i behandlingsfase"
+
+[label_identify_details]
+other = "Identifiseringsdetaljer"
+
+[text_inherited_from_assessment]
+other = "arvet fra vurderingen"
+
+[label_linked_assets]
+other = "Koblede eiendeler"
+
+[label_analysis_details]
+other = "Analysedetaljer"
+
+[label_not_decided]
+other = "Ikke besluttet"
+
+[help_accept_available_only_low_current]
+other = "Aksepter er kun tilgjengelig for lav (grønn) aktuell risiko."
+
+[help_low_risks_only_accepted]
+other = "Lave (grønne) risikoer kan kun aksepteres."
+
+[placeholder_why_decision_appropriate]
+other = "Hvorfor denne beslutningen er passende."
+
+[action_previous_risk]
+other = "Forrige risiko"
+
+[action_save_next]
+other = "Lagre og neste"
+
+[label_current]
+other = "Aktuell"
+
+[label_target]
+other = "Mål"
+
+[label_likelihood]
+other = "Sannsynlighet"
+
+# KPI subtext format strings
+[dash_fw_type_counts]
+other = "{{.Total}} rammeverk · {{.Reg}} reg · {{.Std}} std · {{.Dir}} dir"
+
+[dash_overall_coverage]
+other = "{{.Pct}}% samlet dekning"
+
+[dash_reqs_without_measure]
+other = "{{.Count}} krav uten tiltak"
+
+[dash_risk_level_summary]
+other = "{{.Red}} høy · {{.Yellow}} middels · {{.Green}} lav"
+
+[dash_risk_total_summary]
+other = "{{.Total}} totalt · {{.Red}} høy · {{.Yellow}} middels · {{.Green}} lav"
+
+[dash_risk_org_filter_all]
+other = "Alle organisasjonsenheter"
+
+[dash_risk_org_filter_selected]
+other = "Viser risikodata for {{.Org}} og underenheter."
+
+# Generic table headers
+[label_name]
+other = "Navn"
+
+[label_risks]
+other = "Risikoer"
+
+[label_status]
+other = "Status"
+
+[label_progress]
+other = "Fremgang"
+
+# About page
+[about_subtitle]
+other = "Om denne Vigil-instansen"
+
+[about_open_source_badge]
+other = "Åpen kildekode under Apache 2.0"
+
+[about_intro]
+other = "Vigil er en åpen kildekode GRC-verktøykasse (governance, risk, compliance) for sikkerhets- og samsvarsteam. Denne instansen kjører den samme kodebasen som er publisert på:"
+
+[about_section_includes]
+other = "Hva denne instansen inneholder"
+
+[about_include_1]
+other = "Samsvarsrammeverk og kravsporing, inkludert CSV-import og kobling mellom krav og tiltak."
+
+[about_include_2]
+other = "Tiltaks- og aktivitetsstyring med eiere, ansvarlige, prioritet, frister og statusoverganger."
+
+[about_include_3]
+other = "Risikovurderings- og behandlingsflyt (inkludert NS 5814-tilpassede flyter), risikoregistervisninger og koblede aktiva/tiltak/aktiviteter."
+
+[about_include_4]
+other = "Aktivainventar og kobling til vurderinger og enkeltrisikoer."
+
+[about_include_5]
+other = "Adminverktøy for brukere, organisasjoner, sesjoner, revisjonslogg, eksport, modulinnstillinger og risikoinnstillinger."
+
+[about_include_6]
+other = "Autentiseringsalternativer for utviklingsstub, GitHub, Entra ID og generiske OIDC-leverandører."
+
+[about_issues_intro]
+other = "For arbeid som pågår og planlagte endringer, bruk issue-sporingen:"
+
+[about_section_approach]
+other = "Teknisk tilnærming"
+
+[about_approach_1]
+other = "Go + templ holder rendering på serversiden og distribueres som én binærfil."
+
+[about_approach_2]
+other = "htmx + Alpine.js gir interaktivitet uten en tung SPA."
+
+[about_approach_3]
+other = "PostgreSQL + sqlc + goose holder datatilgang SQL-først, typesikker og migreringsdrevet."
+
+[about_approach_4]
+other = "Tailwind CSS CLI bygger stilene ved build-tid, uten Node-verktøykjede i runtime."
+
+[about_approach_5]
+other = "OPA/Rego holder autorisasjon policy-basert og sentralt håndhevet."
+
+[about_approach_closing]
+other = "Stakken er bevisst enkel, slik at en Vigil-instans kan driftes stabilt av én person."
+
+[about_section_security]
+other = "Sikkerhet"
+
+[about_security_1_intro]
+other = "Sårbarheter rapporteres privat via GitHub private vulnerability reporting; se"
+
+[about_security_2]
+other = "Containerbilder er distroless, kjører som ikke-root, og bruker digest-pinnede basebilder med provenance-attestering i CI."
+
+[about_security_3]
+other = "Autorisasjon er policy-basert via OPA/Rego; handlere gjør ikke direkte rollekontroller."
+
+[about_security_4]
+other = "Prosjektet følger OWASP Top 10-veiledning og revideres jevnlig for sikkerhet og arkitekturkvalitet."
+
+[about_section_contributing]
+other = "Bidra"
+
+[about_contributing_1_intro]
+other = "Feilrapporter og pull requests er velkomne. Bidragsprosess og forventninger er dokumentert i"
+
+[about_contributing_2_intro]
+other = "AI-kodeagenter (inkludert Claude Code og Copilot CLI) brukes i utvikling; konvensjoner for agentassisterte endringer er dokumentert i"
+
+[about_section_posture]
+other = "Prosjektstatus"
+
+[about_posture_1_intro]
+other = "Vigil er åpen kildekode under Apache 2.0:"
+
+[about_posture_1_outro]
+other = "Det er tidlig programvare, brukt i produksjon hos ElBits, og grensesnitt kan fortsatt endre seg."
+
+[about_posture_2]
+other = "Det tilbys ikke kommersiell støtte, hostet tjeneste eller vedlikeholdsforpliktelser."
+
+# Activities form labels
+[filter_all_kinds]
+other = "Alle typer"
+
+[label_type]
+other = "Type"
+
+[label_kind]
+other = "Type"
+
+[label_priority]
+other = "Prioritet"
+
+[label_recurrence]
+other = "Gjentakelse"
+
+[recurrence_none]
+other = "Ingen"
+
+[type_recurring]
+other = "Gjentakende"
+
+[placeholder_filter_owner]
+other = "Filtrer etter eier…"
+
+# Shared labels/actions
+[label_actions]
+other = "Handlinger"
+
+[label_description]
+other = "Beskrivelse"
+
+[label_owner]
+other = "Eier"
+
+[label_owner_text_team]
+other = "Eier (tekst/team)"
+
+[label_owner_free_text_name]
+other = "Eier / navn i fritekst"
+
+[label_assignee_registered]
+other = "Ansvarlig (registrert bruker)"
+
+[label_or_enter_name_below]
+other = "— eller skriv inn navn under —"
+
+[label_measure]
+other = "Tiltak"
+
+[label_title]
+other = "Tittel"
+
+[label_category]
+other = "Kategori"
+
+[label_short_name]
+other = "Kortnavn"
+
+[label_reference]
+other = "Referanse"
+
+[label_sort_order]
+other = "Sortering"
+
+[label_due_date]
+other = "Forfallsdato"
+
+[label_due_date_measure_hint]
+other = "valgfritt — oppretter automatisk aktivitet med \"Implement:\""
+
+[label_reason_optional]
+other = "Begrunnelse (valgfri)"
+
+[label_reason_required_if_not_relevant]
+other = "Begrunnelse (påkrevd hvis ikke relevant)"
+
+[label_email]
+other = "E-post"
+
+[label_role]
+other = "Rolle"
+
+[label_provider]
+other = "Leverandør"
+
+[label_org_unit]
+other = "Org-enhet"
+
+[label_none]
+other = "ingen"
+
+[label_for]
+other = "for"
+
+[label_user]
+other = "Bruker"
+
+[label_sessions]
+other = "Sesjoner"
+
+[label_expires]
+other = "Utløper"
+
+[label_filter]
+other = "Filter"
+
+[label_when]
+other = "Når"
+
+[label_event]
+other = "Hendelse"
+
+[label_detail]
+other = "Detalj"
+
+[label_system]
+other = "system"
+
+[label_label]
+other = "Etikett"
+
+[action_search]
+other = "Søk"
+
+[action_load_more]
+other = "Last inn flere"
+
+[action_revoke]
+other = "Trekk tilbake"
+
+[action_edit_lower]
+other = "rediger"
+
+[status_active]
+other = "Aktiv"
+
+[status_retired]
+other = "Avviklet"
+
+[role_viewer]
+other = "leser"
+
+[role_contributor]
+other = "bidragsyter"
+
+[role_editor]
+other = "redaktør"
+
+[role_admin]
+other = "admin"
+
+# Assets module
+[assets_inventory]
+other = "Eiendelsregister"
+
+[action_add_asset]
+other = "Legg til eiendel"
+
+[action_create_asset]
+other = "Opprett eiendel"
+
+[action_delete_asset]
+other = "Slett eiendel"
+
+[assets_search_assets]
+other = "Søk eiendeler"
+
+[assets_search_name_or_owner]
+other = "Søk navn eller eier"
+
+[assets_filter_status]
+other = "Filtrer status"
+
+[assets_none_found]
+other = "Ingen eiendeler funnet."
+
+[assets_add_first]
+other = "Legg til første eiendel →"
+
+[assets_table_aria]
+other = "Eiendelstabell"
+
+[assets_table_caption]
+other = "Eiendeler"
+
+[assets_criticality]
+other = "Kritikalitet"
+
+[assets_placeholder_name]
+other = "f.eks. Kundeportal"
+
+[assets_placeholder_type]
+other = "System, data, prosess..."
+
+[assets_placeholder_owner]
+other = "Team eller person"
+
+[assets_confirm_delete]
+other = "Slette denne eiendelen?"
+
+[page_assets_title]
+other = "Eiendeler"
+
+[page_assets_subtitle]
+other = "Eiendelsregister"
+
+[page_assets_add_title]
+other = "Legg til eiendel"
+
+[page_assets_add_subtitle]
+other = "Opprett en ny eiendel"
+
+[page_assets_detail_subtitle]
+other = "Eiendeldetaljer"
+
+[page_assets_edit_title]
+other = "Rediger eiendel"
+
+[page_assets_item_subtitle]
+other = "Eiendel"
+
+[assets_flash_create_failed]
+other = "Kunne ikke opprette eiendel."
+
+[assets_flash_created]
+other = "Eiendel opprettet."
+
+[assets_flash_update_failed]
+other = "Kunne ikke oppdatere eiendel."
+
+[assets_flash_updated]
+other = "Eiendel oppdatert."
+
+[assets_flash_delete_failed]
+other = "Kunne ikke slette eiendel."
+
+[assets_flash_deleted]
+other = "Eiendel slettet."
+
+# Admin module
+[admin_sections]
+other = "Administrasjonsseksjoner"
+
+[admin_add_user]
+other = "Legg til bruker"
+
+[admin_add_user_hint]
+other = "Brukeren kan logge inn med SSO etter at den er lagt til. Hvis brukeren allerede har konto, oppdateres rollen."
+
+[admin_confirm_delete_user]
+other = "Slette denne brukeren?"
+
+[admin_active_sessions]
+other = "Aktive sesjoner"
+
+[admin_revoke_sessions_for]
+other = "Trekk tilbake alle sesjoner for"
+
+[admin_frameworks]
+other = "Rammeverk"
+
+[admin_requirements]
+other = "Krav"
+
+[admin_org_tree_help]
+other = "Organisasjonstre — topp → avdeling → team (maks 3 nivåer)"
+
+[admin_org_placeholder]
+other = "f.eks. Finansavdeling"
+
+[admin_parent_unit]
+other = "Overordnet enhet"
+
+[admin_top_level]
+other = "toppnivå"
+
+[admin_risk_settings_help]
+other = "Globale risikoinnstillinger — terskler, akseptansekriterier og skalaer brukt i alle vurderinger."
+
+[admin_risk_level_thresholds]
+other = "Terskler for risikonivå"
+
+[admin_green_lowmax]
+other = "Grønn ≤ (LowMax)"
+
+[admin_scores_green_help]
+other = "Poeng ≤ denne verdien er grønne"
+
+[admin_red_highmin]
+other = "Rød ≥ (HighMin)"
+
+[admin_scores_red_help]
+other = "Poeng ≥ denne verdien er røde"
+
+[admin_ns5814_default_help]
+other = "Standard NS 5814: LowMax=5, HighMin=12. Gul = poeng mellom disse."
+
+[admin_acceptance_criteria_placeholder]
+other = "f.eks. Risikoer med poengsum ≥12 (høy) må behandles. Risikoer 6–11 (middels) krever dokumentert beslutning. Risikoer ≤5 (lav) kan aksepteres."
+
+[admin_likelihood_scale]
+other = "Sannsynlighetsskala (1–5)"
+
+[admin_scale_help]
+other = "Kort etikett og beskrivelse vist til vurderere ved poengsetting av risiko."
+
+[admin_consequence_scale]
+other = "Konsekvensskala (1–5)"
+
+[admin_consequence_scale_help]
+other = "Kort etikett og beskrivelse vist til vurderere ved poengsetting av konsekvens. Bruk høyeste relevante dimensjon."
+
+[admin_save_all_settings]
+other = "Lagre alle innstillinger"
+
+[admin_modules_help]
+other = "Aktiver eller deaktiver valgfrie moduler. Tiltak er alltid på. Endringer gjelder ved neste sidelast."
+
+[admin_module_compliance_desc]
+other = "Rammeverk, krav og dekningssporing"
+
+[admin_module_risk_desc]
+other = "Risikovurderinger, register og varmekart"
+
+[admin_module_activities_desc]
+other = "Oppgaver, gjennomganger og planlagte kontroller"
+
+[admin_assets]
+other = "Eiendeler"
+
+[admin_module_assets_desc]
+other = "Eiendelsregister og kobling mot risiko/vurdering"
+
+[admin_short_label_placeholder]
+other = "Kort etikett"
+
+[admin_scale_description_placeholder]
+other = "Beskrivelse vist til vurderere"
+
+[admin_confirm_delete_org]
+other = "Slette denne organisasjonsenheten? Dette kan påvirke koblede vurderinger."
+
+[admin_pending_sso]
+other = "Venter på SSO"
+
+# Additional nav labels
+[nav_section_assets]
+other = "Eiendeler"
+
+[nav_assets_inventory]
+other = "Inventar"
+
+[nav_isms]
+other = "ISMS"
+
+# Legacy page header/subheader literals used by handlers
+["About"]
+other = "Om"
+
+["Activities"]
+other = "Aktiviteter"
+
+["Add activity"]
+other = "Legg til aktivitet"
+
+["Add framework"]
+other = "Legg til rammeverk"
+
+["Add measure"]
+other = "Legg til tiltak"
+
+["Add requirement"]
+other = "Legg til krav"
+
+["Admin"]
+other = "Administrasjon"
+
+["All risks across assessments"]
+other = "Alle risikoer på tvers av vurderinger"
+
+["Compliance"]
+other = "Samsvar"
+
+["Compliance activity register"]
+other = "Aktivitetsregister for samsvar"
+
+["Create a new compliance activity"]
+other = "Opprett en ny samsvarsaktivitet"
+
+["Evaluate a new system"]
+other = "Vurder et nytt system"
+
+["Feature roadmap"]
+other = "Funksjonsveikart"
+
+["Frameworks and requirements"]
+other = "Rammeverk og krav"
+
+["ISMS"]
+other = "ISMS"
+
+["Import requirements"]
+other = "Importer krav"
+
+["Lightweight system assessment"]
+other = "Lettvekts systemvurdering"
+
+["Measures"]
+other = "Tiltak"
+
+["NS 5814 risk assessments"]
+other = "NS 5814-risikovurderinger"
+
+["New requirement"]
+other = "Nytt krav"
+
+["New risk assessment"]
+other = "Ny risikovurdering"
+
+["New security measure"]
+other = "Nytt sikkerhetstiltak"
+
+["Register a new compliance standard"]
+other = "Registrer en ny samsvarsstandard"
+
+["Review step 1"]
+other = "Gjennomgang steg 1"
+
+["Review step 2"]
+other = "Gjennomgang steg 2"
+
+["Review step 3"]
+other = "Gjennomgang steg 3"
+
+["Review: Analyse"]
+other = "Gjennomgang: Analyser"
+
+["Review: Framework"]
+other = "Gjennomgang: Rammeverk"
+
+["Review: Identify"]
+other = "Gjennomgang: Identifiser"
+
+["Risk analysis"]
+other = "Risikoanalyse"
+
+["Risk assessment"]
+other = "Risikovurdering"
+
+["Risk assessment result"]
+other = "Resultat av risikovurdering"
+
+["Risk assessments"]
+other = "Risikovurderinger"
+
+["Risk identification"]
+other = "Risikoidentifisering"
+
+["Risk register"]
+other = "Risikoregister"
+
+["Security & risk management system"]
+other = "Sikkerhets- og risikostyringssystem"
+
+["Security controls and measures"]
+other = "Sikkerhetskontroller og tiltak"
+
+["Step 1 — Framework"]
+other = "Steg 1 — Rammeverk"
+
+["Step 2 — Identify"]
+other = "Steg 2 — Identifiser"
+
+["Step 3 — Analyse"]
+other = "Steg 3 — Analyser"
+
+["System administration"]
+other = "Systemadministrasjon"
+
+["Upload CSV"]
+other = "Last opp CSV"
+
+[page_dashboard_title]
+other = "Oversikt"
+
+[dashboard_subtitle_updated]
+other = "sist oppdatert"
+
+[nav_security]
+other = "Sikkerhet"
+
+[nav_security_hub]
+other = "Testing og mockup"
+
+[nav_team_workspace]
+other = "Team workspace"
+
+[nav_area_workspace]
+other = "Area workspace"
+
+[nav_ceo_workspace]
+other = "CEO-visning"
+
+[page_security_title]
+other = "Sikkerhet"
+
+[page_security_subtitle]
+other = "Slik bygger vi tillit i ElBits"
+
+[page_team_workspace_title]
+other = "Team workspace"
+
+[page_team_workspace_subtitle]
+other = "Templates og mockups"
+
+[page_area_workspace_title]
+other = "Area workspace"
+
+[page_area_workspace_subtitle]
+other = "Templates og mockups"
+
+[page_ceo_workspace_title]
+other = "CEO-visning"
+
+[page_ceo_workspace_subtitle]
+other = "Templates og mockups"
+
+[label_key]
+other = "Nøkkel"
+
+[nav_avvik]
+other = "Avvik"
+
+[admin_module_avvik_desc]
+other = "Avvik-modul (avvik og sikkerhetshendelser)"
+
+[error_action_go_home]
+other = "Gå til oversikt"
+
+[error_action_go_back]
+other = "Gå tilbake"
+
+[error_request_id_label]
+other = "Forespørsels-ID"
+
+[error_page_title]
+other = "Feil"
+
+[error_page_subtitle]
+other = "Noe trenger oppmerksomheten din"
+
+[error_404_title]
+other = "Siden finnes ikke"
+
+[error_404_message]
+other = "Siden kan ha blitt flyttet, eller lenken er feil."
+
+[error_403_title]
+other = "Ingen tilgang"
+
+[error_403_message]
+other = "Du har ikke tilgang til denne ressursen."
+
+[error_429_title]
+other = "For mange forespørsler"
+
+[error_429_message]
+other = "Vent litt og prøv igjen."
+
+[error_500_title]
+other = "Noe gikk galt"
+
+[error_500_message]
+other = "En uventet feil oppstod. Prøv igjen."
+
+[error_401_title]
+other = "Innlogging kreves"
+
+[error_401_message]
+other = "Logg inn for å fortsette."
+
+[page_my_title]
+other = "Min side"
+
+[page_my_subtitle]
+other = "Din profil og eide objekter"
+
+[my_profile_heading]
+other = "Profil"
+
+[my_org_label]
+other = "Organisasjon"
+
+[my_provider_label]
+other = "Innloggingsleverandør"
+
+[my_owned_activities_heading]
+other = "Eide aktiviteter"
+
+[my_owned_measures_heading]
+other = "Eide tiltak"
+
+[my_owned_risks_heading]
+other = "Eide risikoer"
+
+[my_empty_activities]
+other = "Ingen eide aktiviteter."
+
+[my_empty_measures]
+other = "Ingen eide tiltak."
+
+[my_empty_risks]
+other = "Ingen eide risikoer."
+
+[my_last_changed_label]
+other = "Sist endret"
+
+[my_due_label]
+other = "Frist"
+
+[my_risk_score_label]
+other = "Risikoscore"

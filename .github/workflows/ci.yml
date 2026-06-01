@@ -1,0 +1,177 @@
+name: CI
+
+# Generic build/verify/sign pipeline for the public repo.
+# - verify: gate that mirrors `make pre-commit` (lint, vuln, SAST, secrets, tests)
+# - build:  runs only after verify passes; builds, pushes to GHCR, signs (keyless), attests provenance
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+
+# Cancel superseded runs on the same ref (e.g. rapid pushes / PR force-pushes).
+# Tags get their own group so release builds are never cancelled by a later branch push.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+permissions:
+  contents: read
+
+env:
+  REGISTRY: ghcr.io
+  # Package path images are pushed to: ghcr.io/3lbits/vigil
+  # NOTE: the internal repo's elbits.hujson must reference this exact path.
+  # If you keep the hujson's ghcr.io/3lbits/vigil/vigil, change this to
+  # `${{ github.repository }}/vigil` instead so the two agree.
+  IMAGE_NAME: ${{ github.repository }} # e.g. 3lbits/vigil
+
+jobs:
+  # ──────────────────────────────────────────────────────────────────────────
+  # Gate: must pass before anything is built or published. This IS your
+  # pre-commit suite, enforced server-side so it can't be skipped locally.
+  # Runs on every PR (incl. forks) — needs no secrets, so the read-only token
+  # is sufficient. Make this a REQUIRED status check in branch protection,
+  # otherwise it runs but can be merged past.
+  # ──────────────────────────────────────────────────────────────────────────
+  verify:
+    name: Verify
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history so gitleaks can scan past commits
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Install templ
+        run: go install github.com/a-h/templ/cmd/templ@v0.3.1001
+
+      - name: Generate templ
+        run: templ generate ./...
+
+      - name: Stub Tailwind output # CSS isn't needed to compile/test Go
+        run: touch cmd/server/public/css/output.css
+
+      - name: gofmt
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then echo "$unformatted"; exit 1; fi
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: golangci-lint
+        # action v8 is required for golangci-lint v2.x (v6 only supports v1).
+        # Linter pinned for reproducible gating; bump deliberately.
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.12.2
+
+      - name: govulncheck
+        # Left at @latest on purpose: the value of a vuln scanner is catching
+        # the NEWEST advisories. The advisory DB is fetched live regardless of
+        # binary version, so `latest` maximises coverage. Pin if you'd rather
+        # have fully reproducible scan results.
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck ./...
+
+      - name: Semgrep
+        # Same rationale as govulncheck: rulesets (p/*) are fetched live.
+        run: |
+          python3 -m pip install --quiet semgrep
+          semgrep scan --error \
+            --config p/golang \
+            --config p/secrets \
+            --config p/gitleaks
+
+      - name: Gitleaks (secret scan, full history)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Tests (race)
+        run: go test -race -count=1 -timeout 120s ./...
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Build, push, sign — only on pushes to main or version tags, after verify.
+  # ──────────────────────────────────────────────────────────────────────────
+  build:
+    name: Build, push & sign
+    needs: [verify]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write # push image to GHCR
+      id-token: write # keyless cosign signing via OIDC
+      attestations: write # build-provenance attestation
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # tags needed for `git describe`
+
+      - name: Compute version
+        id: version
+        # Tag build -> v1.2.3 ; branch build -> v1.2.3-5-gabc1234 or short SHA fallback
+        run: echo "value=$(git describe --tags --always --dirty)" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-qemu-action@v3 # arm64 emulation for multi-arch
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Image metadata (tags + labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # semver tag (-> prod channel downstream) only fires on v* tags.
+          # branch + sha tags fire on main pushes (-> dev channel downstream).
+          tags: |
+            type=semver,pattern={{version}}
+            type=ref,event=branch
+            type=sha
+          labels: |
+            org.opencontainers.image.version=${{ steps.version.outputs.value }}
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ steps.version.outputs.value }}
+          # Provenance/SBOM are attached via the dedicated steps below for
+          # GitHub-verifiable attestations, so disable buildkit's inline ones.
+          provenance: false
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign image (keyless)
+        env:
+          IMAGE_DIGEST: ${{ steps.build.outputs.digest }}
+        run: cosign sign --yes "${REGISTRY}/${IMAGE_NAME}@${IMAGE_DIGEST}"
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true

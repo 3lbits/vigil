@@ -1,0 +1,136 @@
+package admintemplates
+
+import (
+	"github.com/3lbits/vigil/internal/csrf"
+	"github.com/3lbits/vigil/internal/db"
+	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui"
+)
+
+templ OrgsPage(orgs []db.Organization, flash, flashType string) {
+	@ui.Flash(flash, flashType)
+	<div class="flex items-center justify-between mb-4">
+		<p class="text-[13px] text-sand-700">{ locale.T(ctx, "admin_org_tree_help") }</p>
+	</div>
+	<!-- Add form -->
+	<div class="border border-sand-300/60 rounded-[10px] p-4 mb-6 max-w-lg">
+		<h2 class="text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3">{ locale.T(ctx, "action_add_org_unit") }</h2>
+		<form method="POST" action="/admin/orgs" class="flex flex-col gap-3">
+			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			@ui.Field("org_name", "label_name", true) {
+				@ui.Input(ui.InputProps{
+					ID:          "org_name",
+					Name:        "name",
+					Type:        "text",
+					Required:    true,
+					Placeholder: locale.T(ctx, "admin_org_placeholder"),
+				})
+			}
+			@ui.Field("parent_id", "admin_parent_unit", false) {
+				@ui.Select(ui.SelectProps{
+					ID:   "parent_id",
+					Name: "parent_id",
+				}) {
+					<option value="">— { locale.T(ctx, "admin_top_level") } —</option>
+					for _, o := range orgs {
+						if !o.ParentID.Valid {
+							<option value={ o.ID.String() }>{ o.Name }</option>
+							for _, child := range orgs {
+								if child.ParentID.Valid && child.ParentID.UUID == o.ID {
+									<option value={ child.ID.String() }>&nbsp;&nbsp;↳ { child.Name }</option>
+								}
+							}
+						}
+					}
+				}
+			}
+			<div class="flex justify-end">
+				@ui.Button(ui.ButtonProps{
+					Attrs: templ.Attributes{
+						"type": "submit",
+					},
+				}) {
+					{ locale.T(ctx, "action_add") }
+				}
+			</div>
+		</form>
+	</div>
+	<!-- Tree list -->
+	if len(orgs) == 0 {
+		<div class="rounded-xl border border-dashed border-sand-300 p-8 text-center text-[13px] text-sand-700">
+			{ locale.T(ctx, "admin_no_orgs") }
+		</div>
+	} else {
+		<div class="border border-sand-200 rounded-xl overflow-hidden max-w-lg">
+			for _, o := range orgs {
+				if !o.ParentID.Valid {
+					@orgRow(o, 0, orgs)
+				}
+			}
+		</div>
+	}
+}
+
+templ orgRow(o db.Organization, depth int, all []db.Organization) {
+	<div class={ "flex items-center justify-between px-4 py-2.5 border-b border-sand-100 last:border-0", orgRowBg(depth) }>
+		<span class="text-[13px] text-sand-800">
+			if depth == 1 {
+				<span class="text-sand-700 mr-1">↳</span>
+			}
+			if depth == 2 {
+				<span class="text-sand-700 mr-1">&nbsp;&nbsp;↳</span>
+			}
+			{ o.Name }
+		</span>
+		<form method="POST" action={ templ.SafeURL("/admin/orgs/" + o.ID.String() + "/delete") } onsubmit="return confirm('Delete this org unit? This may affect linked assessments.')">
+			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			<button type="submit" aria-label={ locale.T(ctx, "action_delete") + " " + o.Name } class="text-sand-300 hover:text-red-500 p-1.5 min-w-[24px] min-h-[24px] flex items-center justify-center transition-colors">×</button>
+		</form>
+	</div>
+	for _, child := range all {
+		if child.ParentID.Valid && child.ParentID.UUID == o.ID {
+			@orgRow(child, depth+1, all)
+		}
+	}
+}
+
+func orgRowBg(depth int) string {
+	switch depth {
+	case 1:
+		return "bg-sand-50/50 pl-8"
+	case 2:
+		return "bg-sand-50 pl-14"
+	default:
+		return ""
+	}
+}
+
+templ RiskSettingsPage(acceptanceCriteria, flash, flashType string) {
+	@ui.Flash(flash, flashType)
+	<div class="max-w-xl">
+		<p class="text-[13px] text-sand-700 mb-4">{ locale.T(ctx, "admin_risk_settings_help") }</p>
+		<form method="POST" action="/admin/risk-settings" class="flex flex-col gap-3">
+			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			@ui.Field("acceptance_criteria", "label_acceptance_criteria", false) {
+				@ui.Textarea(ui.TextareaProps{
+					ID:          "acceptance_criteria",
+					Name:        "acceptance_criteria",
+					Value:       acceptanceCriteria,
+					Placeholder: locale.T(ctx, "admin_acceptance_criteria_placeholder"),
+					Attrs: templ.Attributes{
+						"rows": "5",
+					},
+				})
+			}
+			<div class="flex justify-end">
+				@ui.Button(ui.ButtonProps{
+					Attrs: templ.Attributes{
+						"type": "submit",
+					},
+				}) {
+					{ locale.T(ctx, "action_save") }
+				}
+			</div>
+		</form>
+	</div>
+}

@@ -1,0 +1,285 @@
+package layout
+
+import (
+	"context"
+	"github.com/3lbits/vigil/internal/csrf"
+	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/middleware"
+	"github.com/3lbits/vigil/internal/ui"
+)
+
+type NavItem struct {
+	Key   string
+	Icon  string
+	Label string
+	Href  string
+}
+
+type NavGroup struct {
+	Section string
+	Items   []NavItem
+}
+
+func navGroups(ctx context.Context, isAdmin bool, flags middleware.ModuleFlags) []NavGroup {
+	controlItems := []NavItem{
+		{Key: "measures", Icon: "shield", Label: locale.T(ctx, "nav_measures"), Href: "/measures"},
+	}
+	if flags.ActivitiesEnabled {
+		controlItems = append(controlItems, NavItem{Key: "activities", Icon: "calendar", Label: locale.T(ctx, "nav_activities"), Href: "/activities"})
+	}
+	groups := []NavGroup{
+		{Section: locale.T(ctx, "nav_section_overview"), Items: []NavItem{
+			{Key: "dashboard", Icon: "dashboard", Label: locale.T(ctx, "nav_dashboard"), Href: "/"},
+		}},
+		{Section: locale.T(ctx, "nav_section_controls"), Items: controlItems},
+	}
+	if flags.RiskEnabled {
+		riskItems := []NavItem{
+			{Key: "risk", Icon: "risk", Label: locale.T(ctx, "nav_risk_assessments"), Href: "/risks"},
+			{Key: "risk-register", Icon: "risk", Label: locale.T(ctx, "nav_risk_register"), Href: "/risk-register"},
+		}
+		if flags.AvvikEnabled {
+			riskItems = append(riskItems, NavItem{Key: "avvik", Icon: "risk", Label: locale.T(ctx, "nav_avvik"), Href: "/avvik"})
+		}
+		groups = append(groups, NavGroup{Section: locale.T(ctx, "nav_section_risk"), Items: riskItems})
+	}
+	if flags.AssetsEnabled {
+		groups = append(groups, NavGroup{Section: locale.T(ctx, "nav_section_assets"), Items: []NavItem{
+			{Key: "assets", Icon: "package", Label: locale.T(ctx, "nav_assets_inventory"), Href: "/assets"},
+		}})
+	}
+	if flags.ComplianceEnabled {
+		groups = append(groups, NavGroup{Section: locale.T(ctx, "nav_section_compliance"), Items: []NavItem{
+			{Key: "compliance", Icon: "compliance", Label: locale.T(ctx, "nav_compliance"), Href: "/compliance"},
+		}})
+	}
+	groups = append(groups, NavGroup{Section: locale.T(ctx, "nav_section_info"), Items: []NavItem{
+		{Key: "me", Icon: "users", Label: locale.T(ctx, "nav_my_page"), Href: "/me"},
+		{Key: "about", Icon: "info", Label: locale.T(ctx, "nav_about"), Href: "/about"},
+	}})
+	if isAdmin {
+		groups = append(groups, NavGroup{Section: locale.T(ctx, "nav_section_administration"), Items: []NavItem{
+			{Key: "admin", Icon: "users", Label: locale.T(ctx, "nav_admin"), Href: "/admin"},
+		}})
+	}
+	return groups
+}
+
+func UserInitials(name string) string {
+	if name == "" {
+		return "?"
+	}
+	runes := []rune(name)
+	if len(runes) >= 2 {
+		return string(runes[0:1]) + string(runes[1:2])
+	}
+	return string(runes[0:1])
+}
+
+templ Layout(title string, subtitle string, activePage string, user middleware.SessionUser, content templ.Component) {
+	<!DOCTYPE html>
+	<html lang={ locale.LangFromContext(ctx) }>
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>{ middleware.TopOrgNameFromContext(ctx) } — { title }</title>
+		<meta name="csrf-token" content={ csrf.TokenFromContext(ctx) }/>
+		<link rel="stylesheet" href={ "/public/css/output.css?v=" + AssetVer }/>
+		<script nonce={ middleware.CSPNonceFromContext(ctx) }>(function(){var d=localStorage.getItem('darkMode');if(d==='true')document.documentElement.classList.add('dark');})()</script>
+		<script src={ "/public/js/alpine-data.js?v=" + AssetVer } defer></script>
+		<script src={ "/public/js/alpine.min.js?v=" + AssetVer } defer></script>
+		<meta name="htmx-config" content='{"includeIndicatorStyles": false}'/>
+		<script src={ "/public/js/htmx.min.js?v=" + AssetVer }></script>
+		<script nonce={ middleware.CSPNonceFromContext(ctx) }>
+			document.addEventListener("htmx:configRequest", function(e) {
+				var t = document.querySelector('meta[name="csrf-token"]');
+				if (t) { e.detail.headers["X-CSRF-Token"] = t.content; }
+			});
+		</script>
+	</head>
+	<body class="font-sans bg-white dark:bg-zinc-950 text-sand-900 dark:text-zinc-100 antialiased">
+		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:text-[13px] focus:rounded-md">{ locale.T(ctx, "action_skip_to_main") }</a>
+		<div
+			x-data="appLayout"
+			@keydown.window.escape="sidebarOpen = false"
+			class="flex h-screen overflow-hidden"
+		>
+			<!-- Mobile overlay -->
+			<div
+				x-show="sidebarOpen"
+				x-cloak
+				aria-hidden="true"
+				@click="sidebarOpen = false"
+				x-transition:enter="transition ease-out duration-200"
+				x-transition:enter-start="opacity-0"
+				x-transition:enter-end="opacity-100"
+				x-transition:leave="transition ease-in duration-150"
+				x-transition:leave-start="opacity-100"
+				x-transition:leave-end="opacity-0"
+				class="fixed inset-0 bg-black/20 z-30 lg:hidden"
+			></div>
+
+			<!-- Sidebar -->
+			<nav
+				aria-label="Main navigation"
+				:class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+				class="fixed inset-y-0 left-0 z-40 w-[210px] bg-sand-50 dark:bg-zinc-900 border-r border-sand-300/60 dark:border-zinc-700/60 flex flex-col py-4 transition-transform duration-200 ease-out lg:translate-x-0 lg:static lg:z-auto"
+			>
+				<!-- Logo -->
+				<div class="px-4 pb-4 flex items-center gap-2">
+					<div class="w-[26px] h-[26px] rounded-[5px] bg-blue-50 dark:bg-blue-950 flex items-center justify-center text-blue-700 dark:text-blue-300">
+						@ui.IconSVG("eye", 13)
+					</div>
+					<div class="min-w-0">
+						<div class="font-medium text-[15px] leading-tight">Vigil</div>
+						<div class="text-[10px] text-sand-700 dark:text-zinc-400 truncate">{ middleware.TopOrgNameFromContext(ctx) }</div>
+					</div>
+					<button x-ref="closeBtn" aria-label={ locale.T(ctx, "action_close_menu") } @click="sidebarOpen = false" class="ml-auto lg:hidden text-sand-700 dark:text-zinc-400 hover:text-sand-900 dark:hover:text-zinc-100">
+						@ui.IconSVG("x", 16)
+					</button>
+				</div>
+
+				<!-- Nav groups -->
+				<div class="flex-1 px-2.5">
+					for _, group := range navGroups(ctx, user.Role == "admin", middleware.ModuleFlagsFromContext(ctx)) {
+						<div class="mb-3">
+							<h3 class="text-[10px] uppercase tracking-wider text-sand-700 dark:text-zinc-400 px-2 mb-1">{ group.Section }</h3>
+							<ul>
+								for _, item := range group.Items {
+									<li>
+										<a
+											href={ templ.SafeURL(item.Href) }
+											@click="sidebarOpen = false"
+											if activePage == item.Key {
+												aria-current="page"
+											}
+											class={
+												"flex items-center gap-2 w-full py-[7px] px-2.5 rounded-md text-[13px] mb-px transition-colors",
+												templ.KV("bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-medium", activePage == item.Key),
+												templ.KV("text-sand-700 dark:text-zinc-300 hover:bg-sand-100 dark:hover:bg-zinc-800", activePage != item.Key),
+											}
+										>
+											@ui.IconSVG(item.Icon, 15)
+											{ item.Label }
+										</a>
+									</li>
+								}
+							</ul>
+						</div>
+					}
+				</div>
+
+				<!-- User -->
+				<div class="px-3.5 border-t border-sand-300/60 dark:border-zinc-700/60 pt-3 mt-1.5">
+					<div class="p-1 space-y-2">
+						<div class="flex items-center gap-2">
+							<div aria-hidden="true" class="w-[26px] h-[26px] rounded-full bg-sand-200 dark:bg-zinc-700 flex items-center justify-center text-[10px] font-medium text-sand-700 dark:text-zinc-300 shrink-0">
+								{ UserInitials(user.Name) }
+							</div>
+							<div class="flex-1 min-w-0">
+								<div class="text-xs font-medium truncate">{ user.Name }</div>
+								<div class="text-[10px] text-sand-700 dark:text-zinc-400 truncate flex items-center gap-1.5">
+									<span class="truncate">{ user.Email }</span>
+									<span class="shrink-0 text-[9px] font-semibold uppercase tracking-wide bg-sand-200 dark:bg-zinc-700 text-sand-700 dark:text-zinc-300 px-1 rounded">{ user.Role }</span>
+								</div>
+							</div>
+							<div class="shrink-0 flex items-center gap-1">
+								<button
+									type="button"
+									@click="darkMode = !darkMode"
+									aria-label={ locale.T(ctx, "action_toggle_dark_mode") }
+									class="text-sand-700 dark:text-zinc-400 hover:text-sand-800 dark:hover:text-zinc-100 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
+								>
+									<span x-show="!darkMode">@ui.IconSVG("moon", 15)</span>
+									<span x-show="darkMode" x-cloak>@ui.IconSVG("sun", 15)</span>
+								</button>
+								<form method="POST" action="/logout" class="shrink-0">
+									<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+									<button type="submit" aria-label={ locale.T(ctx, "action_sign_out") } class="text-sand-700 dark:text-zinc-400 hover:text-sand-800 dark:hover:text-zinc-100 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded">
+										@ui.IconSVG("logout", 15)
+									</button>
+								</form>
+							</div>
+						</div>
+						<form method="POST" action="/locale" class="grid grid-cols-3 gap-1">
+							<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+							<button
+								type="submit"
+								name="lang"
+								value="nb"
+								aria-label={ locale.T(ctx, "lang_switch_nb") }
+								class={
+									"text-[10px] font-medium transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded px-1 py-1 text-center border",
+									templ.KV("border-sand-500 bg-sand-100 dark:bg-zinc-800 text-sand-900 dark:text-zinc-100", locale.LangFromContext(ctx) == locale.LangNB),
+									templ.KV("border-sand-300 dark:border-zinc-700 text-sand-700 dark:text-zinc-400 hover:bg-sand-100 dark:hover:bg-zinc-800", locale.LangFromContext(ctx) != locale.LangNB),
+								}
+							>NB</button>
+							<button
+								type="submit"
+								name="lang"
+								value="nn"
+								aria-label={ locale.T(ctx, "lang_switch_nn") }
+								class={
+									"text-[10px] font-medium transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded px-1 py-1 text-center border",
+									templ.KV("border-sand-500 bg-sand-100 dark:bg-zinc-800 text-sand-900 dark:text-zinc-100", locale.LangFromContext(ctx) == locale.LangNN),
+									templ.KV("border-sand-300 dark:border-zinc-700 text-sand-700 dark:text-zinc-400 hover:bg-sand-100 dark:hover:bg-zinc-800", locale.LangFromContext(ctx) != locale.LangNN),
+								}
+							>NN</button>
+							<button
+								type="submit"
+								name="lang"
+								value="en"
+								aria-label={ locale.T(ctx, "lang_switch_en") }
+								class={
+									"text-[10px] font-medium transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded px-1 py-1 text-center border",
+									templ.KV("border-sand-500 bg-sand-100 dark:bg-zinc-800 text-sand-900 dark:text-zinc-100", locale.LangFromContext(ctx) == locale.LangEN),
+									templ.KV("border-sand-300 dark:border-zinc-700 text-sand-700 dark:text-zinc-400 hover:bg-sand-100 dark:hover:bg-zinc-800", locale.LangFromContext(ctx) != locale.LangEN),
+								}
+							>EN</button>
+						</form>
+						if middleware.DevStubAuthFromContext(ctx) {
+							<form method="POST" action="/dev/role" class="space-y-1">
+								<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+								<label for="dev-role-switcher" class="block text-[10px] font-medium text-sand-700 dark:text-zinc-400">{ locale.T(ctx, "dev_role_switcher_label") }</label>
+								<div class="flex items-center gap-1">
+									<select
+										id="dev-role-switcher"
+										name="role"
+										class="w-full text-[11px] px-2 py-1 rounded border border-sand-300 dark:border-zinc-700 bg-white dark:bg-zinc-900"
+									>
+										for _, role := range []string{"admin", "editor", "viewer", "contributor"} {
+											<option value={ role } selected?={ user.Role == role }>{ role }</option>
+										}
+									</select>
+									<button type="submit" class="text-[10px] px-2 py-1 rounded border border-sand-300 dark:border-zinc-700 hover:bg-sand-50 dark:hover:bg-zinc-800 transition-colors">
+										{ locale.T(ctx, "action_switch_role") }
+									</button>
+								</div>
+							</form>
+						}
+					</div>
+				</div>
+			</nav>
+
+			<!-- Main -->
+			<main id="main-content" class="flex-1 min-w-0 overflow-y-auto">
+				<div class="p-4 lg:px-7 lg:py-5">
+					<!-- Page header -->
+					<div class="flex items-center gap-2.5 mb-5">
+						<button type="button" aria-label={ locale.T(ctx, "action_open_menu") } @click="sidebarOpen = true" class="lg:hidden border border-sand-400 dark:border-zinc-600 rounded-md p-1.5 text-sand-700 dark:text-zinc-400 hover:bg-sand-100 dark:hover:bg-zinc-800 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">
+							@ui.IconSVG("menu", 16)
+						</button>
+						<div>
+							<h1 class="text-[17px] font-medium leading-tight">{ locale.T(ctx, title) }</h1>
+							<p class="text-xs text-sand-700 dark:text-zinc-400">{ locale.T(ctx, subtitle) }</p>
+						</div>
+					</div>
+
+					<!-- Page content -->
+					@content
+				</div>
+			</main>
+		</div>
+	</body>
+	</html>
+}

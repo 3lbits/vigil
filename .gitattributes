@@ -1,0 +1,5 @@
+# sqlc generated files
+internal/db/*.go linguist-generated=true
+
+# templ generated files
+*_templ.go linguist-generated=true

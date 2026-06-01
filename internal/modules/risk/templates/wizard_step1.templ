@@ -1,0 +1,330 @@
+package risktemplates
+
+import (
+	"github.com/google/uuid"
+	"github.com/3lbits/vigil/internal/csrf"
+	"github.com/3lbits/vigil/internal/db"
+	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui"
+)
+
+templ WizardStep1(vm WizardStep1VM) {
+	@wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, 1, vm.IsNew)
+	@wizardFlash(vm.Flash)
+	<form
+		method="POST"
+		action={ templ.SafeURL(wizardPostAction(vm.IsNew, vm.Assessment.ID.String(), "")) }
+		class="max-w-2xl"
+	>
+		<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+		<!-- Basic info -->
+		<div class="border border-sand-300/60 rounded-[10px] p-4 mb-4">
+			<h2 class="text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3">{ locale.T(ctx, "label_assessment") }</h2>
+			<div class="flex flex-col gap-3">
+				@ui.Field("name", "label_assessment_name", true) {
+					@ui.Input(ui.InputProps{
+						ID:          "name",
+						Name:        "name",
+						Type:        "text",
+						Required:    true,
+						Value:       vm.Assessment.Name,
+						Placeholder: "e.g. ISMS Annual Risk Assessment 2026",
+					})
+				}
+				<div class="grid grid-cols-2 gap-3">
+					<div class="flex flex-col gap-1">
+						@ui.Field("org_id", "label_organisational_unit", false) {
+						@orgPicker("org_id", vm.Assessment.OrgID, vm.Orgs)
+						}
+					</div>
+					<div class="flex flex-col gap-1">
+						@ui.Field("risk_owner_id", "label_risk_owner", false) {
+						@userPicker("risk_owner_id", vm.Assessment.RiskOwnerID, vm.Users)
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Scope & objectives -->
+		<div class="border border-sand-300/60 rounded-[10px] p-4 mb-4">
+			<div class="flex flex-col gap-3">
+				<div>
+					<label for="scope" class="mb-1 flex items-center gap-1 text-[13px] text-sand-700 dark:text-zinc-200">
+						{ locale.T(ctx, "label_scope_analysis_object") }
+						@helpIcon("Describe what is being assessed — system, process, or asset — and what&#39;s included/excluded.")
+					</label>
+					@ui.Textarea(ui.TextareaProps{
+						ID:          "scope",
+						Name:        "scope",
+						Value:       vm.Assessment.Scope,
+						Placeholder: locale.T(ctx, "placeholder_assessment_scope"),
+						Attrs: templ.Attributes{
+							"rows": "3",
+						},
+					})
+				</div>
+				<div>
+					<label for="security_objectives" class="mb-1 flex items-center gap-1 text-[13px] text-sand-700 dark:text-zinc-200">
+						{ locale.T(ctx, "label_objectives") }
+						@helpIcon("What are you protecting and why? Security concerns and business/compliance drivers.")
+					</label>
+					@ui.Textarea(ui.TextareaProps{
+						ID:          "security_objectives",
+						Name:        "security_objectives",
+						Value:       vm.Assessment.SecurityObjectives,
+						Placeholder: locale.T(ctx, "placeholder_assessment_objectives"),
+						Attrs: templ.Attributes{
+							"rows": "3",
+						},
+					})
+				</div>
+			</div>
+		</div>
+		<!-- Participants -->
+		<div class="border border-sand-300/60 rounded-[10px] p-4 mb-4">
+			<h2 class="text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3">{ locale.T(ctx, "label_participants") }</h2>
+			if vm.IsNew {
+				<p class="text-[12px] text-sand-700">
+					Participants can be added after the assessment is created.
+				</p>
+			} else if len(vm.Users) == 0 {
+				<p class="text-[12px] text-sand-700">No users available.</p>
+			} else {
+				<div class="mb-3">
+					<div class="text-[11px] font-semibold text-sand-700 uppercase tracking-wide mb-1">Selected</div>
+					if len(vm.Participants) == 0 {
+						<div class="text-[12px] text-sand-700">No participants selected.</div>
+					} else {
+						<div class="flex flex-wrap gap-1.5">
+							for _, p := range vm.Participants {
+								<button
+									type="submit"
+									formmethod="post"
+									formaction={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/participants/" + p.ID.String() + "/remove") }
+									formnovalidate
+									class="inline-flex items-center gap-1 text-[12px] font-medium bg-blue-50 text-blue-800 border border-blue-200 rounded-full px-2.5 py-0.5 hover:bg-blue-100"
+								>
+									<span>{ p.Name }</span>
+									<span aria-hidden="true">×</span>
+								</button>
+							}
+						</div>
+					}
+				</div>
+				<div class="border-t border-sand-200 pt-3">
+					<div class="text-[11px] font-semibold text-sand-700 uppercase tracking-wide mb-1">Add participant</div>
+					<div class="flex items-center gap-2">
+						<label for="participant-search" class="sr-only">{ locale.T(ctx, "label_search_participants") }</label>
+						@ui.Input(ui.InputProps{
+							ID:          "participant-search",
+							Name:        "participant_q",
+							Type:        "search",
+							Value:       vm.ParticipantQuery,
+							Placeholder: locale.T(ctx, "placeholder_search_name_or_email"),
+						})
+						<button
+							type="submit"
+							formmethod="get"
+							formaction={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/review/step/1") }
+							formnovalidate
+							class="text-[12px] px-3 py-1.5 rounded border border-sand-300 hover:bg-sand-50 transition-colors"
+						>{ locale.T(ctx, "action_search") }</button>
+					</div>
+					if vm.ParticipantQuery != "" {
+						<div class="mt-2 rounded-md border border-sand-200 divide-y divide-sand-100">
+							if len(vm.ParticipantResults) == 0 {
+								<div class="px-3 py-2 text-[12px] text-sand-700">No matching users found.</div>
+							} else {
+								for _, u := range vm.ParticipantResults {
+									<div class="px-3 py-2 flex items-center justify-between gap-2">
+										<div class="min-w-0">
+											<div class="text-[12px] text-sand-900 truncate">{ u.Name }</div>
+											<div class="text-[11px] text-sand-700 truncate">{ u.Email }</div>
+										</div>
+										<button
+											type="submit"
+											formmethod="post"
+											formaction={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/participants/" + u.ID.String() + "/add") }
+											formnovalidate
+											class="text-[11px] px-2.5 py-1 rounded border border-sand-300 hover:bg-sand-50 transition-colors"
+										>Add</button>
+									</div>
+								}
+							}
+						</div>
+					}
+				</div>
+			}
+		</div>
+		<!-- Assets -->
+		<div class="border border-sand-300/60 rounded-[10px] p-4 mb-4">
+			<h2 class="text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3">{ locale.T(ctx, "label_assets") }</h2>
+			if vm.IsNew {
+				<p class="text-[12px] text-sand-700">
+					Assets can be linked after the assessment is created.
+				</p>
+			} else {
+				<div class="mb-3">
+					<div class="text-[11px] font-semibold text-sand-700 uppercase tracking-wide mb-1">Linked</div>
+					if len(vm.Assets) == 0 {
+						<div class="text-[12px] text-sand-700">No assets linked.</div>
+					} else {
+						<div class="flex flex-wrap gap-1.5">
+							for _, a := range vm.Assets {
+								<button
+									type="submit"
+									formmethod="post"
+									formaction={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/assets/" + a.ID.String() + "/remove") }
+									formnovalidate
+									class="inline-flex items-center gap-1 text-[12px] font-medium bg-violet-50 text-violet-800 border border-violet-200 rounded-full px-2.5 py-0.5 hover:bg-violet-100"
+								>
+									<span>{ a.Name }</span>
+									<span aria-hidden="true">×</span>
+								</button>
+							}
+						</div>
+					}
+				</div>
+				<div class="border-t border-sand-200 pt-3">
+					<div class="text-[11px] font-semibold text-sand-700 uppercase tracking-wide mb-1">Link asset</div>
+					<div class="flex items-center gap-2">
+						<label for="asset-search" class="sr-only">{ locale.T(ctx, "label_search_assets") }</label>
+						@ui.Input(ui.InputProps{
+							ID:          "asset-search",
+							Name:        "asset_q",
+							Type:        "search",
+							Value:       vm.AssetQuery,
+							Placeholder: locale.T(ctx, "placeholder_search_name_or_owner"),
+						})
+						<button
+							type="submit"
+							formmethod="get"
+							formaction={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/review/step/1") }
+							formnovalidate
+							class="text-[12px] px-3 py-1.5 rounded border border-sand-300 hover:bg-sand-50 transition-colors"
+						>{ locale.T(ctx, "action_search") }</button>
+					</div>
+					if vm.AssetQuery != "" {
+						<div class="mt-2 rounded-md border border-sand-200 divide-y divide-sand-100">
+							if len(vm.AssetResults) == 0 {
+								<div class="px-3 py-2 text-[12px] text-sand-700">No matching assets found.</div>
+							} else {
+								for _, a := range vm.AssetResults {
+									<div class="px-3 py-2 flex items-center justify-between gap-2">
+										<div class="min-w-0">
+											<div class="text-[12px] text-sand-900 truncate">{ a.Name }</div>
+											if a.Owner != "" {
+												<div class="text-[11px] text-sand-700 truncate">{ a.Owner }</div>
+											}
+										</div>
+										<button
+											type="submit"
+											formmethod="post"
+											formaction={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/assets/" + a.ID.String() + "/add") }
+											formnovalidate
+											class="text-[11px] px-2.5 py-1 rounded border border-sand-300 hover:bg-sand-50 transition-colors"
+										>Add</button>
+									</div>
+								}
+							}
+						</div>
+					}
+				</div>
+			}
+		</div>
+		<!-- Risk acceptance criteria (read-only) -->
+		if vm.AcceptanceCriteria != "" {
+			<div class="border border-sand-300/60 rounded-[10px] p-4 mb-4">
+				<div class="flex items-center justify-between mb-2">
+					<h2 class="text-[12px] font-semibold uppercase tracking-wide text-sand-700">{ locale.T(ctx, "label_risk_acceptance_criteria") }</h2>
+					<a href="/admin?tab=risk" class="text-[11px] text-blue-600 hover:underline">Edit →</a>
+				</div>
+				<p class="text-[13px] text-sand-700 whitespace-pre-wrap">{ vm.AcceptanceCriteria }</p>
+			</div>
+		} else {
+			<div class="border border-dashed border-sand-300 rounded-[10px] p-4 mb-4 text-[13px] text-sand-700">
+				No global risk acceptance criteria set. <a href="/admin?tab=risk" class="text-blue-600 hover:underline">Set criteria in admin →</a>
+			</div>
+		}
+		<div class="flex justify-end">
+			@ui.Button(ui.ButtonProps{
+				Attrs: templ.Attributes{
+					"type": "submit",
+				},
+			}) {
+				if vm.IsNew {
+					Save and identify risks →
+				} else {
+					Save and continue →
+				}
+			}
+		</div>
+	</form>
+}
+
+// helpIcon renders a ? button with a Tailwind group-hover/focus popover.
+templ helpIcon(text string) {
+	<span class="relative group inline-flex items-center">
+		<button type="button" aria-label="Help" class="w-3.5 h-3.5 rounded-full border border-sand-300 text-sand-700 text-[9px] font-bold flex items-center justify-center hover:border-sand-500 hover:text-sand-700 focus:outline-none focus:ring-1 focus:ring-blue-400">?</button>
+		<span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-52 rounded-md bg-sand-900 text-white text-[11px] px-2.5 py-1.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity z-10 shadow-lg leading-snug">
+			{ text }
+		</span>
+	</span>
+}
+
+func isParticipant(id uuid.UUID, participants []db.User) bool {
+	for _, p := range participants {
+		if p.ID == id {
+			return true
+		}
+	}
+	return false
+}
+
+// orgPicker renders a grouped org select — top-level orgs followed by indented children/grandchildren.
+templ orgPicker(name string, selected uuid.NullUUID, orgs []db.Organization) {
+	@ui.Select(ui.SelectProps{
+		ID:   name,
+		Name: name,
+	}) {
+		<option value="">— none —</option>
+		for _, o := range orgs {
+			if !o.ParentID.Valid {
+				<option value={ o.ID.String() } selected?={ selected.Valid && selected.UUID == o.ID }>{ o.Name }</option>
+				for _, child := range orgs {
+					if child.ParentID.Valid && child.ParentID.UUID == o.ID {
+						<option value={ child.ID.String() } selected?={ selected.Valid && selected.UUID == child.ID }>&nbsp;&nbsp;↳ { child.Name }</option>
+						for _, grand := range orgs {
+							if grand.ParentID.Valid && grand.ParentID.UUID == child.ID {
+								<option value={ grand.ID.String() } selected?={ selected.Valid && selected.UUID == grand.ID }>&nbsp;&nbsp;&nbsp;&nbsp;↳ { grand.Name }</option>
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+// userPicker renders a user select matching the pattern used in measures/activities.
+templ userPicker(name string, selected uuid.NullUUID, users []db.User) {
+	@ui.Select(ui.SelectProps{
+		ID:   name,
+		Name: name,
+	}) {
+		<option value="">— unassigned —</option>
+		for _, u := range users {
+			<option value={ u.ID.String() } selected?={ selected.Valid && selected.UUID == u.ID }>{ u.Name }</option>
+		}
+	}
+}
+
+func wizardPostAction(isNew bool, id, suffix string) string {
+	if isNew {
+		return "/risks"
+	}
+	if suffix != "" {
+		return "/risks/" + id + suffix
+	}
+	return "/risks/" + id + "/review/step/1"
+}

@@ -1,0 +1,252 @@
+package risktemplates
+
+import (
+	"fmt"
+	"github.com/3lbits/vigil/internal/csrf"
+	"github.com/3lbits/vigil/internal/db"
+	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui"
+)
+
+// scaleReference renders a collapsible reference panel for likelihood and consequence scales.
+templ scaleReference(labels []db.RiskScaleLabel) {
+	<details class="mb-4 border border-sand-200 rounded-lg">
+		<summary class="px-4 py-2.5 text-[12px] font-semibold text-sand-700 cursor-pointer select-none hover:bg-sand-50 rounded-lg transition-colors list-none flex items-center justify-between">
+			<span>{ locale.T(ctx, "scale_reference") }</span>
+			<span class="text-sand-700 text-[10px]">click to expand</span>
+		</summary>
+		<div class="px-4 pb-4 pt-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+			<div>
+				<div class="text-[10px] font-semibold text-sand-700 uppercase tracking-wide mb-2">{ locale.T(ctx, "scale_probability") }</div>
+				<div class="flex flex-col gap-1">
+					for _, i := range []int32{1, 2, 3, 4, 5} {
+						<div class="flex gap-2 text-[12px]">
+							<span class="font-mono font-bold text-sand-700 shrink-0 w-4">{ fmt.Sprint(i) }</span>
+							<div>
+								<span class="font-medium text-sand-800">{ findLabel(labels, "probability", i) }</span>
+								if d := findDesc(labels, "probability", i); d != "" {
+									<span class="text-sand-700 dark:text-zinc-400"> — { d }</span>
+								}
+							</div>
+						</div>
+					}
+				</div>
+			</div>
+			<div>
+				<div class="text-[10px] font-semibold text-sand-700 uppercase tracking-wide mb-2">{ locale.T(ctx, "scale_consequence") }</div>
+				<div class="flex flex-col gap-1">
+					for _, i := range []int32{1, 2, 3, 4, 5} {
+						<div class="flex gap-2 text-[12px]">
+							<span class="font-mono font-bold text-sand-700 shrink-0 w-4">{ fmt.Sprint(i) }</span>
+							<div>
+								<span class="font-medium text-sand-800">{ findLabel(labels, "consequence", i) }</span>
+								if d := findDesc(labels, "consequence", i); d != "" {
+									<span class="text-sand-700 dark:text-zinc-400"> — { d }</span>
+								}
+							</div>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	</details>
+}
+
+func findLabel(labels []db.RiskScaleLabel, scale string, level int32) string {
+	for _, l := range labels {
+		if l.Scale == scale && l.Level == level {
+			return l.Label
+		}
+	}
+	return fmt.Sprint(level)
+}
+
+func findDesc(labels []db.RiskScaleLabel, scale string, level int32) string {
+	for _, l := range labels {
+		if l.Scale == scale && l.Level == level {
+			return l.Description
+		}
+	}
+	return ""
+}
+
+templ WizardStep3(vm WizardStep3VM) {
+	@wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, 3, false)
+	if vm.IsReview {
+		@reviewBanner(vm.Assessment)
+	}
+	if len(vm.Risks) == 0 {
+		<div class="rounded-xl border border-dashed border-sand-300 p-8 text-center max-w-2xl">
+			<p class="text-[13px] text-sand-700 mb-3">{ locale.T(ctx, "risk_none_identified") }</p>
+			<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") } class="text-[13px] text-blue-600 hover:underline">← { locale.T(ctx, "action_go_back_add_risks_first") }</a>
+		</div>
+	} else {
+		<p class="text-[12px] text-sand-700 mb-4 max-w-2xl">{ locale.T(ctx, "text_risk_scoring_guidance") }</p>
+		if len(vm.ScaleLabels) > 0 {
+			@scaleReference(vm.ScaleLabels)
+		}
+		<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/3") }>
+			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			<div class="flex flex-col gap-4 mb-6">
+				for _, risk := range vm.Risks {
+					@riskScoreRow(risk, vm.LowMax, vm.HighMin)
+				}
+			</div>
+			<div class="flex items-center justify-between max-w-3xl">
+				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") } class="text-[13px] text-sand-700 hover:text-sand-800">← { locale.T(ctx, "action_back_to_identify") }</a>
+				@ui.Button(ui.ButtonProps{
+					Attrs: templ.Attributes{
+						"type": "submit",
+					},
+				}) {
+					{ locale.T(ctx, "action_save_evaluate") } →
+				}
+			</div>
+		</form>
+	}
+}
+
+templ riskScoreRow(risk db.Risk, lowMax, highMin int) {
+	<div
+		class="border border-sand-200 rounded-[10px] p-4"
+		x-data="{ expanded: true }"
+	>
+		<button
+			type="button"
+			@click="expanded = !expanded"
+			:aria-expanded="expanded.toString()"
+			aria-controls={ "risk-body-" + risk.ID.String() }
+			class="w-full flex items-center justify-between gap-3 text-left"
+		>
+			<span class="text-[13px] font-semibold text-sand-900">{ risk.Name }</span>
+			<span class="text-[11px] text-sand-700" x-text="expanded ? 'Hide details' : 'Show details'"></span>
+		</button>
+		<div
+			id={ "risk-body-" + risk.ID.String() }
+			x-show="expanded"
+			class="mt-3"
+			x-data={ fmt.Sprintf("riskScorer(%d,%d,%d,%d)", risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, highMin, lowMax) }
+		>
+			if risk.Description != "" {
+				<div class="text-[11px] text-sand-700 dark:text-zinc-400 mb-3">{ risk.Description }</div>
+			}
+			<div class="mb-3 max-w-sm">
+				@scorePanel(risk.ID.String(), "current", "label_current_risk", "label_with_existing_controls", int(risk.LikelihoodCurrent.Int32), int(risk.ConsequenceCurrent.Int32), risk.LikelihoodCurrent.Valid)
+			</div>
+			<!-- Reasoning -->
+			<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+				<div>
+					@ui.Field("lr-" + risk.ID.String(), "label_likelihood_reasoning", false) {
+						@ui.Textarea(ui.TextareaProps{
+							ID:          "lr-" + risk.ID.String(),
+							Name:        "likelihood_reasoning_" + risk.ID.String(),
+							Value:       risk.LikelihoodReasoning,
+							Placeholder: locale.T(ctx, "placeholder_likelihood_reasoning"),
+							Class:       "border-sand-200 px-2 py-1.5 text-[12px] resize-y min-h-0 focus:ring-1",
+							Attrs: templ.Attributes{
+								"rows": "2",
+							},
+						})
+					}
+				</div>
+				<div>
+					@ui.Field("cr-" + risk.ID.String(), "label_consequence_reasoning", false) {
+						@ui.Textarea(ui.TextareaProps{
+							ID:          "cr-" + risk.ID.String(),
+							Name:        "consequence_reasoning_" + risk.ID.String(),
+							Value:       risk.ConsequenceReasoning,
+							Placeholder: locale.T(ctx, "placeholder_consequence_reasoning"),
+							Class:       "border-sand-200 px-2 py-1.5 text-[12px] resize-y min-h-0 focus:ring-1",
+							Attrs: templ.Attributes{
+								"rows": "2",
+							},
+						})
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// scorePanel renders a current risk scoring panel with Alpine.js live color.
+// Expects a parent x-data="riskScorer(...)" with properties l (likelihood) and c (consequence).
+templ scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) {
+	<div class="border border-sand-100 rounded-lg p-3 bg-sand-50/50">
+		<div class="text-[11px] font-semibold text-sand-700 mb-0.5">{ locale.T(ctx, labelKey) }</div>
+		<div class="text-[10px] text-sand-700 dark:text-zinc-400 mb-2">{ locale.T(ctx, subKey) }</div>
+		<div class="grid grid-cols-2 gap-2 mb-2">
+			<div>
+				<label for={ kind + "-likelihood-" + riskID } class="block text-[10px] text-sand-700 mb-1">{ locale.T(ctx, "label_likelihood_1_5") }</label>
+				@ui.Select(ui.SelectProps{
+					ID:    kind + "-likelihood-" + riskID,
+					Name:  kind + "_likelihood_" + riskID,
+					Class: "px-2 py-1 text-[12px] focus:ring-1",
+					Attrs: templ.Attributes{
+						"x-model": "l",
+					},
+				}) {
+					<option value="0">—</option>
+					for i := 1; i <= 5; i++ {
+						<option value={ fmt.Sprint(i) } selected?={ valid && l == i }>{ fmt.Sprint(i) } { likelihoodLabel(i) }</option>
+					}
+				}
+			</div>
+			<div>
+				<label for={ kind + "-consequence-" + riskID } class="block text-[10px] text-sand-700 mb-1">{ locale.T(ctx, "label_consequence_1_5") }</label>
+				@ui.Select(ui.SelectProps{
+					ID:    kind + "-consequence-" + riskID,
+					Name:  kind + "_consequence_" + riskID,
+					Class: "px-2 py-1 text-[12px] focus:ring-1",
+					Attrs: templ.Attributes{
+						"x-model": "c",
+					},
+				}) {
+					<option value="0">—</option>
+					for i := 1; i <= 5; i++ {
+						<option value={ fmt.Sprint(i) } selected?={ valid && c == i }>{ fmt.Sprint(i) } { consequenceLabel(i) }</option>
+					}
+				}
+			</div>
+		</div>
+		<!-- Live score badge — updates as selects change -->
+		<template x-if="l > 0 && c > 0">
+			<div
+				class="flex items-center justify-between px-2 py-1.5 rounded text-[11px] font-semibold text-white transition-colors"
+				:class="bgClass(score())"
+			>
+				<span x-text="'Score: ' + score()"></span>
+				<span class="bg-white/25 px-1.5 rounded text-[10px]" x-text="label(score())"></span>
+			</div>
+		</template>
+	</div>
+}
+
+func likelihoodLabel(i int) string {
+	switch i {
+	case 1:
+		return "(Very unlikely)"
+	case 2:
+		return "(Unlikely)"
+	case 3:
+		return "(Possible)"
+	case 4:
+		return "(Likely)"
+	default:
+		return "(Very likely)"
+	}
+}
+
+func consequenceLabel(i int) string {
+	switch i {
+	case 1:
+		return "(Negligible)"
+	case 2:
+		return "(Minor)"
+	case 3:
+		return "(Moderate)"
+	case 4:
+		return "(Severe)"
+	default:
+		return "(Critical)"
+	}
+}
