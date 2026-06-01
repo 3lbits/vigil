@@ -77,7 +77,7 @@ func Record(ctx context.Context, q db.Querier, e Event) error {
 	)
 
 	// Write to the audit_log table.
-	return q.InsertAuditLog(ctx, db.InsertAuditLogParams{ //nolint:wrapcheck
+	return q.InsertAuditLog(ctx, db.InsertAuditLogParams{
 		Event:     e.Event,
 		UserID:    userID,
 		SourceIp:  sourceIP,

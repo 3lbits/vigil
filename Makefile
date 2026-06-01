@@ -33,7 +33,7 @@ help: ## Show this help message
 
 ##@ Common
 
-setup: ## One-time setup: install Tailwind CLI, configure git hooks
+setup: tailwind-install ## One-time setup: install Tailwind CLI, configure git hooks
 	git config core.hooksPath githooks
 
 run: ## Start dev server with live reload (uses 1Password CLI if available)
@@ -132,6 +132,7 @@ loadtest-rate-burst: ## Run ad-hoc k6 burst scenario to observe 429 behavior
 ##@ One-time setup
 
 tailwind-install: ## Download the Tailwind v4 standalone CLI
+	mkdir -p bin
 	curl -sLo bin/tailwindcss \
 	  "https://github.com/tailwindlabs/tailwindcss/releases/download/$(TAILWIND_VERSION)/$(TAILWIND_BIN)"
 	chmod +x bin/tailwindcss

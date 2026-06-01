@@ -36,11 +36,11 @@ func NewHandler(q db.Querier, engine *authz.Engine) *Handler {
 func (h *Handler) listAssessments(r *http.Request, user middleware.SessionUser) ([]db.RiskAssessment, error) {
 	if user.Role == "admin" || user.Role == "editor" {
 		rows, err := h.q.ListRiskAssessments(r.Context())
-		return rows, err //nolint:wrapcheck
+		return rows, err
 	}
 	userID, _ := uuid.Parse(user.ID)
 	rows, err := h.q.ListRiskAssessmentsForUser(r.Context(), uuid.NullUUID{UUID: userID, Valid: true})
-	return rows, err //nolint:wrapcheck
+	return rows, err
 }
 
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
