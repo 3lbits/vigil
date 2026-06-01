@@ -9,6 +9,12 @@ import (
 	"log/slog"
 	"net"
 
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"github.com/pressly/goose/v3"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
+
 	dbmigrations "github.com/3lbits/vigil/db/migrations"
 	"github.com/3lbits/vigil/internal/authz"
 	"github.com/3lbits/vigil/internal/config"
@@ -16,11 +22,6 @@ import (
 	"github.com/3lbits/vigil/internal/locale"
 	"github.com/3lbits/vigil/internal/obs"
 	"github.com/3lbits/vigil/internal/ui/layout"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"github.com/pressly/goose/v3"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/collectors"
 )
 
 type appState struct {

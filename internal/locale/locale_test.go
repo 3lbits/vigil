@@ -4,8 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/3lbits/vigil/internal/locale"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
+
+	"github.com/3lbits/vigil/internal/locale"
 )
 
 func ctxForLang(t *testing.T, bundle *i18n.Bundle, lang string) context.Context {

@@ -1,9 +1,10 @@
 package risktemplates
 
 import (
+	"github.com/google/uuid"
+
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/ui/layout"
-	"github.com/google/uuid"
 )
 
 type AssessmentListVM struct {

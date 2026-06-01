@@ -4,8 +4,9 @@ package testutil
 import (
 	"context"
 
-	"github.com/3lbits/vigil/internal/db"
 	"github.com/google/uuid"
+
+	"github.com/3lbits/vigil/internal/db"
 )
 
 // StubQuerier implements db.Querier with zero-value returns.

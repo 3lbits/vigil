@@ -7,9 +7,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/modregistry"
-	"github.com/google/uuid"
 )
 
 var errNoDevUsersForActivities = errors.New("no dev stub users found; run stub-user seeding first")

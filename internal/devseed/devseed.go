@@ -6,8 +6,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/3lbits/vigil/internal/db"
 	"github.com/google/uuid"
+
+	"github.com/3lbits/vigil/internal/db"
 )
 
 type stubUser struct {

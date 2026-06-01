@@ -83,6 +83,9 @@ generate: generate-sqlc generate-templ css-build ## Run all code generation
 lint: ## Run golangci-lint
 	golangci-lint run ./...
 
+fmt: ## Format code (gofmt + goimports via golangci-lint)
+	golangci-lint fmt
+
 clean: ## Remove build artifacts
 	rm -rf bin/
 

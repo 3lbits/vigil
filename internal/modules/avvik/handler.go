@@ -10,13 +10,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/3lbits/vigil/internal/authz"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/httputil"
 	"github.com/3lbits/vigil/internal/middleware"
 	avviktemplates "github.com/3lbits/vigil/internal/modules/avvik/templates"
 	"github.com/3lbits/vigil/internal/ui/layout"
-	"github.com/google/uuid"
 )
 
 type Handler struct {

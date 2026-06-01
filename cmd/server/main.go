@@ -9,9 +9,10 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/joho/godotenv"
+
 	"github.com/3lbits/vigil/internal/app"
 	"github.com/3lbits/vigil/internal/config"
-	"github.com/joho/godotenv"
 )
 
 //go:embed policies/authz.rego

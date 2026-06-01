@@ -7,11 +7,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/alexedwards/scs/v2"
+	"github.com/google/uuid"
+
 	authpkg "github.com/3lbits/vigil/internal/auth"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/testutil"
-	"github.com/alexedwards/scs/v2"
-	"github.com/google/uuid"
 )
 
 type authProviderStub struct {

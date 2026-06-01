@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/google/uuid"
+
 	"github.com/3lbits/vigil/internal/audit"
 	"github.com/3lbits/vigil/internal/authz"
 	"github.com/3lbits/vigil/internal/db"
@@ -14,7 +16,6 @@ import (
 	"github.com/3lbits/vigil/internal/middleware"
 	assetstemplates "github.com/3lbits/vigil/internal/modules/assets/templates"
 	"github.com/3lbits/vigil/internal/ui/layout"
-	"github.com/google/uuid"
 )
 
 const assetsPageSize int32 = 50

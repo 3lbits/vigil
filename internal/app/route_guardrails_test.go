@@ -6,6 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/alexedwards/scs/v2"
+
 	"github.com/3lbits/vigil/internal/middleware"
 	"github.com/3lbits/vigil/internal/modregistry"
 	"github.com/3lbits/vigil/internal/modules/about"
@@ -19,7 +21,6 @@ import (
 	"github.com/3lbits/vigil/internal/modules/me"
 	"github.com/3lbits/vigil/internal/modules/measures"
 	"github.com/3lbits/vigil/internal/modules/risk"
-	"github.com/alexedwards/scs/v2"
 )
 
 func TestLoginExemptRoutesAreExactlyExpected(t *testing.T) {

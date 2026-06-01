@@ -7,9 +7,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/google/uuid"
+
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/modregistry"
-	"github.com/google/uuid"
 )
 
 var (

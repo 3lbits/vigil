@@ -11,11 +11,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/3lbits/vigil/internal/authz"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/middleware"
 	"github.com/3lbits/vigil/internal/testutil"
-	"github.com/google/uuid"
 )
 
 // ── test double ───────────────────────────────────────────────────────────────

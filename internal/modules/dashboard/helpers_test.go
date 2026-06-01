@@ -5,9 +5,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/ui/layout"
-	"github.com/google/uuid"
 )
 
 func TestDescendantOrgIDsAndRiskScope(t *testing.T) {

@@ -4,12 +4,13 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/alexedwards/scs/v2"
+
 	"github.com/3lbits/vigil/internal/auth"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/middleware"
 	"github.com/3lbits/vigil/internal/modregistry"
 	"github.com/3lbits/vigil/internal/obs"
-	"github.com/alexedwards/scs/v2"
 )
 
 type authModule struct {

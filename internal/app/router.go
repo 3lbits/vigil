@@ -7,6 +7,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/alexedwards/scs/v2"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
 	"github.com/3lbits/vigil/internal/auth/scsstore"
 	"github.com/3lbits/vigil/internal/authz"
 	"github.com/3lbits/vigil/internal/config"
@@ -25,8 +28,6 @@ import (
 	"github.com/3lbits/vigil/internal/modules/me"
 	"github.com/3lbits/vigil/internal/modules/measures"
 	"github.com/3lbits/vigil/internal/modules/risk"
-	"github.com/alexedwards/scs/v2"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func buildMux(ctx context.Context, cfg *config.Config, state appState, opts Options) (*http.ServeMux, *scs.SessionManager, error) {

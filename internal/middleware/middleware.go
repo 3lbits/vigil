@@ -8,10 +8,11 @@ import (
 	"strings"
 	"sync/atomic"
 
+	"github.com/google/uuid"
+
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/health"
 	"github.com/3lbits/vigil/internal/httpresp"
-	"github.com/google/uuid"
 )
 
 // SessionUser holds the authenticated user in the request context.

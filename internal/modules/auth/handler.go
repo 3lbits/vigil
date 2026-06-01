@@ -10,12 +10,13 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/alexedwards/scs/v2"
+	"golang.org/x/oauth2"
+
 	"github.com/3lbits/vigil/internal/auth"
 	"github.com/3lbits/vigil/internal/db"
 	authtemplates "github.com/3lbits/vigil/internal/modules/auth/templates"
 	"github.com/3lbits/vigil/internal/obs"
-	"github.com/alexedwards/scs/v2"
-	"golang.org/x/oauth2"
 )
 
 type Handler struct {

@@ -8,11 +8,12 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/google/uuid"
+
 	"github.com/3lbits/vigil/internal/authz"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/httputil"
 	"github.com/3lbits/vigil/internal/middleware"
-	"github.com/google/uuid"
 )
 
 type assessmentCtxKey struct{}

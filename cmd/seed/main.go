@@ -8,6 +8,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
+	"github.com/pressly/goose/v3"
+
 	dbmigrations "github.com/3lbits/vigil/db/migrations"
 	"github.com/3lbits/vigil/internal/config"
 	"github.com/3lbits/vigil/internal/db"
@@ -22,8 +25,6 @@ import (
 	"github.com/3lbits/vigil/internal/modules/me"
 	"github.com/3lbits/vigil/internal/modules/measures"
 	"github.com/3lbits/vigil/internal/modules/risk"
-	"github.com/joho/godotenv"
-	"github.com/pressly/goose/v3"
 )
 
 var errDevSeedingDisabled = errors.New("dev seeding is disabled; require APP_ENV=development and DEV_SEED=true")

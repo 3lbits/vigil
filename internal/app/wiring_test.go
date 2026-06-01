@@ -13,6 +13,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/alexedwards/scs/v2"
+	"github.com/google/uuid"
+	"github.com/prometheus/client_golang/prometheus"
+
 	"github.com/3lbits/vigil/internal/authz"
 	"github.com/3lbits/vigil/internal/config"
 	"github.com/3lbits/vigil/internal/db"
@@ -20,9 +24,6 @@ import (
 	"github.com/3lbits/vigil/internal/middleware"
 	"github.com/3lbits/vigil/internal/obs"
 	"github.com/3lbits/vigil/internal/testutil"
-	"github.com/alexedwards/scs/v2"
-	"github.com/google/uuid"
-	"github.com/prometheus/client_golang/prometheus"
 )
 
 type devUsersQ struct {

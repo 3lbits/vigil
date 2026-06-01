@@ -4,12 +4,13 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/google/uuid"
+
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/httputil"
 	"github.com/3lbits/vigil/internal/middleware"
 	metemplates "github.com/3lbits/vigil/internal/modules/me/templates"
 	"github.com/3lbits/vigil/internal/ui/layout"
-	"github.com/google/uuid"
 )
 
 type Handler struct {

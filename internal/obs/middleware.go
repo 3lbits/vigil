@@ -11,13 +11,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/3lbits/vigil/internal/httputil"
-	"github.com/3lbits/vigil/internal/middleware"
 	"github.com/google/uuid"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
+
+	"github.com/3lbits/vigil/internal/httputil"
+	"github.com/3lbits/vigil/internal/middleware"
 )
 
 // ── context keys ────────────────────────────────────────────────────────────

@@ -4,13 +4,14 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/alexedwards/scs/v2"
+
 	"github.com/3lbits/vigil/internal/auth"
 	"github.com/3lbits/vigil/internal/config"
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/locale"
 	"github.com/3lbits/vigil/internal/middleware"
 	"github.com/3lbits/vigil/internal/obs"
-	"github.com/alexedwards/scs/v2"
 )
 
 func loginExemptRoutes() ([]middleware.PublicRoute, []string) {

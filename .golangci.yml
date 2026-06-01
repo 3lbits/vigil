@@ -1,6 +1,17 @@
 # .golangci.yml
 version: "2"
 
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/3lbits/vigil
+  exclusions:
+    generated: lax
+
 linters:
   default: none
   enable:

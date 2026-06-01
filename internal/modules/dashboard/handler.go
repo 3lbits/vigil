@@ -8,13 +8,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/httputil"
 	"github.com/3lbits/vigil/internal/locale"
 	"github.com/3lbits/vigil/internal/middleware"
 	dashboardtemplates "github.com/3lbits/vigil/internal/modules/dashboard/templates"
 	"github.com/3lbits/vigil/internal/ui/layout"
-	"github.com/google/uuid"
 )
 
 type Handler struct {

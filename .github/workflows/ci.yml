@@ -3,6 +3,9 @@ name: CI
 # Generic build/verify/sign pipeline for the public repo.
 # - verify: gate that mirrors `make pre-commit` (lint, vuln, SAST, secrets, tests)
 # - build:  runs only after verify passes; builds, pushes to GHCR, signs (keyless), attests provenance
+#
+# Repo is currently PRIVATE. Blocks marked "ENABLE WHEN PUBLIC" become useful
+# (or free) once the repo is opened — uncomment them at that point.
 
 on:
   push:
@@ -32,17 +35,33 @@ jobs:
   # ──────────────────────────────────────────────────────────────────────────
   # Gate: must pass before anything is built or published. This IS your
   # pre-commit suite, enforced server-side so it can't be skipped locally.
-  # Runs on every PR (incl. forks) — needs no secrets, so the read-only token
-  # is sufficient. Make this a REQUIRED status check in branch protection,
-  # otherwise it runs but can be merged past.
+  # Runs on every PR (incl. forks once public) — needs no secrets, so the
+  # read-only token is sufficient and it's safe for untrusted fork PRs.
+  # Make this a REQUIRED status check in branch protection, otherwise it runs
+  # but can be merged past.
   # ──────────────────────────────────────────────────────────────────────────
   verify:
     name: Verify
     runs-on: ubuntu-24.04
+
+    # ENABLE WHEN PUBLIC: needed to upload SARIF to the Security tab (see the
+    # commented SARIF steps below). Harmless to enable earlier.
+    # permissions:
+    #   contents: read
+    #   security-events: write
+
     steps:
+      # ENABLE WHEN PUBLIC (supply-chain hardening, recommended for open repos):
+      # - name: Harden runner
+      #   uses: step-security/harden-runner@v2
+      #   with:
+      #     egress-policy: audit   # switch to 'block' once you've reviewed the audit
+
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # full history so gitleaks can scan past commits
+          fetch-depth: 0 # full history; required by the commented full-history secret scan below
+          # ENABLE WHEN PUBLIC: don't leave the checkout token in the local git config.
+          # persist-credentials: false
 
       - uses: actions/setup-go@v5
         with:
@@ -58,17 +77,16 @@ jobs:
       - name: Stub Tailwind output # CSS isn't needed to compile/test Go
         run: touch cmd/server/public/css/output.css
 
-      - name: gofmt
-        run: |
-          unformatted="$(gofmt -l .)"
-          if [ -n "$unformatted" ]; then echo "$unformatted"; exit 1; fi
-
       - name: go vet
         run: go vet ./...
-
+        
       - name: golangci-lint
         # action v8 is required for golangci-lint v2.x (v6 only supports v1).
         # Linter pinned for reproducible gating; bump deliberately.
+        # Formatting is gated here too: .golangci.yml has a `formatters:` block
+        # (gofmt + goimports), and in v2 `golangci-lint run` reports formatter
+        # issues as lint findings. Generated templ/sqlc output is skipped via
+        # formatters.exclusions.generated, so no separate gofmt step is needed.
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.12.2
@@ -84,6 +102,11 @@ jobs:
 
       - name: Semgrep
         # Same rationale as govulncheck: rulesets (p/*) are fetched live.
+        # p/secrets + p/gitleaks give license-free secret scanning of the
+        # working tree. This replaces the old gitleaks-action (which requires
+        # a paid GITLEAKS_LICENSE for org-owned repos). For full git *history*
+        # scanning, see the commented block below — wire it up before going
+        # public, since history exposure is a public-repo concern.
         run: |
           python3 -m pip install --quiet semgrep
           semgrep scan --error \
@@ -91,16 +114,72 @@ jobs:
             --config p/secrets \
             --config p/gitleaks
 
-      - name: Gitleaks (secret scan, full history)
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+      # ENABLE WHEN PUBLIC: full git-history secret scan.
+      # The official gitleaks-action@v2/v3 needs a paid GITLEAKS_LICENSE for
+      # org-owned repos, so use the MIT-licensed binary instead. Pick whichever
+      # install you trust at the time and verify the subcommand/flags against the
+      # version you pin (gitleaks moved `detect` -> `git` in v8.19+). Requires the
+      # `fetch-depth: 0` checkout above. gitleaks exits non-zero on findings, so
+      # it fails the job automatically; --redact keeps secrets out of the logs.
+      #
+      # - name: Gitleaks (secret scan, full history)
+      #   run: |
+      #     docker run --rm -v "${{ github.workspace }}:/repo" \
+      #       zricethezav/gitleaks:latest git --no-banner --redact /repo
+      #     # --report-format sarif --report-path gitleaks.sarif  # for the SARIF upload below
+
+      # ENABLE WHEN PUBLIC: surface findings in the GitHub Security tab.
+      # Re-run semgrep/gitleaks with SARIF output, then upload. Needs the
+      # `security-events: write` permission block above. Note: with `--error`
+      # semgrep fails before reaching the upload step, so for SARIF you either
+      # drop `--error` and gate on the SARIF, or run a second non-failing pass.
+      #
+      # - name: Upload Semgrep SARIF
+      #   if: always()
+      #   uses: github/codeql-action/upload-sarif@v3
+      #   with:
+      #     sarif_file: semgrep.sarif
+      # - name: Upload Gitleaks SARIF
+      #   if: always()
+      #   uses: github/codeql-action/upload-sarif@v3
+      #   with:
+      #     sarif_file: gitleaks.sarif
 
       - name: Tests (race)
         run: go test -race -count=1 -timeout 120s ./...
 
   # ──────────────────────────────────────────────────────────────────────────
+  # ENABLE WHEN PUBLIC: CodeQL code scanning. Free for public repos and
+  # populates the Security tab alongside the SARIF uploads above. Kept as its
+  # own job so it can run in parallel with `verify`. Make it a required check
+  # too once enabled.
+  # ──────────────────────────────────────────────────────────────────────────
+  # codeql:
+  #   name: CodeQL
+  #   runs-on: ubuntu-24.04
+  #   permissions:
+  #     contents: read
+  #     security-events: write
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-go@v5
+  #       with:
+  #         go-version-file: go.mod
+  #         cache: true
+  #     - name: Install templ
+  #       run: go install github.com/a-h/templ/cmd/templ@v0.3.1001
+  #     - run: templ generate ./...
+  #     - run: touch cmd/server/public/css/output.css   # CodeQL autobuild must compile
+  #     - uses: github/codeql-action/init@v3
+  #       with:
+  #         languages: go
+  #         queries: security-extended
+  #     - uses: github/codeql-action/autobuild@v3
+  #     - uses: github/codeql-action/analyze@v3
+
+  # ──────────────────────────────────────────────────────────────────────────
   # Build, push, sign — only on pushes to main or version tags, after verify.
+  # Never runs on PRs, so fork PRs (once public) can't reach secrets/registry.
   # ──────────────────────────────────────────────────────────────────────────
   build:
     name: Build, push & sign
@@ -157,8 +236,9 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VERSION=${{ steps.version.outputs.value }}
-          # Provenance/SBOM are attached via the dedicated steps below for
-          # GitHub-verifiable attestations, so disable buildkit's inline ones.
+          # Provenance attestation is attached via the dedicated step below for a
+          # GitHub-verifiable attestation, so disable buildkit's inline one.
+          # (SBOM is NOT currently attached — see the commented SBOM step below.)
           provenance: false
 
       - name: Install cosign
@@ -175,3 +255,21 @@ jobs:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
+
+      # ENABLE WHEN PUBLIC (or whenever you want a published SBOM): generate an
+      # SBOM and attach it as a GitHub-verifiable attestation. Pairs with the
+      # provenance attestation above and makes the "SBOM" half of the comment true.
+      #
+      # - name: Generate SBOM
+      #   uses: anchore/sbom-action@v0
+      #   with:
+      #     image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+      #     format: cyclonedx-json
+      #     output-file: sbom.cdx.json
+      # - name: Attest SBOM
+      #   uses: actions/attest-sbom@v2
+      #   with:
+      #     subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      #     subject-digest: ${{ steps.build.outputs.digest }}
+      #     sbom-path: sbom.cdx.json
+      #     push-to-registry: true
