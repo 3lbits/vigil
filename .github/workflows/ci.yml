@@ -201,7 +201,7 @@ jobs:
         # Tag build -> v1.2.3 ; branch build -> v1.2.3-5-gabc1234 or short SHA fallback
         run: echo "value=$(git describe --tags --always --dirty)" >> "$GITHUB_OUTPUT"
 
-      - uses: docker/setup-qemu-action@v3 # arm64 emulation for multi-arch
+      - uses: docker/setup-qemu-action@v4 # arm64 emulation for multi-arch
       - uses: docker/setup-buildx-action@v3
 
       - name: Log in to GHCR
