@@ -256,7 +256,7 @@ func (h *Handler) Triage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "triage update failed", http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=details", http.StatusSeeOther)
+	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=details", http.StatusSeeOther) //nolint:gosec // path is a hardcoded prefix + UUID, not user input
 }
 
 func (h *Handler) UpdateStatus(w http.ResponseWriter, r *http.Request) {
@@ -293,7 +293,7 @@ func (h *Handler) UpdateStatus(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "status update failed", http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=timeline", http.StatusSeeOther)
+	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=timeline", http.StatusSeeOther) //nolint:gosec // path is a hardcoded prefix + UUID, not user input
 }
 
 func (h *Handler) AddNote(w http.ResponseWriter, r *http.Request) {
@@ -317,7 +317,7 @@ func (h *Handler) AddNote(w http.ResponseWriter, r *http.Request) {
 	}
 	note := strings.TrimSpace(r.FormValue("note"))
 	if note == "" {
-		http.Redirect(w, r, "/avvik/"+id.String()+"?tab=timeline", http.StatusSeeOther)
+		http.Redirect(w, r, "/avvik/"+id.String()+"?tab=timeline", http.StatusSeeOther) //nolint:gosec // path is a hardcoded prefix + UUID, not user input
 		return
 	}
 	if err := h.withTx(r.Context(), func(qtx db.Querier) error {
@@ -326,7 +326,7 @@ func (h *Handler) AddNote(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "note failed", http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=timeline", http.StatusSeeOther)
+	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=timeline", http.StatusSeeOther) //nolint:gosec // path is a hardcoded prefix + UUID, not user input
 }
 
 func (h *Handler) LinkMeasure(w http.ResponseWriter, r *http.Request) {
@@ -376,7 +376,7 @@ func (h *Handler) LinkMeasure(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "failed to link measure", http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=measures", http.StatusSeeOther)
+	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=measures", http.StatusSeeOther) //nolint:gosec // path is a hardcoded prefix + UUID, not user input
 }
 
 func (h *Handler) LinkActivity(w http.ResponseWriter, r *http.Request) {
@@ -415,7 +415,7 @@ func (h *Handler) LinkActivity(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "failed to link activity", http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=activities", http.StatusSeeOther)
+	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=activities", http.StatusSeeOther) //nolint:gosec // path is a hardcoded prefix + UUID, not user input
 }
 
 func (h *Handler) resolveActivityToLink(ctx context.Context, qtx db.Querier, avvikID uuid.UUID, r *http.Request) (uuid.UUID, error) {
@@ -507,7 +507,7 @@ func (h *Handler) AddNotification(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "failed to add notification", http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=notifications", http.StatusSeeOther)
+	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=notifications", http.StatusSeeOther) //nolint:gosec // path is a hardcoded prefix + UUID, not user input
 }
 
 func (h *Handler) AddAttachment(w http.ResponseWriter, r *http.Request) {
@@ -555,7 +555,7 @@ func (h *Handler) AddAttachment(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "failed to add attachment", http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=evidence", http.StatusSeeOther)
+	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=evidence", http.StatusSeeOther) //nolint:gosec // path is a hardcoded prefix + UUID, not user input
 }
 
 func (h *Handler) UpdateClosureFlags(w http.ResponseWriter, r *http.Request) {
@@ -587,7 +587,7 @@ func (h *Handler) UpdateClosureFlags(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "failed to update closure flags", http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=closure", http.StatusSeeOther)
+	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=closure", http.StatusSeeOther) //nolint:gosec // path is a hardcoded prefix + UUID, not user input
 }
 
 func (h *Handler) Close(w http.ResponseWriter, r *http.Request) {
@@ -625,7 +625,7 @@ func (h *Handler) Close(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "failed to close avvik", http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=closure", http.StatusSeeOther)
+	http.Redirect(w, r, "/avvik/"+id.String()+"?tab=closure", http.StatusSeeOther) //nolint:gosec // path is a hardcoded prefix + UUID, not user input
 }
 
 func (h *Handler) withTx(ctx context.Context, fn func(db.Querier) error) error {

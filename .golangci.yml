@@ -96,6 +96,7 @@ linters:
           - wrapcheck
           - funlen
           - err113
+          - gosec
       # contextcheck false-positive: templ components pass ctx via .Render(ctx, w),
       # not as a constructor argument — the linter can't follow this pattern.
       - text: "should pass the context parameter"

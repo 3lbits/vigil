@@ -33,7 +33,7 @@ func registerDevRoleRoute(mux *http.ServeMux, enabled, secureCookie bool, q db.Q
 				break
 			}
 		}
-		http.SetCookie(w, &http.Cookie{ // nosemgrep: go.lang.security.audit.net.cookie-missing-secure.cookie-missing-secure
+		http.SetCookie(w, &http.Cookie{ //nolint:gosec // nosemgrep: go.lang.security.audit.net.cookie-missing-secure.cookie-missing-secure
 			Name:     middleware.DevUserCookieName,
 			Value:    selected.ID.String(),
 			Path:     "/",
@@ -42,7 +42,7 @@ func registerDevRoleRoute(mux *http.ServeMux, enabled, secureCookie bool, q db.Q
 			SameSite: http.SameSiteLaxMode,
 			Secure:   secureCookie,
 		})
-		http.SetCookie(w, &http.Cookie{ // nosemgrep: go.lang.security.audit.net.cookie-missing-secure.cookie-missing-secure
+		http.SetCookie(w, &http.Cookie{ //nolint:gosec // nosemgrep: go.lang.security.audit.net.cookie-missing-secure.cookie-missing-secure
 			Name:     middleware.DevRoleCookieName,
 			Value:    "",
 			Path:     "/",
@@ -51,7 +51,7 @@ func registerDevRoleRoute(mux *http.ServeMux, enabled, secureCookie bool, q db.Q
 			SameSite: http.SameSiteLaxMode,
 			Secure:   secureCookie,
 		})
-		http.Redirect(w, r, redirectPathFromReferer(r.Header.Get("Referer")), http.StatusSeeOther)
+		http.Redirect(w, r, redirectPathFromReferer(r.Header.Get("Referer")), http.StatusSeeOther) //nolint:gosec // redirectPathFromReferer enforces a safe local path via safeLocalRedirect
 	})
 }
 

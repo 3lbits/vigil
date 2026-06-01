@@ -70,7 +70,7 @@ func validateToken(r *http.Request, token string) bool {
 		// Parse multipart to read _csrf field. Body size is bounded here so that
 		// the handler's MaxBytesReader wrapper does not affect multipart parsing.
 		r.Body = http.MaxBytesReader(nil, r.Body, maxBodySize)
-		if err := r.ParseMultipartForm(maxBodySize); err != nil {
+		if err := r.ParseMultipartForm(maxBodySize); err != nil { //nolint:gosec // body is already bounded by MaxBytesReader above
 			return false
 		}
 		return hmac.Equal([]byte(token), []byte(r.FormValue(fieldName)))
@@ -88,7 +88,7 @@ func issueToken(key []byte, r *http.Request, w http.ResponseWriter, secure bool)
 		return c.Value
 	}
 	tok := newSignedToken(key)
-	c := &http.Cookie{
+	c := &http.Cookie{ //nolint:gosec // cookie has HttpOnly, SameSite=Strict, and Secure=true by default; Secure is only relaxed in dev via the conditional below
 		Name:     cookieName,
 		Value:    tok,
 		Path:     "/",

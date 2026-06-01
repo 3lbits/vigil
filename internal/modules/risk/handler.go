@@ -188,7 +188,7 @@ func (h *Handler) saveParticipants(r *http.Request, assessmentID uuid.UUID) {
 				AssessmentID: assessmentID,
 				UserID:       uid,
 			}); err != nil {
-				slog.Warn("add assessment participant", "assessment_id", assessmentID, "user_id", uid.String(), "error", err) //nolint:gosec // uid.String() is always hex+hyphens from uuid.Parse; no injection risk
+				slog.Warn("add assessment participant", "assessment_id", assessmentID, "user_id", uid.String(), "error", err)
 			}
 		}
 	}
@@ -1634,7 +1634,7 @@ func (h *Handler) saveDecisionRisk(w http.ResponseWriter, r *http.Request, revie
 		return
 	}
 	if idx+1 < len(allRisks) {
-		http.Redirect(w, r, decisionRiskPath(assessment.ID, allRisks[idx+1].ID, review), http.StatusSeeOther) // nosemgrep: go.lang.security.injection.open-redirect.open-redirect
+		http.Redirect(w, r, decisionRiskPath(assessment.ID, allRisks[idx+1].ID, review), http.StatusSeeOther) //nolint:gosec // nosemgrep: go.lang.security.injection.open-redirect.open-redirect
 		return
 	}
 	http.Redirect(w, r, decisionRiskPath(assessment.ID, risk.ID, review), http.StatusSeeOther) // nosemgrep: go.lang.security.injection.open-redirect.open-redirect

@@ -14,7 +14,7 @@ func newTestEngine(t *testing.T) *Engine {
 	t.Helper()
 	_, file, _, _ := runtime.Caller(0)
 	policyPath := filepath.Join(filepath.Dir(file), "..", "..", "cmd", "server", "policies", "authz.rego")
-	src, err := os.ReadFile(policyPath) //nolint:gosec // path is repo-internal, not user input
+	src, err := os.ReadFile(policyPath)
 	if err != nil {
 		t.Fatalf("read authz.rego: %v (path: %s)", err, policyPath)
 	}

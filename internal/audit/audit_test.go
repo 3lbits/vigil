@@ -83,7 +83,7 @@ func TestRecord_EmitsSlogLine(t *testing.T) {
 	buf := captureLogger(t)
 	q := &recordingQuerier{}
 
-	Record(context.Background(), q, Event{Event: "admin.role_change"}) //nolint:errcheck,gosec
+	Record(context.Background(), q, Event{Event: "admin.role_change"}) //nolint:errcheck
 
 	m := decodeLastLine(t, buf)
 	if m["log_type"] != "audit" {
@@ -114,7 +114,7 @@ func TestRecord_NilAttrs_ValidJSON(t *testing.T) {
 	captureLogger(t)
 	q := &recordingQuerier{}
 
-	Record(context.Background(), q, Event{Event: "x", Attrs: nil}) //nolint:errcheck,gosec
+	Record(context.Background(), q, Event{Event: "x", Attrs: nil}) //nolint:errcheck
 
 	if len(q.calls) == 0 {
 		t.Fatal("no InsertAuditLog call")
@@ -129,7 +129,7 @@ func TestRecord_AttrsSerialised(t *testing.T) {
 	captureLogger(t)
 	q := &recordingQuerier{}
 
-	Record(context.Background(), q, Event{ //nolint:errcheck,gosec
+	Record(context.Background(), q, Event{ //nolint:errcheck
 		Event: "x",
 		Attrs: map[string]any{"target_user_id": "u-42", "new_role": "editor"},
 	})
@@ -151,7 +151,7 @@ func TestRecord_NoUserInContext_ZeroUUID(t *testing.T) {
 	q := &recordingQuerier{}
 
 	// No SessionUser injected → UserID must be null (Valid == false).
-	Record(context.Background(), q, Event{Event: "x"}) //nolint:errcheck,gosec
+	Record(context.Background(), q, Event{Event: "x"}) //nolint:errcheck
 
 	if len(q.calls) == 0 {
 		t.Fatal("no InsertAuditLog call")
@@ -170,7 +170,7 @@ func TestRecord_UserInContext_PopulatesUserID(t *testing.T) {
 		ID: "11111111-1111-1111-1111-111111111111", Role: "admin",
 	})
 
-	Record(ctx, q, Event{Event: "x"}) //nolint:errcheck,gosec
+	Record(ctx, q, Event{Event: "x"}) //nolint:errcheck
 
 	if len(q.calls) == 0 {
 		t.Fatal("no InsertAuditLog call")
@@ -188,7 +188,7 @@ func TestRecord_SourceIPPopulated(t *testing.T) {
 	q := &recordingQuerier{}
 
 	ctx := injectSourceIP(context.Background(), "10.0.0.1")
-	Record(ctx, q, Event{Event: "x"}) //nolint:errcheck,gosec
+	Record(ctx, q, Event{Event: "x"}) //nolint:errcheck
 
 	if len(q.calls) == 0 {
 		t.Fatal("no InsertAuditLog call")

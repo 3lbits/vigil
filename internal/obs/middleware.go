@@ -327,7 +327,7 @@ func Logger(ctx context.Context) *slog.Logger {
 	}
 
 	if u, ok := middleware.FromContext(ctx); ok && u.ID != "" {
-		attrs = append(attrs, slog.String("user.id", u.ID))
+		attrs = append(attrs, slog.String("user_id", u.ID))
 	}
 
 	return slog.Default().With(attrs...)

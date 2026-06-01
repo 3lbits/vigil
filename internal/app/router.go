@@ -119,7 +119,7 @@ func registerLocaleRoute(mux *http.ServeMux, cfg *config.Config) {
 			lang = locale.DefaultLang
 		}
 		redirect := redirectPathFromReferer(r.Header.Get("Referer"))
-		http.SetCookie(w, &http.Cookie{ // nosemgrep: go.lang.security.audit.net.cookie-missing-secure.cookie-missing-secure
+		http.SetCookie(w, &http.Cookie{ //nolint:gosec // nosemgrep: go.lang.security.audit.net.cookie-missing-secure.cookie-missing-secure
 			Name:     locale.CookieName,
 			Value:    lang,
 			Path:     "/",
@@ -128,6 +128,6 @@ func registerLocaleRoute(mux *http.ServeMux, cfg *config.Config) {
 			SameSite: http.SameSiteLaxMode,
 			Secure:   cfg.SessionCookieSecure,
 		})
-		http.Redirect(w, r, redirect, http.StatusSeeOther)
+		http.Redirect(w, r, redirect, http.StatusSeeOther) //nolint:gosec // redirect is sanitised by redirectPathFromReferer via safeLocalRedirect
 	})
 }
