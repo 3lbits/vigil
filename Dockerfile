@@ -2,7 +2,13 @@
 # Multi-stage: build with full Go toolchain, run on distroless/static (no shell, no libc)
 
 ## ── Stage 1: build ──────────────────────────────────────────────────────────
-FROM golang:1.26.3-bookworm@sha256:386d475a660466863d9f8c766fec64d7fdad3edac2c6a05020c09534d71edb4b AS builder
+# --platform=$BUILDPLATFORM pins the builder to the native build host (e.g. the
+# amd64 GHA runner) for ALL target platforms. The Go build cross-compiles via
+# GOARCH=${TARGETARCH} (CGO_ENABLED=0), and the runtime stage only COPYs the
+# binary, so no target-arch code is ever executed at build time — QEMU emulation
+# is not needed. Digest pinning still works: the digest points at the manifest
+# index and $BUILDPLATFORM resolves the host variant from it.
+FROM --platform=$BUILDPLATFORM golang:1.26.3-bookworm@sha256:386d475a660466863d9f8c766fec64d7fdad3edac2c6a05020c09534d71edb4b AS builder
 
 # Prevent Go from auto-downloading a newer toolchain at build time
 ENV GOTOOLCHAIN=local
@@ -12,16 +18,21 @@ WORKDIR /build
 ARG VERSION=dev
 
 # Install templ CLI (version pinned to match go.mod: v0.3.1001)
-# Placed before source copy so this layer is cached as long as the version is unchanged
+# Placed before source copy so this layer is cached as long as the version is unchanged.
+# Now runs natively on the build host for every target -> built once, reused.
 RUN go install github.com/a-h/templ/cmd/templ@v0.3.1001
 
 # Install Tailwind v4 standalone CLI (no Node.js required)
+# This binary EXECUTES on the builder, so it must match the build HOST arch
+# (BUILDARCH), not the target (TARGETARCH). Keying off TARGETARCH here would
+# download an arm64 binary onto an amd64 host and either fail to exec or
+# silently re-summon QEMU — defeating the cross-compile setup.
 # SHA256 values from sha256sums.txt in the release — update all three ARGs together when bumping.
-ARG TARGETARCH
+ARG BUILDARCH
 ARG TAILWIND_VERSION=v4.1.5
 ARG TAILWIND_SHA256_amd64=9d258a7786c22f8572aea20ed35848f8cbef1d06277e4e6b97ad8561ffc21e07
 ARG TAILWIND_SHA256_arm64=9555c6414617c15cc820679ec65404af92507e7b7718fd035d26df055561dec9
-RUN case "${TARGETARCH}" in \
+RUN case "${BUILDARCH}" in \
       arm64) ARCH=arm64; SHA256="${TAILWIND_SHA256_arm64}" ;; \
       *)     ARCH=x64;   SHA256="${TAILWIND_SHA256_amd64}" ;; \
     esac \
@@ -48,6 +59,7 @@ RUN tailwindcss -i cmd/server/public/css/input.css -o cmd/server/public/css/outp
 # -buildvcs=false: skip Git metadata embedding (version injected via CI if needed)
 # -ldflags -s -w:  strip debug symbols and DWARF (reduces binary size ~30%)
 # -mod=readonly:   fail if the build would require updating go.mod/go.sum
+ARG TARGETARCH
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} \
     go build \
       -trimpath \
