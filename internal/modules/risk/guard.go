@@ -72,6 +72,27 @@ func scopedReadInput(r *http.Request, q db.Querier, user middleware.SessionUser)
 	}, nil
 }
 
+func updateOwnInput(r *http.Request, q db.Querier, user middleware.SessionUser) (map[string]any, error) {
+	assessment, ok := assessmentFromContext(r.Context())
+	if !ok {
+		return nil, errMissingLoadedAssessment
+	}
+	userID, err := uuid.Parse(user.ID)
+	if err != nil {
+		return nil, fmt.Errorf("parse user id for scoped risk update: %w", err)
+	}
+	isParticipant, err := q.IsRiskAssessmentParticipant(r.Context(), db.IsRiskAssessmentParticipantParams{
+		AssessmentID: assessment.ID,
+		UserID:       userID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("query risk assessment participant: %w", err)
+	}
+	return map[string]any{
+		"is_participant": isParticipant,
+	}, nil
+}
+
 func ownerInput(r *http.Request, user middleware.SessionUser) (map[string]any, error) {
 	assessment, ok := assessmentFromContext(r.Context())
 	if !ok {
@@ -87,13 +108,26 @@ func ownerInput(r *http.Request, user middleware.SessionUser) (map[string]any, e
 }
 
 func RequireRiskReadScoped(q db.Querier, e *authz.Engine) func(http.Handler) http.Handler {
+	return requireRiskObjectPolicy("read_scoped", q, e, scopedReadInput)
+}
+
+func RequireRiskUpdateOwn(q db.Querier, e *authz.Engine) func(http.Handler) http.Handler {
+	return requireRiskObjectPolicy("update_own", q, e, updateOwnInput)
+}
+
+func requireRiskObjectPolicy(
+	action string,
+	q db.Querier,
+	e *authz.Engine,
+	build func(*http.Request, db.Querier, middleware.SessionUser) (map[string]any, error),
+) func(http.Handler) http.Handler {
 	load := func(w http.ResponseWriter, r *http.Request) (*http.Request, bool) {
 		return loadAssessmentForGuard(w, r, q)
 	}
 	buildInput := func(r *http.Request, user middleware.SessionUser) (map[string]any, error) {
-		return scopedReadInput(r, q, user)
+		return build(r, q, user)
 	}
-	return authz.RequireObjectPolicy(e, "risk", "read_scoped", load, buildInput)
+	return authz.RequireObjectPolicy(e, "risk", action, load, buildInput)
 }
 
 func RequireRiskOwnerDecision(action string, q db.Querier, e *authz.Engine) func(http.Handler) http.Handler {

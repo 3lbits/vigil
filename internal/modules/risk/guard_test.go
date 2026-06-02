@@ -81,6 +81,19 @@ allow if {
 	input.user.role == "viewer"
 	input.is_creator == true
 }
+
+allow if {
+	input.resource == "risk"
+	input.action == "update_own"
+	input.user.role == "contributor"
+	input.is_participant == true
+}
+
+allow if {
+	input.resource == "risk"
+	input.action == "update_own"
+	input.user.role == "editor"
+}
 `)
 	if err != nil {
 		t.Fatalf("compile authz engine: %v", err)
@@ -225,5 +238,65 @@ func TestRequireRiskReadScoped_ViewerVisibilityMatrix(t *testing.T) {
 				t.Fatalf("status: got %d want %d", w.Code, tc.wantStatus)
 			}
 		})
+	}
+}
+
+func TestRequireRiskUpdateOwn_ContributorParticipantAllowed(t *testing.T) {
+	assessmentID := uuid.New()
+	userID := uuid.New()
+	q := &riskGuardQ{
+		assessment:  db.RiskAssessment{ID: assessmentID},
+		participant: true,
+	}
+	guard := RequireRiskUpdateOwn(q, riskGuardEngine(t))
+	w := httptest.NewRecorder()
+	r := requestWithPathAndUser("/risks/"+assessmentID.String()+"/step/2", assessmentID.String(), userID.String(), "contributor")
+
+	guard(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	})).ServeHTTP(w, r)
+
+	if w.Code != http.StatusNoContent {
+		t.Fatalf("status: got %d want %d", w.Code, http.StatusNoContent)
+	}
+}
+
+func TestRequireRiskUpdateOwn_ContributorNonParticipantDenied(t *testing.T) {
+	assessmentID := uuid.New()
+	userID := uuid.New()
+	q := &riskGuardQ{
+		assessment:  db.RiskAssessment{ID: assessmentID},
+		participant: false,
+	}
+	guard := RequireRiskUpdateOwn(q, riskGuardEngine(t))
+	w := httptest.NewRecorder()
+	r := requestWithPathAndUser("/risks/"+assessmentID.String()+"/step/2", assessmentID.String(), userID.String(), "contributor")
+
+	guard(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	})).ServeHTTP(w, r)
+
+	if w.Code != http.StatusForbidden {
+		t.Fatalf("status: got %d want %d", w.Code, http.StatusForbidden)
+	}
+}
+
+func TestRequireRiskUpdateOwn_EditorAllowedWithoutParticipant(t *testing.T) {
+	assessmentID := uuid.New()
+	userID := uuid.New()
+	q := &riskGuardQ{
+		assessment:  db.RiskAssessment{ID: assessmentID},
+		participant: false,
+	}
+	guard := RequireRiskUpdateOwn(q, riskGuardEngine(t))
+	w := httptest.NewRecorder()
+	r := requestWithPathAndUser("/risks/"+assessmentID.String()+"/step/2", assessmentID.String(), userID.String(), "editor")
+
+	guard(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	})).ServeHTTP(w, r)
+
+	if w.Code != http.StatusNoContent {
+		t.Fatalf("status: got %d want %d", w.Code, http.StatusNoContent)
 	}
 }
