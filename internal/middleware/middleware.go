@@ -3,6 +3,7 @@ package middleware
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -204,6 +205,60 @@ type topOrgNameKey struct{}
 const defaultTopOrgName = "Vigil"
 const moduleFlagsColdCacheFailClosed = true
 
+// ModuleFlagsSnapshot is the cached view served to request handlers.
+type ModuleFlagsSnapshot struct {
+	Flags      ModuleFlags
+	TopOrgName string
+}
+
+// ModuleFlagsCache maintains an atomic snapshot of module flags and top org
+// name. Refresh is expected to run in background and on explicit invalidation
+// paths; request middleware should only perform atomic loads.
+type ModuleFlagsCache struct {
+	q            db.Querier
+	avvikEnabled bool
+	lastKnown    atomic.Pointer[ModuleFlagsSnapshot]
+}
+
+func NewModuleFlagsCache(q db.Querier, avvikEnabled bool) *ModuleFlagsCache {
+	return &ModuleFlagsCache{
+		q:            q,
+		avvikEnabled: avvikEnabled,
+	}
+}
+
+func (c *ModuleFlagsCache) Refresh(ctx context.Context) error {
+	settings, err := c.q.GetAppSettings(ctx)
+	if err != nil {
+		health.SetModuleFlagsSettingsLoadFailure(true)
+		return fmt.Errorf("load app settings: %w", err)
+	}
+
+	flags := moduleFlagsFromSettings(settings, c.avvikEnabled)
+	topOrgName := defaultTopOrgName
+	orgs, orgErr := c.q.ListOrganizations(ctx)
+	if orgErr != nil {
+		slog.Warn("list organizations", "error", orgErr)
+	} else {
+		topOrgName = resolveTopOrgName(orgs)
+	}
+
+	snapshot := ModuleFlagsSnapshot{
+		Flags:      flags,
+		TopOrgName: topOrgName,
+	}
+	c.lastKnown.Store(&snapshot)
+	health.SetModuleFlagsSettingsLoadFailure(false)
+	return nil
+}
+
+func (c *ModuleFlagsCache) Snapshot() (ModuleFlagsSnapshot, bool) {
+	if cached := c.lastKnown.Load(); cached != nil {
+		return *cached, true
+	}
+	return ModuleFlagsSnapshot{}, false
+}
+
 // ModuleFlagsFromContext retrieves ModuleFlags from the request context.
 // Returns all-enabled defaults if not set (safe for tests without the middleware).
 func ModuleFlagsFromContext(ctx context.Context) ModuleFlags {
@@ -230,35 +285,26 @@ func TopOrgNameFromContext(ctx context.Context) string {
 	return strings.TrimSpace(name)
 }
 
-// ModuleFlagsMiddleware loads app_settings once per request and injects ModuleFlags
-// into the context. On read failures it prefers last-known-good flags; if no
-// successful read has happened yet, it uses the cold-cache fallback policy.
-func ModuleFlagsMiddleware(q db.Querier, avvikEnabled bool) func(http.Handler) http.Handler {
-	var lastKnownGood atomic.Pointer[ModuleFlags]
-
+// ModuleFlagsMiddleware injects the current module flag snapshot into request
+// context without hitting the database. Refresh is performed separately by
+// startup/background loops and explicit invalidation paths.
+func ModuleFlagsMiddleware(cache *ModuleFlagsCache) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			flags := moduleFlagsColdCacheDefault(avvikEnabled)
-			settings, err := q.GetAppSettings(r.Context())
-			if err != nil {
-				slog.Error("load app settings", "error", err)
-				health.SetModuleFlagsSettingsLoadFailure(true)
-				if cached := lastKnownGood.Load(); cached != nil {
-					flags = *cached
-				}
-			} else {
-				flags = moduleFlagsFromSettings(settings, avvikEnabled)
-				cached := flags
-				lastKnownGood.Store(&cached)
-				health.SetModuleFlagsSettingsLoadFailure(false)
+			flags := ModuleFlags{
+				ComplianceEnabled: true,
+				RiskEnabled:       true,
+				ActivitiesEnabled: true,
+				AssetsEnabled:     true,
+				AvvikEnabled:      true,
 			}
-
 			topOrgName := defaultTopOrgName
-			orgs, orgErr := q.ListOrganizations(r.Context())
-			if orgErr != nil {
-				slog.Warn("list organizations", "error", orgErr)
-			} else {
-				topOrgName = resolveTopOrgName(orgs)
+			if cache != nil {
+				flags = moduleFlagsColdCacheDefault(cache.avvikEnabled)
+				if snapshot, ok := cache.Snapshot(); ok {
+					flags = snapshot.Flags
+					topOrgName = snapshot.TopOrgName
+				}
 			}
 
 			ctx := context.WithValue(r.Context(), moduleFlagsKey{}, flags)

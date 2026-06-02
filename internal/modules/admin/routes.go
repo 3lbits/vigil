@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"context"
 	"net/http"
 	"time"
 
@@ -10,16 +11,18 @@ import (
 )
 
 type adminModule struct {
-	pool      dbPinger
-	startTime time.Time
-	version   string
+	pool               dbPinger
+	startTime          time.Time
+	version            string
+	refreshModuleFlags func(context.Context) error
 }
 
-func New(pool dbPinger, startTime time.Time, version string) modregistry.Module {
+func New(pool dbPinger, startTime time.Time, version string, refreshModuleFlags func(context.Context) error) modregistry.Module {
 	return adminModule{
-		pool:      pool,
-		startTime: startTime,
-		version:   version,
+		pool:               pool,
+		startTime:          startTime,
+		version:            version,
+		refreshModuleFlags: refreshModuleFlags,
 	}
 }
 
@@ -28,7 +31,7 @@ func (adminModule) Name() string {
 }
 
 func (m adminModule) Register(deps modregistry.Dependencies, r *modregistry.Registrar) error {
-	h := NewHandler(deps.Queries, m.pool, m.startTime, m.version)
+	h := NewHandler(deps.Queries, m.pool, m.startTime, m.version, m.refreshModuleFlags)
 	adminMutationLimiter := middleware.NewIPRateLimiterWithKey(20, time.Minute, func(r *http.Request) string {
 		return obs.SourceIPFromContext(r.Context())
 	})

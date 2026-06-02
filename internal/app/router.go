@@ -64,6 +64,10 @@ func buildMux(ctx context.Context, cfg *config.Config, state appState, opts Opti
 		Queries: state.queries,
 		Authz:   state.engine,
 	}
+	var refreshModuleFlags func(context.Context) error
+	if state.moduleFlags != nil {
+		refreshModuleFlags = state.moduleFlags.Refresh
+	}
 	registry := modregistry.NewRegistry()
 	coreModules := []modregistry.Module{
 		about.New(),
@@ -74,7 +78,7 @@ func buildMux(ctx context.Context, cfg *config.Config, state appState, opts Opti
 		assets.New(),
 		activities.New(),
 		risk.New(),
-		admin.New(state.pool, opts.StartTime, opts.Version),
+		admin.New(state.pool, opts.StartTime, opts.Version, refreshModuleFlags),
 	}
 	if cfg.AvvikEnabled {
 		coreModules = append(coreModules, avvik.New(state.sqlDB))

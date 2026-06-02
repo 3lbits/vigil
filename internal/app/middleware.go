@@ -64,6 +64,7 @@ func withMiddleware(cfg *config.Config, state appState, sm *scs.SessionManager, 
 	instMux := obs.NewInstrumentedMux(mux)
 	sourceIP := obs.SourceIPMiddlewareWithTrustedCIDRs(state.trustedCIDRs)
 	globalRateLimit := globalRateLimitMiddleware(cfg)
+	moduleFlags := middleware.ModuleFlagsMiddleware(state.moduleFlags)
 
 	var handler http.Handler
 	if cfg.DevStubAuth {
@@ -73,7 +74,7 @@ func withMiddleware(cfg *config.Config, state appState, sm *scs.SessionManager, 
 			middleware.StubDBMiddleware(state.queries),
 			locale.LangMiddleware(state.bundle),
 			csrf.Middleware(state.csrfKey, cfg.SessionCookieSecure, nil),
-			middleware.ModuleFlagsMiddleware(state.queries, cfg.AvvikEnabled),
+			moduleFlags,
 			obs.RequestMiddleware("/healthz", "/readyz", cfg.MetricsPath),
 			obs.HTTPMetricsMiddleware(state.metrics),
 			obs.PanicMiddleware,
@@ -90,7 +91,7 @@ func withMiddleware(cfg *config.Config, state appState, sm *scs.SessionManager, 
 			csrf.Middleware(state.csrfKey, cfg.SessionCookieSecure, func(r *http.Request) string {
 				return sm.Token(r.Context())
 			}),
-			middleware.ModuleFlagsMiddleware(state.queries, cfg.AvvikEnabled),
+			moduleFlags,
 			obs.RequestMiddleware("/healthz", "/readyz", cfg.MetricsPath),
 			obs.HTTPMetricsMiddleware(state.metrics),
 			obs.PanicMiddleware,

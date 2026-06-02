@@ -25,14 +25,36 @@ type dbPinger interface {
 }
 
 type Handler struct {
-	q         db.Querier
-	pool      dbPinger
-	startTime time.Time
-	version   string
+	q                  db.Querier
+	pool               dbPinger
+	startTime          time.Time
+	version            string
+	refreshModuleFlags func(context.Context) error
 }
 
-func NewHandler(q db.Querier, pool dbPinger, startTime time.Time, version string) *Handler {
-	return &Handler{q: q, pool: pool, startTime: startTime, version: version}
+func NewHandler(
+	q db.Querier,
+	pool dbPinger,
+	startTime time.Time,
+	version string,
+	refreshModuleFlags func(context.Context) error,
+) *Handler {
+	return &Handler{
+		q:                  q,
+		pool:               pool,
+		startTime:          startTime,
+		version:            version,
+		refreshModuleFlags: refreshModuleFlags,
+	}
+}
+
+func (h *Handler) refreshModuleFlagsCache(ctx context.Context) {
+	if h.refreshModuleFlags == nil {
+		return
+	}
+	if err := h.refreshModuleFlags(ctx); err != nil {
+		slog.Warn("refresh module flags cache", "error", err)
+	}
 }
 
 func (h *Handler) AdminPage(w http.ResponseWriter, r *http.Request) {
@@ -287,6 +309,7 @@ func (h *Handler) CreateOrg(w http.ResponseWriter, r *http.Request) {
 		Event: "admin.organization.create",
 		Attrs: map[string]any{"organization_id": org.ID.String(), "name": name},
 	})
+	h.refreshModuleFlagsCache(r.Context())
 	http.Redirect(w, r, "/admin?tab=orgs&flash=Organisation+added.&type=success", http.StatusSeeOther)
 }
 
@@ -305,6 +328,7 @@ func (h *Handler) DeleteOrg(w http.ResponseWriter, r *http.Request) {
 		Event: "admin.organization.delete",
 		Attrs: map[string]any{"organization_id": id.String()},
 	})
+	h.refreshModuleFlagsCache(r.Context())
 	http.Redirect(w, r, "/admin?tab=orgs&flash=Organisation+deleted.&type=success", http.StatusSeeOther)
 }
 
@@ -375,6 +399,7 @@ func (h *Handler) SaveModuleSettings(w http.ResponseWriter, r *http.Request) {
 			"avvik_enabled":      params.AvvikEnabled,
 		},
 	})
+	h.refreshModuleFlagsCache(r.Context())
 	http.Redirect(w, r, "/admin?tab=modules&flash=Saved.&type=success", http.StatusSeeOther)
 }
 

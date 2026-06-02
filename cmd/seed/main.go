@@ -133,7 +133,7 @@ func seedModules(pool dbPinger) []modregistry.Module {
 		assets.New(),
 		activities.New(),
 		risk.New(),
-		admin.New(pool, time.Now(), "dev-seed"),
+		admin.New(pool, time.Now(), "dev-seed", nil),
 	}
 }
 

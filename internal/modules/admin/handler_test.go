@@ -44,7 +44,7 @@ type noopPinger struct{}
 func (noopPinger) Ping(_ context.Context) error { return nil }
 
 func newTestHandler(q *adminQ) *Handler {
-	return NewHandler(q, noopPinger{}, time.Now(), "test")
+	return NewHandler(q, noopPinger{}, time.Now(), "test", nil)
 }
 
 // ── helpers ───────────────────────────────────────────────────────────────────

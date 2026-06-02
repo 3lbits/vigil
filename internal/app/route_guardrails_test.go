@@ -53,7 +53,7 @@ func TestModulePublicRoutesAreExactlyExpected(t *testing.T) {
 		activities.New(),
 		risk.New(),
 		avvik.New(nil),
-		admin.New(nil, time.Unix(0, 0), "test"),
+		admin.New(nil, time.Unix(0, 0), "test", nil),
 		authmodule.New(nil, nil, scs.New(), "test-key", false),
 	}
 	for _, m := range mods {

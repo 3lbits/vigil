@@ -287,7 +287,10 @@ func TestChain_NoMiddleware(t *testing.T) {
 type moduleFlagsStubQ struct {
 	testutil.StubQuerier
 	settings []moduleFlagsSettingsResult
+	orgs     []db.Organization
+	orgErr   error
 	calls    int
+	orgCalls int
 }
 
 type moduleFlagsSettingsResult struct {
@@ -307,6 +310,14 @@ func (q *moduleFlagsStubQ) GetAppSettings(_ context.Context) (db.AppSetting, err
 	return q.settings[idx].settings, q.settings[idx].err
 }
 
+func (q *moduleFlagsStubQ) ListOrganizations(_ context.Context) ([]db.Organization, error) {
+	q.orgCalls++
+	if q.orgErr != nil {
+		return nil, q.orgErr
+	}
+	return q.orgs, nil
+}
+
 func TestModuleFlagsMiddleware_SuccessAppliesSettings(t *testing.T) {
 	health.SetModuleFlagsSettingsLoadFailure(false)
 	t.Cleanup(func() { health.SetModuleFlagsSettingsLoadFailure(false) })
@@ -320,7 +331,11 @@ func TestModuleFlagsMiddleware_SuccessAppliesSettings(t *testing.T) {
 	inner := RequireModule("compliance")(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
-	handler := ModuleFlagsMiddleware(q, true)(inner)
+	cache := NewModuleFlagsCache(q, true)
+	if err := cache.Refresh(context.Background()); err != nil {
+		t.Fatalf("refresh cache: %v", err)
+	}
+	handler := ModuleFlagsMiddleware(cache)(inner)
 
 	r := httptest.NewRequest(http.MethodGet, "/compliance", nil)
 	w := httptest.NewRecorder()
@@ -345,20 +360,20 @@ func TestModuleFlagsMiddleware_ErrorUsesLastKnownGood(t *testing.T) {
 	inner := RequireModule("compliance")(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
-	handler := ModuleFlagsMiddleware(q, true)(inner)
-
-	r1 := httptest.NewRequest(http.MethodGet, "/compliance", nil)
-	w1 := httptest.NewRecorder()
-	handler.ServeHTTP(w1, r1)
-	if w1.Code != http.StatusNotFound {
-		t.Fatalf("expected first request 404 from disabled compliance module, got %d", w1.Code)
+	cache := NewModuleFlagsCache(q, true)
+	if err := cache.Refresh(context.Background()); err != nil {
+		t.Fatalf("warm cache: %v", err)
 	}
+	if err := cache.Refresh(context.Background()); err == nil {
+		t.Fatal("expected second refresh to fail")
+	}
+	handler := ModuleFlagsMiddleware(cache)(inner)
 
-	r2 := httptest.NewRequest(http.MethodGet, "/compliance", nil)
-	w2 := httptest.NewRecorder()
-	handler.ServeHTTP(w2, r2)
-	if w2.Code != http.StatusNotFound {
-		t.Fatalf("expected cached disabled compliance module to stay 404 on settings error, got %d", w2.Code)
+	r := httptest.NewRequest(http.MethodGet, "/compliance", nil)
+	w := httptest.NewRecorder()
+	handler.ServeHTTP(w, r)
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("expected cached disabled compliance module to stay 404 on refresh error, got %d", w.Code)
 	}
 }
 
@@ -375,7 +390,11 @@ func TestModuleFlagsMiddleware_ColdCacheErrorUsesDocumentedDefault(t *testing.T)
 	inner := RequireModule("risk")(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
-	handler := ModuleFlagsMiddleware(q, true)(inner)
+	cache := NewModuleFlagsCache(q, true)
+	if err := cache.Refresh(context.Background()); err == nil {
+		t.Fatal("expected cold-cache refresh failure")
+	}
+	handler := ModuleFlagsMiddleware(cache)(inner)
 
 	r := httptest.NewRequest(http.MethodGet, "/risks", nil)
 	w := httptest.NewRecorder()
@@ -403,21 +422,51 @@ func TestModuleFlagsMiddleware_HealthSignalSetAndCleared(t *testing.T) {
 		},
 	}
 
-	handler := ModuleFlagsMiddleware(q, true)(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+	cache := NewModuleFlagsCache(q, true)
+	_ = ModuleFlagsMiddleware(cache)(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
-	r1 := httptest.NewRequest(http.MethodGet, "/", nil)
-	w1 := httptest.NewRecorder()
-	handler.ServeHTTP(w1, r1)
+	_ = cache.Refresh(context.Background())
 	if !health.ModuleFlagsSettingsLoadFailed() {
 		t.Fatal("expected health signal set after app_settings load failure")
 	}
 
-	r2 := httptest.NewRequest(http.MethodGet, "/", nil)
-	w2 := httptest.NewRecorder()
-	handler.ServeHTTP(w2, r2)
+	if err := cache.Refresh(context.Background()); err != nil {
+		t.Fatalf("expected refresh recovery, got: %v", err)
+	}
 	if health.ModuleFlagsSettingsLoadFailed() {
 		t.Fatal("expected health signal cleared after app_settings load recovery")
+	}
+}
+
+func TestModuleFlagsMiddleware_RequestPathDoesNotHitDB(t *testing.T) {
+	q := &moduleFlagsStubQ{
+		settings: []moduleFlagsSettingsResult{
+			{settings: db.AppSetting{ComplianceEnabled: true, RiskEnabled: true, ActivitiesEnabled: true, AssetsEnabled: true}},
+		},
+		orgs: []db.Organization{{Name: "Example"}},
+	}
+	cache := NewModuleFlagsCache(q, true)
+	if err := cache.Refresh(context.Background()); err != nil {
+		t.Fatalf("refresh cache: %v", err)
+	}
+
+	handler := ModuleFlagsMiddleware(cache)(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	for i := 0; i < 3; i++ {
+		r := httptest.NewRequest(http.MethodGet, "/", nil)
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, r)
+		if w.Code != http.StatusNoContent {
+			t.Fatalf("request %d: got %d want %d", i, w.Code, http.StatusNoContent)
+		}
+	}
+	if q.calls != 1 {
+		t.Fatalf("expected single settings DB call from refresh, got %d", q.calls)
+	}
+	if q.orgCalls != 1 {
+		t.Fatalf("expected single org DB call from refresh, got %d", q.orgCalls)
 	}
 }

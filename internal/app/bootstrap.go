@@ -8,6 +8,7 @@ import (
 	"io/fs"
 	"log/slog"
 	"net"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -20,6 +21,7 @@ import (
 	"github.com/3lbits/vigil/internal/config"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/middleware"
 	"github.com/3lbits/vigil/internal/obs"
 	"github.com/3lbits/vigil/internal/ui/layout"
 )
@@ -35,6 +37,7 @@ type appState struct {
 	reg          *prometheus.Registry
 	csrfKey      []byte
 	trustedCIDRs []*net.IPNet
+	moduleFlags  *middleware.ModuleFlagsCache
 }
 
 func (s appState) closeDB() {
@@ -82,6 +85,8 @@ func bootstrap(ctx context.Context, cfg *config.Config, opts Options) (appState,
 	}
 
 	queries := db.New(sqlDB)
+	moduleFlags := startModuleFlagsCache(ctx, queries, cfg.AvvikEnabled)
+
 	engine, err := authz.New(ctx, opts.PolicySource)
 	if err != nil {
 		return appState{}, fmt.Errorf("authz compile: %w", err)
@@ -110,5 +115,32 @@ func bootstrap(ctx context.Context, cfg *config.Config, opts Options) (appState,
 		reg:          reg,
 		csrfKey:      csrfKeyBytes[:],
 		trustedCIDRs: trustedCIDRs,
+		moduleFlags:  moduleFlags,
 	}, nil
+}
+
+func startModuleFlagsCache(
+	ctx context.Context,
+	queries *db.Queries,
+	avvikEnabled bool,
+) *middleware.ModuleFlagsCache {
+	moduleFlags := middleware.NewModuleFlagsCache(queries, avvikEnabled)
+	if refreshErr := moduleFlags.Refresh(ctx); refreshErr != nil {
+		slog.Error("warm module flags cache", "error", refreshErr)
+	}
+	go func() {
+		ticker := time.NewTicker(45 * time.Second)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				if refreshErr := moduleFlags.Refresh(ctx); refreshErr != nil {
+					slog.Error("refresh module flags cache", "error", refreshErr)
+				}
+			}
+		}
+	}()
+	return moduleFlags
 }

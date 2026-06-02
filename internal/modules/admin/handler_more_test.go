@@ -74,7 +74,11 @@ func (q *adminExtraQ) UpdateAppSettings(_ context.Context, _ db.UpdateAppSetting
 }
 
 func newExtraHandler(q *adminExtraQ) *Handler {
-	return NewHandler(q, noopPinger{}, time.Now(), "test")
+	return NewHandler(q, noopPinger{}, time.Now(), "test", nil)
+}
+
+func newExtraHandlerWithRefresh(q *adminExtraQ, refresh func(context.Context) error) *Handler {
+	return NewHandler(q, noopPinger{}, time.Now(), "test", refresh)
 }
 
 func TestFilterAuditLog(t *testing.T) {
@@ -274,8 +278,57 @@ func TestSaveModuleSettings_GetCurrentError(t *testing.T) {
 	}
 }
 
+func TestRefreshModuleFlagsCalledOnSuccessfulWrites(t *testing.T) {
+	refreshCalls := 0
+	refresh := func(context.Context) error {
+		refreshCalls++
+		return nil
+	}
+	h := newExtraHandlerWithRefresh(&adminExtraQ{}, refresh)
+
+	createForm := url.Values{"name": {"Org One"}, "key": {"org-1"}}
+	createReq := httptest.NewRequest(http.MethodPost, "/admin/orgs", strings.NewReader(createForm.Encode()))
+	createReq.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	createReq = adminCtx(createReq)
+	createW := httptest.NewRecorder()
+	h.CreateOrg(createW, createReq)
+	if createW.Code != http.StatusSeeOther {
+		t.Fatalf("create expected 303, got %d", createW.Code)
+	}
+
+	deleteID := uuid.New()
+	deleteReq := httptest.NewRequest(http.MethodPost, "/admin/orgs/"+deleteID.String()+"/delete", nil)
+	deleteReq.SetPathValue("id", deleteID.String())
+	deleteReq = adminCtx(deleteReq)
+	deleteW := httptest.NewRecorder()
+	h.DeleteOrg(deleteW, deleteReq)
+	if deleteW.Code != http.StatusSeeOther {
+		t.Fatalf("delete expected 303, got %d", deleteW.Code)
+	}
+
+	moduleForm := url.Values{
+		"compliance_enabled": {"on"},
+		"risk_enabled":       {"on"},
+		"activities_enabled": {"on"},
+		"assets_enabled":     {"on"},
+		"avvik_enabled":      {"on"},
+	}
+	moduleReq := httptest.NewRequest(http.MethodPost, "/admin/module-settings", strings.NewReader(moduleForm.Encode()))
+	moduleReq.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	moduleReq = adminCtx(moduleReq)
+	moduleW := httptest.NewRecorder()
+	h.SaveModuleSettings(moduleW, moduleReq)
+	if moduleW.Code != http.StatusSeeOther {
+		t.Fatalf("module settings expected 303, got %d", moduleW.Code)
+	}
+
+	if refreshCalls != 3 {
+		t.Fatalf("expected refresh callback 3 times, got %d", refreshCalls)
+	}
+}
+
 func TestModuleContract(t *testing.T) {
-	m := New(noopPinger{}, time.Now(), "test")
+	m := New(noopPinger{}, time.Now(), "test", nil)
 	if got := m.Name(); got != "admin" {
 		t.Fatalf("module name = %q, want %q", got, "admin")
 	}
