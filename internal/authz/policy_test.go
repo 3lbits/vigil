@@ -267,3 +267,58 @@ func TestPolicy_AvvikRoleMatrix(t *testing.T) {
 		t.Error("contributor should be allowed for avvik/write")
 	}
 }
+
+// ── toggle_public ─────────────────────────────────────────────────────────────
+
+func TestPolicy_RiskTogglePublic(t *testing.T) {
+	e := newTestEngine(t)
+
+	// admin is covered by global rule — no is_owner/is_creator needed
+	if !allow(t, e, "admin", "risk", "toggle_public") {
+		t.Error("admin should be allowed toggle_public unconditionally")
+	}
+
+	// editor/contributor allowed when is_owner
+	for _, role := range []string{"editor", "contributor"} {
+		if !allowWith(t, e, role, "risk", "toggle_public", map[string]any{"is_owner": true, "is_creator": false}) {
+			t.Errorf("%s with is_owner should be allowed toggle_public", role)
+		}
+		if !allowWith(t, e, role, "risk", "toggle_public", map[string]any{"is_owner": false, "is_creator": true}) {
+			t.Errorf("%s with is_creator should be allowed toggle_public", role)
+		}
+		if allowWith(t, e, role, "risk", "toggle_public", map[string]any{"is_owner": false, "is_creator": false}) {
+			t.Errorf("%s with neither is_owner nor is_creator should be denied toggle_public", role)
+		}
+	}
+
+	// viewer always denied
+	if allowWith(t, e, "viewer", "risk", "toggle_public", map[string]any{"is_owner": true, "is_creator": true}) {
+		t.Error("viewer should be denied toggle_public even as owner/creator")
+	}
+}
+
+// ── submit_own ────────────────────────────────────────────────────────────────
+
+func TestPolicy_AvvikSubmitOwn(t *testing.T) {
+	e := newTestEngine(t)
+
+	// admin is covered by global rule
+	if !allow(t, e, "admin", "avvik", "submit_own") {
+		t.Error("admin should be allowed submit_own unconditionally")
+	}
+
+	// any non-admin role allowed when is_participant
+	for _, role := range []string{"contributor", "editor"} {
+		if !allowWith(t, e, role, "avvik", "submit_own", map[string]any{"is_participant": true}) {
+			t.Errorf("%s as participant should be allowed submit_own", role)
+		}
+		if allowWith(t, e, role, "avvik", "submit_own", map[string]any{"is_participant": false}) {
+			t.Errorf("%s as non-participant should be denied submit_own", role)
+		}
+	}
+
+	// viewer always denied regardless of participant status
+	if allowWith(t, e, "viewer", "avvik", "submit_own", map[string]any{"is_participant": true}) {
+		t.Error("viewer should be denied submit_own even as participant")
+	}
+}

@@ -1106,11 +1106,6 @@ func (h *Handler) TogglePublic(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	user, _ := middleware.FromContext(r.Context())
-	if !canToggleAssessmentVisibility(assessment, user) {
-		httputil.Forbidden(w, r)
-		return
-	}
 	updated, err := h.q.ToggleRiskAssessmentPublic(r.Context(), assessment.ID)
 	if err != nil {
 		slog.Error("toggle public", "error", err)
@@ -1910,18 +1905,6 @@ func thresholdDefaults(lowMax, highMin int) (int, int) {
 		return 5, 12
 	}
 	return lowMax, highMin
-}
-
-func canToggleAssessmentVisibility(assessment db.RiskAssessment, user middleware.SessionUser) bool {
-	if user.Role == "admin" {
-		return true
-	}
-	userID, err := uuid.Parse(user.ID)
-	if err != nil {
-		return false
-	}
-	return (assessment.RiskOwnerID.Valid && assessment.RiskOwnerID.UUID == userID) ||
-		(assessment.CreatedBy.Valid && assessment.CreatedBy.UUID == userID)
 }
 
 func riskCanBeAccepted(risk db.Risk, lowMax int) bool {

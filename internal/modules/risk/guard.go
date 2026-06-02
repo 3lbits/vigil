@@ -72,6 +72,21 @@ func scopedReadInput(r *http.Request, q db.Querier, user middleware.SessionUser)
 	}, nil
 }
 
+func toggleOwnInput(r *http.Request, _ db.Querier, user middleware.SessionUser) (map[string]any, error) {
+	assessment, ok := assessmentFromContext(r.Context())
+	if !ok {
+		return nil, errMissingLoadedAssessment
+	}
+	userID, err := uuid.Parse(user.ID)
+	if err != nil {
+		return nil, fmt.Errorf("parse user id for risk toggle public: %w", err)
+	}
+	return map[string]any{
+		"is_owner":   assessment.RiskOwnerID.Valid && assessment.RiskOwnerID.UUID == userID,
+		"is_creator": assessment.CreatedBy.Valid && assessment.CreatedBy.UUID == userID,
+	}, nil
+}
+
 func updateOwnInput(r *http.Request, q db.Querier, user middleware.SessionUser) (map[string]any, error) {
 	assessment, ok := assessmentFromContext(r.Context())
 	if !ok {
@@ -113,6 +128,10 @@ func RequireRiskReadScoped(q db.Querier, e *authz.Engine) func(http.Handler) htt
 
 func RequireRiskUpdateOwn(q db.Querier, e *authz.Engine) func(http.Handler) http.Handler {
 	return requireRiskObjectPolicy("update_own", q, e, updateOwnInput)
+}
+
+func RequireRiskTogglePublic(q db.Querier, e *authz.Engine) func(http.Handler) http.Handler {
+	return requireRiskObjectPolicy("toggle_public", q, e, toggleOwnInput)
 }
 
 func requireRiskObjectPolicy(

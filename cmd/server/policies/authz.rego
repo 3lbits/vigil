@@ -107,3 +107,26 @@ allow if {
 	input.action == "read_scoped"
 	input.user.role in {"contributor", "editor", "admin"}
 }
+
+# Risk owner or creator can toggle assessment visibility.
+allow if {
+	input.resource == "risk"
+	input.action == "toggle_public"
+	input.user.role in {"contributor", "editor"}
+	input.is_owner == true
+}
+
+allow if {
+	input.resource == "risk"
+	input.action == "toggle_public"
+	input.user.role in {"contributor", "editor"}
+	input.is_creator == true
+}
+
+# Avvik reporter/creator can add notes and attachments.
+allow if {
+	input.resource == "avvik"
+	input.action == "submit_own"
+	input.user.role in {"contributor", "editor"}
+	input.is_participant == true
+}

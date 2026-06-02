@@ -25,6 +25,7 @@ func (riskModule) Register(deps modregistry.Dependencies, r *modregistry.Registr
 	declinePolicy := modregistry.Policy{Resource: "risks", Action: "decline"}
 	assessmentReadScoped := RequireRiskReadScoped(deps.Queries, deps.Authz)
 	assessmentUpdateOwn := RequireRiskUpdateOwn(deps.Queries, deps.Authz)
+	assessmentTogglePublic := RequireRiskTogglePublic(deps.Queries, deps.Authz)
 	assessmentAcceptOwn := RequireRiskOwnerDecision("accept", deps.Queries, deps.Authz)
 	assessmentDeclineOwn := RequireRiskOwnerDecision("decline", deps.Queries, deps.Authz)
 
@@ -37,7 +38,7 @@ func (riskModule) Register(deps modregistry.Dependencies, r *modregistry.Registr
 	r.Guarded("POST /risks", writePolicy, h.CreateAssessment, moduleGuard)
 	r.Guarded("GET /risks/{id}", readPolicy, h.Detail, moduleGuard, assessmentReadScoped)
 	r.Guarded("POST /risks/{id}/delete", deletePolicy, h.DeleteAssessment, moduleGuard, assessmentReadScoped)
-	r.Guarded("POST /risks/{id}/toggle-public", writePolicy, h.TogglePublic, moduleGuard, assessmentReadScoped, assessmentUpdateOwn)
+	r.Guarded("POST /risks/{id}/toggle-public", writePolicy, h.TogglePublic, moduleGuard, assessmentReadScoped, assessmentTogglePublic)
 
 	// Wizard steps (new assessment flow)
 	r.Guarded("GET /risks/{id}/step/2", writePolicy, h.Step2, moduleGuard, assessmentReadScoped, assessmentUpdateOwn)

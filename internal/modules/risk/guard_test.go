@@ -42,6 +42,10 @@ import rego.v1
 default allow := false
 
 allow if {
+	input.user.role == "admin"
+}
+
+allow if {
 	input.resource == "risks"
 	input.action in {"accept", "decline"}
 	input.user.role in {"editor", "admin"}
@@ -93,6 +97,20 @@ allow if {
 	input.resource == "risk"
 	input.action == "update_own"
 	input.user.role == "editor"
+}
+
+allow if {
+	input.resource == "risk"
+	input.action == "toggle_public"
+	input.user.role in {"contributor", "editor"}
+	input.is_owner == true
+}
+
+allow if {
+	input.resource == "risk"
+	input.action == "toggle_public"
+	input.user.role in {"contributor", "editor"}
+	input.is_creator == true
 }
 `)
 	if err != nil {
@@ -298,5 +316,91 @@ func TestRequireRiskUpdateOwn_EditorAllowedWithoutParticipant(t *testing.T) {
 
 	if w.Code != http.StatusNoContent {
 		t.Fatalf("status: got %d want %d", w.Code, http.StatusNoContent)
+	}
+}
+
+func TestRequireRiskTogglePublic_OwnerAllowed(t *testing.T) {
+	ownerID := uuid.New()
+	assessmentID := uuid.New()
+	q := &riskGuardQ{
+		assessment: db.RiskAssessment{
+			ID:          assessmentID,
+			RiskOwnerID: uuid.NullUUID{UUID: ownerID, Valid: true},
+		},
+	}
+	guard := RequireRiskTogglePublic(q, riskGuardEngine(t))
+	w := httptest.NewRecorder()
+	r := requestWithPathAndUser("/risks/"+assessmentID.String()+"/toggle-public", assessmentID.String(), ownerID.String(), "editor")
+
+	guard(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	})).ServeHTTP(w, r)
+
+	if w.Code != http.StatusNoContent {
+		t.Fatalf("owner: got %d want %d", w.Code, http.StatusNoContent)
+	}
+}
+
+func TestRequireRiskTogglePublic_CreatorAllowed(t *testing.T) {
+	creatorID := uuid.New()
+	assessmentID := uuid.New()
+	q := &riskGuardQ{
+		assessment: db.RiskAssessment{
+			ID:        assessmentID,
+			CreatedBy: uuid.NullUUID{UUID: creatorID, Valid: true},
+		},
+	}
+	guard := RequireRiskTogglePublic(q, riskGuardEngine(t))
+	w := httptest.NewRecorder()
+	r := requestWithPathAndUser("/risks/"+assessmentID.String()+"/toggle-public", assessmentID.String(), creatorID.String(), "contributor")
+
+	guard(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	})).ServeHTTP(w, r)
+
+	if w.Code != http.StatusNoContent {
+		t.Fatalf("creator: got %d want %d", w.Code, http.StatusNoContent)
+	}
+}
+
+func TestRequireRiskTogglePublic_UnrelatedUserDenied(t *testing.T) {
+	ownerID := uuid.New()
+	otherID := uuid.New()
+	assessmentID := uuid.New()
+	q := &riskGuardQ{
+		assessment: db.RiskAssessment{
+			ID:          assessmentID,
+			RiskOwnerID: uuid.NullUUID{UUID: ownerID, Valid: true},
+		},
+	}
+	guard := RequireRiskTogglePublic(q, riskGuardEngine(t))
+	w := httptest.NewRecorder()
+	r := requestWithPathAndUser("/risks/"+assessmentID.String()+"/toggle-public", assessmentID.String(), otherID.String(), "editor")
+
+	guard(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	})).ServeHTTP(w, r)
+
+	if w.Code != http.StatusForbidden {
+		t.Fatalf("unrelated user: got %d want %d", w.Code, http.StatusForbidden)
+	}
+}
+
+func TestRequireRiskTogglePublic_AdminAlwaysAllowed(t *testing.T) {
+	assessmentID := uuid.New()
+	adminID := uuid.New()
+	q := &riskGuardQ{
+		assessment: db.RiskAssessment{ID: assessmentID},
+	}
+	guard := RequireRiskTogglePublic(q, riskGuardEngine(t))
+	w := httptest.NewRecorder()
+	r := requestWithPathAndUser("/risks/"+assessmentID.String()+"/toggle-public", assessmentID.String(), adminID.String(), "admin")
+
+	guard(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	})).ServeHTTP(w, r)
+
+	if w.Code != http.StatusNoContent {
+		t.Fatalf("admin: got %d want %d", w.Code, http.StatusNoContent)
 	}
 }

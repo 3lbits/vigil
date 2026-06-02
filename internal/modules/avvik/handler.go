@@ -301,16 +301,6 @@ func (h *Handler) AddNote(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	current, err := h.q.GetAvvik(r.Context(), id)
-	if err != nil {
-		http.NotFound(w, r)
-		return
-	}
-	user, _ := middleware.FromContext(r.Context())
-	if !h.canReporterOrCreatorAccess(r.Context(), current, user) && user.Role != "admin" {
-		httputil.Forbidden(w, r)
-		return
-	}
 	if parseErr := r.ParseForm(); parseErr != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
 		return
@@ -515,16 +505,6 @@ func (h *Handler) AddAttachment(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	current, err := h.q.GetAvvik(r.Context(), id)
-	if err != nil {
-		http.NotFound(w, r)
-		return
-	}
-	user, _ := middleware.FromContext(r.Context())
-	if !h.canReporterOrCreatorAccess(r.Context(), current, user) && user.Role != "admin" {
-		httputil.Forbidden(w, r)
-		return
-	}
 	if parseErr := r.ParseForm(); parseErr != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
 		return
@@ -539,7 +519,7 @@ func (h *Handler) AddAttachment(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "invalid URL: "+urlErr.Error(), http.StatusBadRequest)
 		return
 	}
-	err = h.withTx(r.Context(), func(qtx db.Querier) error {
+	if err := h.withTx(r.Context(), func(qtx db.Querier) error {
 		userID, _ := currentUser(r.Context())
 		if _, addErr := qtx.AddAvvikAttachment(r.Context(), db.AddAvvikAttachmentParams{
 			AvvikID:    id,
@@ -550,8 +530,7 @@ func (h *Handler) AddAttachment(w http.ResponseWriter, r *http.Request) {
 			return fmt.Errorf("add attachment: %w", addErr)
 		}
 		return h.addEventTx(r.Context(), qtx, id, "evidence_added", map[string]any{"filename": filename, "storage_key": link})
-	})
-	if err != nil {
+	}); err != nil {
 		http.Error(w, "failed to add attachment", http.StatusInternalServerError)
 		return
 	}
@@ -825,26 +804,7 @@ func (h *Handler) resolveUserLookupAssignee(ctx context.Context, rawID, lookup s
 }
 
 func (h *Handler) canReporterOrCreatorAccess(ctx context.Context, a db.Avvik, user middleware.SessionUser) bool {
-	if user.Role == "admin" {
-		return true
-	}
-	if strings.EqualFold(strings.TrimSpace(a.ReporterEmail), strings.TrimSpace(user.Email)) && strings.TrimSpace(user.Email) != "" {
-		return true
-	}
-	uid, err := uuid.Parse(user.ID)
-	if err != nil {
-		return false
-	}
-	events, listErr := h.q.ListAvvikEvents(ctx, a.ID)
-	if listErr != nil {
-		return false
-	}
-	for _, e := range events {
-		if e.EventType == "created" && e.ActorID.Valid && e.ActorID.UUID == uid {
-			return true
-		}
-	}
-	return false
+	return isReporterOrCreator(ctx, h.q, a, user)
 }
 
 func defaultIfEmpty(v, fallback string) string {
