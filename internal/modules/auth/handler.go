@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"github.com/alexedwards/scs/v2"
 	"golang.org/x/oauth2"
@@ -22,19 +23,29 @@ import (
 type Handler struct {
 	q              db.Querier
 	providers      map[string]auth.Provider // slug → provider
+	allowedDomains map[string]struct{}
 	sm             *scs.SessionManager
 	sessionHMACKey string
 	cookieSecure   bool
 }
 
-func NewHandler(q db.Querier, providers []auth.Provider, sm *scs.SessionManager, sessionHMACKey string, cookieSecure bool) *Handler {
+func NewHandler(q db.Querier, providers []auth.Provider, allowedDomains []string, sm *scs.SessionManager, sessionHMACKey string, cookieSecure bool) *Handler {
 	m := make(map[string]auth.Provider, len(providers))
 	for _, p := range providers {
 		m[p.Name()] = p
 	}
+	domains := make(map[string]struct{}, len(allowedDomains))
+	for _, d := range allowedDomains {
+		d = strings.ToLower(strings.TrimSpace(strings.TrimPrefix(d, "@")))
+		if d == "" {
+			continue
+		}
+		domains[d] = struct{}{}
+	}
 	return &Handler{
 		q:              q,
 		providers:      m,
+		allowedDomains: domains,
 		sm:             sm,
 		sessionHMACKey: sessionHMACKey,
 		cookieSecure:   cookieSecure,
@@ -194,6 +205,12 @@ func (h *Handler) Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !h.isAllowedEmail(identity.Email) {
+		obs.SecurityEvent(r.Context(), "auth.login_denied", "provider", slug, "reason", "email_domain_not_allowed")
+		http.Error(w, "email domain not allowed", http.StatusForbidden)
+		return
+	}
+
 	// Claim a pre-created pending user (admin pre-provisioned by email) if one exists.
 	// Falls back to normal upsert, which creates a new viewer account.
 	user, err := h.q.ClaimPendingUser(r.Context(), db.ClaimPendingUserParams{
@@ -257,6 +274,18 @@ func nonceCookieName(slug string) string {
 
 func isOIDCProvider(slug string) bool {
 	return slug == "oidc" || slug == "entra"
+}
+
+func (h *Handler) isAllowedEmail(email string) bool {
+	if len(h.allowedDomains) == 0 {
+		return true
+	}
+	i := strings.LastIndex(email, "@")
+	if i <= 0 || i == len(email)-1 {
+		return false
+	}
+	_, ok := h.allowedDomains[strings.ToLower(email[i+1:])]
+	return ok
 }
 
 func generateState() (string, error) {

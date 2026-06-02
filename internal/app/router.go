@@ -89,7 +89,7 @@ func buildMux(ctx context.Context, cfg *config.Config, state appState, opts Opti
 		if err != nil {
 			return nil, nil, err
 		}
-		if err := registry.Register(authmodule.New(providers, sm, cfg.SessionHMACKey, cfg.SessionCookieSecure)); err != nil {
+		if err := registry.Register(authmodule.New(providers, cfg.AllowedEmailDomains, sm, cfg.SessionHMACKey, cfg.SessionCookieSecure)); err != nil {
 			return nil, nil, fmt.Errorf("register modules: %w", err)
 		}
 	}

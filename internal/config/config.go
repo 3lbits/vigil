@@ -20,6 +20,9 @@ type Config struct {
 	// AuthProviders is the list of enabled auth providers (e.g. ["github", "entra"]).
 	// Set via AUTH_PROVIDERS (comma-separated) or the legacy AUTH_PROVIDER variable.
 	AuthProviders []string
+	// AllowedEmailDomains is the optional OAuth self-registration allowlist.
+	// Set via AUTH_ALLOWED_EMAIL_DOMAINS (comma-separated domains).
+	AllowedEmailDomains []string
 
 	GitHubClientID     string
 	GitHubClientSecret string
@@ -72,6 +75,7 @@ func Load() *Config {
 			os.Getenv("AUTH_PROVIDERS"),
 			getEnvWithDefault("AUTH_PROVIDER", "github"),
 		),
+		AllowedEmailDomains: parseEmailDomains(os.Getenv("AUTH_ALLOWED_EMAIL_DOMAINS")),
 
 		GitHubClientID:     os.Getenv("GITHUB_CLIENT_ID"),
 		GitHubClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
@@ -122,6 +126,9 @@ func validateConfig(cfg *Config) {
 
 	if cfg.DatabaseURL == "" {
 		panic("required environment variable DATABASE_URL is not set")
+	}
+	if hasProvider(cfg.AuthProviders, "github") && len(cfg.AllowedEmailDomains) == 0 {
+		panic("AUTH_ALLOWED_EMAIL_DOMAINS must be set when AUTH_PROVIDERS includes github")
 	}
 	if cfg.GlobalRateLimitPerWindow < 0 {
 		panic("GLOBAL_RATE_LIMIT_PER_WINDOW must be >= 0")
@@ -179,17 +186,37 @@ func parseProviders(multi, single string) []string {
 	if raw == "" {
 		raw = single
 	}
+	return parseCSV(raw, false)
+}
+
+func parseEmailDomains(raw string) []string {
+	return parseCSV(raw, true)
+}
+
+func parseCSV(raw string, lower bool) []string {
 	parts := strings.Split(raw, ",")
 	seen := make(map[string]bool, len(parts))
 	out := make([]string, 0, len(parts))
 	for _, p := range parts {
 		p = strings.TrimSpace(p)
+		if lower {
+			p = strings.ToLower(strings.TrimPrefix(p, "@"))
+		}
 		if p != "" && !seen[p] {
 			seen[p] = true
 			out = append(out, p)
 		}
 	}
 	return out
+}
+
+func hasProvider(providers []string, want string) bool {
+	for _, p := range providers {
+		if p == want {
+			return true
+		}
+	}
+	return false
 }
 
 func getEnvWithDefault(key, defaultVal string) string {

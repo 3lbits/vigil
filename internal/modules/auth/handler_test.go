@@ -82,7 +82,7 @@ func responseCookie(cookies []*http.Cookie, name string) *http.Cookie {
 
 func TestRedirect_UnknownProvider(t *testing.T) {
 	sm := scs.New()
-	h := NewHandler(&authQ{}, nil, sm, "test-key", false)
+	h := NewHandler(&authQ{}, nil, nil, sm, "test-key", false)
 	r := withSession(t, sm, httptest.NewRequest(http.MethodGet, "/auth/unknown", nil))
 	r.SetPathValue("slug", "unknown")
 	w := httptest.NewRecorder()
@@ -97,7 +97,7 @@ func TestRedirect_UnknownProvider(t *testing.T) {
 func TestRedirect_OIDC_SetsStatePKCEAndNonceCookies(t *testing.T) {
 	sm := scs.New()
 	provider := &authProviderStub{name: "oidc"}
-	h := NewHandler(&authQ{}, []authpkg.Provider{provider}, sm, "test-key", false)
+	h := NewHandler(&authQ{}, []authpkg.Provider{provider}, nil, sm, "test-key", false)
 
 	r := withSession(t, sm, httptest.NewRequest(http.MethodGet, "/auth/oidc", nil))
 	r.SetPathValue("slug", "oidc")
@@ -128,7 +128,7 @@ func TestRedirect_OIDC_SetsStatePKCEAndNonceCookies(t *testing.T) {
 func TestCallback_StateMismatchRejected(t *testing.T) {
 	sm := scs.New()
 	provider := &authProviderStub{name: "oidc"}
-	h := NewHandler(&authQ{}, []authpkg.Provider{provider}, sm, "test-key", false)
+	h := NewHandler(&authQ{}, []authpkg.Provider{provider}, nil, sm, "test-key", false)
 
 	r := withSession(t, sm, httptest.NewRequest(http.MethodGet, "/auth/oidc/callback?state=bad&code=x", nil))
 	r.SetPathValue("slug", "oidc")
@@ -144,7 +144,7 @@ func TestCallback_StateMismatchRejected(t *testing.T) {
 func TestCallback_OIDCMissingPKCEOrNonceRejected(t *testing.T) {
 	sm := scs.New()
 	provider := &authProviderStub{name: "oidc"}
-	h := NewHandler(&authQ{}, []authpkg.Provider{provider}, sm, "test-key", false)
+	h := NewHandler(&authQ{}, []authpkg.Provider{provider}, nil, sm, "test-key", false)
 
 	r := withSession(t, sm, httptest.NewRequest(http.MethodGet, "/auth/oidc/callback?state=s1&code=c1", nil))
 	r.SetPathValue("slug", "oidc")
@@ -171,7 +171,7 @@ func TestCallback_OIDCSuccessClearsCookiesAndSetsSession(t *testing.T) {
 	}
 	h := NewHandler(&authQ{
 		claimUser: db.User{ID: userID, Email: "user@example.com", Name: "User", Role: "viewer"},
-	}, []authpkg.Provider{provider}, sm, "test-key", false)
+	}, []authpkg.Provider{provider}, nil, sm, "test-key", false)
 
 	r := withSession(t, sm, httptest.NewRequest(http.MethodGet, "/auth/oidc/callback?state=s-ok&code=code-ok", nil))
 	r.SetPathValue("slug", "oidc")
@@ -208,7 +208,7 @@ func TestCallback_OIDCSuccessClearsCookiesAndSetsSession(t *testing.T) {
 
 func TestLogout_DestroysSessionAndRedirectsToLogin(t *testing.T) {
 	sm := scs.New()
-	h := NewHandler(&authQ{}, nil, sm, "test-key", false)
+	h := NewHandler(&authQ{}, nil, nil, sm, "test-key", false)
 
 	r := withSession(t, sm, httptest.NewRequest(http.MethodPost, "/auth/logout", nil))
 	sm.Put(r.Context(), "userID", "uid-logout")
@@ -230,7 +230,7 @@ func TestLogout_DestroysSessionAndRedirectsToLogin(t *testing.T) {
 func TestCallback_ExchangeError(t *testing.T) {
 	sm := scs.New()
 	provider := &authProviderStub{name: "oidc", exchangeErr: errors.New("exchange failed")}
-	h := NewHandler(&authQ{}, []authpkg.Provider{provider}, sm, "test-key", false)
+	h := NewHandler(&authQ{}, []authpkg.Provider{provider}, nil, sm, "test-key", false)
 
 	r := withSession(t, sm, httptest.NewRequest(http.MethodGet, "/auth/oidc/callback?state=s1&code=c1", nil))
 	r.SetPathValue("slug", "oidc")
@@ -249,7 +249,7 @@ func TestCallback_GitHubMissingVerifiedEmailRejected(t *testing.T) {
 	sm := scs.New()
 	provider := &authProviderStub{name: "github", exchangeErr: authpkg.ErrVerifiedEmailRequired}
 	q := &authQ{}
-	h := NewHandler(q, []authpkg.Provider{provider}, sm, "test-key", false)
+	h := NewHandler(q, []authpkg.Provider{provider}, nil, sm, "test-key", false)
 
 	r := withSession(t, sm, httptest.NewRequest(http.MethodGet, "/auth/github/callback?state=s1&code=c1", nil))
 	r.SetPathValue("slug", "github")
@@ -265,5 +265,67 @@ func TestCallback_GitHubMissingVerifiedEmailRejected(t *testing.T) {
 	}
 	if q.upsertCalls != 0 {
 		t.Fatalf("expected no upsert call, got %d", q.upsertCalls)
+	}
+}
+
+func TestCallback_EmailDomainNotAllowedRejected(t *testing.T) {
+	sm := scs.New()
+	provider := &authProviderStub{
+		name: "github",
+		identity: authpkg.Identity{
+			Provider:   "github",
+			ProviderID: "123",
+			Email:      "user@outside.test",
+			Name:       "User",
+		},
+	}
+	q := &authQ{}
+	h := NewHandler(q, []authpkg.Provider{provider}, []string{"example.com"}, sm, "test-key", false)
+
+	r := withSession(t, sm, httptest.NewRequest(http.MethodGet, "/auth/github/callback?state=s1&code=c1", nil))
+	r.SetPathValue("slug", "github")
+	r.AddCookie(&http.Cookie{Name: stateCookieName("github"), Value: "s1"})
+	w := httptest.NewRecorder()
+	h.Callback(w, r)
+
+	if w.Code != http.StatusForbidden {
+		t.Fatalf("expected 403, got %d", w.Code)
+	}
+	if q.claimCalls != 0 {
+		t.Fatalf("expected no claim call, got %d", q.claimCalls)
+	}
+	if q.upsertCalls != 0 {
+		t.Fatalf("expected no upsert call, got %d", q.upsertCalls)
+	}
+}
+
+func TestCallback_EmailDomainAllowedIsCaseInsensitive(t *testing.T) {
+	sm := scs.New()
+	userID := uuid.New()
+	provider := &authProviderStub{
+		name: "github",
+		identity: authpkg.Identity{
+			Provider:   "github",
+			ProviderID: "123",
+			Email:      "User@Example.com",
+			Name:       "User",
+		},
+	}
+	q := &authQ{
+		claimUser: db.User{ID: userID, Email: "User@Example.com", Name: "User", Role: "viewer"},
+	}
+	h := NewHandler(q, []authpkg.Provider{provider}, []string{"example.com"}, sm, "test-key", false)
+
+	r := withSession(t, sm, httptest.NewRequest(http.MethodGet, "/auth/github/callback?state=s1&code=c1", nil))
+	r.SetPathValue("slug", "github")
+	r.AddCookie(&http.Cookie{Name: stateCookieName("github"), Value: "s1"})
+	w := httptest.NewRecorder()
+	h.Callback(w, r)
+
+	if w.Code != http.StatusSeeOther {
+		t.Fatalf("expected 303, got %d", w.Code)
+	}
+	if q.claimCalls != 1 {
+		t.Fatalf("expected one claim call, got %d", q.claimCalls)
 	}
 }

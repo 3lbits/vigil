@@ -59,7 +59,7 @@ make tailwind-install
 make generate
 make db-up
 
-air
+make run
 ```
 
 Open <http://localhost:8080>.
@@ -120,6 +120,7 @@ Key environment variables. See `.env.example` for the full list with comments.
 | `DEV_STUB_AUTH` | Enables stub auth | `false` |
 | `DEV_SEED` | Enables `cmd/seed` development dataset seeding (development only) | `false` |
 | `AUTH_PROVIDERS` | Comma-separated providers (`github,entra,oidc`) | falls back to `AUTH_PROVIDER` |
+| `AUTH_ALLOWED_EMAIL_DOMAINS` | Comma-separated OAuth login allowlist domains (e.g. `example.com,subsidiary.org`) | empty (required when `github` is enabled) |
 | `APP_BASE_URL` | Public app URL (used for OIDC redirects) | `http://localhost:8080` |
 | `SESSION_COOKIE_NAME` | Session cookie name | `vigil_session` |
 | `SESSION_COOKIE_SECURE` | Set `Secure` flag on session cookie | `true` (unless explicitly `false`) |
@@ -130,6 +131,14 @@ Key environment variables. See `.env.example` for the full list with comments.
 | `GLOBAL_RATE_LIMIT_PER_WINDOW` | Global in-memory soft rate limit per key (`0` disables) | `240` |
 | `GLOBAL_RATE_LIMIT_WINDOW` | Window duration for global soft rate limit | `1m` |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | Enables OpenTelemetry tracing when set | empty |
+
+### OAuth registration model (important)
+
+- OAuth callback first tries to claim a pre-provisioned pending user by email.
+- If no pending user exists, Vigil creates a new `viewer` user for that identity.
+- When `github` is enabled, `AUTH_ALLOWED_EMAIL_DOMAINS` must be set or startup fails.
+
+For public deployments, do not expose GitHub login without a strict domain allowlist.
 
 ## Common Make targets
 
@@ -233,6 +242,19 @@ composed via `Registry` in `cmd/server/main.go`. Module-specific
 dependencies are passed to each module's constructor; the shared
 `Dependencies` struct is kept deliberately minimal. See
 [`internal/modregistry`](internal/modregistry) for the contract.
+ 
+**Handler design.** Handlers are intentionally "fat" and query the database
+directly via sqlc. There is no service layer, no DTOs, and no per-module
+interfaces — these solve problems this stack does not have. Split a handler
+only when concerns are genuinely mixed or logic is duplicated.
+ 
+**Generated code is not edited by hand.** `**/*_templ.go` (templ), the
+sqlc-generated Go, and `cmd/server/public/css/output.css` (Tailwind) are all
+produced by `make generate`. Change the source (`.templ`, `db/queries/*.sql`,
+or the Tailwind input) and regenerate — never edit the output.
+ 
+The full set of conventions lives in [AGENTS.md](AGENTS.md); contributor-facing
+highlights are summarised in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Authorization policy
 

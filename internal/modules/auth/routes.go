@@ -15,14 +15,16 @@ import (
 
 type authModule struct {
 	providers      []auth.Provider
+	allowedDomains []string
 	sm             *scs.SessionManager
 	sessionHMACKey string
 	cookieSecure   bool
 }
 
-func New(providers []auth.Provider, sm *scs.SessionManager, sessionHMACKey string, cookieSecure bool) modregistry.Module {
+func New(providers []auth.Provider, allowedDomains []string, sm *scs.SessionManager, sessionHMACKey string, cookieSecure bool) modregistry.Module {
 	return authModule{
 		providers:      providers,
+		allowedDomains: allowedDomains,
 		sm:             sm,
 		sessionHMACKey: sessionHMACKey,
 		cookieSecure:   cookieSecure,
@@ -35,7 +37,7 @@ func (authModule) Name() string {
 
 func (m authModule) Register(deps modregistry.Dependencies, r *modregistry.Registrar) error {
 	var q db.Querier = deps.Queries
-	h := NewHandler(q, m.providers, m.sm, m.sessionHMACKey, m.cookieSecure)
+	h := NewHandler(q, m.providers, m.allowedDomains, m.sm, m.sessionHMACKey, m.cookieSecure)
 	rl := middleware.NewIPRateLimiterWithKey(20, time.Minute, func(r *http.Request) string {
 		return obs.SourceIPFromContext(r.Context())
 	})

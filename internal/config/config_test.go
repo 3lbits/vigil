@@ -126,6 +126,41 @@ func TestLoad_AppEnvValidation(t *testing.T) {
 	})
 }
 
+func TestLoad_AuthAllowedEmailDomains(t *testing.T) {
+	t.Run("github requires allowed domains", func(t *testing.T) {
+		setBaseDevEnv(t)
+		t.Setenv("AUTH_PROVIDER", "github")
+		t.Setenv("AUTH_ALLOWED_EMAIL_DOMAINS", "")
+		expectPanicContains(t, "AUTH_ALLOWED_EMAIL_DOMAINS must be set when AUTH_PROVIDERS includes github", func() { Load() })
+	})
+
+	t.Run("github with allowed domains is accepted", func(t *testing.T) {
+		setBaseDevEnv(t)
+		t.Setenv("AUTH_PROVIDER", "github")
+		t.Setenv("AUTH_ALLOWED_EMAIL_DOMAINS", "Example.com, @example.com ,corp.test")
+		cfg := Load()
+		want := []string{"example.com", "corp.test"}
+		if len(cfg.AllowedEmailDomains) != len(want) {
+			t.Fatalf("AllowedEmailDomains length = %d, want %d", len(cfg.AllowedEmailDomains), len(want))
+		}
+		for i := range want {
+			if cfg.AllowedEmailDomains[i] != want[i] {
+				t.Fatalf("AllowedEmailDomains[%d] = %q, want %q", i, cfg.AllowedEmailDomains[i], want[i])
+			}
+		}
+	})
+
+	t.Run("non github providers do not require allowed domains", func(t *testing.T) {
+		setBaseDevEnv(t)
+		t.Setenv("AUTH_PROVIDER", "oidc")
+		t.Setenv("AUTH_ALLOWED_EMAIL_DOMAINS", "")
+		cfg := Load()
+		if len(cfg.AllowedEmailDomains) != 0 {
+			t.Fatalf("AllowedEmailDomains = %#v, want empty", cfg.AllowedEmailDomains)
+		}
+	})
+}
+
 func TestLoad_AvvikEnabled(t *testing.T) {
 	t.Run("default false", func(t *testing.T) {
 		setBaseDevEnv(t)
@@ -230,6 +265,7 @@ func setBaseProdEnv(t *testing.T) {
 	t.Setenv("DEV_SEED", "false")
 	t.Setenv("AVVIK_ENABLED", "false")
 	t.Setenv("ALLOW_INSECURE_DB_SSL", "false")
+	t.Setenv("AUTH_ALLOWED_EMAIL_DOMAINS", "example.com")
 }
 
 func setBaseStagingEnv(t *testing.T) {
@@ -242,6 +278,7 @@ func setBaseStagingEnv(t *testing.T) {
 	t.Setenv("DEV_SEED", "false")
 	t.Setenv("AVVIK_ENABLED", "false")
 	t.Setenv("ALLOW_INSECURE_DB_SSL", "false")
+	t.Setenv("AUTH_ALLOWED_EMAIL_DOMAINS", "example.com")
 }
 
 func setBaseDevEnv(t *testing.T) {
@@ -254,6 +291,7 @@ func setBaseDevEnv(t *testing.T) {
 	t.Setenv("DEV_SEED", "false")
 	t.Setenv("AVVIK_ENABLED", "false")
 	t.Setenv("ALLOW_INSECURE_DB_SSL", "false")
+	t.Setenv("AUTH_ALLOWED_EMAIL_DOMAINS", "example.com")
 }
 
 func expectPanicContains(t *testing.T, want string, fn func()) {

@@ -46,6 +46,18 @@ Out of scope: third-party dependencies (please report upstream), self-hosted
 deployments of Vigil run by other organisations, social engineering, physical
 attacks.
 
+## Authentication enrollment model
+
+Vigil supports pre-provisioned user claiming and OAuth self-registration:
+
+- On successful OAuth login, Vigil first tries to claim a pending user by email.
+- If no pending user is found, Vigil creates a new `viewer` user.
+
+Because this is security-sensitive for public deployments, configure
+`AUTH_ALLOWED_EMAIL_DOMAINS` to restrict which email domains may complete login.
+When `github` auth is enabled, this allowlist is mandatory and startup fails if
+it is missing.
+
 ## Safe harbour
 
 We will not pursue legal action against researchers who:

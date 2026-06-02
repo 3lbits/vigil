@@ -3,6 +3,11 @@
 Instructions for AI coding agents working on this codebase. Read before
 making changes.
 
+This file is the authoritative source for project conventions; a shorter,
+human-facing summary lives in [README.md](README.md#architecture) and
+[CONTRIBUTING.md](CONTRIBUTING.md#project-conventions) — keep them in sync when
+a rule here changes.
+
 ---
 
 ## Project

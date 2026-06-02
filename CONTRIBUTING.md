@@ -70,6 +70,38 @@ External contributors:
 Maintainers push to feature branches and open PRs against `main`. CI must
 pass before merge.
 
+### Definition of done
+
+A change is ready for review when:
+
+1. `make pre-commit-fast` exits 0 (regenerates code, tidies `go.mod`, lints,
+   runs govulncheck, and runs tests).
+2. Tests are added or updated for the changed behaviour.
+3. Authorization stays policy-driven: `cmd/server/policies/authz.rego` remains
+   the single source of truth, embedded via `cmd/server/main.go`. Authz changes
+   are high-risk — flag them explicitly in the PR description and don't bundle
+   them with unrelated work.
+4. The change is focused: every modified line traces to the stated task. Don't
+   refactor adjacent code, comments, or formatting unrelated to the change.
+
+## Project conventions
+
+These are the conventions a contributor most often needs. The complete,
+authoritative set lives in [AGENTS.md] — it is written for AI agents but
+applies equally to everyone, so reach for it when this summary isn't enough.
+
+- **Fat handlers, no service layer.** Handlers query the database directly via
+  sqlc. No service layer, no DTOs, no per-module interfaces. Split a handler
+  only when concerns are genuinely mixed or logic is duplicated.
+- **Authorization only in policy.** Never role-check in a handler
+  (`if user.Role == "admin"` is wrong) — the check belongs in `authz.rego`,
+  enforced through `authz.RequirePolicy(engine, resource, action)`.
+- **Don't edit generated code.** `**/*_templ.go`, the sqlc-generated Go, and
+  `cmd/server/public/css/output.css` are produced by `make generate`. Change
+  the source and regenerate; the next generation overwrites hand edits.
+- **Keep it simple.** No speculative abstractions or unrequested configuration
+  knobs. If 200 lines could be 50, write 50. Match the existing style.
+
 ## Using AI coding agents
 
 Agents like Claude Code, GitHub Copilot, Cursor, and Aider are welcome on
@@ -83,9 +115,9 @@ What we do expect:
   on each commit certifies the contribution is yours to give — that
   applies regardless of how it was drafted. If you can't explain a line in
   review, don't ship it.
-- **The same quality bar applies.** `make pre-commit-fast` must pass, and
-  project conventions (see [AGENTS.md](AGENTS.md)) must be followed —
-  especially fat handlers / no service layer, and the authorization rules.
+- **The same quality bar applies.** `make pre-commit-fast` must pass, and the
+  [Project conventions](#project-conventions) must be followed — especially fat
+  handlers / no service layer, and the authorization rules.
 - **No required disclosure.** You don't need to flag agent use in the PR.
   If a change is substantially agent-generated and you're less confident
   in parts of it, saying so helps reviewers focus their attention, but
