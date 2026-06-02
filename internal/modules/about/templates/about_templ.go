@@ -57,7 +57,7 @@ func About() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p><a href=\"https://github.com/3lbits/vigil-public\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"mt-2 inline-flex items-center gap-1.5 text-[13px] text-sand-800 underline underline-offset-2 hover:text-sand-900\">https://github.com/3lbits/vigil-public</a></div><section class=\"mt-6\"><h2 class=\"text-[14px] font-semibold text-sand-900\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p><a href=\"https://github.com/3lbits/vigil\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"mt-2 inline-flex items-center gap-1.5 text-[13px] text-sand-800 underline underline-offset-2 hover:text-sand-900\">https://github.com/3lbits/vigil</a></div><section class=\"mt-6\"><h2 class=\"text-[14px] font-semibold text-sand-900\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -161,7 +161,7 @@ func About() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " <a href=\"https://github.com/3lbits/vigil-public/issues\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"underline underline-offset-2 hover:text-sand-900\">https://github.com/3lbits/vigil-public/issues</a>.</p></section><section class=\"mt-6\"><h2 class=\"text-[14px] font-semibold text-sand-900\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " <a href=\"https://github.com/3lbits/vigil/issues\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"underline underline-offset-2 hover:text-sand-900\">https://github.com/3lbits/vigil/issues</a>.</p></section><section class=\"mt-6\"><h2 class=\"text-[14px] font-semibold text-sand-900\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -278,7 +278,7 @@ func About() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, " <a href=\"https://github.com/3lbits/vigil-public/blob/main/SECURITY.md\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"underline underline-offset-2 hover:text-sand-900\">SECURITY.md</a>.</li><li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, " <a href=\"https://github.com/3lbits/vigil/blob/main/SECURITY.md\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"underline underline-offset-2 hover:text-sand-900\">SECURITY.md</a>.</li><li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -343,7 +343,7 @@ func About() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " <a href=\"https://github.com/3lbits/vigil-public/blob/main/CONTRIBUTING.md\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"underline underline-offset-2 hover:text-sand-900\">CONTRIBUTING.md</a>.</p><p class=\"mt-2 text-[13px] text-sand-800 leading-relaxed\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " <a href=\"https://github.com/3lbits/vigil/blob/main/CONTRIBUTING.md\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"underline underline-offset-2 hover:text-sand-900\">CONTRIBUTING.md</a>.</p><p class=\"mt-2 text-[13px] text-sand-800 leading-relaxed\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -356,7 +356,7 @@ func About() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " <a href=\"https://github.com/3lbits/vigil-public/blob/main/AGENTS.md\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"underline underline-offset-2 hover:text-sand-900\">AGENTS.md</a>.</p></section><section class=\"mt-6 rounded-[10px] border border-sand-300/60 bg-sand-50 p-4 sm:p-5\"><h2 class=\"text-[14px] font-semibold text-sand-900\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " <a href=\"https://github.com/3lbits/vigil/blob/main/AGENTS.md\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"underline underline-offset-2 hover:text-sand-900\">AGENTS.md</a>.</p></section><section class=\"mt-6 rounded-[10px] border border-sand-300/60 bg-sand-50 p-4 sm:p-5\"><h2 class=\"text-[14px] font-semibold text-sand-900\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -382,7 +382,7 @@ func About() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, " <a href=\"https://github.com/3lbits/vigil-public/blob/main/LICENSE\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"underline underline-offset-2 hover:text-sand-900\">LICENSE</a>. ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, " <a href=\"https://github.com/3lbits/vigil/blob/main/LICENSE\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"underline underline-offset-2 hover:text-sand-900\">LICENSE</a>. ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -40,7 +40,7 @@ Please include:
 ## Scope
 
 In scope: the code in this repository, official container images published to
-`ghcr.io/3lbits/vigil-public`, and the documented deployment configuration.
+`ghcr.io/3lbits/vigil`, and the documented deployment configuration.
 
 Out of scope: third-party dependencies (please report upstream), self-hosted
 deployments of Vigil run by other organisations, social engineering, physical

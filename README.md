@@ -49,7 +49,7 @@ Requirements: Go 1.26+, Docker or Podman, and the Tailwind standalone CLI
 (installed by `make tailwind-install`).
 
 ```sh
-git clone https://github.com/3lbits/vigil-public.git
+git clone https://github.com/3lbits/vigil.git
 cd vigil
 
 make setup
@@ -185,9 +185,9 @@ This is manual developer tooling and is intentionally gated to development.
 The production image is published to the GitHub Container Registry:
 
 ```sh
-docker pull ghcr.io/3lbits/vigil-public:latest
+docker pull ghcr.io/3lbits/vigil:latest
 # or pin a specific release:
-docker pull ghcr.io/3lbits/vigil-public:v1.0.0
+docker pull ghcr.io/3lbits/vigil:v1.0.0
 ```
 
 The image is built from a distroless base, runs as non-root (UID 65532), and
@@ -202,7 +202,7 @@ docker run --rm \
   -e DATABASE_URL=... \
   -e SESSION_HMAC_KEY=... \
   -p 8080:8080 \
-  ghcr.io/3lbits/vigil-public:latest
+  ghcr.io/3lbits/vigil:latest
 ```
 
 Vigil applies its database migrations at startup (via goose) — point it at a

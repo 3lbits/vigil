@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security vulnerability
-    url: https://github.com/3lbits/vigil-public/security/advisories/new
+    url: https://github.com/3lbits/vigil/security/advisories/new
     about: Report security issues privately, not as public issues.
   - name: Question or discussion
-    url: https://github.com/3lbits/vigil-public/discussions
+    url: https://github.com/3lbits/vigil/discussions
     about: For usage questions, ideas, and general discussion.

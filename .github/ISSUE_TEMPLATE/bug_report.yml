@@ -8,7 +8,7 @@ body:
         Thanks for taking the time to report a bug. Please fill in as much as
         you can — partial reports are still useful.
 
-        **Security issue?** Please follow [SECURITY.md](https://github.com/3lbits/vigil-public/blob/main/SECURITY.md) instead.
+        **Security issue?** Please follow [SECURITY.md](https://github.com/3lbits/vigil/blob/main/SECURITY.md) instead.
   - type: textarea
     id: what-happened
     attributes:

@@ -22,8 +22,8 @@ See [SECURITY.md](SECURITY.md) for the disclosure process.
 Requirements: Go 1.26+, and Docker or Podman.
 
 ```sh
-git clone https://github.com/3lbits/vigil-public.git
-cd vigil-public
+git clone https://github.com/3lbits/vigil.git
+cd vigil
 
 make setup
 cp .env.example .env
