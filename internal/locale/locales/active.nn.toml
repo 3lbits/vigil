@@ -1089,6 +1089,9 @@ other = "Alle typar"
 [label_type]
 other = "Type"
 
+[label_asset_type]
+other = "Eigedelstype"
+
 [label_kind]
 other = "Type"
 
@@ -1117,6 +1120,9 @@ other = "Skildring"
 [label_owner]
 other = "Eigar"
 
+[label_asset_owner]
+other = "Eigedelseigar"
+
 [label_owner_text_team]
 other = "Eigar (tekst/team)"
 
@@ -1131,6 +1137,12 @@ other = "— eller skriv inn namn under —"
 
 [label_measure]
 other = "Tiltak"
+
+[label_activity]
+other = "Aktivitet"
+
+[label_frameworks]
+other = "Rammeverk"
 
 [label_title]
 other = "Tittel"
@@ -1149,6 +1161,9 @@ other = "Sortering"
 
 [label_due_date]
 other = "Forfallsdato"
+
+[label_due]
+other = "Forfell"
 
 [label_due_date_measure_hint]
 other = "valfritt — opprettar automatisk aktivitet med \"Implement:\""
@@ -1189,6 +1204,9 @@ other = "Går ut"
 [label_filter]
 other = "Filter"
 
+[label_by]
+other = "Av"
+
 [label_when]
 other = "Når"
 
@@ -1203,6 +1221,15 @@ other = "system"
 
 [label_label]
 other = "Etikett"
+
+[label_recent_changes]
+other = "Siste 5 endringar"
+
+[label_recent_changes_toggle]
+other = "Siste 5 endringar (klikk for å utvide)"
+
+[label_no_changes_yet]
+other = "Ingen endringar enno."
 
 [action_search]
 other = "Søk"

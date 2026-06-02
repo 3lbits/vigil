@@ -7,6 +7,7 @@ type MeasureVM struct {
 	Measure      db.Measure
 	Frameworks   []string // framework short names this measure covers
 	HasRiskLinks bool     // linked to at least one risk
+	OwnerDisplay string
 }
 
 // MeasureEditVM is the view model for the measure edit page with links management.

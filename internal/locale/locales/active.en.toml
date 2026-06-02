@@ -1089,6 +1089,9 @@ other = "All kinds"
 [label_type]
 other = "Type"
 
+[label_asset_type]
+other = "Asset type"
+
 [label_kind]
 other = "Kind"
 
@@ -1117,6 +1120,9 @@ other = "Description"
 [label_owner]
 other = "Owner"
 
+[label_asset_owner]
+other = "Asset owner"
+
 [label_owner_text_team]
 other = "Owner (text/team)"
 
@@ -1131,6 +1137,12 @@ other = "— or enter name below —"
 
 [label_measure]
 other = "Measure"
+
+[label_activity]
+other = "Activity"
+
+[label_frameworks]
+other = "Frameworks"
 
 [label_title]
 other = "Title"
@@ -1149,6 +1161,9 @@ other = "Sort order"
 
 [label_due_date]
 other = "Due date"
+
+[label_due]
+other = "Due"
 
 [label_due_date_measure_hint]
 other = "optional — auto-creates \"Implement:\" activity"
@@ -1189,6 +1204,9 @@ other = "Expires"
 [label_filter]
 other = "Filter"
 
+[label_by]
+other = "By"
+
 [label_when]
 other = "When"
 
@@ -1203,6 +1221,15 @@ other = "system"
 
 [label_label]
 other = "Label"
+
+[label_recent_changes]
+other = "Last 5 changes"
+
+[label_recent_changes_toggle]
+other = "Last 5 changes (click to expand)"
+
+[label_no_changes_yet]
+other = "No changes yet."
 
 [action_search]
 other = "Search"

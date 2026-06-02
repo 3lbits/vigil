@@ -62,11 +62,11 @@ templ AssetList(assets []db.Asset, q, status, flash, flashType string, hasMore b
 						},
 					}) {
 						@ui.Tr(ui.TrProps{}) {
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px]"}}) { locale.T(ctx, "label_name") }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { locale.T(ctx, "label_type") }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { locale.T(ctx, "label_owner") }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { locale.T(ctx, "label_status") }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { locale.T(ctx, "assets_criticality") }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px]"}}) { { locale.T(ctx, "label_name") } }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { { locale.T(ctx, "label_asset_type") } }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { { locale.T(ctx, "label_asset_owner") } }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { { locale.T(ctx, "label_status") } }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { { locale.T(ctx, "assets_criticality") } }
 							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-right px-4"}}) { <span class="sr-only">{ locale.T(ctx, "label_actions") }</span> }
 						}
 					}
@@ -131,11 +131,11 @@ templ AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLog
 			</div>
 			<div class="grid grid-cols-2 gap-3">
 				<div>
-					<label for="asset-type" class="block text-[13px] font-medium text-sand-800 mb-1">{ locale.T(ctx, "label_type") }</label>
+					<label for="asset-type" class="block text-[13px] font-medium text-sand-800 mb-1">{ locale.T(ctx, "label_asset_type") }</label>
 					<input id="asset-type" type="text" name="asset_type" value={ assetValue(a, "asset_type") } placeholder={ locale.T(ctx, "assets_placeholder_type") } class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-transparent outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"/>
 				</div>
 				<div>
-					<label for="asset-owner" class="block text-[13px] font-medium text-sand-800 mb-1">{ locale.T(ctx, "label_owner") }</label>
+					<label for="asset-owner" class="block text-[13px] font-medium text-sand-800 mb-1">{ locale.T(ctx, "label_asset_owner") }</label>
 					<input id="asset-owner" type="text" name="owner" value={ assetValue(a, "owner") } placeholder={ locale.T(ctx, "assets_placeholder_owner") } class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-transparent outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"/>
 				</div>
 			</div>
@@ -198,11 +198,11 @@ templ AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []
 			</div>
 			<div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-[13px]">
 				<div>
-					<div class="text-sand-700 text-[11px] uppercase tracking-wide">{ locale.T(ctx, "label_type") }</div>
+					<div class="text-sand-700 text-[11px] uppercase tracking-wide">{ locale.T(ctx, "label_asset_type") }</div>
 					<div>{ zeroDash(a.AssetType) }</div>
 				</div>
 				<div>
-					<div class="text-sand-700 text-[11px] uppercase tracking-wide">{ locale.T(ctx, "label_owner") }</div>
+					<div class="text-sand-700 text-[11px] uppercase tracking-wide">{ locale.T(ctx, "label_asset_owner") }</div>
 					<div>{ zeroDash(a.Owner) }</div>
 				</div>
 			</div>
@@ -227,19 +227,19 @@ templ AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []
 
 templ assetRecentChanges(auditLog []db.ListAuditLogForAssetRow, wrapperClass string) {
 	<details class={ wrapperClass }>
-		<summary class="cursor-pointer text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3 list-none">Last 5 changes (click to expand)</summary>
+		<summary class="cursor-pointer text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3 list-none">{ locale.T(ctx, "label_recent_changes_toggle") }</summary>
 		<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
 			@ui.Table(ui.TableProps{}) {
-				<caption class="sr-only">Last 5 changes</caption>
+				<caption class="sr-only">{ locale.T(ctx, "label_recent_changes") }</caption>
 				@ui.THead(ui.THeadProps{
 					Attrs: templ.Attributes{
 						"class": "bg-sand-100 dark:bg-zinc-800",
 					},
 				}) {
 					@ui.Tr(ui.TrProps{}) {
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px] uppercase tracking-wider"}}) { Event }
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { By }
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { When }
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_event") } }
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_by") } }
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_when") } }
 					}
 				}
 				<tbody>
@@ -254,7 +254,7 @@ templ assetRecentChanges(auditLog []db.ListAuditLogForAssetRow, wrapperClass str
 									"colspan": "3",
 									"class":   "px-4 text-sand-700",
 								},
-							}) { No changes yet. }
+							}) { { locale.T(ctx, "label_no_changes_yet") } }
 						}
 					} else {
 						for i, entry := range auditLog {
@@ -264,7 +264,7 @@ templ assetRecentChanges(auditLog []db.ListAuditLogForAssetRow, wrapperClass str
 										"class": "border-sand-300/60 dark:border-zinc-700/60",
 									},
 								}) {
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-medium"}}) { assetAuditEventLabel(entry.Event) }
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-medium"}}) { { assetAuditEventLabel(entry.Event) } }
 									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) {
 										if entry.UserName != "" {
 											{ entry.UserName }
@@ -272,7 +272,7 @@ templ assetRecentChanges(auditLog []db.ListAuditLogForAssetRow, wrapperClass str
 											<span class="text-sand-700">—</span>
 										}
 									}
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700 font-mono text-[11px]"}}) { entry.EventTime.Format("2 Jan 2006 15:04") }
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700 font-mono text-[11px]"}}) { { entry.EventTime.Format("2 Jan 2006 15:04") } }
 								}
 							}
 						}

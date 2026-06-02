@@ -1089,6 +1089,9 @@ other = "Alle typer"
 [label_type]
 other = "Type"
 
+[label_asset_type]
+other = "Eiendelstype"
+
 [label_kind]
 other = "Type"
 
@@ -1117,6 +1120,9 @@ other = "Beskrivelse"
 [label_owner]
 other = "Eier"
 
+[label_asset_owner]
+other = "Eiendeleier"
+
 [label_owner_text_team]
 other = "Eier (tekst/team)"
 
@@ -1131,6 +1137,12 @@ other = "— eller skriv inn navn under —"
 
 [label_measure]
 other = "Tiltak"
+
+[label_activity]
+other = "Aktivitet"
+
+[label_frameworks]
+other = "Rammeverk"
 
 [label_title]
 other = "Tittel"
@@ -1149,6 +1161,9 @@ other = "Sortering"
 
 [label_due_date]
 other = "Forfallsdato"
+
+[label_due]
+other = "Forfaller"
 
 [label_due_date_measure_hint]
 other = "valgfritt — oppretter automatisk aktivitet med \"Implement:\""
@@ -1189,6 +1204,9 @@ other = "Utløper"
 [label_filter]
 other = "Filter"
 
+[label_by]
+other = "Av"
+
 [label_when]
 other = "Når"
 
@@ -1203,6 +1221,15 @@ other = "system"
 
 [label_label]
 other = "Etikett"
+
+[label_recent_changes]
+other = "Siste 5 endringer"
+
+[label_recent_changes_toggle]
+other = "Siste 5 endringer (klikk for å utvide)"
+
+[label_no_changes_yet]
+other = "Ingen endringer ennå."
 
 [action_search]
 other = "Søk"

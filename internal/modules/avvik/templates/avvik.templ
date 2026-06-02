@@ -6,6 +6,7 @@ import (
 
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/db"
+	"github.com/3lbits/vigil/internal/locale"
 	"github.com/3lbits/vigil/internal/ui"
 	formstemplates "github.com/3lbits/vigil/internal/ui/forms"
 )
@@ -299,19 +300,19 @@ templ AvvikDetail(d DetailData) {
 
 templ avvikRecentChanges(events []db.AvvikEvent) {
 	<details>
-		<summary class="cursor-pointer text-sm font-semibold text-sand-800 mb-3 list-none">Last 5 changes (click to expand)</summary>
+		<summary class="cursor-pointer text-sm font-semibold text-sand-800 mb-3 list-none">{ locale.T(ctx, "label_recent_changes_toggle") }</summary>
 		<div class="border border-sand-300/60 rounded-[10px] overflow-hidden bg-white">
 			@ui.Table(ui.TableProps{}) {
-				<caption class="sr-only">Last 5 changes</caption>
+				<caption class="sr-only">{ locale.T(ctx, "label_recent_changes") }</caption>
 				@ui.THead(ui.THeadProps{}) {
 					@ui.Tr(ui.TrProps{
 						Attrs: templ.Attributes{
 							"class": "bg-sand-100",
 						},
 					}) {
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px] uppercase tracking-wider"}}) {Event}
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) {By}
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) {When}
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_event") } }
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_by") } }
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_when") } }
 					}
 				}
 				<tbody>
@@ -321,7 +322,7 @@ templ avvikRecentChanges(events []db.AvvikEvent) {
 								"class": "border-sand-300/60",
 							},
 						}) {
-							@ui.Td(ui.TdProps{Attrs: templ.Attributes{"colspan": "3", "class": "px-4 text-sand-700"}}) {No changes yet.}
+							@ui.Td(ui.TdProps{Attrs: templ.Attributes{"colspan": "3", "class": "px-4 text-sand-700"}}) { { locale.T(ctx, "label_no_changes_yet") } }
 						}
 					} else {
 						for i, e := range events {

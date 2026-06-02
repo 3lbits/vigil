@@ -107,7 +107,13 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 										{ u.Name }
 									}
 								}
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-3 text-sand-700"}}) { u.Email }
+								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-3 text-sand-700"}}) {
+									if strings.TrimSpace(u.Email) == "" {
+										<span class="text-sand-700 italic">—</span>
+									} else {
+										{ u.Email }
+									}
+								}
 								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-3"}}) {
 									@ProviderBadge(u.Provider)
 								}
@@ -117,14 +123,14 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 py-3"}}) {
 									<form method="POST" action={ templ.SafeURL("/admin/users/" + u.ID.String() + "/org") } class="flex items-center gap-2">
 										<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-										<label for={ "org-" + u.ID.String() } class="sr-only">{ locale.T(ctx, "label_org_unit") } { u.Email }</label>
+										<label for={ "org-" + u.ID.String() } class="sr-only">{ locale.T(ctx, "label_org_unit") } { adminUserLabel(u) }</label>
 										<select id={ "org-" + u.ID.String() } name="org_id" class="text-xs border border-sand-300 rounded px-2 py-1 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
 											<option value="">— { locale.T(ctx, "label_none") } —</option>
 											for _, o := range orgs {
 												<option value={ o.ID.String() } selected?={ u.OrgID.Valid && u.OrgID.UUID == o.ID }>{ o.Name }</option>
 											}
 										</select>
-										<button type="submit" aria-label={ locale.T(ctx, "action_save") + " " + locale.T(ctx, "label_org_unit") + " " + locale.T(ctx, "label_for") + " " + u.Email } class="text-xs px-2.5 py-1 rounded border border-sand-300 hover:bg-sand-50 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 outline-none">
+										<button type="submit" aria-label={ locale.T(ctx, "action_save") + " " + locale.T(ctx, "label_org_unit") + " " + locale.T(ctx, "label_for") + " " + adminUserLabel(u) } class="text-xs px-2.5 py-1 rounded border border-sand-300 hover:bg-sand-50 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 outline-none">
 											{ locale.T(ctx, "action_save") }
 										</button>
 									</form>
@@ -133,20 +139,20 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 									<div class="flex items-center gap-2 flex-wrap">
 										<form method="POST" action={ templ.SafeURL("/admin/users/" + u.ID.String() + "/role") } class="flex items-center gap-2">
 											<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-											<label for={ "role-" + u.ID.String() } class="sr-only">{ locale.T(ctx, "label_role") } { locale.T(ctx, "label_for") } { u.Email }</label>
+											<label for={ "role-" + u.ID.String() } class="sr-only">{ locale.T(ctx, "label_role") } { locale.T(ctx, "label_for") } { adminUserLabel(u) }</label>
 											<select id={ "role-" + u.ID.String() } name="role" class="text-xs border border-sand-300 rounded px-2 py-1 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
 												<option value="viewer" selected?={ u.Role == "viewer" }>{ locale.T(ctx, "role_viewer") }</option>
 												<option value="contributor" selected?={ u.Role == "contributor" }>{ locale.T(ctx, "role_contributor") }</option>
 												<option value="editor" selected?={ u.Role == "editor" }>{ locale.T(ctx, "role_editor") }</option>
 												<option value="admin" selected?={ u.Role == "admin" }>{ locale.T(ctx, "role_admin") }</option>
 											</select>
-											<button type="submit" aria-label={ locale.T(ctx, "action_save") + " " + locale.T(ctx, "label_role") + " " + locale.T(ctx, "label_for") + " " + u.Email } class="text-xs px-2.5 py-1 rounded border border-sand-300 hover:bg-sand-50 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 outline-none">
+											<button type="submit" aria-label={ locale.T(ctx, "action_save") + " " + locale.T(ctx, "label_role") + " " + locale.T(ctx, "label_for") + " " + adminUserLabel(u) } class="text-xs px-2.5 py-1 rounded border border-sand-300 hover:bg-sand-50 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 outline-none">
 												{ locale.T(ctx, "action_save") }
 											</button>
 										</form>
 										<form method="POST" action={ templ.SafeURL("/admin/users/" + u.ID.String() + "/delete") } onsubmit="return confirm('Delete this user?')">
 											<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-											<button type="submit" aria-label={ locale.T(ctx, "action_delete") + " " + u.Email } class="text-xs px-2 py-1 rounded border border-red-200 text-red-600 hover:bg-red-50 transition-colors">
+											<button type="submit" aria-label={ locale.T(ctx, "action_delete") + " " + adminUserLabel(u) } class="text-xs px-2 py-1 rounded border border-red-200 text-red-600 hover:bg-red-50 transition-colors">
 												{ locale.T(ctx, "action_delete") }
 											</button>
 										</form>
@@ -789,6 +795,16 @@ func auditAttrsPreview(attrs string) string {
 		return s[:80] + "…"
 	}
 	return s
+}
+
+func adminUserLabel(u db.User) string {
+	if name := strings.TrimSpace(u.Name); name != "" {
+		return name
+	}
+	if email := strings.TrimSpace(u.Email); email != "" {
+		return email
+	}
+	return u.ID.String()
 }
 
 func relativeTime(t time.Time) string {

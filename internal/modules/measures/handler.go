@@ -56,6 +56,10 @@ func (h *Handler) buildFilteredMeasureVMs(ctx context.Context, status, owner str
 	if err != nil {
 		return nil, fmt.Errorf("list measure risk link ids: %w", err)
 	}
+	users, err := h.q.ListUsers(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("list users for measure owners: %w", err)
+	}
 
 	fwByMeasure := make(map[uuid.UUID][]string)
 	for _, l := range links {
@@ -66,16 +70,34 @@ func (h *Handler) buildFilteredMeasureVMs(ctx context.Context, status, owner str
 	for _, id := range riskLinkIDs {
 		riskLinked[id] = true
 	}
+	userByID := make(map[uuid.UUID]db.User, len(users))
+	for _, u := range users {
+		userByID[u.ID] = u
+	}
 
 	vms := make([]measurestemplates.MeasureVM, 0, len(measures))
 	for _, m := range measures {
+		ownerDisplay := strings.TrimSpace(m.Owner)
+		if ownerDisplay == "" && m.AssigneeID.Valid {
+			if u, ok := userByID[m.AssigneeID.UUID]; ok {
+				ownerDisplay = measureOwnerDisplayName(u)
+			}
+		}
 		vms = append(vms, measurestemplates.MeasureVM{
 			Measure:      m,
 			Frameworks:   fwByMeasure[m.ID],
 			HasRiskLinks: riskLinked[m.ID],
+			OwnerDisplay: ownerDisplay,
 		})
 	}
 	return vms, nil
+}
+
+func measureOwnerDisplayName(u db.User) string {
+	if name := strings.TrimSpace(u.Name); name != "" {
+		return name
+	}
+	return strings.TrimSpace(u.Email)
 }
 
 // ── Handlers ──

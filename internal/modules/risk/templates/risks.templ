@@ -318,19 +318,19 @@ templ AssessmentDetail(vm AssessmentDetailVM) {
 
 templ assessmentRecentChanges(auditLog []db.ListAuditLogForAssessmentRow, wrapperClass string) {
 	<details class={ wrapperClass }>
-		<summary class="cursor-pointer text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3 list-none">Last 5 changes (click to expand)</summary>
+		<summary class="cursor-pointer text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3 list-none">{ locale.T(ctx, "label_recent_changes_toggle") }</summary>
 		<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
 			@ui.Table(ui.TableProps{}) {
-				<caption class="sr-only">Last 5 changes</caption>
+				<caption class="sr-only">{ locale.T(ctx, "label_recent_changes") }</caption>
 				@ui.THead(ui.THeadProps{
 					Attrs: templ.Attributes{
 						"class": "bg-sand-100 dark:bg-zinc-800",
 					},
 				}) {
 					@ui.Tr(ui.TrProps{}) {
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px] uppercase tracking-wider"}}) { Event }
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { By }
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { When }
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_event") } }
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_by") } }
+						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_when") } }
 					}
 				}
 				<tbody>
@@ -345,7 +345,7 @@ templ assessmentRecentChanges(auditLog []db.ListAuditLogForAssessmentRow, wrappe
 									"colspan": "3",
 									"class":   "px-4 text-sand-700",
 								},
-							}) { No changes yet. }
+							}) { { locale.T(ctx, "label_no_changes_yet") } }
 						}
 					} else {
 						for i, entry := range auditLog {
@@ -355,7 +355,7 @@ templ assessmentRecentChanges(auditLog []db.ListAuditLogForAssessmentRow, wrappe
 										"class": "border-sand-300/60 dark:border-zinc-700/60",
 									},
 								}) {
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-medium"}}) { riskAuditEventLabel(entry.Event) }
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-medium"}}) { { riskAuditEventLabel(entry.Event) } }
 									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) {
 										if entry.UserName != "" {
 											{ entry.UserName }
@@ -363,7 +363,7 @@ templ assessmentRecentChanges(auditLog []db.ListAuditLogForAssessmentRow, wrappe
 											<span class="text-sand-700">—</span>
 										}
 									}
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700 font-mono text-[11px]"}}) { entry.EventTime.Format("2 Jan 2006 15:04") }
+									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700 font-mono text-[11px]"}}) { { entry.EventTime.Format("2 Jan 2006 15:04") } }
 								}
 							}
 						}
