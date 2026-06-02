@@ -9,6 +9,8 @@ ENV GOTOOLCHAIN=local
 
 WORKDIR /build
 
+ARG VERSION=dev
+
 # Install templ CLI (version pinned to match go.mod: v0.3.1001)
 # Placed before source copy so this layer is cached as long as the version is unchanged
 RUN go install github.com/a-h/templ/cmd/templ@v0.3.1001
@@ -50,7 +52,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} \
     go build \
       -trimpath \
       -buildvcs=false \
-      -ldflags="-s -w" \
+      -ldflags="-s -w -X 'main.Version=${VERSION}'" \
       -mod=readonly \
       -o /out/server \
       ./cmd/server
