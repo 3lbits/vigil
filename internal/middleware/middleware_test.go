@@ -331,7 +331,7 @@ func TestModuleFlagsMiddleware_SuccessAppliesSettings(t *testing.T) {
 	inner := RequireModule("compliance")(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
-	cache := NewModuleFlagsCache(q, true)
+	cache := NewModuleFlagsCache(q)
 	if err := cache.Refresh(context.Background()); err != nil {
 		t.Fatalf("refresh cache: %v", err)
 	}
@@ -360,7 +360,7 @@ func TestModuleFlagsMiddleware_ErrorUsesLastKnownGood(t *testing.T) {
 	inner := RequireModule("compliance")(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
-	cache := NewModuleFlagsCache(q, true)
+	cache := NewModuleFlagsCache(q)
 	if err := cache.Refresh(context.Background()); err != nil {
 		t.Fatalf("warm cache: %v", err)
 	}
@@ -390,7 +390,7 @@ func TestModuleFlagsMiddleware_ColdCacheErrorUsesDocumentedDefault(t *testing.T)
 	inner := RequireModule("risk")(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
-	cache := NewModuleFlagsCache(q, true)
+	cache := NewModuleFlagsCache(q)
 	if err := cache.Refresh(context.Background()); err == nil {
 		t.Fatal("expected cold-cache refresh failure")
 	}
@@ -422,7 +422,7 @@ func TestModuleFlagsMiddleware_HealthSignalSetAndCleared(t *testing.T) {
 		},
 	}
 
-	cache := NewModuleFlagsCache(q, true)
+	cache := NewModuleFlagsCache(q)
 	_ = ModuleFlagsMiddleware(cache)(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
@@ -447,7 +447,7 @@ func TestModuleFlagsMiddleware_RequestPathDoesNotHitDB(t *testing.T) {
 		},
 		orgs: []db.Organization{{Name: "Example"}},
 	}
-	cache := NewModuleFlagsCache(q, true)
+	cache := NewModuleFlagsCache(q)
 	if err := cache.Refresh(context.Background()); err != nil {
 		t.Fatalf("refresh cache: %v", err)
 	}

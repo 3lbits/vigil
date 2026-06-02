@@ -85,7 +85,7 @@ func bootstrap(ctx context.Context, cfg *config.Config, opts Options) (appState,
 	}
 
 	queries := db.New(sqlDB)
-	moduleFlags := startModuleFlagsCache(ctx, queries, cfg.AvvikEnabled)
+	moduleFlags := startModuleFlagsCache(ctx, queries)
 
 	engine, err := authz.New(ctx, opts.PolicySource)
 	if err != nil {
@@ -122,9 +122,8 @@ func bootstrap(ctx context.Context, cfg *config.Config, opts Options) (appState,
 func startModuleFlagsCache(
 	ctx context.Context,
 	queries *db.Queries,
-	avvikEnabled bool,
 ) *middleware.ModuleFlagsCache {
-	moduleFlags := middleware.NewModuleFlagsCache(queries, avvikEnabled)
+	moduleFlags := middleware.NewModuleFlagsCache(queries)
 	if refreshErr := moduleFlags.Refresh(ctx); refreshErr != nil {
 		slog.Error("warm module flags cache", "error", refreshErr)
 	}

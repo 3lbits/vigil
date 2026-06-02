@@ -78,10 +78,8 @@ func buildMux(ctx context.Context, cfg *config.Config, state appState, opts Opti
 		assets.New(),
 		activities.New(),
 		risk.New(),
+		avvik.New(state.sqlDB),
 		admin.New(state.pool, opts.StartTime, opts.Version, refreshModuleFlags),
-	}
-	if cfg.AvvikEnabled {
-		coreModules = append(coreModules, avvik.New(state.sqlDB))
 	}
 	for _, m := range coreModules {
 		if err := registry.Register(m); err != nil {

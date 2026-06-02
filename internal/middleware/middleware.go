@@ -215,15 +215,13 @@ type ModuleFlagsSnapshot struct {
 // name. Refresh is expected to run in background and on explicit invalidation
 // paths; request middleware should only perform atomic loads.
 type ModuleFlagsCache struct {
-	q            db.Querier
-	avvikEnabled bool
-	lastKnown    atomic.Pointer[ModuleFlagsSnapshot]
+	q         db.Querier
+	lastKnown atomic.Pointer[ModuleFlagsSnapshot]
 }
 
-func NewModuleFlagsCache(q db.Querier, avvikEnabled bool) *ModuleFlagsCache {
+func NewModuleFlagsCache(q db.Querier) *ModuleFlagsCache {
 	return &ModuleFlagsCache{
-		q:            q,
-		avvikEnabled: avvikEnabled,
+		q: q,
 	}
 }
 
@@ -234,7 +232,7 @@ func (c *ModuleFlagsCache) Refresh(ctx context.Context) error {
 		return fmt.Errorf("load app settings: %w", err)
 	}
 
-	flags := moduleFlagsFromSettings(settings, c.avvikEnabled)
+	flags := moduleFlagsFromSettings(settings)
 	topOrgName := defaultTopOrgName
 	orgs, orgErr := c.q.ListOrganizations(ctx)
 	if orgErr != nil {
@@ -300,7 +298,7 @@ func ModuleFlagsMiddleware(cache *ModuleFlagsCache) func(http.Handler) http.Hand
 			}
 			topOrgName := defaultTopOrgName
 			if cache != nil {
-				flags = moduleFlagsColdCacheDefault(cache.avvikEnabled)
+				flags = moduleFlagsColdCacheDefault()
 				if snapshot, ok := cache.Snapshot(); ok {
 					flags = snapshot.Flags
 					topOrgName = snapshot.TopOrgName
@@ -314,17 +312,17 @@ func ModuleFlagsMiddleware(cache *ModuleFlagsCache) func(http.Handler) http.Hand
 	}
 }
 
-func moduleFlagsFromSettings(settings db.AppSetting, avvikEnabled bool) ModuleFlags {
+func moduleFlagsFromSettings(settings db.AppSetting) ModuleFlags {
 	return ModuleFlags{
 		ComplianceEnabled: settings.ComplianceEnabled,
 		RiskEnabled:       settings.RiskEnabled,
 		ActivitiesEnabled: settings.ActivitiesEnabled,
 		AssetsEnabled:     settings.AssetsEnabled,
-		AvvikEnabled:      avvikEnabled,
+		AvvikEnabled:      settings.AvvikEnabled,
 	}
 }
 
-func moduleFlagsColdCacheDefault(avvikEnabled bool) ModuleFlags {
+func moduleFlagsColdCacheDefault() ModuleFlags {
 	// Fail closed when app_settings cannot be read before any successful load.
 	// This preserves operator intent ("disabled stays disabled") in audit-focused
 	// environments. Availability still degrades gracefully once a last-known-good
@@ -343,7 +341,7 @@ func moduleFlagsColdCacheDefault(avvikEnabled bool) ModuleFlags {
 		RiskEnabled:       true,
 		ActivitiesEnabled: true,
 		AssetsEnabled:     true,
-		AvvikEnabled:      avvikEnabled,
+		AvvikEnabled:      false,
 	}
 }
 
