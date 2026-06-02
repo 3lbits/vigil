@@ -28,6 +28,8 @@ const (
 
 type ctxKey struct{}
 
+type SessionTokenGetter func(*http.Request) string
+
 // TokenFromContext returns the CSRF token injected by Middleware.
 // Call this from templ components to populate hidden form inputs.
 func TokenFromContext(ctx context.Context) string {
@@ -35,13 +37,15 @@ func TokenFromContext(ctx context.Context) string {
 	return v
 }
 
-// Middleware generates or reuses a signed CSRF token per session, stores it
-// in a SameSite=Strict cookie and in the request context, and validates it on
-// mutating requests. Pass secure=true in production so the cookie is HTTPS-only.
-func Middleware(key []byte, secure bool) func(http.Handler) http.Handler {
+// Middleware generates or reuses a signed CSRF token, stores it in a
+// SameSite=Strict cookie and in the request context, and validates it on
+// mutating requests. If sessionToken is provided and returns a non-empty value,
+// the token MAC is additionally bound to that session token.
+func Middleware(key []byte, secure bool, sessionToken SessionTokenGetter) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			token := issueToken(key, r, w, secure)
+			session := tokenForRequest(r, sessionToken)
+			token := issueToken(key, session, r, w, secure)
 			ctx := context.WithValue(r.Context(), ctxKey{}, token)
 			r = r.WithContext(ctx)
 
@@ -83,11 +87,18 @@ func validateToken(r *http.Request, token string) bool {
 	return hmac.Equal([]byte(token), []byte(r.FormValue(fieldName)))
 }
 
-func issueToken(key []byte, r *http.Request, w http.ResponseWriter, secure bool) string {
-	if c, err := r.Cookie(cookieName); err == nil && verifyToken(key, c.Value) {
+func tokenForRequest(r *http.Request, get SessionTokenGetter) string {
+	if get == nil {
+		return ""
+	}
+	return get(r)
+}
+
+func issueToken(key []byte, sessionToken string, r *http.Request, w http.ResponseWriter, secure bool) string {
+	if c, err := r.Cookie(cookieName); err == nil && verifyToken(key, sessionToken, c.Value) {
 		return c.Value
 	}
-	tok := newSignedToken(key)
+	tok := newSignedToken(key, sessionToken)
 	c := &http.Cookie{ //nolint:gosec // cookie has HttpOnly, SameSite=Strict, and Secure=true by default; Secure is only relaxed in dev via the conditional below
 		Name:     cookieName,
 		Value:    tok,
@@ -103,20 +114,27 @@ func issueToken(key []byte, r *http.Request, w http.ResponseWriter, secure bool)
 	return tok
 }
 
-func newSignedToken(key []byte) string {
+func newSignedToken(key []byte, sessionToken string) string {
 	nonce := make([]byte, 16)
 	_, _ = rand.Read(nonce)
 	nonceHex := hex.EncodeToString(nonce)
-	return nonceHex + "." + macHex(key, nonceHex)
+	return nonceHex + "." + macHex(key, nonceAndSession(nonceHex, sessionToken))
 }
 
-func verifyToken(key []byte, tok string) bool {
+func verifyToken(key []byte, sessionToken string, tok string) bool {
 	dot := strings.IndexByte(tok, '.')
 	if dot < 0 {
 		return false
 	}
 	nonce, gotMac := tok[:dot], tok[dot+1:]
-	return hmac.Equal([]byte(macHex(key, nonce)), []byte(gotMac))
+	return hmac.Equal([]byte(macHex(key, nonceAndSession(nonce, sessionToken))), []byte(gotMac))
+}
+
+func nonceAndSession(nonce, sessionToken string) string {
+	if sessionToken == "" {
+		return nonce
+	}
+	return nonce + "." + sessionToken
 }
 
 func macHex(key []byte, msg string) string {

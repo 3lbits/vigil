@@ -21,7 +21,7 @@ func csrfCookieValue(cookies []*http.Cookie) string {
 
 func TestMiddleware_GETSetsTokenCookieAndContext(t *testing.T) {
 	var token string
-	h := Middleware([]byte("test-key"), false)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	h := Middleware([]byte("test-key"), false, nil)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token = TokenFromContext(r.Context())
 		w.WriteHeader(http.StatusOK)
 	}))
@@ -39,7 +39,7 @@ func TestMiddleware_GETSetsTokenCookieAndContext(t *testing.T) {
 }
 
 func TestMiddleware_POSTAcceptsHeaderToken(t *testing.T) {
-	mw := Middleware([]byte("test-key"), false)
+	mw := Middleware([]byte("test-key"), false, nil)
 	h := mw(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 	}))
@@ -63,7 +63,7 @@ func TestMiddleware_POSTAcceptsHeaderToken(t *testing.T) {
 }
 
 func TestMiddleware_POSTAcceptsFormToken(t *testing.T) {
-	mw := Middleware([]byte("test-key"), false)
+	mw := Middleware([]byte("test-key"), false, nil)
 	h := mw(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 	}))
@@ -88,7 +88,7 @@ func TestMiddleware_POSTAcceptsFormToken(t *testing.T) {
 }
 
 func TestMiddleware_POSTAcceptsMultipartToken(t *testing.T) {
-	mw := Middleware([]byte("test-key"), false)
+	mw := Middleware([]byte("test-key"), false, nil)
 	h := mw(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 	}))
@@ -121,7 +121,7 @@ func TestMiddleware_POSTAcceptsMultipartToken(t *testing.T) {
 }
 
 func TestMiddleware_POSTMissingTokenForbidden(t *testing.T) {
-	h := Middleware([]byte("test-key"), false)(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+	h := Middleware([]byte("test-key"), false, nil)(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 	}))
 
@@ -135,7 +135,7 @@ func TestMiddleware_POSTMissingTokenForbidden(t *testing.T) {
 }
 
 func TestMiddleware_InvalidCookieIsReplaced(t *testing.T) {
-	h := Middleware([]byte("test-key"), false)(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+	h := Middleware([]byte("test-key"), false, nil)(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
@@ -147,5 +147,65 @@ func TestMiddleware_InvalidCookieIsReplaced(t *testing.T) {
 	newToken := csrfCookieValue(w.Result().Cookies())
 	if newToken == "" || newToken == "invalid" {
 		t.Fatalf("expected invalid token to be replaced, got %q", newToken)
+	}
+}
+
+func TestMiddleware_SessionBoundTokenRejectedAcrossSessions(t *testing.T) {
+	getSessionToken := func(r *http.Request) string {
+		return r.Header.Get("X-Session-Token")
+	}
+	mw := Middleware([]byte("test-key"), false, getSessionToken)
+	h := mw(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	}))
+
+	getW := httptest.NewRecorder()
+	getR := httptest.NewRequest(http.MethodGet, "/", nil)
+	getR.Header.Set("X-Session-Token", "session-a")
+	h.ServeHTTP(getW, getR)
+	token := csrfCookieValue(getW.Result().Cookies())
+	if token == "" {
+		t.Fatal("missing csrf cookie token")
+	}
+
+	postW := httptest.NewRecorder()
+	postR := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(""))
+	postR.Header.Set("X-Session-Token", "session-b")
+	postR.Header.Set("X-CSRF-Token", token)
+	postR.AddCookie(&http.Cookie{Name: "_csrf", Value: token})
+	h.ServeHTTP(postW, postR)
+
+	if postW.Code != http.StatusForbidden {
+		t.Fatalf("expected %d, got %d", http.StatusForbidden, postW.Code)
+	}
+}
+
+func TestMiddleware_SessionBoundTokenAcceptedSameSession(t *testing.T) {
+	getSessionToken := func(r *http.Request) string {
+		return r.Header.Get("X-Session-Token")
+	}
+	mw := Middleware([]byte("test-key"), false, getSessionToken)
+	h := mw(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	}))
+
+	getW := httptest.NewRecorder()
+	getR := httptest.NewRequest(http.MethodGet, "/", nil)
+	getR.Header.Set("X-Session-Token", "session-a")
+	h.ServeHTTP(getW, getR)
+	token := csrfCookieValue(getW.Result().Cookies())
+	if token == "" {
+		t.Fatal("missing csrf cookie token")
+	}
+
+	postW := httptest.NewRecorder()
+	postR := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(""))
+	postR.Header.Set("X-Session-Token", "session-a")
+	postR.Header.Set("X-CSRF-Token", token)
+	postR.AddCookie(&http.Cookie{Name: "_csrf", Value: token})
+	h.ServeHTTP(postW, postR)
+
+	if postW.Code != http.StatusNoContent {
+		t.Fatalf("expected %d, got %d", http.StatusNoContent, postW.Code)
 	}
 }
