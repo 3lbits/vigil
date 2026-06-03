@@ -6,9 +6,9 @@
 *                       @3lbits/vigil
 
 # Risk model core — only maintainers review.
-/modules/risk/          @3lbits/vigil
+/internal/modules/risk/ @3lbits/vigil
 /internal/authz/        @3lbits/vigil
-/policies/              @3lbits/vigil
+cmd/server/policies/    @3lbits/vigil
 
 # Security-sensitive surfaces.
 /SECURITY.md            @3lbits/vigil
