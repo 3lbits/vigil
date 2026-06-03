@@ -8,7 +8,7 @@
 # binary, so no target-arch code is ever executed at build time — QEMU emulation
 # is not needed. Digest pinning still works: the digest points at the manifest
 # index and $BUILDPLATFORM resolves the host variant from it.
-FROM --platform=$BUILDPLATFORM golang:1.26.3-bookworm@sha256:386d475a660466863d9f8c766fec64d7fdad3edac2c6a05020c09534d71edb4b AS builder
+FROM --platform=$BUILDPLATFORM golang:1.26.4-bookworm@sha256:13d4f379508484b05642e3f56d90d15fb25dc743a2c5a9c9af0985d055941c4b AS builder
 
 # Prevent Go from auto-downloading a newer toolchain at build time
 ENV GOTOOLCHAIN=local
