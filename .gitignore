@@ -44,3 +44,4 @@ example/
 
 .DS_Store
 scripts/loadtest/artifacts/
+vigil-db/

@@ -126,7 +126,8 @@ jobs:
           semgrep scan --error --sarif --output semgrep.sarif \
             --config p/golang \
             --config p/secrets \
-            --config p/gitleaks
+            --config p/owasp-top-ten \
+            --config p/supply-chain
       - name: Upload Semgrep SARIF
         if: always()
         uses: github/codeql-action/upload-sarif@v4

@@ -172,10 +172,11 @@ css-watch:
 	bin/tailwindcss -i cmd/server/public/css/input.css -o cmd/server/public/css/output.css --watch
 
 semgrep:
-	semgrep --config "p/golang" --config "p/secrets" --config "p/gitleaks" \
-		--config "p/owasp-top-ten" --config "p/supply-chain" \
-		--exclude "vendor/" --exclude "*_test.go" --exclude ".github/" \
-		--exclude "*.hujson" .
+	semgrep scan --error \
+		--config "p/golang" \
+		--config "p/secrets" \
+		--config "p/owasp-top-ten" \
+		--config "p/supply-chain"
 
 deadcode:
 	deadcode -test ./...
