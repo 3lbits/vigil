@@ -1,0 +1,59 @@
+name: CodeQL
+
+# GitHub code scanning with CodeQL. This workflow IS the "advanced setup" —
+# do not enable Default setup in the repository's Code Security settings, as
+# the two cannot both analyze Go and would conflict.
+#
+# Runs on pushes and pull requests to main, and on a weekly schedule so newly
+# published advisories are caught even when the code isn't changing. Results
+# appear in the Security tab. Requires Code Security (free once the repository
+# is public).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  codeql:
+    name: CodeQL
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
+      actions: read # required by code scanning on private repositories
+      packages: read # required to fetch CodeQL packs
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install templ
+        run: go install github.com/a-h/templ/cmd/templ@v0.3.1001
+      - name: Generate templ
+        run: templ generate ./...
+      - name: Stub Tailwind output # autobuild must be able to compile
+        run: touch cmd/server/public/css/output.css
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: go
+          build-mode: autobuild
+          queries: security-extended
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:go"
