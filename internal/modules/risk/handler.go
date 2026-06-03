@@ -463,7 +463,7 @@ func (h *Handler) AcceptAssessment(w http.ResponseWriter, r *http.Request) {
 	}
 	audit.RecordOrWarn(ctx, h.q, audit.Event{
 		Event: "risk.assessment.accepted",
-		Attrs: map[string]any{"id": assessment.ID.String(), "name": assessment.Name},
+		Attrs: map[string]any{"assessment_id": assessment.ID.String(), "id": assessment.ID.String(), "name": assessment.Name},
 	})
 	httputil.RedirectWithFlash(w, r, "/risks/"+assessment.ID.String(), "Assessment accepted and marked active.", "success")
 }

@@ -66,6 +66,26 @@ func (q *reassessQ) ReassessRiskCurrentScores(_ context.Context, arg db.Reassess
 	}, nil
 }
 
+type acceptAuditQ struct {
+	testutil.StubQuerier
+	assessment db.RiskAssessment
+	auditRows  []db.InsertAuditLogParams
+}
+
+func (q *acceptAuditQ) GetRiskAssessment(_ context.Context, _ uuid.UUID) (db.RiskAssessment, error) {
+	return q.assessment, nil
+}
+
+func (q *acceptAuditQ) AcceptAssessment(_ context.Context, id uuid.UUID) (db.RiskAssessment, error) {
+	q.assessment.Status = "active"
+	return q.assessment, nil
+}
+
+func (q *acceptAuditQ) InsertAuditLog(_ context.Context, arg db.InsertAuditLogParams) error {
+	q.auditRows = append(q.auditRows, arg)
+	return nil
+}
+
 func withUser(r *http.Request) *http.Request {
 	ctx := middleware.SetUser(r.Context(), middleware.SessionUser{
 		ID:   "00000000-0000-0000-0000-000000000010",
@@ -183,6 +203,39 @@ func TestSubmitRiskReassessment_StubAuthSetsAssessedBy(t *testing.T) {
 	}
 	if !q.reassessArg.AssessedBy.Valid {
 		t.Fatal("expected assessed_by to be set under stub auth")
+	}
+}
+
+func TestAcceptAssessment_RecordsAuditWithAssessmentID(t *testing.T) {
+	assessmentID := uuid.New()
+	q := &acceptAuditQ{
+		assessment: db.RiskAssessment{
+			ID:     assessmentID,
+			Name:   "Vendor onboarding",
+			Status: "pending_acceptance",
+		},
+	}
+	h := NewHandler(q, nil)
+
+	r := httptest.NewRequest(http.MethodPost, "/risks/"+assessmentID.String()+"/accept", nil)
+	r.SetPathValue("id", assessmentID.String())
+	r = withUser(r)
+	w := httptest.NewRecorder()
+
+	h.AcceptAssessment(w, r)
+
+	if w.Code != http.StatusSeeOther {
+		t.Fatalf("expected 303, got %d", w.Code)
+	}
+	if len(q.auditRows) != 1 {
+		t.Fatalf("expected 1 audit row, got %d", len(q.auditRows))
+	}
+	if q.auditRows[0].Event != "risk.assessment.accepted" {
+		t.Fatalf("unexpected audit event: %s", q.auditRows[0].Event)
+	}
+	attrs := string(q.auditRows[0].Attrs)
+	if !strings.Contains(attrs, `"assessment_id":"`+assessmentID.String()+`"`) {
+		t.Fatalf("expected assessment_id in attrs, got %s", attrs)
 	}
 }
 
