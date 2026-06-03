@@ -256,7 +256,7 @@ func Layout(title string, subtitle string, activePage string, user middleware.Se
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div><div class=\"min-w-0\"><div class=\"font-medium text-[15px] leading-tight\">Vigil</div><div class=\"text-[10px] text-sand-700 dark:text-zinc-400 truncate\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div><a href=\"/\" @click=\"sidebarOpen = false\" class=\"min-w-0 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded\"><div class=\"font-medium text-[15px] leading-tight\">Vigil</div><div class=\"text-[10px] text-sand-700 dark:text-zinc-400 truncate\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -269,7 +269,7 @@ func Layout(title string, subtitle string, activePage string, user middleware.Se
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div><button x-ref=\"closeBtn\" aria-label=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></a> <button x-ref=\"closeBtn\" aria-label=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
