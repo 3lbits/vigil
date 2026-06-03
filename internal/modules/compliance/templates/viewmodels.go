@@ -13,11 +13,12 @@ type FrameworkVM struct {
 
 // FrameworkDetailVM is the view model for the framework detail page.
 type FrameworkDetailVM struct {
-	Framework    db.Framework
-	Requirements []db.Requirement
-	CoveredReqs  int64
-	CanEdit      bool
-	AuditLog     []db.ListAuditLogForFrameworkRow
+	Framework                  db.Framework
+	Requirements               []db.Requirement
+	RequirementImplementations []RequirementVM
+	CoveredReqs                int64
+	CanEdit                    bool
+	AuditLog                   []db.ListAuditLogForFrameworkRow
 }
 
 // RequirementVM is the view model for a requirement with its linked measures.

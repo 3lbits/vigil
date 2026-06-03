@@ -317,6 +317,17 @@ func (h *Handler) ShowFramework(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Warn("list requirements for framework", "framework_id", id.String(), "error", err) // #nosec G706
 	}
+	reqImplementations := make([]compliancetemplates.RequirementVM, 0, len(reqs))
+	for _, req := range reqs {
+		measures, listMeasuresErr := h.q.ListMeasuresForRequirement(r.Context(), req.ID)
+		if listMeasuresErr != nil {
+			slog.Warn("list measures for requirement", "framework_id", id.String(), "requirement_id", req.ID.String(), "error", listMeasuresErr) // #nosec G706
+		}
+		reqImplementations = append(reqImplementations, compliancetemplates.RequirementVM{
+			Requirement: req,
+			Measures:    measures,
+		})
+	}
 	covered, err := h.q.CountCoveredRequirementsByFramework(r.Context(), id)
 	if err != nil {
 		slog.Warn("count covered reqs", "framework_id", id.String(), "error", err) // #nosec G706
@@ -331,11 +342,12 @@ func (h *Handler) ShowFramework(w http.ResponseWriter, r *http.Request) {
 		slog.Error("authz eval", "error", err)
 	}
 	vm := compliancetemplates.FrameworkDetailVM{
-		Framework:    fw,
-		Requirements: reqs,
-		CoveredReqs:  covered,
-		CanEdit:      canEdit,
-		AuditLog:     auditLog,
+		Framework:                  fw,
+		Requirements:               reqs,
+		RequirementImplementations: reqImplementations,
+		CoveredReqs:                covered,
+		CanEdit:                    canEdit,
+		AuditLog:                   auditLog,
 	}
 	httputil.Render(w, r, layout.Layout(fw.Name, fw.ShortName+" · "+fw.FrameworkType, "compliance", user,
 		compliancetemplates.FrameworkDetail(vm),

@@ -73,3 +73,122 @@ func TestFrameworkList_EmptyState(t *testing.T) {
 		t.Errorf("expected '0' in count text, got %q", count)
 	}
 }
+
+func TestFrameworkDetail_ShowsSOAColumnsAndReferenceValue(t *testing.T) {
+	fwID := uuid.New()
+	doc := renderToDoc(t, FrameworkDetail(FrameworkDetailVM{
+		Framework: db.Framework{ID: fwID, Name: "ISO 27001", ShortName: "ISO"},
+		Requirements: []db.Requirement{
+			{
+				ID:                uuid.New(),
+				FrameworkID:       fwID,
+				Ref:               "A.5.1",
+				Title:             "Policies for information security",
+				NotRelevant:       true,
+				NotRelevantReason: "Out of scope for this unit",
+			},
+		},
+		CanEdit: true,
+	}))
+
+	if !strings.Contains(doc.Text(), "Applicability") {
+		t.Fatal("expected Applicability column in framework detail")
+	}
+	if !strings.Contains(doc.Text(), "Justification") {
+		t.Fatal("expected Justification column in framework detail")
+	}
+	if !strings.Contains(doc.Text(), "A.5.1") {
+		t.Fatal("expected actual requirement ref value to be rendered")
+	}
+	if strings.Contains(doc.Text(), "req.Ref") {
+		t.Fatal("did not expect literal req.Ref text in rendered output")
+	}
+}
+
+func TestRequirementDetail_ShowsRelevantStatusWhenApplicable(t *testing.T) {
+	doc := renderToDoc(t, RequirementDetail(RequirementDetailVM{
+		Requirement: db.Requirement{
+			ID:          uuid.New(),
+			FrameworkID: uuid.New(),
+			Ref:         "A.5.1",
+			Title:       "Policies for information security",
+			NotRelevant: false,
+		},
+		FrameworkName:  "ISO 27001",
+		FrameworkShort: "ISO",
+	}))
+
+	if !strings.Contains(doc.Text(), "Status") {
+		t.Fatal("expected status label in requirement detail")
+	}
+	if !strings.Contains(doc.Text(), "Relevant") {
+		t.Fatal("expected relevant status badge in requirement detail")
+	}
+}
+
+func TestFrameworkDetail_ShowsImplementationMappingWithMeasures(t *testing.T) {
+	fwID := uuid.New()
+	reqID := uuid.New()
+	doc := renderToDoc(t, FrameworkDetail(FrameworkDetailVM{
+		Framework: db.Framework{ID: fwID, Name: "ISO 27001", ShortName: "ISO"},
+		Requirements: []db.Requirement{
+			{
+				ID:          reqID,
+				FrameworkID: fwID,
+				Ref:         "A.5.2",
+				Title:       "Information security roles",
+			},
+		},
+		RequirementImplementations: []RequirementVM{
+			{
+				Requirement: db.Requirement{
+					ID:          reqID,
+					FrameworkID: fwID,
+					Ref:         "A.5.2",
+					Title:       "Information security roles",
+				},
+				Measures: []db.ListMeasuresForRequirementRow{
+					{ID: uuid.New(), Name: "Security policy review", Status: "implemented"},
+				},
+			},
+		},
+	}))
+
+	if !strings.Contains(doc.Text(), "Implementation mapping (requirements") {
+		t.Fatal("expected implementation mapping section")
+	}
+	if !strings.Contains(doc.Text(), "Measures") {
+		t.Fatal("expected measures column in implementation mapping table")
+	}
+	if !strings.Contains(doc.Text(), "Security policy review") {
+		t.Fatal("expected linked measure name in implementation mapping table")
+	}
+}
+
+func TestFrameworkDetail_ShowsQuickLinksToSections(t *testing.T) {
+	fwID := uuid.New()
+	doc := renderToDoc(t, FrameworkDetail(FrameworkDetailVM{
+		Framework: db.Framework{ID: fwID, Name: "ISO 27001", ShortName: "ISO"},
+		Requirements: []db.Requirement{
+			{
+				ID:          uuid.New(),
+				FrameworkID: fwID,
+				Ref:         "A.5.1",
+				Title:       "Policies for information security",
+			},
+		},
+	}))
+
+	if doc.Find(`a[href="#implementation-mapping"]`).Length() != 1 {
+		t.Fatal("expected quick link to implementation mapping section")
+	}
+	if doc.Find(`a[href="#statement-of-applicability"]`).Length() != 1 {
+		t.Fatal("expected quick link to SOA section")
+	}
+	if doc.Find(`#implementation-mapping`).Length() != 1 {
+		t.Fatal("expected implementation mapping section anchor")
+	}
+	if doc.Find(`#statement-of-applicability`).Length() != 1 {
+		t.Fatal("expected SOA section anchor")
+	}
+}

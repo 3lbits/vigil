@@ -460,16 +460,23 @@ templ RequirementDetail(vm RequirementDetailVM) {
 		</span>
 		<span class="text-[11px] uppercase tracking-wider text-sand-700 font-medium pt-0.5">Reference</span>
 		<span class="font-mono text-[13px] text-sand-800">{ vm.Requirement.Ref }</span>
+		<span class="text-[11px] uppercase tracking-wider text-sand-700 font-medium pt-0.5">Status</span>
+		if vm.Requirement.NotRelevant {
+			@ui.Badge(ui.BadgeProps{
+				Variant: "default",
+				Class:   "text-[11px] px-1.5 rounded",
+			}) { { locale.T(ctx, "label_not_relevant") } }
+		} else {
+			@ui.Badge(ui.BadgeProps{
+				Variant: "success",
+				Class:   "text-[11px] px-1.5 rounded",
+			}) { Relevant }
+		}
 		if vm.Requirement.Description != "" {
 			<span class="text-[11px] uppercase tracking-wider text-sand-700 font-medium pt-0.5">Description</span>
 			<span class="text-sand-700">{ vm.Requirement.Description }</span>
 		}
 		if vm.Requirement.NotRelevant {
-			<span class="text-[11px] uppercase tracking-wider text-sand-700 font-medium pt-0.5">Status</span>
-			@ui.Badge(ui.BadgeProps{
-				Variant: "default",
-				Class:   "text-[11px] px-1.5 rounded",
-			}) { { locale.T(ctx, "label_not_relevant") } }
 			if vm.Requirement.NotRelevantReason != "" {
 				<span class="text-[11px] uppercase tracking-wider text-sand-700 font-medium pt-0.5">Reason</span>
 				<span class="text-sand-700">{ vm.Requirement.NotRelevantReason }</span>
@@ -720,10 +727,68 @@ templ FrameworkDetail(vm FrameworkDetailVM) {
 			}
 		</span>
 	</div>
+	if len(vm.Requirements) > 0 {
+		<div class="mb-6 flex flex-wrap items-center gap-2 text-xs">
+			<span class="text-sand-700 dark:text-zinc-400 font-medium uppercase tracking-wider">Quick links</span>
+			<a href="#implementation-mapping" class="rounded-full border border-sand-300/70 dark:border-zinc-700 px-2.5 py-1 text-sand-700 dark:text-zinc-300 hover:bg-sand-100 dark:hover:bg-zinc-800">Implementation mapping</a>
+			<a href="#statement-of-applicability" class="rounded-full border border-sand-300/70 dark:border-zinc-700 px-2.5 py-1 text-sand-700 dark:text-zinc-300 hover:bg-sand-100 dark:hover:bg-zinc-800">SOA</a>
+		</div>
+	}
 
-	<div class="border-t border-sand-300/60 dark:border-zinc-700/60 pt-6">
+	if len(vm.Requirements) > 0 {
+		<div id="implementation-mapping" class="border-t border-sand-300/60 dark:border-zinc-700/60 pt-6 scroll-mt-24">
+			<h2 class="text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3">
+				Implementation mapping (requirements → measures)
+			</h2>
+			<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
+				@ui.Table(ui.TableProps{}) {
+					<caption class="sr-only">Requirement implementation mapping</caption>
+					@ui.THead(ui.THeadProps{
+						Attrs: templ.Attributes{
+							"class": "bg-sand-100 dark:bg-zinc-800",
+						},
+					}) {
+						@ui.Tr(ui.TrProps{}) {
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px]"}}) { Ref }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { Requirement }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { Measures }
+						}
+					}
+					<tbody>
+						for _, row := range vm.RequirementImplementations {
+							@ui.Tr(ui.TrProps{
+								Attrs: templ.Attributes{
+									"class": "border-sand-300/60 dark:border-zinc-700/60 align-top",
+								},
+							}) {
+								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-mono text-xs text-sand-700 dark:text-zinc-400"}}) { { row.Requirement.Ref } }
+								@ui.Td(ui.TdProps{}) {
+									<a href={ templ.SafeURL("/compliance/requirements/" + row.Requirement.ID.String()) } class="hover:text-blue-700 hover:underline">{ row.Requirement.Title }</a>
+								}
+								@ui.Td(ui.TdProps{}) {
+									if len(row.Measures) == 0 {
+										<span class="text-sand-700 dark:text-zinc-400">No measures linked</span>
+									} else {
+										<ul class="space-y-1">
+											for _, m := range row.Measures {
+												<li class="flex items-center gap-2">
+													<a href={ templ.SafeURL("/measures/" + m.ID.String()) } class="hover:text-blue-700 hover:underline">{ m.Name }</a>
+													@ui.StatusBadge(m.Status)
+												</li>
+											}
+										</ul>
+									}
+								}
+							}
+						}
+					</tbody>
+				}
+			</div>
+		</div>
+	}
+	<div id="statement-of-applicability" class="border-t border-sand-300/60 dark:border-zinc-700/60 pt-6 scroll-mt-24">
 		<h2 class="text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3">
-			{ locale.T(ctx, "section_requirements") }
+			Statement of applicability (SOA)
 			<span class="ml-1 text-[11px] font-normal text-sand-700 dark:text-zinc-400">({ fmt.Sprint(len(vm.Requirements)) })</span>
 		</h2>
 		if len(vm.Requirements) == 0 {
@@ -735,7 +800,7 @@ templ FrameworkDetail(vm FrameworkDetailVM) {
 		} else {
 			<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
 				@ui.Table(ui.TableProps{}) {
-					<caption class="sr-only">Requirements</caption>
+					<caption class="sr-only">Statement of applicability</caption>
 					@ui.THead(ui.THeadProps{
 						Attrs: templ.Attributes{
 							"class": "bg-sand-100 dark:bg-zinc-800",
@@ -743,8 +808,9 @@ templ FrameworkDetail(vm FrameworkDetailVM) {
 					}) {
 						@ui.Tr(ui.TrProps{}) {
 							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px]"}}) { Ref }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { Title }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { Status }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { Requirement }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { Applicability }
+							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { Justification }
 						}
 					}
 					<tbody>
@@ -754,7 +820,7 @@ templ FrameworkDetail(vm FrameworkDetailVM) {
 									"class": "border-sand-300/60 dark:border-zinc-700/60",
 								},
 							}) {
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-mono text-xs text-sand-700 dark:text-zinc-400"}}) { req.Ref }
+								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-mono text-xs text-sand-700 dark:text-zinc-400"}}) { { req.Ref } }
 								@ui.Td(ui.TdProps{}) {
 									<a href={ templ.SafeURL("/compliance/requirements/" + req.ID.String()) } class="hover:text-blue-700 hover:underline">{ req.Title }</a>
 									if req.Description != "" {
@@ -767,6 +833,18 @@ templ FrameworkDetail(vm FrameworkDetailVM) {
 											Variant: "default",
 											Class:   "text-[11px] px-1.5 rounded",
 										}) { { locale.T(ctx, "label_not_relevant") } }
+									} else {
+										@ui.Badge(ui.BadgeProps{
+											Variant: "success",
+											Class:   "text-[11px] px-1.5 rounded",
+										}) { Relevant }
+									}
+								}
+								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700 dark:text-zinc-400"}}) {
+									if req.NotRelevant && req.NotRelevantReason != "" {
+										{ req.NotRelevantReason }
+									} else {
+										N/A
 									}
 								}
 							}
