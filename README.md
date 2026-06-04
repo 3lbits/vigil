@@ -8,6 +8,8 @@ flow with treatment planning and risk register views.
 Authorization is policy-based using embedded [OPA](https://www.openpolicyagent.org/)
 Rego (`cmd/server/policies/authz.rego`), not hardcoded role checks in handlers.
 
+![Vigil demo](docs/images/demo.png)
+
 > **Status:** Vigil is open-sourced for the common good under Apache 2.0.
 > No commercial support, hosted offering, or maintenance commitments are
 > provided. Parts of this codebase have been developed with the help of
