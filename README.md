@@ -68,18 +68,34 @@ Open <http://localhost:8080>.
 > alias `podman` to `docker` or run `docker compose up -d` directly in place
 > of `make db-up`.
 
-### Demo the app (quick path)
+### Demo with published GHCR image
 
-If you just want to see Vigil running with realistic sample data:
+To run Vigil from the published container image with PostgreSQL:
+
+```sh
+docker compose -f demo-compose.yml up -d
+```
+
+Then open <http://localhost:8080>.
+
+Useful commands:
+
+```sh
+docker compose -f demo-compose.yml logs -f app
+docker compose -f demo-compose.yml down
+# remove demo database volume too:
+docker compose -f demo-compose.yml down -v
+```
+
+### Demo from source (quick local path)
+
+If you prefer running the app from source with live reload:
 
 ```sh
 cp .env.example .env
 make setup tailwind-install db-reset-seed
 DEV_STUB_AUTH=true make run
 ```
-
-Then open <http://localhost:8080/login/dev> and sign in as one of the seeded
-dev users.
 
 ### Tooling
 

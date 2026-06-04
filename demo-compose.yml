@@ -1,0 +1,36 @@
+name: vigil-demo
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: vigil
+      POSTGRES_PASSWORD: vigil
+      POSTGRES_DB: vigil
+    volumes:
+      - vigil-demo-postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vigil -d vigil"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  app:
+    image: ghcr.io/3lbits/vigil:latest
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      APP_ENV: development
+      DEV_STUB_AUTH: "true"
+      AUTH_PROVIDERS: "stub"
+      SESSION_COOKIE_SECURE: "false"
+      DATABASE_URL: postgres://vigil:vigil@postgres:5432/vigil?sslmode=disable
+
+volumes:
+  vigil-demo-postgres:
