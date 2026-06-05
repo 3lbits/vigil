@@ -126,6 +126,7 @@ func (h *Handler) NewAssessment(w http.ResponseWriter, r *http.Request) {
 	httputil.Render(w, r, layout.Layout("New risk assessment", "Step 1 — Framework", "risk", user,
 		risktemplates.WizardStep1(risktemplates.WizardStep1VM{
 			Assessment:         db.RiskAssessment{Type: "security"},
+			ThreatEnabled:      false,
 			Users:              users,
 			Orgs:               orgs,
 			IsNew:              true,
@@ -141,10 +142,13 @@ func (h *Handler) CreateAssessment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user, _ := middleware.FromContext(r.Context())
+	threatEnabled := r.FormValue("threat_assessment_enabled") == "on"
 
 	name := strings.TrimSpace(r.FormValue("name"))
 	if name == "" {
-		h.renderStep1Error(w, r, user, db.RiskAssessment{}, true, "Assessment name is required.")
+		h.renderStep1Error(w, r, user, db.RiskAssessment{
+			ThreatAssessmentEnabled: threatEnabled,
+		}, true, "Assessment name is required.")
 		return
 	}
 
@@ -154,17 +158,18 @@ func (h *Handler) CreateAssessment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	assessment, err := h.q.CreateRiskAssessment(r.Context(), db.CreateRiskAssessmentParams{
-		Name:               name,
-		Scope:              strings.TrimSpace(r.FormValue("scope")),
-		SecurityObjectives: strings.TrimSpace(r.FormValue("security_objectives")),
-		Type:               "security",
-		RiskOwnerID:        nullUUID(r.FormValue("risk_owner_id")),
-		OrgID:              nullUUID(r.FormValue("org_id")),
-		CreatedBy:          createdBy,
+		Name:                    name,
+		Scope:                   strings.TrimSpace(r.FormValue("scope")),
+		SecurityObjectives:      strings.TrimSpace(r.FormValue("security_objectives")),
+		Type:                    "security",
+		RiskOwnerID:             nullUUID(r.FormValue("risk_owner_id")),
+		OrgID:                   nullUUID(r.FormValue("org_id")),
+		CreatedBy:               createdBy,
+		ThreatAssessmentEnabled: threatEnabled,
 	})
 	if err != nil {
 		slog.Error("create risk assessment", "error", err)
-		h.renderStep1Error(w, r, user, db.RiskAssessment{Name: name}, true, "Failed to create assessment.")
+		h.renderStep1Error(w, r, user, db.RiskAssessment{Name: name, ThreatAssessmentEnabled: threatEnabled}, true, "Failed to create assessment.")
 		return
 	}
 
@@ -175,7 +180,7 @@ func (h *Handler) CreateAssessment(w http.ResponseWriter, r *http.Request) {
 		Attrs: map[string]any{"assessment_id": assessment.ID.String(), "name": name},
 	})
 
-	http.Redirect(w, r, "/risks/"+assessment.ID.String()+"/step/2", http.StatusSeeOther) // nosemgrep: go.lang.security.injection.open-redirect.open-redirect
+	http.Redirect(w, r, stepAfterFrameworkPath(assessment.ID, false, assessment.ThreatAssessmentEnabled), http.StatusSeeOther) // nosemgrep: go.lang.security.injection.open-redirect.open-redirect
 }
 
 func (h *Handler) saveParticipants(r *http.Request, assessmentID uuid.UUID) {
@@ -201,11 +206,84 @@ func (h *Handler) renderStep1Error(w http.ResponseWriter, r *http.Request, user 
 	httputil.Render(w, r, layout.Layout("New risk assessment", "Step 1 — Framework", "risk", user,
 		risktemplates.WizardStep1(risktemplates.WizardStep1VM{
 			Assessment:         a,
+			ThreatEnabled:      a.ThreatAssessmentEnabled,
 			Users:              users,
 			Orgs:               orgs,
 			IsNew:              isNew,
 			Flash:              msg,
 			AcceptanceCriteria: gs.AcceptanceCriteria,
+		}),
+	))
+}
+
+// ── Wizard Step Threat: Context ──────────────────────────────────────────────
+
+func (h *Handler) StepThreat(w http.ResponseWriter, r *http.Request) {
+	assessment, ok := h.loadAssessment(w, r)
+	if !ok {
+		return
+	}
+	h.renderStepThreat(w, r, assessment, false)
+}
+
+func (h *Handler) SaveStepThreat(w http.ResponseWriter, r *http.Request) {
+	h.saveStepThreat(w, r, false)
+}
+
+func (h *Handler) saveStepThreat(w http.ResponseWriter, r *http.Request, review bool) {
+	assessment, ok := h.loadAssessment(w, r)
+	if !ok {
+		return
+	}
+	if !assessment.ThreatAssessmentEnabled {
+		http.Redirect(w, r, step2Path(assessment.ID, review, false), http.StatusSeeOther) // nosemgrep: go.lang.security.injection.open-redirect.open-redirect
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 10<<20)
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "bad request", http.StatusBadRequest)
+		return
+	}
+
+	updated, err := h.q.UpdateRiskAssessmentThreatStep(r.Context(), db.UpdateRiskAssessmentThreatStepParams{
+		ID:                    assessment.ID,
+		ThreatAppDescription:  strings.TrimSpace(r.FormValue("threat_app_description")),
+		ThreatInformationFlow: strings.TrimSpace(r.FormValue("threat_information_flow")),
+	})
+	if err != nil {
+		slog.Error("update risk assessment threat step", "error", err)
+		http.Redirect(w, r, threatStepPath(assessment.ID, review)+"?flash=Save+failed", http.StatusSeeOther) // nosemgrep: go.lang.security.injection.open-redirect.open-redirect
+		return
+	}
+
+	audit.RecordOrWarn(r.Context(), h.q, audit.Event{
+		Event: "risk.assessment.threat_updated",
+		Attrs: map[string]any{"assessment_id": assessment.ID.String()},
+	})
+	http.Redirect(w, r, step2Path(updated.ID, review, false), http.StatusSeeOther) // nosemgrep: go.lang.security.injection.open-redirect.open-redirect
+}
+
+func (h *Handler) renderStepThreat(w http.ResponseWriter, r *http.Request, assessment db.RiskAssessment, isReview bool) {
+	assets, err := h.q.ListAssetsForAssessment(r.Context(), assessment.ID)
+	if err != nil {
+		slog.Error("list assessment assets for threat view", "assessment_id", assessment.ID, "error", err)
+		http.Error(w, "failed to load assets", http.StatusInternalServerError)
+		return
+	}
+	user, _ := middleware.FromContext(r.Context())
+	title := "Threat context"
+	subtitle := "Step 2 — Threat context"
+	if isReview {
+		title = "Review: Threat context"
+		subtitle = "Review step 2"
+	}
+	httputil.Render(w, r, layout.Layout(title, subtitle, "risk", user,
+		risktemplates.WizardStepThreat(risktemplates.WizardStepThreatVM{
+			Assessment: assessment,
+			Assets:     assets,
+			IsReview:   isReview,
+			Flash:      r.URL.Query().Get("flash"),
 		}),
 	))
 }
@@ -1157,6 +1235,7 @@ func (h *Handler) ReviewStep1(w http.ResponseWriter, r *http.Request) {
 	httputil.Render(w, r, layout.Layout("Review: Framework", "Review step 1", "risk", user,
 		risktemplates.WizardStep1(risktemplates.WizardStep1VM{
 			Assessment:         assessment,
+			ThreatEnabled:      assessment.ThreatAssessmentEnabled,
 			Users:              users,
 			Orgs:               orgs,
 			Participants:       participants,
@@ -1183,18 +1262,20 @@ func (h *Handler) SaveReviewStep1(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	name := strings.TrimSpace(r.FormValue("name"))
+	threatEnabled := r.FormValue("threat_assessment_enabled") == "on"
 	if name == "" {
 		http.Redirect(w, r, "/risks/"+assessment.ID.String()+"/review/step/1?flash=Name+required", http.StatusSeeOther) // nosemgrep: go.lang.security.injection.open-redirect.open-redirect
 		return
 	}
 	_, err := h.q.UpdateRiskAssessmentStep1(r.Context(), db.UpdateRiskAssessmentStep1Params{
-		ID:                 assessment.ID,
-		Name:               name,
-		Scope:              strings.TrimSpace(r.FormValue("scope")),
-		SecurityObjectives: strings.TrimSpace(r.FormValue("security_objectives")),
-		Type:               assessment.Type,
-		RiskOwnerID:        nullUUID(r.FormValue("risk_owner_id")),
-		OrgID:              nullUUID(r.FormValue("org_id")),
+		ID:                      assessment.ID,
+		Name:                    name,
+		Scope:                   strings.TrimSpace(r.FormValue("scope")),
+		SecurityObjectives:      strings.TrimSpace(r.FormValue("security_objectives")),
+		Type:                    assessment.Type,
+		RiskOwnerID:             nullUUID(r.FormValue("risk_owner_id")),
+		OrgID:                   nullUUID(r.FormValue("org_id")),
+		ThreatAssessmentEnabled: threatEnabled,
 	})
 	if err != nil {
 		slog.Error("update risk assessment step1", "error", err)
@@ -1205,7 +1286,23 @@ func (h *Handler) SaveReviewStep1(w http.ResponseWriter, r *http.Request) {
 		Event: "risk.assessment.review_updated",
 		Attrs: map[string]any{"assessment_id": assessment.ID.String(), "name": name},
 	})
-	http.Redirect(w, r, "/risks/"+assessment.ID.String()+"/step/2", http.StatusSeeOther) // nosemgrep: go.lang.security.injection.open-redirect.open-redirect
+	http.Redirect(w, r, stepAfterFrameworkPath(assessment.ID, true, threatEnabled), http.StatusSeeOther) // nosemgrep: go.lang.security.injection.open-redirect.open-redirect
+}
+
+func (h *Handler) ReviewStepThreat(w http.ResponseWriter, r *http.Request) {
+	assessment, ok := h.loadAssessment(w, r)
+	if !ok {
+		return
+	}
+	if !assessment.ThreatAssessmentEnabled {
+		http.Redirect(w, r, "/risks/"+assessment.ID.String()+"/review/step/2", http.StatusSeeOther) // nosemgrep: go.lang.security.injection.open-redirect.open-redirect
+		return
+	}
+	h.renderStepThreat(w, r, assessment, true)
+}
+
+func (h *Handler) SaveReviewStepThreat(w http.ResponseWriter, r *http.Request) {
+	h.saveStepThreat(w, r, true)
 }
 
 func (h *Handler) AddAssessmentParticipant(w http.ResponseWriter, r *http.Request) {
@@ -1777,6 +1874,23 @@ func step2Path(assessmentID uuid.UUID, review, shouldContinue bool) string {
 		return "/risks/" + assessmentID.String() + "/review/step/2"
 	}
 	return "/risks/" + assessmentID.String() + "/step/2"
+}
+
+func stepAfterFrameworkPath(assessmentID uuid.UUID, review, threatEnabled bool) string {
+	if threatEnabled {
+		return threatStepPath(assessmentID, review)
+	}
+	if review {
+		return "/risks/" + assessmentID.String() + "/review/step/2"
+	}
+	return "/risks/" + assessmentID.String() + "/step/2"
+}
+
+func threatStepPath(assessmentID uuid.UUID, review bool) string {
+	if review {
+		return "/risks/" + assessmentID.String() + "/review/step/threat"
+	}
+	return "/risks/" + assessmentID.String() + "/step/threat"
 }
 
 func decisionRiskPathFromRequest(r *http.Request, assessmentID, riskID uuid.UUID) string {

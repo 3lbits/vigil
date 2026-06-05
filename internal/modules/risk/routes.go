@@ -41,6 +41,8 @@ func (riskModule) Register(deps modregistry.Dependencies, r *modregistry.Registr
 	r.Guarded("POST /risks/{id}/toggle-public", writePolicy, h.TogglePublic, moduleGuard, assessmentReadScoped, assessmentTogglePublic)
 
 	// Wizard steps (new assessment flow)
+	r.Guarded("GET /risks/{id}/step/threat", writePolicy, h.StepThreat, moduleGuard, assessmentReadScoped, assessmentUpdateOwn)
+	r.Guarded("POST /risks/{id}/step/threat", writePolicy, h.SaveStepThreat, moduleGuard, assessmentReadScoped, assessmentUpdateOwn)
 	r.Guarded("GET /risks/{id}/step/2", writePolicy, h.Step2, moduleGuard, assessmentReadScoped, assessmentUpdateOwn)
 	r.Guarded("POST /risks/{id}/step/2", writePolicy, h.SaveStep2, moduleGuard, assessmentReadScoped, assessmentUpdateOwn)
 	r.Guarded("GET /risks/{id}/step/3", writePolicy, h.Step3, moduleGuard, assessmentReadScoped, assessmentUpdateOwn)
@@ -86,6 +88,8 @@ func (riskModule) Register(deps modregistry.Dependencies, r *modregistry.Registr
 	r.Guarded("GET /risks/{id}/review", readPolicy, h.ReviewStart, moduleGuard, assessmentReadScoped)
 	r.Guarded("GET /risks/{id}/review/step/1", writePolicy, h.ReviewStep1, moduleGuard, assessmentReadScoped, assessmentUpdateOwn)
 	r.Guarded("POST /risks/{id}/review/step/1", writePolicy, h.SaveReviewStep1, moduleGuard, assessmentReadScoped, assessmentUpdateOwn)
+	r.Guarded("GET /risks/{id}/review/step/threat", writePolicy, h.ReviewStepThreat, moduleGuard, assessmentReadScoped, assessmentUpdateOwn)
+	r.Guarded("POST /risks/{id}/review/step/threat", writePolicy, h.SaveReviewStepThreat, moduleGuard, assessmentReadScoped, assessmentUpdateOwn)
 	r.Guarded("POST /risks/{id}/participants/{uid}/add", writePolicy, h.AddAssessmentParticipant, moduleGuard, assessmentReadScoped, assessmentUpdateOwn)
 	r.Guarded("POST /risks/{id}/participants/{uid}/remove", writePolicy, h.RemoveAssessmentParticipant, moduleGuard, assessmentReadScoped, assessmentUpdateOwn)
 	r.Guarded("POST /risks/{id}/assets/{aid}/add", writePolicy, h.AddAssessmentAsset, moduleGuard, assessmentReadScoped, assessmentUpdateOwn)

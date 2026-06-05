@@ -43,8 +43,10 @@ func SecurityHeaders(hstsEnabled bool) func(http.Handler) http.Handler {
 				"default-src 'self'; "+
 					fmt.Sprintf("script-src 'self' 'nonce-%s'; ", nonce)+
 					"style-src 'self'; "+
+					"style-src-elem 'self' 'unsafe-inline'; "+
 					"font-src 'self'; "+
 					"img-src 'self' data:; "+
+					"frame-src 'self' blob: data:; "+
 					"object-src 'none'; "+
 					"form-action 'self'; "+
 					"frame-ancestors 'none'; "+

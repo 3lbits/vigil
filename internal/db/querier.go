@@ -164,6 +164,7 @@ type Querier interface {
 	UpdateRiskAssessmentReviewed(ctx context.Context, id uuid.UUID) error
 	UpdateRiskAssessmentStep(ctx context.Context, arg UpdateRiskAssessmentStepParams) error
 	UpdateRiskAssessmentStep1(ctx context.Context, arg UpdateRiskAssessmentStep1Params) (RiskAssessment, error)
+	UpdateRiskAssessmentThreatStep(ctx context.Context, arg UpdateRiskAssessmentThreatStepParams) (RiskAssessment, error)
 	UpdateRiskCurrentScores(ctx context.Context, arg UpdateRiskCurrentScoresParams) (Risk, error)
 	UpdateRiskDecision(ctx context.Context, arg UpdateRiskDecisionParams) error
 	UpdateRiskGlobalSettings(ctx context.Context, arg UpdateRiskGlobalSettingsParams) error

@@ -11,7 +11,7 @@ import (
 )
 
 templ WizardStep4(vm WizardStep4VM) {
-	@wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, 4, false)
+	@wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, wizardDisplayStep(4, vm.Assessment.ThreatAssessmentEnabled), false, vm.Assessment.ThreatAssessmentEnabled)
 	if vm.IsReview {
 		@reviewBanner(vm.Assessment)
 	}

@@ -519,6 +519,87 @@ other = "Analyser"
 [wizard_step_treat]
 other = "Handsame"
 
+[wizard_step_threat]
+other = "Trusselkontekst"
+
+[label_enable_threat_assessment]
+other = "Aktiver trusselvurderingssteg"
+
+[help_enable_threat_assessment]
+other = "Legg til eit trusselkontekst-steg for å dokumentere systemet, informasjonsflyt og lenkja ressursar før risikoidentifisering."
+
+[help_enable_threat_assessment_tooltip]
+other = "Bruk dette for eit eige trusselkontekst-steg. Ressursar lenkja i steg 1 blir viste øvst som kontekst."
+
+[heading_threat_context]
+other = "Trusselkontekst"
+
+[text_threat_context_guidance]
+other = "Skildre systemet og korleis data eller førespurnader flyt mellom komponentar. Vanleg tekst fungerer, også Mermaid-liknande syntaks."
+
+[text_threat_context_tip_1]
+other = "Hald appskildringa kort: føremål, nøkkelkomponentar og kvar sensitive data ligg."
+
+[text_threat_context_tip_2]
+other = "Skildre tillitsgrenser og eksterne avhengnader (tredjeparts API-ar, identitetsleverandørar, integrasjonar)."
+
+[text_threat_context_tip_3]
+other = "For informasjonsflyt kan du skrive piler (A -> B -> C) eller bruke Mermaid flowchart-syntaks."
+
+[label_threat_asset_context]
+other = "Kontekst frå lenkja ressursar"
+
+[text_threat_asset_context_none]
+other = "Ingen ressursar er lenkja i steg 1 enno."
+
+[text_threat_asset_context_hint]
+other = "Bruk desse lenkja ressursane som kontekst når de skildrar trusselscenarioet."
+
+[label_threat_diagram_toggle]
+other = "Diagram for trusselvurdering"
+
+[text_threat_diagram_empty]
+other = "Ingen informasjonsflyt-diagram er lagra for denne vurderinga."
+
+[label_threat_primary_asset]
+other = "Primær ressurs for denne trusselvurderinga"
+
+[help_threat_primary_asset]
+other = "Vel éin lenkja ressurs frå steg 1 for å forankre trusselkonteksten. Dette steget lagrar berre éin primær ressurs."
+
+[text_threat_primary_asset_none]
+other = "Ingen ressursar er lenkja enno. Legg til ressursar i steg 1 dersom du vil velje ein primær ressurs her."
+
+[option_none]
+other = "— ingen —"
+
+[label_threat_app_description]
+other = "Appskildring"
+
+[placeholder_threat_app_description]
+other = "Skildre appen, avgrensingar, tillitssoner, inngangspunkt og viktige verdiar."
+
+[label_threat_information_flow]
+other = "Informasjonsflyt"
+
+[placeholder_threat_information_flow]
+other = "flowchart LR\n    %% Threat model: subgraphs are trust boundaries, crossing arrows are where threats live\n\n    subgraph internet[\"Internet (untrusted)\"]\n        User([\"User\"])\n    end\n\n    subgraph backend[\"Trust boundary: Backend\"]\n        Web[\"Web app\"]\n        API[\"API service\"]\n    end\n\n    subgraph data[\"Trust boundary: Data\"]\n        DB[(\"Database\")]\n    end\n\n    Vendor[\"Third-party API\"]\n\n    User -->|HTTPS, login| Web\n    Web -->|token| API\n    API -->|SQL| DB\n    API -->|API key| Vendor"
+
+[help_threat_information_flow]
+other = "Bruk vanleg tekst eller Mermaid flowchart-syntaks. Fokuser på inngangspunkt, behandling, lagring og utgåande integrasjonar."
+
+[action_update_diagram]
+other = "Vis diagram"
+
+[label_rendering]
+other = "Renderer..."
+
+[action_back_to_framework]
+other = "Tilbake til rammeverk"
+
+[action_save_continue_identify]
+other = "Lagre og gå vidare til identifisering"
+
 [label_review_mode]
 other = "Gjennomgangsmodus"
 

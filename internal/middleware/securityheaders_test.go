@@ -83,13 +83,13 @@ func TestSecurityHeaders_CSP_Present(t *testing.T) {
 	if csp == "" {
 		t.Error("Content-Security-Policy header must be set")
 	}
-	for _, required := range []string{"default-src", "script-src", "style-src", "object-src 'none'", "form-action 'self'", "frame-ancestors 'none'", "base-uri 'self'"} {
+	for _, required := range []string{"default-src", "script-src", "style-src", "style-src-elem 'self' 'unsafe-inline'", "frame-src 'self' blob: data:", "object-src 'none'", "form-action 'self'", "frame-ancestors 'none'", "base-uri 'self'"} {
 		if !strings.Contains(csp, required) {
 			t.Errorf("CSP missing directive %q", required)
 		}
 	}
-	if strings.Contains(csp, "'unsafe-inline'") {
-		t.Error("CSP must not include unsafe-inline")
+	if strings.Contains(csp, "script-src") && strings.Contains(csp, "script-src 'unsafe-inline'") {
+		t.Error("CSP must not include unsafe-inline in script-src")
 	}
 	if !strings.Contains(csp, "script-src 'self' 'nonce-") {
 		t.Errorf("CSP script-src must include nonce, got %q", csp)

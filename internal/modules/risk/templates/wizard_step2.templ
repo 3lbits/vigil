@@ -9,7 +9,7 @@ import (
 )
 
 templ WizardStep2(vm WizardStep2VM) {
-	@wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, 2, false)
+	@wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, wizardDisplayStep(2, vm.Assessment.ThreatAssessmentEnabled), false, vm.Assessment.ThreatAssessmentEnabled)
 	if vm.IsReview {
 		@reviewBanner(vm.Assessment)
 	}
@@ -101,7 +101,7 @@ templ WizardStep2(vm WizardStep2VM) {
 		</div>
 		<!-- Navigation -->
 		<div class="flex items-center justify-between max-w-2xl">
-			<a href={ templ.SafeURL(wizardStepHref(vm.Assessment.ID.String(), 1)) } class="text-[13px] text-sand-700 hover:text-sand-800">← Back to Framework</a>
+			<a href={ templ.SafeURL(wizardStepHref(vm.Assessment.ID.String(), "framework")) } class="text-[13px] text-sand-700 hover:text-sand-800">← Back to Framework</a>
 			<div class="flex items-center gap-2">
 				@ui.Button(ui.ButtonProps{
 					Variant: "secondary",

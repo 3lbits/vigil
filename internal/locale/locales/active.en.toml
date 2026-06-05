@@ -519,6 +519,87 @@ other = "Analyse"
 [wizard_step_treat]
 other = "Treat"
 
+[wizard_step_threat]
+other = "Threat context"
+
+[label_enable_threat_assessment]
+other = "Enable threat assessment step"
+
+[help_enable_threat_assessment]
+other = "Adds a threat-context step to document the system, information flow, and linked assets before risk identification."
+
+[help_enable_threat_assessment_tooltip]
+other = "Use this for a dedicated threat-context step. Assets linked in Step 1 are shown at the top as context."
+
+[heading_threat_context]
+other = "Threat context"
+
+[text_threat_context_guidance]
+other = "Describe the system and how data or requests flow between components. Plain text works, including Mermaid-style syntax."
+
+[text_threat_context_tip_1]
+other = "Keep the app description short: purpose, key components, and where sensitive data lives."
+
+[text_threat_context_tip_2]
+other = "List trust boundaries and external dependencies (third-party APIs, identity providers, integrations)."
+
+[text_threat_context_tip_3]
+other = "For information flow, write arrows (A -> B -> C) or Mermaid flowchart syntax."
+
+[label_threat_asset_context]
+other = "Linked assets context"
+
+[text_threat_asset_context_none]
+other = "No assets are linked in Step 1 yet."
+
+[text_threat_asset_context_hint]
+other = "Use these linked assets as context while describing the threat scenario."
+
+[label_threat_diagram_toggle]
+other = "Threat assessment diagram"
+
+[text_threat_diagram_empty]
+other = "No information-flow diagram has been saved for this assessment."
+
+[label_threat_primary_asset]
+other = "Primary asset for this threat assessment"
+
+[help_threat_primary_asset]
+other = "Pick one linked asset from Step 1 to anchor this threat context. This step stores a single primary asset."
+
+[text_threat_primary_asset_none]
+other = "No linked assets yet. Add assets in Step 1 if you want to select a primary asset here."
+
+[option_none]
+other = "— none —"
+
+[label_threat_app_description]
+other = "Application description"
+
+[placeholder_threat_app_description]
+other = "Describe the app, boundaries, trust zones, entry points, and important assets."
+
+[label_threat_information_flow]
+other = "Information flow"
+
+[placeholder_threat_information_flow]
+other = "flowchart LR\n    %% Threat model: subgraphs are trust boundaries, crossing arrows are where threats live\n\n    subgraph internet[\"Internet (untrusted)\"]\n        User([\"User\"])\n    end\n\n    subgraph backend[\"Trust boundary: Backend\"]\n        Web[\"Web app\"]\n        API[\"API service\"]\n    end\n\n    subgraph data[\"Trust boundary: Data\"]\n        DB[(\"Database\")]\n    end\n\n    Vendor[\"Third-party API\"]\n\n    User -->|HTTPS, login| Web\n    Web -->|token| API\n    API -->|SQL| DB\n    API -->|API key| Vendor"
+
+[help_threat_information_flow]
+other = "Use plain text or Mermaid flowchart syntax. Focus on entry points, processing steps, storage, and outbound integrations."
+
+[action_update_diagram]
+other = "Show diagram"
+
+[label_rendering]
+other = "Rendering..."
+
+[action_back_to_framework]
+other = "Back to framework"
+
+[action_save_continue_identify]
+other = "Save and continue to identify"
+
 [label_review_mode]
 other = "Review mode"
 

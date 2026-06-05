@@ -1,0 +1,153 @@
+package risktemplates
+
+import (
+	"strings"
+	"github.com/3lbits/vigil/internal/csrf"
+	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui"
+)
+
+templ WizardStepThreat(vm WizardStepThreatVM) {
+	@wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, 2, false, vm.Assessment.ThreatAssessmentEnabled)
+	if vm.IsReview {
+		@reviewBanner(vm.Assessment)
+	}
+	@wizardFlash(vm.Flash)
+	<form method="POST" action={ templ.SafeURL(threatStepFormAction(vm.Assessment.ID.String(), vm.IsReview)) } class="max-w-3xl">
+		<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+		<div class="border border-sand-300/60 rounded-[10px] p-4 mb-4">
+			<h2 class="text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3">{ locale.T(ctx, "heading_threat_context") }</h2>
+			<p class="text-[12px] text-sand-700 mb-2">{ locale.T(ctx, "text_threat_context_guidance") }</p>
+			<ul class="list-disc ml-5 text-[12px] text-sand-700 mb-3 space-y-1">
+				<li>{ locale.T(ctx, "text_threat_context_tip_1") }</li>
+				<li>{ locale.T(ctx, "text_threat_context_tip_2") }</li>
+				<li>{ locale.T(ctx, "text_threat_context_tip_3") }</li>
+			</ul>
+			<div class="mb-3 rounded-md border border-blue-200 bg-blue-50 p-3">
+				<div class="text-[11px] font-semibold text-blue-800 uppercase tracking-wide mb-1">{ locale.T(ctx, "label_threat_asset_context") }</div>
+				if len(vm.Assets) == 0 {
+					<p class="text-[12px] text-blue-800">{ locale.T(ctx, "text_threat_asset_context_none") }</p>
+				} else {
+					<p class="text-[12px] text-blue-800 mb-2">{ locale.T(ctx, "text_threat_asset_context_hint") }</p>
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+						for _, asset := range vm.Assets {
+							<div class="rounded-md border border-blue-200 bg-white px-2.5 py-2">
+								<div class="text-[12px] font-semibold text-blue-900 truncate">{ asset.Name }</div>
+								<div class="mt-1 text-[11px] text-blue-800">
+									{ locale.T(ctx, "label_asset_type") }: { compactAssetField(asset.AssetType) }
+									<span class="mx-1">·</span>
+									{ locale.T(ctx, "label_asset_owner") }: { compactAssetField(asset.Owner) }
+								</div>
+								<div class="mt-1 flex items-center gap-1.5">
+								switch asset.Status {
+									case "planned":
+										@ui.Badge(ui.BadgeProps{Variant: "warning"}) { { locale.T(ctx, "status_planned") } }
+									case "retired":
+										@ui.Badge(ui.BadgeProps{Variant: "neutral"}) { { locale.T(ctx, "status_retired") } }
+									default:
+										@ui.Badge(ui.BadgeProps{Variant: "success"}) { { locale.T(ctx, "status_active") } }
+								}
+								switch asset.Criticality {
+									case "low":
+										@ui.Badge(ui.BadgeProps{Variant: "neutral"}) { { locale.T(ctx, "risk_level_low") } }
+									case "high":
+										@ui.Badge(ui.BadgeProps{Variant: "danger"}) { { locale.T(ctx, "risk_level_high") } }
+									default:
+										@ui.Badge(ui.BadgeProps{Variant: "warning"}) { { locale.T(ctx, "risk_level_medium") } }
+								}
+							</div>
+								if desc := compactAssetDescription(asset.Description); desc != "" {
+									<div class="mt-1 text-[11px] text-blue-800">{ desc }</div>
+								}
+							</div>
+						}
+					</div>
+				}
+			</div>
+			<div class="flex flex-col gap-3">
+				@ui.Field("threat_app_description", "label_threat_app_description", false) {
+					@ui.Textarea(ui.TextareaProps{
+						ID:          "threat_app_description",
+						Name:        "threat_app_description",
+						Value:       vm.Assessment.ThreatAppDescription,
+						Placeholder: locale.T(ctx, "placeholder_threat_app_description"),
+						Attrs: templ.Attributes{
+							"rows": "5",
+						},
+					})
+				}
+				<div x-data="mermaidPreview()">
+					<label for="threat_information_flow" class="mb-1 flex items-center gap-1 text-[13px] text-sand-700 dark:text-zinc-200">
+						{ locale.T(ctx, "label_threat_information_flow") }
+						@helpIcon(locale.T(ctx, "help_threat_information_flow"))
+					</label>
+					@ui.Textarea(ui.TextareaProps{
+						ID:          "threat_information_flow",
+						Name:        "threat_information_flow",
+						Value:       vm.Assessment.ThreatInformationFlow,
+						Placeholder: locale.T(ctx, "placeholder_threat_information_flow"),
+						Class:       "font-mono",
+						Attrs: templ.Attributes{
+							"rows":  "8",
+							"x-ref": "src",
+						},
+					})
+					<div class="mt-2 flex items-center gap-2">
+						@ui.Button(ui.ButtonProps{
+							Variant: "secondary",
+							Size:    "sm",
+							Attrs: templ.Attributes{
+								"type":      "button",
+								"@click":    "render()",
+								":disabled": "rendering",
+							},
+						}) {
+							<span x-show="!rendering">{ locale.T(ctx, "action_update_diagram") }</span>
+							<span x-show="rendering" x-cloak>{ locale.T(ctx, "label_rendering") }</span>
+						}
+						<span x-show="error" x-text="error" class="text-[12px] text-red-700"></span>
+					</div>
+					<div class="mt-2 rounded-md border border-sand-200 bg-white p-3 min-h-16 overflow-auto">
+						<div x-ref="out" class="text-[12px] text-sand-700 [&>svg]:max-w-full [&>svg]:h-auto [&>iframe]:w-full [&>iframe]:min-h-[360px] [&>iframe]:border-0"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="flex items-center justify-between">
+			<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/review/step/1") } class="text-[13px] text-sand-700 hover:text-sand-800">← { locale.T(ctx, "action_back_to_framework") }</a>
+			@ui.Button(ui.ButtonProps{
+				Attrs: templ.Attributes{
+					"type": "submit",
+				},
+			}) {
+				{ locale.T(ctx, "action_save_continue_identify") } →
+			}
+		</div>
+	</form>
+}
+
+func threatStepFormAction(id string, isReview bool) string {
+	if isReview {
+		return "/risks/" + id + "/review/step/threat"
+	}
+	return "/risks/" + id + "/step/threat"
+}
+
+func compactAssetField(v string) string {
+	if strings.TrimSpace(v) == "" {
+		return "—"
+	}
+	return v
+}
+
+func compactAssetDescription(v string) string {
+	v = strings.TrimSpace(v)
+	if v == "" {
+		return ""
+	}
+	r := []rune(v)
+	if len(r) <= 110 {
+		return v
+	}
+	return string(r[:107]) + "..."
+}

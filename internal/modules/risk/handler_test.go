@@ -40,6 +40,159 @@ func TestStep2Path(t *testing.T) {
 	}
 }
 
+func TestStepAfterFrameworkPath(t *testing.T) {
+	id := uuid.MustParse("11111111-1111-1111-1111-111111111111")
+	tests := []struct {
+		name          string
+		review        bool
+		threatEnabled bool
+		want          string
+	}{
+		{name: "standard path", review: false, threatEnabled: false, want: "/risks/11111111-1111-1111-1111-111111111111/step/2"},
+		{name: "review path", review: true, threatEnabled: false, want: "/risks/11111111-1111-1111-1111-111111111111/review/step/2"},
+		{name: "standard threat path", review: false, threatEnabled: true, want: "/risks/11111111-1111-1111-1111-111111111111/step/threat"},
+		{name: "review threat path", review: true, threatEnabled: true, want: "/risks/11111111-1111-1111-1111-111111111111/review/step/threat"},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := stepAfterFrameworkPath(id, tc.review, tc.threatEnabled); got != tc.want {
+				t.Fatalf("stepAfterFrameworkPath(%v,%v)=%q, want %q", tc.review, tc.threatEnabled, got, tc.want)
+			}
+		})
+	}
+}
+
+type reviewStep1Q struct {
+	testutil.StubQuerier
+	assessment db.RiskAssessment
+	step1Arg   db.UpdateRiskAssessmentStep1Params
+}
+
+func (q *reviewStep1Q) GetRiskAssessment(_ context.Context, _ uuid.UUID) (db.RiskAssessment, error) {
+	return q.assessment, nil
+}
+
+func (q *reviewStep1Q) UpdateRiskAssessmentStep1(_ context.Context, arg db.UpdateRiskAssessmentStep1Params) (db.RiskAssessment, error) {
+	q.step1Arg = arg
+	return q.assessment, nil
+}
+
+func TestSaveReviewStep1_ThreatEnabledRedirectsToThreatStep(t *testing.T) {
+	assessmentID := uuid.New()
+	q := &reviewStep1Q{
+		assessment: db.RiskAssessment{ID: assessmentID, Type: "security"},
+	}
+	h := NewHandler(q, nil)
+	form := url.Values{
+		"name":                      {"Quarterly review"},
+		"scope":                     {"core app"},
+		"security_objectives":       {"availability"},
+		"threat_assessment_enabled": {"on"},
+	}
+	r := httptest.NewRequest(http.MethodPost, "/risks/"+assessmentID.String()+"/review/step/1", strings.NewReader(form.Encode()))
+	r.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	r.SetPathValue("id", assessmentID.String())
+	r = withUser(r)
+	w := httptest.NewRecorder()
+
+	h.SaveReviewStep1(w, r)
+
+	if w.Code != http.StatusSeeOther {
+		t.Fatalf("expected 303, got %d", w.Code)
+	}
+	if !q.step1Arg.ThreatAssessmentEnabled {
+		t.Fatal("expected threat_assessment_enabled to be true")
+	}
+	if got := w.Header().Get("Location"); got != "/risks/"+assessmentID.String()+"/review/step/threat" {
+		t.Fatalf("unexpected redirect: %q", got)
+	}
+}
+
+func TestSaveReviewStep1_ThreatDisabledRedirectsToStep2(t *testing.T) {
+	assessmentID := uuid.New()
+	q := &reviewStep1Q{
+		assessment: db.RiskAssessment{ID: assessmentID, Type: "security"},
+	}
+	h := NewHandler(q, nil)
+	form := url.Values{
+		"name":                {"Quarterly review"},
+		"scope":               {"core app"},
+		"security_objectives": {"availability"},
+	}
+	r := httptest.NewRequest(http.MethodPost, "/risks/"+assessmentID.String()+"/review/step/1", strings.NewReader(form.Encode()))
+	r.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	r.SetPathValue("id", assessmentID.String())
+	r = withUser(r)
+	w := httptest.NewRecorder()
+
+	h.SaveReviewStep1(w, r)
+
+	if w.Code != http.StatusSeeOther {
+		t.Fatalf("expected 303, got %d", w.Code)
+	}
+	if q.step1Arg.ThreatAssessmentEnabled {
+		t.Fatal("expected threat_assessment_enabled to be false")
+	}
+	if got := w.Header().Get("Location"); got != "/risks/"+assessmentID.String()+"/review/step/2" {
+		t.Fatalf("unexpected redirect: %q", got)
+	}
+}
+
+type threatStepQ struct {
+	testutil.StubQuerier
+	assessment db.RiskAssessment
+	arg        db.UpdateRiskAssessmentThreatStepParams
+	called     bool
+}
+
+func (q *threatStepQ) GetRiskAssessment(_ context.Context, _ uuid.UUID) (db.RiskAssessment, error) {
+	return q.assessment, nil
+}
+
+func (q *threatStepQ) UpdateRiskAssessmentThreatStep(_ context.Context, arg db.UpdateRiskAssessmentThreatStepParams) (db.RiskAssessment, error) {
+	q.called = true
+	q.arg = arg
+	return q.assessment, nil
+}
+
+func TestSaveStepThreat_SavesAndRedirectsToIdentify(t *testing.T) {
+	assessmentID := uuid.New()
+	q := &threatStepQ{
+		assessment: db.RiskAssessment{
+			ID:                      assessmentID,
+			ThreatAssessmentEnabled: true,
+		},
+	}
+	h := NewHandler(q, nil)
+	form := url.Values{
+		"threat_app_description":  {"Core app behind reverse proxy"},
+		"threat_information_flow": {"User -> Web -> API -> DB"},
+	}
+	r := httptest.NewRequest(http.MethodPost, "/risks/"+assessmentID.String()+"/step/threat", strings.NewReader(form.Encode()))
+	r.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	r.SetPathValue("id", assessmentID.String())
+	r = withUser(r)
+	w := httptest.NewRecorder()
+
+	h.SaveStepThreat(w, r)
+
+	if w.Code != http.StatusSeeOther {
+		t.Fatalf("expected 303, got %d", w.Code)
+	}
+	if !q.called {
+		t.Fatal("expected threat step update to be called")
+	}
+	if q.arg.ThreatAppDescription != "Core app behind reverse proxy" {
+		t.Fatalf("unexpected app description: %q", q.arg.ThreatAppDescription)
+	}
+	if q.arg.ThreatInformationFlow != "User -> Web -> API -> DB" {
+		t.Fatalf("unexpected information flow: %q", q.arg.ThreatInformationFlow)
+	}
+	if got := w.Header().Get("Location"); got != "/risks/"+assessmentID.String()+"/step/2" {
+		t.Fatalf("unexpected redirect: %q", got)
+	}
+}
+
 type reassessQ struct {
 	testutil.StubQuerier
 	assessment     db.RiskAssessment
@@ -433,8 +586,8 @@ func TestRiskModuleContract(t *testing.T) {
 	if err := m.Register(modregistry.Dependencies{}, r); err != nil {
 		t.Fatalf("register failed: %v", err)
 	}
-	if got := len(r.Meta()); got != 55 {
-		t.Fatalf("expected 55 routes, got %d", got)
+	if got := len(r.Meta()); got != 59 {
+		t.Fatalf("expected 59 routes, got %d", got)
 	}
 }
 

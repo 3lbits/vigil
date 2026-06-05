@@ -9,7 +9,7 @@ import (
 )
 
 templ WizardStep1(vm WizardStep1VM) {
-	@wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, 1, vm.IsNew)
+	@wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, 1, vm.IsNew, vm.ThreatEnabled)
 	@wizardFlash(vm.Flash)
 	<form
 		method="POST"
@@ -79,6 +79,25 @@ templ WizardStep1(vm WizardStep1VM) {
 					})
 				</div>
 			</div>
+		</div>
+		<!-- Threat assessment toggle -->
+		<div class="border border-sand-300/60 rounded-[10px] p-4 mb-4">
+			<label class="flex items-start gap-3">
+				<input
+					type="checkbox"
+					id="threat_assessment_enabled"
+					name="threat_assessment_enabled"
+					class="mt-0.5 h-4 w-4 rounded border-sand-300 text-blue-600 focus:ring-blue-500"
+					checked?={ vm.ThreatEnabled }
+				/>
+				<span>
+					<span class="flex items-center gap-1 text-[13px] font-medium text-sand-900">
+						{ locale.T(ctx, "label_enable_threat_assessment") }
+						@helpIcon(locale.T(ctx, "help_enable_threat_assessment_tooltip"))
+					</span>
+					<span class="block text-[12px] text-sand-700">{ locale.T(ctx, "help_enable_threat_assessment") }</span>
+				</span>
+			</label>
 		</div>
 		<!-- Participants -->
 		<div class="border border-sand-300/60 rounded-[10px] p-4 mb-4">

@@ -87,15 +87,25 @@ ORDER BY COALESCE(r.likelihood_current, 0) * COALESCE(r.consequence_current, 0) 
 -- name: CreateRiskAssessment :one
 INSERT INTO risk_assessments (
     name, scope, analysis_object, security_objectives, business_objectives,
-    type, risk_owner_id, org_id, created_by
-) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    type, risk_owner_id, org_id, created_by, threat_assessment_enabled
+) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 RETURNING *;
 
 -- name: UpdateRiskAssessmentStep1 :one
 UPDATE risk_assessments
 SET name = $2, scope = $3, analysis_object = $4, security_objectives = $5,
     business_objectives = $6, type = $7, risk_owner_id = $8, org_id = $9,
+    threat_assessment_enabled = $10,
     current_step = GREATEST(current_step, 2), updated_at = NOW()
+WHERE id = $1
+RETURNING *;
+
+-- name: UpdateRiskAssessmentThreatStep :one
+UPDATE risk_assessments
+SET threat_app_description  = $2,
+    threat_information_flow = $3,
+    current_step            = GREATEST(current_step, 2),
+    updated_at              = NOW()
 WHERE id = $1
 RETURNING *;
 

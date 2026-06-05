@@ -18,7 +18,7 @@ import (
 //go:embed policies/authz.rego
 var policySource string
 
-//go:embed public/css/output.css public/js/htmx.min.js public/js/alpine.min.js public/js/alpine-data.js
+//go:embed public/css/output.css public/js/htmx.min.js public/js/alpine.min.js public/js/alpine-data.js public/js/mermaid.min.js
 var staticFS embed.FS
 
 // Version is overridden at build time: go build -ldflags "-X main.Version=v1.2.3"

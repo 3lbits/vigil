@@ -23,6 +23,7 @@ type AssessmentListPageVM struct {
 
 type WizardStep1VM struct {
 	Assessment         db.RiskAssessment
+	ThreatEnabled      bool
 	Users              []db.User
 	Orgs               []db.Organization
 	Participants       []db.User
@@ -34,6 +35,13 @@ type WizardStep1VM struct {
 	IsNew              bool
 	Flash              string
 	AcceptanceCriteria string
+}
+
+type WizardStepThreatVM struct {
+	Assessment db.RiskAssessment
+	Assets     []db.Asset
+	IsReview   bool
+	Flash      string
 }
 
 type WizardStep2VM struct {

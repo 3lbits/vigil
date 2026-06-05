@@ -37,7 +37,7 @@ func WizardStep2(vm WizardStep2VM) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, 2, false).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, wizardDisplayStep(2, vm.Assessment.ThreatAssessmentEnabled), false, vm.Assessment.ThreatAssessmentEnabled).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -446,9 +446,9 @@ func WizardStep2(vm WizardStep2VM) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var23 templ.SafeURL
-		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(wizardStepHref(vm.Assessment.ID.String(), 1)))
+		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(wizardStepHref(vm.Assessment.ID.String(), "framework")))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step2.templ`, Line: 104, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step2.templ`, Line: 104, Col: 82}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {

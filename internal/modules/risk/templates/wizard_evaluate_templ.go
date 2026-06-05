@@ -37,7 +37,7 @@ func WizardEvaluate(vm EvaluationVM) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, 3, false).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, wizardDisplayStep(3, vm.Assessment.ThreatAssessmentEnabled), false, vm.Assessment.ThreatAssessmentEnabled).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

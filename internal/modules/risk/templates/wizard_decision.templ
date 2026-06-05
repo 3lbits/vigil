@@ -9,7 +9,7 @@ import (
 )
 
 templ WizardDecision(vm DecisionVM) {
-	@wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, 4, false)
+	@wizardShell(vm.Assessment.ID.String(), vm.Assessment.Name, wizardDisplayStep(4, vm.Assessment.ThreatAssessmentEnabled), false, vm.Assessment.ThreatAssessmentEnabled)
 	if vm.IsReview {
 		@reviewBanner(vm.Assessment)
 	}

@@ -17,7 +17,7 @@ const acceptAssessment = `-- name: AcceptAssessment :one
 UPDATE risk_assessments
 SET status = 'active', acceptance_note = '', updated_at = NOW()
 WHERE id = $1
-RETURNING id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public
+RETURNING id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public, threat_assessment_enabled, threat_app_description, threat_information_flow
 `
 
 func (q *Queries) AcceptAssessment(ctx context.Context, id uuid.UUID) (RiskAssessment, error) {
@@ -42,6 +42,9 @@ func (q *Queries) AcceptAssessment(ctx context.Context, id uuid.UUID) (RiskAsses
 		&i.RefNum,
 		&i.AcceptanceNote,
 		&i.IsPublic,
+		&i.ThreatAssessmentEnabled,
+		&i.ThreatAppDescription,
+		&i.ThreatInformationFlow,
 	)
 	return i, err
 }
@@ -161,21 +164,22 @@ func (q *Queries) CreateRisk(ctx context.Context, arg CreateRiskParams) (Risk, e
 const createRiskAssessment = `-- name: CreateRiskAssessment :one
 INSERT INTO risk_assessments (
     name, scope, analysis_object, security_objectives, business_objectives,
-    type, risk_owner_id, org_id, created_by
-) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-RETURNING id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public
+    type, risk_owner_id, org_id, created_by, threat_assessment_enabled
+) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+RETURNING id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public, threat_assessment_enabled, threat_app_description, threat_information_flow
 `
 
 type CreateRiskAssessmentParams struct {
-	Name               string        `json:"name"`
-	Scope              string        `json:"scope"`
-	AnalysisObject     string        `json:"analysis_object"`
-	SecurityObjectives string        `json:"security_objectives"`
-	BusinessObjectives string        `json:"business_objectives"`
-	Type               string        `json:"type"`
-	RiskOwnerID        uuid.NullUUID `json:"risk_owner_id"`
-	OrgID              uuid.NullUUID `json:"org_id"`
-	CreatedBy          uuid.NullUUID `json:"created_by"`
+	Name                    string        `json:"name"`
+	Scope                   string        `json:"scope"`
+	AnalysisObject          string        `json:"analysis_object"`
+	SecurityObjectives      string        `json:"security_objectives"`
+	BusinessObjectives      string        `json:"business_objectives"`
+	Type                    string        `json:"type"`
+	RiskOwnerID             uuid.NullUUID `json:"risk_owner_id"`
+	OrgID                   uuid.NullUUID `json:"org_id"`
+	CreatedBy               uuid.NullUUID `json:"created_by"`
+	ThreatAssessmentEnabled bool          `json:"threat_assessment_enabled"`
 }
 
 func (q *Queries) CreateRiskAssessment(ctx context.Context, arg CreateRiskAssessmentParams) (RiskAssessment, error) {
@@ -189,6 +193,7 @@ func (q *Queries) CreateRiskAssessment(ctx context.Context, arg CreateRiskAssess
 		arg.RiskOwnerID,
 		arg.OrgID,
 		arg.CreatedBy,
+		arg.ThreatAssessmentEnabled,
 	)
 	var i RiskAssessment
 	err := row.Scan(
@@ -210,6 +215,9 @@ func (q *Queries) CreateRiskAssessment(ctx context.Context, arg CreateRiskAssess
 		&i.RefNum,
 		&i.AcceptanceNote,
 		&i.IsPublic,
+		&i.ThreatAssessmentEnabled,
+		&i.ThreatAppDescription,
+		&i.ThreatInformationFlow,
 	)
 	return i, err
 }
@@ -242,7 +250,7 @@ const declineAssessment = `-- name: DeclineAssessment :one
 UPDATE risk_assessments
 SET status = 'draft', acceptance_note = $2, updated_at = NOW()
 WHERE id = $1
-RETURNING id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public
+RETURNING id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public, threat_assessment_enabled, threat_app_description, threat_information_flow
 `
 
 type DeclineAssessmentParams struct {
@@ -272,6 +280,9 @@ func (q *Queries) DeclineAssessment(ctx context.Context, arg DeclineAssessmentPa
 		&i.RefNum,
 		&i.AcceptanceNote,
 		&i.IsPublic,
+		&i.ThreatAssessmentEnabled,
+		&i.ThreatAppDescription,
+		&i.ThreatInformationFlow,
 	)
 	return i, err
 }
@@ -342,7 +353,7 @@ func (q *Queries) GetRisk(ctx context.Context, id uuid.UUID) (Risk, error) {
 }
 
 const getRiskAssessment = `-- name: GetRiskAssessment :one
-SELECT id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public FROM risk_assessments WHERE id = $1
+SELECT id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public, threat_assessment_enabled, threat_app_description, threat_information_flow FROM risk_assessments WHERE id = $1
 `
 
 func (q *Queries) GetRiskAssessment(ctx context.Context, id uuid.UUID) (RiskAssessment, error) {
@@ -367,6 +378,9 @@ func (q *Queries) GetRiskAssessment(ctx context.Context, id uuid.UUID) (RiskAsse
 		&i.RefNum,
 		&i.AcceptanceNote,
 		&i.IsPublic,
+		&i.ThreatAssessmentEnabled,
+		&i.ThreatAppDescription,
+		&i.ThreatInformationFlow,
 	)
 	return i, err
 }
@@ -940,7 +954,7 @@ func (q *Queries) ListParticipantsForAssessment(ctx context.Context, assessmentI
 }
 
 const listRiskAssessments = `-- name: ListRiskAssessments :many
-SELECT id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public FROM risk_assessments ORDER BY updated_at DESC
+SELECT id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public, threat_assessment_enabled, threat_app_description, threat_information_flow FROM risk_assessments ORDER BY updated_at DESC
 `
 
 func (q *Queries) ListRiskAssessments(ctx context.Context) ([]RiskAssessment, error) {
@@ -971,6 +985,9 @@ func (q *Queries) ListRiskAssessments(ctx context.Context) ([]RiskAssessment, er
 			&i.RefNum,
 			&i.AcceptanceNote,
 			&i.IsPublic,
+			&i.ThreatAssessmentEnabled,
+			&i.ThreatAppDescription,
+			&i.ThreatInformationFlow,
 		); err != nil {
 			return nil, err
 		}
@@ -986,7 +1003,7 @@ func (q *Queries) ListRiskAssessments(ctx context.Context) ([]RiskAssessment, er
 }
 
 const listRiskAssessmentsForUser = `-- name: ListRiskAssessmentsForUser :many
-SELECT DISTINCT ra.id, ra.name, ra.scope, ra.analysis_object, ra.security_objectives, ra.business_objectives, ra.type, ra.status, ra.current_step, ra.last_reviewed_at, ra.created_by, ra.created_at, ra.updated_at, ra.risk_owner_id, ra.org_id, ra.ref_num, ra.acceptance_note, ra.is_public
+SELECT DISTINCT ra.id, ra.name, ra.scope, ra.analysis_object, ra.security_objectives, ra.business_objectives, ra.type, ra.status, ra.current_step, ra.last_reviewed_at, ra.created_by, ra.created_at, ra.updated_at, ra.risk_owner_id, ra.org_id, ra.ref_num, ra.acceptance_note, ra.is_public, ra.threat_assessment_enabled, ra.threat_app_description, ra.threat_information_flow
 FROM risk_assessments ra
 LEFT JOIN risk_assessment_participants rap ON rap.assessment_id = ra.id
 WHERE ra.is_public = true
@@ -1024,6 +1041,9 @@ func (q *Queries) ListRiskAssessmentsForUser(ctx context.Context, riskOwnerID uu
 			&i.RefNum,
 			&i.AcceptanceNote,
 			&i.IsPublic,
+			&i.ThreatAssessmentEnabled,
+			&i.ThreatAppDescription,
+			&i.ThreatInformationFlow,
 		); err != nil {
 			return nil, err
 		}
@@ -1777,7 +1797,7 @@ const toggleRiskAssessmentPublic = `-- name: ToggleRiskAssessmentPublic :one
 UPDATE risk_assessments
 SET is_public = NOT is_public, updated_at = NOW()
 WHERE id = $1
-RETURNING id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public
+RETURNING id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public, threat_assessment_enabled, threat_app_description, threat_information_flow
 `
 
 func (q *Queries) ToggleRiskAssessmentPublic(ctx context.Context, id uuid.UUID) (RiskAssessment, error) {
@@ -1802,6 +1822,9 @@ func (q *Queries) ToggleRiskAssessmentPublic(ctx context.Context, id uuid.UUID) 
 		&i.RefNum,
 		&i.AcceptanceNote,
 		&i.IsPublic,
+		&i.ThreatAssessmentEnabled,
+		&i.ThreatAppDescription,
+		&i.ThreatInformationFlow,
 	)
 	return i, err
 }
@@ -1880,21 +1903,23 @@ const updateRiskAssessmentStep1 = `-- name: UpdateRiskAssessmentStep1 :one
 UPDATE risk_assessments
 SET name = $2, scope = $3, analysis_object = $4, security_objectives = $5,
     business_objectives = $6, type = $7, risk_owner_id = $8, org_id = $9,
+    threat_assessment_enabled = $10,
     current_step = GREATEST(current_step, 2), updated_at = NOW()
 WHERE id = $1
-RETURNING id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public
+RETURNING id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public, threat_assessment_enabled, threat_app_description, threat_information_flow
 `
 
 type UpdateRiskAssessmentStep1Params struct {
-	ID                 uuid.UUID     `json:"id"`
-	Name               string        `json:"name"`
-	Scope              string        `json:"scope"`
-	AnalysisObject     string        `json:"analysis_object"`
-	SecurityObjectives string        `json:"security_objectives"`
-	BusinessObjectives string        `json:"business_objectives"`
-	Type               string        `json:"type"`
-	RiskOwnerID        uuid.NullUUID `json:"risk_owner_id"`
-	OrgID              uuid.NullUUID `json:"org_id"`
+	ID                      uuid.UUID     `json:"id"`
+	Name                    string        `json:"name"`
+	Scope                   string        `json:"scope"`
+	AnalysisObject          string        `json:"analysis_object"`
+	SecurityObjectives      string        `json:"security_objectives"`
+	BusinessObjectives      string        `json:"business_objectives"`
+	Type                    string        `json:"type"`
+	RiskOwnerID             uuid.NullUUID `json:"risk_owner_id"`
+	OrgID                   uuid.NullUUID `json:"org_id"`
+	ThreatAssessmentEnabled bool          `json:"threat_assessment_enabled"`
 }
 
 func (q *Queries) UpdateRiskAssessmentStep1(ctx context.Context, arg UpdateRiskAssessmentStep1Params) (RiskAssessment, error) {
@@ -1908,6 +1933,7 @@ func (q *Queries) UpdateRiskAssessmentStep1(ctx context.Context, arg UpdateRiskA
 		arg.Type,
 		arg.RiskOwnerID,
 		arg.OrgID,
+		arg.ThreatAssessmentEnabled,
 	)
 	var i RiskAssessment
 	err := row.Scan(
@@ -1929,6 +1955,54 @@ func (q *Queries) UpdateRiskAssessmentStep1(ctx context.Context, arg UpdateRiskA
 		&i.RefNum,
 		&i.AcceptanceNote,
 		&i.IsPublic,
+		&i.ThreatAssessmentEnabled,
+		&i.ThreatAppDescription,
+		&i.ThreatInformationFlow,
+	)
+	return i, err
+}
+
+const updateRiskAssessmentThreatStep = `-- name: UpdateRiskAssessmentThreatStep :one
+UPDATE risk_assessments
+SET threat_app_description  = $2,
+    threat_information_flow = $3,
+    current_step            = GREATEST(current_step, 2),
+    updated_at              = NOW()
+WHERE id = $1
+RETURNING id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public, threat_assessment_enabled, threat_app_description, threat_information_flow
+`
+
+type UpdateRiskAssessmentThreatStepParams struct {
+	ID                    uuid.UUID `json:"id"`
+	ThreatAppDescription  string    `json:"threat_app_description"`
+	ThreatInformationFlow string    `json:"threat_information_flow"`
+}
+
+func (q *Queries) UpdateRiskAssessmentThreatStep(ctx context.Context, arg UpdateRiskAssessmentThreatStepParams) (RiskAssessment, error) {
+	row := q.db.QueryRowContext(ctx, updateRiskAssessmentThreatStep, arg.ID, arg.ThreatAppDescription, arg.ThreatInformationFlow)
+	var i RiskAssessment
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Scope,
+		&i.AnalysisObject,
+		&i.SecurityObjectives,
+		&i.BusinessObjectives,
+		&i.Type,
+		&i.Status,
+		&i.CurrentStep,
+		&i.LastReviewedAt,
+		&i.CreatedBy,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.RiskOwnerID,
+		&i.OrgID,
+		&i.RefNum,
+		&i.AcceptanceNote,
+		&i.IsPublic,
+		&i.ThreatAssessmentEnabled,
+		&i.ThreatAppDescription,
+		&i.ThreatInformationFlow,
 	)
 	return i, err
 }

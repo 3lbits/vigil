@@ -261,6 +261,9 @@ func (StubQuerier) UpdateRiskAssessmentStep(_ context.Context, _ db.UpdateRiskAs
 func (StubQuerier) UpdateRiskAssessmentStep1(_ context.Context, _ db.UpdateRiskAssessmentStep1Params) (db.RiskAssessment, error) {
 	return db.RiskAssessment{}, nil
 }
+func (StubQuerier) UpdateRiskAssessmentThreatStep(_ context.Context, _ db.UpdateRiskAssessmentThreatStepParams) (db.RiskAssessment, error) {
+	return db.RiskAssessment{}, nil
+}
 func (StubQuerier) UpdateRiskDecision(_ context.Context, _ db.UpdateRiskDecisionParams) error {
 	return nil
 }

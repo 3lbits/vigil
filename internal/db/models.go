@@ -253,24 +253,27 @@ type RiskActivityLink struct {
 }
 
 type RiskAssessment struct {
-	ID                 uuid.UUID     `json:"id"`
-	Name               string        `json:"name"`
-	Scope              string        `json:"scope"`
-	AnalysisObject     string        `json:"analysis_object"`
-	SecurityObjectives string        `json:"security_objectives"`
-	BusinessObjectives string        `json:"business_objectives"`
-	Type               string        `json:"type"`
-	Status             string        `json:"status"`
-	CurrentStep        int32         `json:"current_step"`
-	LastReviewedAt     sql.NullTime  `json:"last_reviewed_at"`
-	CreatedBy          uuid.NullUUID `json:"created_by"`
-	CreatedAt          time.Time     `json:"created_at"`
-	UpdatedAt          time.Time     `json:"updated_at"`
-	RiskOwnerID        uuid.NullUUID `json:"risk_owner_id"`
-	OrgID              uuid.NullUUID `json:"org_id"`
-	RefNum             sql.NullInt32 `json:"ref_num"`
-	AcceptanceNote     string        `json:"acceptance_note"`
-	IsPublic           bool          `json:"is_public"`
+	ID                      uuid.UUID     `json:"id"`
+	Name                    string        `json:"name"`
+	Scope                   string        `json:"scope"`
+	AnalysisObject          string        `json:"analysis_object"`
+	SecurityObjectives      string        `json:"security_objectives"`
+	BusinessObjectives      string        `json:"business_objectives"`
+	Type                    string        `json:"type"`
+	Status                  string        `json:"status"`
+	CurrentStep             int32         `json:"current_step"`
+	LastReviewedAt          sql.NullTime  `json:"last_reviewed_at"`
+	CreatedBy               uuid.NullUUID `json:"created_by"`
+	CreatedAt               time.Time     `json:"created_at"`
+	UpdatedAt               time.Time     `json:"updated_at"`
+	RiskOwnerID             uuid.NullUUID `json:"risk_owner_id"`
+	OrgID                   uuid.NullUUID `json:"org_id"`
+	RefNum                  sql.NullInt32 `json:"ref_num"`
+	AcceptanceNote          string        `json:"acceptance_note"`
+	IsPublic                bool          `json:"is_public"`
+	ThreatAssessmentEnabled bool          `json:"threat_assessment_enabled"`
+	ThreatAppDescription    string        `json:"threat_app_description"`
+	ThreatInformationFlow   string        `json:"threat_information_flow"`
 }
 
 type RiskAssessmentAsset struct {
