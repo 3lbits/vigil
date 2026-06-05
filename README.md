@@ -1,5 +1,12 @@
 # Vigil
 
+[![License](https://img.shields.io/github/license/3lbits/vigil)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/3lbits/vigil)](https://github.com/3lbits/vigil/releases)
+[![CI](https://github.com/3lbits/vigil/actions/workflows/ci.yml/badge.svg)](https://github.com/3lbits/vigil/actions/workflows/ci.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/3lbits/vigil)](https://goreportcard.com/report/github.com/3lbits/vigil)
+[![CodeQL](https://github.com/3lbits/vigil/actions/workflows/codeql.yml/badge.svg)](https://github.com/3lbits/vigil/actions/workflows/codeql.yml)
+
+
 Vigil is a Go-based GRC (governance, risk, compliance) toolbox for security
 and compliance teams. It provides framework and requirement tracking, control
 (measure) management, activity tracking, and a multi-step risk assessment
