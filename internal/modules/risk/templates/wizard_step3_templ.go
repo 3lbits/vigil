@@ -534,7 +534,7 @@ func riskScoreRow(risk db.Risk, lowMax, highMin int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</div><!-- Reasoning --><div class=\"grid grid-cols-1 sm:grid-cols-2 gap-3\"><div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</div><div class=\"grid grid-cols-1 sm:grid-cols-2 gap-3\"><div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -642,7 +642,7 @@ func scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) tem
 		var templ_7745c5c3_Var31 string
 		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, labelKey))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 175, Col: 87}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 174, Col: 87}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 		if templ_7745c5c3_Err != nil {
@@ -655,7 +655,7 @@ func scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) tem
 		var templ_7745c5c3_Var32 string
 		templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, subKey))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 176, Col: 88}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 175, Col: 88}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 		if templ_7745c5c3_Err != nil {
@@ -668,7 +668,7 @@ func scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) tem
 		var templ_7745c5c3_Var33 string
 		templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.ResolveAttributeValue(kind + "-likelihood-" + riskID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 179, Col: 47}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 178, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var33)
 		if templ_7745c5c3_Err != nil {
@@ -681,7 +681,7 @@ func scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) tem
 		var templ_7745c5c3_Var34 string
 		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_likelihood_1_5"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 179, Col: 134}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 178, Col: 134}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 		if templ_7745c5c3_Err != nil {
@@ -715,7 +715,7 @@ func scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) tem
 				var templ_7745c5c3_Var36 string
 				templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprint(i))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 190, Col: 35}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 189, Col: 35}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var36)
 				if templ_7745c5c3_Err != nil {
@@ -738,7 +738,7 @@ func scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) tem
 				var templ_7745c5c3_Var37 string
 				templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(i))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 190, Col: 83}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 189, Col: 83}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 				if templ_7745c5c3_Err != nil {
@@ -751,7 +751,7 @@ func scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) tem
 				var templ_7745c5c3_Var38 string
 				templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(likelihoodLabel(i))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 190, Col: 106}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 189, Col: 106}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 				if templ_7745c5c3_Err != nil {
@@ -782,7 +782,7 @@ func scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) tem
 		var templ_7745c5c3_Var39 string
 		templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.ResolveAttributeValue(kind + "-consequence-" + riskID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 195, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 194, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var39)
 		if templ_7745c5c3_Err != nil {
@@ -795,7 +795,7 @@ func scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) tem
 		var templ_7745c5c3_Var40 string
 		templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_consequence_1_5"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 195, Col: 136}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 194, Col: 136}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 		if templ_7745c5c3_Err != nil {
@@ -829,7 +829,7 @@ func scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) tem
 				var templ_7745c5c3_Var42 string
 				templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprint(i))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 206, Col: 35}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 205, Col: 35}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var42)
 				if templ_7745c5c3_Err != nil {
@@ -852,7 +852,7 @@ func scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) tem
 				var templ_7745c5c3_Var43 string
 				templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(i))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 206, Col: 83}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 205, Col: 83}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
 				if templ_7745c5c3_Err != nil {
@@ -865,7 +865,7 @@ func scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) tem
 				var templ_7745c5c3_Var44 string
 				templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(consequenceLabel(i))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 206, Col: 107}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step3.templ`, Line: 205, Col: 107}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 				if templ_7745c5c3_Err != nil {
@@ -889,7 +889,7 @@ func scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) tem
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "</div></div><!-- Live score badge — updates as selects change --><template x-if=\"l > 0 && c > 0\"><div class=\"flex items-center justify-between px-2 py-1.5 rounded text-[11px] font-semibold text-white transition-colors\" :class=\"bgClass(score())\"><span x-text=\"'Score: ' + score()\"></span> <span class=\"bg-white/25 px-1.5 rounded text-[10px]\" x-text=\"label(score())\"></span></div></template></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "</div></div><template x-if=\"l > 0 && c > 0\"><div class=\"flex items-center justify-between px-2 py-1.5 rounded text-[11px] font-semibold text-white transition-colors\" :class=\"bgClass(score())\"><span x-text=\"'Score: ' + score()\"></span> <span class=\"bg-white/25 px-1.5 rounded text-[10px]\" x-text=\"label(score())\"></span></div></template></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

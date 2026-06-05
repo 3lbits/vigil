@@ -57,7 +57,7 @@ func buildMux(ctx context.Context, cfg *config.Config, state appState, opts Opti
 	sm.IdleTimeout = cfg.SessionIdleTimeout
 	sm.Cookie.Name = cfg.SessionCookieName
 	sm.Cookie.Secure = cfg.SessionCookieSecure
-	sm.Cookie.SameSite = http.SameSiteLaxMode
+	sm.Cookie.SameSite = http.SameSiteStrictMode
 	sm.Cookie.HttpOnly = true
 
 	moduleDeps := modregistry.Dependencies{
@@ -127,7 +127,7 @@ func registerLocaleRoute(mux *http.ServeMux, cfg *config.Config) {
 			Path:     "/",
 			MaxAge:   365 * 24 * 3600,
 			HttpOnly: true,
-			SameSite: http.SameSiteLaxMode,
+			SameSite: http.SameSiteStrictMode,
 			Secure:   cfg.SessionCookieSecure,
 		})
 		http.Redirect(w, r, redirect, http.StatusSeeOther) //nolint:gosec // redirect is sanitised by redirectPathFromReferer via safeLocalRedirect

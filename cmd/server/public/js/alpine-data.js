@@ -70,7 +70,7 @@ document.addEventListener('alpine:init', () => {
     }));
 
     // Risk scoring panel (wizard step 3 — current risk).
-    // initL/initC: initial likelihood/consequence from DB.
+    // initL/initC: initial likelihood/consequence values.
     // highMin: minimum score for red; lowMax: maximum score for green.
     Alpine.data('riskScorer', (initL, initC, highMin, lowMax) => ({
         l: initL,
@@ -107,15 +107,11 @@ document.addEventListener('alpine:init', () => {
         error: '',
         rendering: false,
         init() {
-            // Auto-render on load only for editable fields (x-ref="src" present).
-            // Detail/read-only views set source via x-init and trigger render() manually.
             if (this.$refs.src) {
                 this.$nextTick(() => this.render());
             }
         },
         async render() {
-            // If a source ref exists (editable field), sync from it now.
-            // Falls back to this.source for read-only views (set via x-init).
             if (this.$refs.src) {
                 const el = this.$refs.src;
                 this.source = 'value' in el ? el.value : el.textContent;

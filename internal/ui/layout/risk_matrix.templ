@@ -104,27 +104,22 @@ templ RiskMatrix(cells []RiskMatrixCell) {
 				}
 			</tbody>
 		</table>
-    <!-- Consequence axis label -->
-    <div class="flex items-center justify-center w-[14px] rotate-90">
+    <div class="flex items-center justify-center w-[14px]">
         <span
-            class="text-[10px] text-sand-700 font-medium tracking-wide"
-            style="writing-mode: vertical-rl"
+            class="text-[10px] text-sand-700 font-medium tracking-wide [writing-mode:vertical-rl] [transform:rotate(180deg)]"
         >{ locale.T(ctx, "scale_consequence") }</span>
     </div>
 		<div>
 			<div class="flex">
-				<!-- Y axis numbers — each rotated vertically -->
 				<div class="flex flex-col gap-[3px] mr-1">
 					for _, n := range riskMatrixConsequenceLabels {
 						<div class="w-3.5 h-8 flex items-center justify-center">
 							<span
-								class="text-[10px] text-sand-700 font-mono"
-								style="writing-mode: vertical-rl; transform: rotate(180deg)"
+								class="text-[10px] text-sand-700 font-mono [writing-mode:vertical-rl] [transform:rotate(180deg)]"
 							>{ n }</span>
 						</div>
 					}
 				</div>
-				<!-- 5×5 grid -->
 				<div class="grid grid-cols-5 gap-[3px]">
 					for _, cell := range cells {
 						<div class={ "w-8 h-8 rounded flex items-center justify-center", cell.ColorClass }>

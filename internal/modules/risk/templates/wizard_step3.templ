@@ -133,7 +133,6 @@ templ riskScoreRow(risk db.Risk, lowMax, highMin int) {
 			<div class="mb-3 max-w-sm">
 				@scorePanel(risk.ID.String(), "current", "label_current_risk", "label_with_existing_controls", int(risk.LikelihoodCurrent.Int32), int(risk.ConsequenceCurrent.Int32), risk.LikelihoodCurrent.Valid)
 			</div>
-			<!-- Reasoning -->
 			<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 				<div>
 					@ui.Field("lr-" + risk.ID.String(), "label_likelihood_reasoning", false) {
@@ -208,7 +207,6 @@ templ scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) {
 				}
 			</div>
 		</div>
-		<!-- Live score badge — updates as selects change -->
 		<template x-if="l > 0 && c > 0">
 			<div
 				class="flex items-center justify-between px-2 py-1.5 rounded text-[11px] font-semibold text-white transition-colors"

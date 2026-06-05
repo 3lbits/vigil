@@ -17,7 +17,6 @@ templ WizardStep1(vm WizardStep1VM) {
 		class="max-w-2xl"
 	>
 		<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-		<!-- Basic info -->
 		<div class="border border-sand-300/60 rounded-[10px] p-4 mb-4">
 			<h2 class="text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3">{ locale.T(ctx, "label_assessment") }</h2>
 			<div class="flex flex-col gap-3">
@@ -45,7 +44,6 @@ templ WizardStep1(vm WizardStep1VM) {
 				</div>
 			</div>
 		</div>
-		<!-- Scope & objectives -->
 		<div class="border border-sand-300/60 rounded-[10px] p-4 mb-4">
 			<div class="flex flex-col gap-3">
 				<div>
@@ -80,7 +78,6 @@ templ WizardStep1(vm WizardStep1VM) {
 				</div>
 			</div>
 		</div>
-		<!-- Threat assessment toggle -->
 		<div class="border border-sand-300/60 rounded-[10px] p-4 mb-4">
 			<label class="flex items-start gap-3">
 				<input
@@ -99,7 +96,6 @@ templ WizardStep1(vm WizardStep1VM) {
 				</span>
 			</label>
 		</div>
-		<!-- Participants -->
 		<div class="border border-sand-300/60 rounded-[10px] p-4 mb-4">
 			<h2 class="text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3">{ locale.T(ctx, "label_participants") }</h2>
 			if vm.IsNew {
@@ -175,7 +171,6 @@ templ WizardStep1(vm WizardStep1VM) {
 				</div>
 			}
 		</div>
-		<!-- Assets -->
 		<div class="border border-sand-300/60 rounded-[10px] p-4 mb-4">
 			<h2 class="text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3">{ locale.T(ctx, "label_assets") }</h2>
 			if vm.IsNew {
@@ -251,7 +246,6 @@ templ WizardStep1(vm WizardStep1VM) {
 				</div>
 			}
 		</div>
-		<!-- Risk acceptance criteria (read-only) -->
 		if vm.AcceptanceCriteria != "" {
 			<div class="border border-sand-300/60 rounded-[10px] p-4 mb-4">
 				<div class="flex items-center justify-between mb-2">

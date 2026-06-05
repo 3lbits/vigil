@@ -39,7 +39,7 @@ func registerDevRoleRoute(mux *http.ServeMux, enabled, secureCookie bool, q db.Q
 			Path:     "/",
 			MaxAge:   365 * 24 * 3600,
 			HttpOnly: true,
-			SameSite: http.SameSiteLaxMode,
+			SameSite: http.SameSiteStrictMode,
 			Secure:   secureCookie,
 		})
 		http.SetCookie(w, &http.Cookie{ //nolint:gosec // nosemgrep: go.lang.security.audit.net.cookie-missing-secure.cookie-missing-secure
@@ -48,7 +48,7 @@ func registerDevRoleRoute(mux *http.ServeMux, enabled, secureCookie bool, q db.Q
 			Path:     "/",
 			MaxAge:   -1,
 			HttpOnly: true,
-			SameSite: http.SameSiteLaxMode,
+			SameSite: http.SameSiteStrictMode,
 			Secure:   secureCookie,
 		})
 		http.Redirect(w, r, redirectPathFromReferer(r.Header.Get("Referer")), http.StatusSeeOther) //nolint:gosec // redirectPathFromReferer enforces a safe local path via safeLocalRedirect

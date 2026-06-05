@@ -61,7 +61,6 @@ templ treatmentPanel(risk db.Risk, measures []db.Measure, activities []db.Activi
 		x-data={ fmt.Sprintf("treatmentScorer(%d,%d,%d,%d)", risk.LikelihoodTarget.Int32, risk.ConsequenceTarget.Int32, highMin, lowMax) }
 	>
 		<div id={ "risk-status-" + risk.ID.String() } class="sr-only" aria-live="polite" aria-atomic="true"></div>
-		<!--  Risk header -->
 		<div class="flex items-center gap-2 flex-wrap mb-3">
 			<div id={ "risk-heading-" + risk.ID.String() } tabindex="-1" class="text-[13px] font-semibold text-sand-900">{ risk.Name }</div>
 			if risk.LikelihoodCurrent.Valid && risk.ConsequenceCurrent.Valid {
@@ -73,7 +72,6 @@ templ treatmentPanel(risk db.Risk, measures []db.Measure, activities []db.Activi
 				<div class="text-[11px] text-red-600 ml-1">⚠ Overdue activities</div>
 			}
 		</div>
-		<!--  Target score panel -->
 		<div class="border border-sand-100 rounded-lg p-3 bg-sand-50/50 mb-3 max-w-sm">
 			<div class="text-[11px] font-semibold text-sand-700 mb-0.5">{ locale.T(ctx, "label_target_risk") }</div>
 			<div class="text-[10px] text-sand-700 dark:text-zinc-400 mb-2">{ locale.T(ctx, "label_after_planned_treatment") }</div>
@@ -123,19 +121,16 @@ templ treatmentPanel(risk db.Risk, measures []db.Measure, activities []db.Activi
 				</div>
 			</template>
 		</div>
-		<!--  Linked measures chips -->
 		<div id={ "linked-measures-" + risk.ID.String() } class="flex flex-wrap gap-1.5 mb-3">
 			for _, m := range measures {
 				@measureChip(m, risk.ID.String(), assessmentID.String())
 			}
 		</div>
-		<!--  Linked activities chips -->
 		<div id={ "linked-activities-" + risk.ID.String() } class="flex flex-wrap gap-1.5 mb-2">
 			for _, a := range activities {
 				@activityChip(a, risk.ID.String(), assessmentID.String())
 			}
 		</div>
-		<!--   New measure form (toggle: open when no measures linked) -->
 		<div x-data={ fmt.Sprintf("{ expanded: %v }", len(measures) == 0) } class="mb-3">
 			<button
 				type="button"
@@ -169,7 +164,6 @@ templ treatmentPanel(risk db.Risk, measures []db.Measure, activities []db.Activi
 				</form>
 			</div>
 		</div>
-		<!--  Collapsible: link existing measure / activity -->
 		<div x-data="{ showMeasureSearch: false, showActivitySearch: false }" class="flex flex-col gap-1.5 mt-1">
 			<div>
 				<button

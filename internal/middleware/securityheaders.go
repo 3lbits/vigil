@@ -36,6 +36,7 @@ func SecurityHeaders(hstsEnabled bool) func(http.Handler) http.Handler {
 			h.Set("X-Content-Type-Options", "nosniff")
 			h.Set("Referrer-Policy", "strict-origin-when-cross-origin")
 			h.Set("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+			h.Set("Cross-Origin-Embedder-Policy", "require-corp")
 			h.Set("Cross-Origin-Opener-Policy", "same-origin")
 			h.Set("Cross-Origin-Resource-Policy", "same-origin")
 			h.Set("Cache-Control", "no-store, private")
@@ -44,6 +45,7 @@ func SecurityHeaders(hstsEnabled bool) func(http.Handler) http.Handler {
 					fmt.Sprintf("script-src 'self' 'nonce-%s'; ", nonce)+
 					"style-src 'self'; "+
 					"style-src-elem 'self' 'unsafe-inline'; "+
+					"style-src-attr 'none'; "+
 					"font-src 'self'; "+
 					"img-src 'self' data:; "+
 					"frame-src 'self' blob: data:; "+

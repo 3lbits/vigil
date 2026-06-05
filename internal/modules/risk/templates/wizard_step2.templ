@@ -15,7 +15,6 @@ templ WizardStep2(vm WizardStep2VM) {
 	}
 	@wizardFlash(vm.Flash)
 	<div id="risk-step2-status" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-	<!-- Quick-add form: HTMX posts, returns new row inserted at top of #risk-rows -->
 	<div class="border border-sand-300/60 rounded-[10px] p-4 mb-4 max-w-2xl">
 		<h2 class="text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3">{ locale.T(ctx, "heading_add_risk") }</h2>
 		<form
@@ -57,7 +56,6 @@ templ WizardStep2(vm WizardStep2VM) {
 			</button>
 		</form>
 	</div>
-	<!-- Identification form (bulk-saves all risk details on Next) -->
 	<form method="POST" action={ templ.SafeURL(step2FormAction(vm.Assessment.ID.String(), vm.IsReview)) }>
 		<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 		<div class="border border-sand-200 rounded-[10px] overflow-x-auto mb-5">
@@ -99,7 +97,6 @@ templ WizardStep2(vm WizardStep2VM) {
 				</tbody>
 			}
 		</div>
-		<!-- Navigation -->
 		<div class="flex items-center justify-between max-w-2xl">
 			<a href={ templ.SafeURL(wizardStepHref(vm.Assessment.ID.String(), "framework")) } class="text-[13px] text-sand-700 hover:text-sand-800">← Back to Framework</a>
 			<div class="flex items-center gap-2">

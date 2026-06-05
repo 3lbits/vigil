@@ -38,7 +38,7 @@ func wizardShell(assessmentID, assessmentName string, step int, isNew, threatEna
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Wizard header --><div class=\"mb-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mb-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -50,7 +50,7 @@ func wizardShell(assessmentID, assessmentName string, step int, isNew, threatEna
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(assessmentName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 16, Col: 63}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 15, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -84,7 +84,7 @@ func wizardShell(assessmentID, assessmentName string, step int, isNew, threatEna
 				var templ_7745c5c3_Var3 templ.SafeURL
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(wizardStepHref(assessmentID, item.Key)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 26, Col: 67}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 25, Col: 67}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -97,7 +97,7 @@ func wizardShell(assessmentID, assessmentName string, step int, isNew, threatEna
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(i + 1))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 29, Col: 148}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 28, Col: 148}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -110,7 +110,7 @@ func wizardShell(assessmentID, assessmentName string, step int, isNew, threatEna
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(item.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 30, Col: 19}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 29, Col: 19}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -128,7 +128,7 @@ func wizardShell(assessmentID, assessmentName string, step int, isNew, threatEna
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(i + 1))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 34, Col: 148}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 33, Col: 148}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -141,7 +141,7 @@ func wizardShell(assessmentID, assessmentName string, step int, isNew, threatEna
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(item.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 35, Col: 19}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 34, Col: 19}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -159,7 +159,7 @@ func wizardShell(assessmentID, assessmentName string, step int, isNew, threatEna
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(i + 1))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 39, Col: 162}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 38, Col: 162}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -172,7 +172,7 @@ func wizardShell(assessmentID, assessmentName string, step int, isNew, threatEna
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(item.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 40, Col: 19}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 39, Col: 19}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -267,7 +267,7 @@ func wizardFlash(flash string) templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(flash)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 93, Col: 120}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 92, Col: 120}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -311,7 +311,7 @@ func reviewBanner(a db.RiskAssessment) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_review_mode"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 100, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 99, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -329,7 +329,7 @@ func reviewBanner(a db.RiskAssessment) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(a.LastReviewedAt.Time.Format("2 Jan 2006"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 104, Col: 63}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 103, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -387,7 +387,7 @@ func riskLevelBadge(level string) templ.Component {
 				var templ_7745c5c3_Var17 string
 				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "risk_level_high"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 117, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 116, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 				if templ_7745c5c3_Err != nil {
@@ -418,7 +418,7 @@ func riskLevelBadge(level string) templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "risk_level_medium"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 122, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 121, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -449,7 +449,7 @@ func riskLevelBadge(level string) templ.Component {
 				var templ_7745c5c3_Var21 string
 				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "risk_level_low"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 127, Col: 41}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_shared.templ`, Line: 126, Col: 41}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {

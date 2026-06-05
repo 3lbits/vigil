@@ -10,7 +10,6 @@ import (
 )
 
 templ RiskDetail(vm RiskDetailVM) {
-	<!-- Back link -->
 	<div class="mb-4">
 		<a
 			href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String()) }
@@ -19,7 +18,6 @@ templ RiskDetail(vm RiskDetailVM) {
 			← { vm.Assessment.Name }
 		</a>
 	</div>
-	<!-- Header -->
 	<div class="flex items-start justify-between mb-5">
 		<div>
 			<h2 class="text-[18px] font-semibold text-sand-900 mb-1">
@@ -42,7 +40,6 @@ templ RiskDetail(vm RiskDetailVM) {
 			</a>
 		</div>
 	</div>
-	<!-- Scores -->
 	<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
 		<div class="border border-sand-200 rounded-xl p-4 bg-white">
 			<div class="text-[11px] font-semibold text-sand-700 uppercase tracking-wide mb-3">{ locale.T(ctx, "label_current_risk") }</div>
@@ -171,14 +168,12 @@ templ RiskDetail(vm RiskDetailVM) {
 		</div>
 	}
 	@riskRecentChanges(vm.AuditLog, "mb-5")
-	<!-- Decision notes (document) -->
 	if vm.Risk.RiskDecision == "document" && vm.Risk.DecisionNotes != "" {
 		<div class="border border-sand-200 rounded-xl p-4 bg-white mb-5">
 			<div class="text-[11px] font-semibold text-sand-700 uppercase tracking-wide mb-2">{ locale.T(ctx, "label_documentation_notes") }</div>
 			<p class="text-[13px] text-sand-700 whitespace-pre-wrap">{ vm.Risk.DecisionNotes }</p>
 		</div>
 	}
-	<!-- Linked measures -->
 	<div class="border border-sand-200 rounded-xl overflow-hidden mb-4">
 		<div class="px-4 py-3 bg-sand-50 border-b border-sand-200">
 			<div class="text-[12px] font-semibold text-sand-700">{ locale.T(ctx, "label_measures") } ({ fmt.Sprint(len(vm.Measures)) })</div>
@@ -202,7 +197,6 @@ templ RiskDetail(vm RiskDetailVM) {
 			}
 		}
 	</div>
-	<!-- Linked assets -->
 	<div class="border border-sand-200 rounded-xl overflow-hidden mb-4">
 		<div class="px-4 py-3 bg-sand-50 border-b border-sand-200">
 			<div class="text-[12px] font-semibold text-sand-700">{ locale.T(ctx, "label_assets") } ({ fmt.Sprint(len(vm.Assets)) })</div>
@@ -264,7 +258,6 @@ templ RiskDetail(vm RiskDetailVM) {
 			}
 		</div>
 	</div>
-	<!-- Linked activities -->
 	<div class="border border-sand-200 rounded-xl overflow-hidden">
 		<div class="px-4 py-3 bg-sand-50 border-b border-sand-200">
 			<div class="text-[12px] font-semibold text-sand-700">{ locale.T(ctx, "label_activities_section") } ({ fmt.Sprint(len(vm.Activities)) })</div>
@@ -293,7 +286,6 @@ templ RiskDetail(vm RiskDetailVM) {
 			}
 		}
 	</div>
-	<!-- Delete risk -->
 	<div class="mt-6 pt-4 border-t border-sand-200">
 		<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + vm.Risk.ID.String() + "/delete") } onsubmit="return confirm('Delete this risk and all its links?')">
 			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>

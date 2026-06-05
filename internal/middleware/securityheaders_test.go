@@ -63,6 +63,13 @@ func TestSecurityHeaders_COOP(t *testing.T) {
 	}
 }
 
+func TestSecurityHeaders_COEP(t *testing.T) {
+	w := applySecurityHeaders(t, "")
+	if got := w.Header().Get("Cross-Origin-Embedder-Policy"); got != "require-corp" {
+		t.Errorf("Cross-Origin-Embedder-Policy: got %q, want %q", got, "require-corp")
+	}
+}
+
 func TestSecurityHeaders_CORP(t *testing.T) {
 	w := applySecurityHeaders(t, "")
 	if got := w.Header().Get("Cross-Origin-Resource-Policy"); got != "same-origin" {
@@ -83,7 +90,7 @@ func TestSecurityHeaders_CSP_Present(t *testing.T) {
 	if csp == "" {
 		t.Error("Content-Security-Policy header must be set")
 	}
-	for _, required := range []string{"default-src", "script-src", "style-src", "style-src-elem 'self' 'unsafe-inline'", "frame-src 'self' blob: data:", "object-src 'none'", "form-action 'self'", "frame-ancestors 'none'", "base-uri 'self'"} {
+	for _, required := range []string{"default-src", "script-src", "style-src", "style-src-elem 'self' 'unsafe-inline'", "style-src-attr 'none'", "frame-src 'self' blob: data:", "object-src 'none'", "form-action 'self'", "frame-ancestors 'none'", "base-uri 'self'"} {
 		if !strings.Contains(csp, required) {
 			t.Errorf("CSP missing directive %q", required)
 		}

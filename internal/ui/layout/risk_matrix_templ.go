@@ -179,32 +179,32 @@ func RiskMatrix(cells []RiskMatrixCell) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</tbody></table><!-- Consequence axis label --><div class=\"flex items-center justify-center w-[14px] rotate-90\"><span class=\"text-[10px] text-sand-700 font-medium tracking-wide\" style=\"writing-mode: vertical-rl\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</tbody></table><div class=\"flex items-center justify-center w-[14px]\"><span class=\"text-[10px] text-sand-700 font-medium tracking-wide [writing-mode:vertical-rl] [transform:rotate(180deg)]\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "scale_consequence"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 112, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 110, Col: 45}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</span></div><div><div class=\"flex\"><!-- Y axis numbers — each rotated vertically --><div class=\"flex flex-col gap-[3px] mr-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</span></div><div><div class=\"flex\"><div class=\"flex flex-col gap-[3px] mr-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, n := range riskMatrixConsequenceLabels {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"w-3.5 h-8 flex items-center justify-center\"><span class=\"text-[10px] text-sand-700 font-mono\" style=\"writing-mode: vertical-rl; transform: rotate(180deg)\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"w-3.5 h-8 flex items-center justify-center\"><span class=\"text-[10px] text-sand-700 font-mono [writing-mode:vertical-rl] [transform:rotate(180deg)]\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(n)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 123, Col: 11}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 119, Col: 11}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -215,7 +215,7 @@ func RiskMatrix(cells []RiskMatrixCell) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div><!-- 5×5 grid --><div class=\"grid grid-cols-5 gap-[3px]\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div><div class=\"grid grid-cols-5 gap-[3px]\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -250,7 +250,7 @@ func RiskMatrix(cells []RiskMatrixCell) templ.Component {
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(cell.Count))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 133, Col: 33}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 128, Col: 33}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -278,7 +278,7 @@ func RiskMatrix(cells []RiskMatrixCell) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(n)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 144, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 139, Col: 82}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -296,7 +296,7 @@ func RiskMatrix(cells []RiskMatrixCell) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_likelihood"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 147, Col: 132}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 142, Col: 132}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {

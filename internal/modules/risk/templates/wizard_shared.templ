@@ -10,7 +10,6 @@ import (
 
 // wizardShell renders the wizard progress header.
 templ wizardShell(assessmentID, assessmentName string, step int, isNew, threatEnabled bool) {
-	<!-- Wizard header -->
 	<div class="mb-6">
 		if assessmentName != "" && !isNew {
 			<div class="text-[11px] text-sand-700 mb-1">{ assessmentName }</div>

@@ -71,14 +71,14 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\"><!-- Basic info --><div class=\"border border-sand-300/60 rounded-[10px] p-4 mb-4\"><h2 class=\"text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\"><div class=\"border border-sand-300/60 rounded-[10px] p-4 mb-4\"><h2 class=\"text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_assessment"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 22, Col: 119}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 21, Col: 119}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -169,14 +169,14 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div></div></div><!-- Scope & objectives --><div class=\"border border-sand-300/60 rounded-[10px] p-4 mb-4\"><div class=\"flex flex-col gap-3\"><div><label for=\"scope\" class=\"mb-1 flex items-center gap-1 text-[13px] text-sand-700 dark:text-zinc-200\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div></div></div><div class=\"border border-sand-300/60 rounded-[10px] p-4 mb-4\"><div class=\"flex flex-col gap-3\"><div><label for=\"scope\" class=\"mb-1 flex items-center gap-1 text-[13px] text-sand-700 dark:text-zinc-200\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_scope_analysis_object"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 53, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 51, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -209,7 +209,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_objectives"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 68, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 66, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -235,7 +235,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div></div><!-- Threat assessment toggle --><div class=\"border border-sand-300/60 rounded-[10px] p-4 mb-4\"><label class=\"flex items-start gap-3\"><input type=\"checkbox\" id=\"threat_assessment_enabled\" name=\"threat_assessment_enabled\" class=\"mt-0.5 h-4 w-4 rounded border-sand-300 text-blue-600 focus:ring-blue-500\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div></div><div class=\"border border-sand-300/60 rounded-[10px] p-4 mb-4\"><label class=\"flex items-start gap-3\"><input type=\"checkbox\" id=\"threat_assessment_enabled\" name=\"threat_assessment_enabled\" class=\"mt-0.5 h-4 w-4 rounded border-sand-300 text-blue-600 focus:ring-blue-500\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -252,7 +252,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_enable_threat_assessment"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 95, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 92, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -269,20 +269,20 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "help_enable_threat_assessment"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 98, Col: 99}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 95, Col: 99}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</span></span></label></div><!-- Participants --><div class=\"border border-sand-300/60 rounded-[10px] p-4 mb-4\"><h2 class=\"text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</span></span></label></div><div class=\"border border-sand-300/60 rounded-[10px] p-4 mb-4\"><h2 class=\"text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_participants"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 104, Col: 121}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 100, Col: 121}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -325,7 +325,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 					var templ_7745c5c3_Var13 string
 					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/participants/" + p.ID.String() + "/remove"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 122, Col: 121}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 118, Col: 121}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 					if templ_7745c5c3_Err != nil {
@@ -338,7 +338,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 					var templ_7745c5c3_Var14 string
 					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(p.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 126, Col: 23}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 122, Col: 23}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 					if templ_7745c5c3_Err != nil {
@@ -361,7 +361,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_search_participants"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 136, Col: 98}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 132, Col: 98}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -388,7 +388,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/review/step/1"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 147, Col: 91}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 143, Col: 91}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 			if templ_7745c5c3_Err != nil {
@@ -401,7 +401,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_search"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 150, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 146, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -430,7 +430,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 						var templ_7745c5c3_Var18 string
 						templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(u.Name)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 160, Col: 67}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 156, Col: 67}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 						if templ_7745c5c3_Err != nil {
@@ -443,7 +443,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 						var templ_7745c5c3_Var19 string
 						templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(u.Email)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 161, Col: 68}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 157, Col: 68}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 						if templ_7745c5c3_Err != nil {
@@ -456,7 +456,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 						var templ_7745c5c3_Var20 string
 						templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/participants/" + u.ID.String() + "/add"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 166, Col: 120}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 162, Col: 120}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 						if templ_7745c5c3_Err != nil {
@@ -478,14 +478,14 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</div><!-- Assets --><div class=\"border border-sand-300/60 rounded-[10px] p-4 mb-4\"><h2 class=\"text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</div><div class=\"border border-sand-300/60 rounded-[10px] p-4 mb-4\"><h2 class=\"text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_assets"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 180, Col: 115}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 175, Col: 115}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
@@ -523,7 +523,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 					var templ_7745c5c3_Var22 string
 					templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/assets/" + a.ID.String() + "/remove"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 196, Col: 115}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 191, Col: 115}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 					if templ_7745c5c3_Err != nil {
@@ -536,7 +536,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 					var templ_7745c5c3_Var23 string
 					templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 200, Col: 23}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 195, Col: 23}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 					if templ_7745c5c3_Err != nil {
@@ -559,7 +559,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 			var templ_7745c5c3_Var24 string
 			templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_search_assets"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 210, Col: 86}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 205, Col: 86}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 			if templ_7745c5c3_Err != nil {
@@ -586,7 +586,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 			var templ_7745c5c3_Var25 string
 			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/review/step/1"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 221, Col: 91}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 216, Col: 91}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var25)
 			if templ_7745c5c3_Err != nil {
@@ -599,7 +599,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 			var templ_7745c5c3_Var26 string
 			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_search"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 224, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 219, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 			if templ_7745c5c3_Err != nil {
@@ -628,7 +628,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 						var templ_7745c5c3_Var27 string
 						templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 234, Col: 67}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 229, Col: 67}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 						if templ_7745c5c3_Err != nil {
@@ -646,7 +646,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 							var templ_7745c5c3_Var28 string
 							templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(a.Owner)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 236, Col: 69}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 231, Col: 69}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 							if templ_7745c5c3_Err != nil {
@@ -664,7 +664,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 						var templ_7745c5c3_Var29 string
 						templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/assets/" + a.ID.String() + "/add"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 242, Col: 114}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 237, Col: 114}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var29)
 						if templ_7745c5c3_Err != nil {
@@ -686,7 +686,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</div><!-- Risk acceptance criteria (read-only) -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -698,7 +698,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 			var templ_7745c5c3_Var30 string
 			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_risk_acceptance_criteria"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 258, Col: 130}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 252, Col: 130}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {
@@ -711,7 +711,7 @@ func WizardStep1(vm WizardStep1VM) templ.Component {
 			var templ_7745c5c3_Var31 string
 			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(vm.AcceptanceCriteria)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 261, Col: 84}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 255, Col: 84}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 			if templ_7745c5c3_Err != nil {
@@ -801,7 +801,7 @@ func helpIcon(text string) templ.Component {
 		var templ_7745c5c3_Var34 string
 		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(text)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 289, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 283, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 		if templ_7745c5c3_Err != nil {
@@ -871,7 +871,7 @@ func orgPicker(name string, selected uuid.NullUUID, orgs []db.Organization) temp
 					var templ_7745c5c3_Var37 string
 					templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.ResolveAttributeValue(o.ID.String())
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 312, Col: 33}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 306, Col: 33}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var37)
 					if templ_7745c5c3_Err != nil {
@@ -894,7 +894,7 @@ func orgPicker(name string, selected uuid.NullUUID, orgs []db.Organization) temp
 					var templ_7745c5c3_Var38 string
 					templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(o.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 312, Col: 98}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 306, Col: 98}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 					if templ_7745c5c3_Err != nil {
@@ -913,7 +913,7 @@ func orgPicker(name string, selected uuid.NullUUID, orgs []db.Organization) temp
 							var templ_7745c5c3_Var39 string
 							templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.ResolveAttributeValue(child.ID.String())
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 315, Col: 39}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 309, Col: 39}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var39)
 							if templ_7745c5c3_Err != nil {
@@ -936,7 +936,7 @@ func orgPicker(name string, selected uuid.NullUUID, orgs []db.Organization) temp
 							var templ_7745c5c3_Var40 string
 							templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(child.Name)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 315, Col: 128}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 309, Col: 128}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 							if templ_7745c5c3_Err != nil {
@@ -955,7 +955,7 @@ func orgPicker(name string, selected uuid.NullUUID, orgs []db.Organization) temp
 									var templ_7745c5c3_Var41 string
 									templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.ResolveAttributeValue(grand.ID.String())
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 318, Col: 41}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 312, Col: 41}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var41)
 									if templ_7745c5c3_Err != nil {
@@ -978,7 +978,7 @@ func orgPicker(name string, selected uuid.NullUUID, orgs []db.Organization) temp
 									var templ_7745c5c3_Var42 string
 									templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(grand.Name)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 318, Col: 142}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 312, Col: 142}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 									if templ_7745c5c3_Err != nil {
@@ -1053,7 +1053,7 @@ func userPicker(name string, selected uuid.NullUUID, users []db.User) templ.Comp
 				var templ_7745c5c3_Var45 string
 				templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.ResolveAttributeValue(u.ID.String())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 336, Col: 32}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 330, Col: 32}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var45)
 				if templ_7745c5c3_Err != nil {
@@ -1076,7 +1076,7 @@ func userPicker(name string, selected uuid.NullUUID, users []db.User) templ.Comp
 				var templ_7745c5c3_Var46 string
 				templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.JoinStringErrs(u.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 336, Col: 97}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/wizard_step1.templ`, Line: 330, Col: 97}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var46))
 				if templ_7745c5c3_Err != nil {
