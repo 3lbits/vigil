@@ -23,7 +23,7 @@ endif
         semgrep deadcode db-start db-down db-down-clean db-logs db-psql \
         db-reset-pgadmin db-migrate-create loadtest-browse loadtest-rate-burst \
         db-wait \
-        dev-seed db-reset-seed
+        dev-seed db-reset-seed codeql
 
 # ─────────────────────────────────────────────────────────────────────
 help: ## Show this help message
@@ -177,6 +177,13 @@ semgrep:
 		--config "p/secrets" \
 		--config "p/owasp-top-ten" \
 		--config "p/supply-chain"
+
+codeql:
+	codeql database create vigil-db --language=go --overwrite --source-root=.
+	codeql database analyze vigil-db \
+		codeql/go-queries:codeql-suites/go-security-extended.qls \
+		--format=sarif-latest --output=vigil-results.sarif --sarif-category=go --threads=0
+	@echo "Åpne vigil-results.sarif i SARIF Viewer"
 
 deadcode:
 	deadcode -test ./...
