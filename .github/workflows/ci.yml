@@ -6,9 +6,15 @@ name: CI
 #   Test     – the test suite, run with the race detector.
 #   Security – dependency, static-analysis, and full-history secret scans.
 #              Findings are published to the repository's Security tab.
-#   Build    – builds, publishes, signs, and attests the image. Runs only
-#              after Lint, Test, and Security pass, and only on main or a
-#              version tag — never on a pull request.
+#   Build    – builds and pushes the image. Runs only after Lint, Test, and
+#              Security pass. On a push to main it publishes a rolling dev
+#              image (:edge + :sha-...), unsigned. On a published GitHub
+#              release it publishes the versioned, signed, attested image
+#              (:1.2.3, :1.2, :latest). Never runs on a pull request.
+#
+# Releases are cut as GitHub Releases (not raw tag pushes), which avoids the
+# "more than three tags pushed at once are silently ignored" trigger limit and
+# gives a deliberate human checkpoint. See the README/RELEASING notes.
 #
 # Pull requests from forks run the three check jobs only. They need no secrets
 # and run with a read-only token, so they are safe for untrusted contributions;
@@ -18,9 +24,10 @@ name: CI
 on:
   push:
     branches: [main]
-    tags: ["v*"]
   pull_request:
     branches: [main]
+  release:
+    types: [published]
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -167,7 +174,9 @@ jobs:
   build:
     name: Build, push & sign
     needs: [lint, test, security]
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    # Releases publish the versioned, signed image; main publishes a rolling
+    # dev image. Never on a pull request.
+    if: github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -178,11 +187,18 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0 # tags are needed for `git describe`
-      # Version tags resolve to a clean semver (v1.2.3); branch builds resolve
-      # to a describe string such as v1.2.3-5-gabc1234.
+      # On a release the ref is the tag (refs/tags/v1.2.3), so the baked-in
+      # version is taken straight from the tag name -> "1.2.3". This is immune
+      # to multiple tags landing on one commit (git describe is not). On main
+      # the describe string gives a useful dev version, e.g. v1.2.3-5-gabc1234.
       - name: Compute version
         id: version
-        run: echo "value=$(git describe --tags --always --dirty)" >> "$GITHUB_OUTPUT"
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            echo "value=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=$(git describe --tags --always --dirty)" >> "$GITHUB_OUTPUT"
+          fi
       # No QEMU: the Go binary is cross-compiled and the Dockerfile builder stage
       # is pinned to $BUILDPLATFORM, so no target-arch code runs during the build.
       - uses: docker/setup-buildx-action@v4
@@ -192,6 +208,10 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ github.token }}
+      # Release ref refs/tags/v1.2.3 -> :1.2.3, :1.2, :latest, :sha-...
+      # Push to main                 -> :edge, :sha-...
+      # latest=auto only fires on the semver patterns, so a main build can
+      # never move :latest.
       - name: Image metadata (tags + labels)
         id: meta
         uses: docker/metadata-action@v6
@@ -199,7 +219,8 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=semver,pattern={{version}}
-            type=ref,event=branch
+            type=semver,pattern={{major}}.{{minor}}
+            type=edge,branch=main
             type=sha
           labels: |
             org.opencontainers.image.version=${{ steps.version.outputs.value }}
@@ -219,25 +240,35 @@ jobs:
           provenance: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      # --- Release-only supply-chain ceremony ---------------------------------
+      # Signed + attested artifacts are the ones people pin and consume, so the
+      # cosign signature and the provenance/SBOM attestations are produced for
+      # releases only. To sign every image too, delete the `if:` on these steps.
       - name: Install cosign
+        if: github.event_name == 'release'
         uses: sigstore/cosign-installer@v3
       - name: Sign image (keyless)
+        if: github.event_name == 'release'
         env:
           IMAGE_DIGEST: ${{ steps.build.outputs.digest }}
         run: cosign sign --yes "${REGISTRY}/${IMAGE_NAME}@${IMAGE_DIGEST}"
       - name: Attest build provenance
+        if: github.event_name == 'release'
         uses: actions/attest-build-provenance@v2
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
       - name: Generate SBOM
+        if: github.event_name == 'release'
         uses: anchore/sbom-action@v0
         with:
           image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
           format: cyclonedx-json
           output-file: sbom.cdx.json
       - name: Attest SBOM
+        if: github.event_name == 'release'
         uses: actions/attest-sbom@v2
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
