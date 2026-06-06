@@ -267,6 +267,9 @@ jobs:
           image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
           format: cyclonedx-json
           output-file: sbom.cdx.json
+          # The signed registry attestation (attest-sbom, below) is the SBOM of
+          # record. Don't also attach to the release — that needs contents:write.
+          upload-release-assets: false
       - name: Attest SBOM
         if: github.event_name == 'release'
         uses: actions/attest-sbom@v2
