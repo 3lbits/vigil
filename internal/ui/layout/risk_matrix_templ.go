@@ -29,8 +29,8 @@ type RiskThresholds struct {
 // DefaultThresholds returns NS 5814 defaults.
 func DefaultThresholds() RiskThresholds { return RiskThresholds{LowMax: 5, HighMin: 12} }
 
-var riskMatrixConsequenceLabels = []string{"5", "4", "3", "2", "1"}
-var riskMatrixLikelihoodLabels = []string{"1", "2", "3", "4", "5"}
+var riskMatrixConsequenceLabels = []string{"1", "2", "3", "4", "5"}
+var riskMatrixLikelihoodLabels = []string{"5", "4", "3", "2", "1"}
 
 // CellColor returns a Tailwind bg class using the given thresholds.
 func CellColor(likelihood, consequence int, t RiskThresholds) string {
@@ -76,8 +76,8 @@ func BuildRiskMatrixCells(counts map[[2]int]int) []RiskMatrixCell {
 // BuildRiskMatrixCellsT builds 25 cells with configurable thresholds.
 func BuildRiskMatrixCellsT(counts map[[2]int]int, t RiskThresholds) []RiskMatrixCell {
 	cells := make([]RiskMatrixCell, 25)
-	for i, c := range []int{5, 4, 3, 2, 1} {
-		for j, l := range []int{1, 2, 3, 4, 5} {
+	for i, l := range []int{5, 4, 3, 2, 1} {
+		for j, c := range []int{1, 2, 3, 4, 5} {
 			cells[i*5+j] = RiskMatrixCell{
 				ColorClass: CellColor(l, c, t),
 				Count:      counts[[2]int{l, c}],
@@ -88,7 +88,7 @@ func BuildRiskMatrixCellsT(counts map[[2]int]int, t RiskThresholds) []RiskMatrix
 }
 
 // RiskMatrix renders a 5×5 NS 5814 risk heat map.
-// cells must have exactly 25 elements ordered row-major (consequence desc, likelihood asc).
+// cells must have exactly 25 elements ordered row-major (likelihood desc, consequence asc).
 func RiskMatrix(cells []RiskMatrixCell) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -110,17 +110,17 @@ func RiskMatrix(cells []RiskMatrixCell) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex gap-1.5 items-stretch\"><table class=\"sr-only\"><caption>Risk matrix counts by likelihood and consequence</caption> <thead><tr><th scope=\"col\">Consequence \\\\ Likelihood</th>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex gap-1.5 items-stretch\"><table class=\"sr-only\"><caption>Risk matrix counts by consequence and likelihood</caption> <thead><tr><th scope=\"col\">Likelihood \\\\ Consequence</th>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, l := range riskMatrixLikelihoodLabels {
+		for _, c := range riskMatrixConsequenceLabels {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<th scope=\"col\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(l)
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(c)
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 92, Col: 25}
 			}
@@ -137,13 +137,13 @@ func RiskMatrix(cells []RiskMatrixCell) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for i, c := range riskMatrixConsequenceLabels {
+		for i, l := range riskMatrixLikelihoodLabels {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<tr><th scope=\"row\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(c)
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(l)
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 99, Col: 25}
 			}
@@ -155,7 +155,7 @@ func RiskMatrix(cells []RiskMatrixCell) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for j := range riskMatrixLikelihoodLabels {
+			for j := range riskMatrixConsequenceLabels {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<td>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -184,9 +184,9 @@ func RiskMatrix(cells []RiskMatrixCell) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "scale_consequence"))
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_likelihood"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 110, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 110, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -196,7 +196,7 @@ func RiskMatrix(cells []RiskMatrixCell) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, n := range riskMatrixConsequenceLabels {
+		for _, n := range riskMatrixLikelihoodLabels {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"w-3.5 h-8 flex items-center justify-center\"><span class=\"text-[10px] text-sand-700 font-mono [writing-mode:vertical-rl] [transform:rotate(180deg)]\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -270,7 +270,7 @@ func RiskMatrix(cells []RiskMatrixCell) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, n := range riskMatrixLikelihoodLabels {
+		for _, n := range riskMatrixConsequenceLabels {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"w-8 mr-[3px] text-center text-[10px] text-sand-700 font-mono\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -294,9 +294,9 @@ func RiskMatrix(cells []RiskMatrixCell) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 string
-		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_likelihood"))
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "scale_consequence"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 142, Col: 132}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/risk_matrix.templ`, Line: 142, Col: 133}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
