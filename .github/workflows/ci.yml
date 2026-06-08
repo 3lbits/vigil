@@ -65,7 +65,7 @@ jobs:
       # golangci-lint v2 also enforces formatting (gofmt + goimports) via the
       # formatters block in .golangci.yml; generated code is excluded there.
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v8
+        uses: golangci/golangci-lint-action@v9
         with:
           version: v2.12.2
 
