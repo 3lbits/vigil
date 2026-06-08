@@ -272,7 +272,7 @@ jobs:
           upload-release-assets: false
       - name: Attest SBOM
         if: github.event_name == 'release'
-        uses: actions/attest-sbom@v2
+        uses: actions/attest-sbom@v4
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.build.outputs.digest }}
