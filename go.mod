@@ -10,7 +10,7 @@ require (
 	github.com/coreos/go-oidc/v3 v3.18.0
 	github.com/exaring/otelpgx v0.11.1
 	github.com/google/uuid v1.6.0
-	github.com/jackc/pgx/v5 v5.9.2
+	github.com/jackc/pgx/v5 v5.10.0
 	github.com/joho/godotenv v1.5.1
 	github.com/nicksnyder/go-i18n/v2 v2.6.1
 	github.com/open-policy-agent/opa v1.17.0
