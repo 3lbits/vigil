@@ -57,7 +57,7 @@ func buildMux(ctx context.Context, cfg *config.Config, state appState, opts Opti
 	sm.IdleTimeout = cfg.SessionIdleTimeout
 	sm.Cookie.Name = cfg.SessionCookieName
 	sm.Cookie.Secure = cfg.SessionCookieSecure
-	sm.Cookie.SameSite = http.SameSiteStrictMode
+	sm.Cookie.SameSite = http.SameSiteLaxMode
 	sm.Cookie.HttpOnly = true
 
 	moduleDeps := modregistry.Dependencies{
