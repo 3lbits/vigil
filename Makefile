@@ -2,20 +2,10 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
 # ── Versions ─────────────────────────────────────────────────────────
-TAILWIND_VERSION ?= v4.1.5
 HTMX_VERSION     ?= 2.0.10
 HTMX_SHA384      ?= H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V
 ALPINE_VERSION   ?= 3.15.11
 ALPINE_SHA384    ?= TIk3zaxqa4vMqf5I0fQA5imzQDYj1TODC6n9XoykD/M+27VHsOJcDkic2bhwMHGN
-
-# Tailwind binary varies by platform
-UNAME_S := $(shell uname -s)
-UNAME_M := $(shell uname -m)
-ifeq ($(UNAME_S),Darwin)
-  TAILWIND_BIN := tailwindcss-macos-$(if $(filter arm64,$(UNAME_M)),arm64,x64)
-else
-  TAILWIND_BIN := tailwindcss-linux-x64
-endif
 
 .PHONY: help setup run dev build test lint pre-commit pre-commit-fast \
         generate db-up db-reset tailwind-install vendor-js clean \
@@ -33,7 +23,8 @@ help: ## Show this help message
 
 ##@ Common
 
-setup: tailwind-install ## One-time setup: install Tailwind CLI, configure git hooks
+setup: ## One-time setup: install toolchain via mise, configure git hooks
+	mise install
 	git config core.hooksPath githooks
 
 run: ## Start dev server with live reload (uses 1Password CLI if available)
@@ -76,6 +67,7 @@ pre-commit: pre-commit-fast semgrep ## Full pre-commit suite (includes semgrep)
 ##@ Build & generate
 
 build: ## Build server binary to bin/server
+	@mkdir -p bin
 	go build -o bin/server ./cmd/server
 
 generate: generate-sqlc generate-templ css-build ## Run all code generation
@@ -131,12 +123,6 @@ loadtest-rate-burst: ## Run ad-hoc k6 burst scenario to observe 429 behavior
 
 ##@ One-time setup
 
-tailwind-install: ## Download the Tailwind v4 standalone CLI
-	mkdir -p bin
-	curl -sLo bin/tailwindcss \
-	  "https://github.com/tailwindlabs/tailwindcss/releases/download/$(TAILWIND_VERSION)/$(TAILWIND_BIN)"
-	chmod +x bin/tailwindcss
-
 vendor-js: ## Download and integrity-check htmx and Alpine.js
 	curl -sLo cmd/server/public/js/htmx.min.js \
 	  "https://unpkg.com/htmx.org@$(HTMX_VERSION)/dist/htmx.min.js"
@@ -187,28 +173,3 @@ codeql:
 
 deadcode:
 	deadcode -test ./...
-
-db-start:
-	podman compose start
-
-db-down:
-	podman compose stop
-
-db-down-clean:
-	podman compose down
-
-db-logs:
-	podman compose logs -f postgres
-
-db-psql:
-	podman exec -it vigil-postgres psql -U vigil -d vigil
-
-db-reset-pgadmin:
-	podman compose stop pgadmin
-	podman compose rm -f pgadmin
-	podman volume rm vigil-pgadmin
-	podman compose up -d pgadmin
-
-db-migrate-create:
-	@test -n "$(NAME)" || (echo "ERROR: NAME is required. Usage: make db-migrate-create NAME=create_users"; exit 1)
-	goose -dir db/migrations create $(NAME) sql
