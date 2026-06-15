@@ -4,14 +4,14 @@
   "workspaces": {
     "": {
       "dependencies": {
-        "@alpinejs/csp": "3.15.11",
+        "@alpinejs/csp": "3.15.12",
         "htmx.org": "2.0.10",
         "mermaid": "^11.0.0",
       },
     },
   },
   "packages": {
-    "@alpinejs/csp": ["@alpinejs/csp@3.15.11", "", { "dependencies": { "@vue/reactivity": "~3.1.1" } }, "sha512-7DTQ86/unHMztj5qsjtZ1B9YKLgZ5zxSynq8kBQ1zaMHEXomrGpD2X/rVluIu1AHRnVrjfUt9ji8ZLfXxgbqIg=="],
+    "@alpinejs/csp": ["@alpinejs/csp@3.15.12", "", { "dependencies": { "@vue/reactivity": "~3.1.1" } }, "sha512-9jielHzVPqMlO9zQ6K1WtdhSHVX5OZfq5ZDUSVZfY10VnXRoRBx8nOadWjsG1xev/kz4EPaNN9eDFWtZSvJHxA=="],
 
     "@antfu/install-pkg": ["@antfu/install-pkg@1.1.0", "", { "dependencies": { "package-manager-detector": "^1.3.0", "tinyexec": "^1.0.1" } }, "sha512-MGQsmw10ZyI+EJo45CdSER4zEb+p31LpDAFp2Z3gkSd1yqVZGi0Ebx++YTEMonJy4oChEMLsxZ64j8FH6sSqtQ=="],
 
