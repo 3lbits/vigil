@@ -51,20 +51,23 @@ Rego (`cmd/server/policies/authz.rego`), not hardcoded role checks in handlers.
 | AuthZ | OPA / Rego |
 | Sessions | scs (DB-backed) |
 | Observability | OpenTelemetry + Prometheus |
+| Toolchain | [mise](https://mise.jdx.dev) (pinned dev tools) |
 
 ## Quick start
 
-Requirements: Go 1.26+, Docker or Podman, and the Tailwind standalone CLI
-(installed by `make tailwind-install`).
+Requirements: [mise](https://mise.jdx.dev) and Docker or Podman. mise installs
+and version-pins the rest of the toolchain (Go, the Tailwind CLI, templ, sqlc,
+air, golangci-lint, …) from [`mise.toml`](mise.toml). Make sure mise is
+[activated in your shell](https://mise.jdx.dev/getting-started.html) before you
+start, so the pinned tools land on `PATH`.
 
 ```sh
 git clone https://github.com/3lbits/vigil.git
 cd vigil
 
-make setup
+make setup            # mise install + git hooks
 cp .env.example .env
 
-make tailwind-install
 make generate
 make db-up
 
@@ -102,20 +105,16 @@ If you prefer running the app from source with live reload:
 
 ```sh
 cp .env.example .env
-make setup tailwind-install db-reset-seed
+make setup db-reset-seed
 DEV_STUB_AUTH=true make run
 ```
 
 ### Tooling
 
-The `make pre-commit` target uses `golangci-lint`, `govulncheck`, and
-`semgrep`. Install them if you plan to contribute:
-
-```sh
-go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-go install golang.org/x/vuln/cmd/govulncheck@latest
-# semgrep: see https://semgrep.dev/docs/getting-started/
-```
+`golangci-lint`, `govulncheck`, `semgrep`, and the rest of the dev toolchain are
+version-pinned in [`mise.toml`](mise.toml) and installed by `make setup` (or
+`mise install` directly). No manual installation needed — `make pre-commit`
+finds them on `PATH` once mise is active.
 
 ### Local auth modes
 
@@ -211,6 +210,7 @@ For public deployments, do not expose GitHub login without a strict domain allow
 
 | Target | Description |
 |---|---|
+| `make setup` | Install the pinned toolchain (mise) and configure git hooks |
 | `make generate` | Run sqlc + templ + CSS generation |
 | `make run` | Start the dev server with live reload (air) |
 | `make dev` | Tailwind watch + air in one terminal |
@@ -221,7 +221,6 @@ For public deployments, do not expose GitHub login without a strict domain allow
 | `make pre-commit-fast` | Same without semgrep |
 | `make db-up` / `db-reset` | Manage the local PostgreSQL container |
 | `make dev-seed` / `db-reset-seed` | Seed coherent dev data (manual; dev only) |
-| `make tailwind-install` | Download the Tailwind v4 standalone CLI |
 | `make vendor-js` | Download and integrity-check htmx and Alpine.js |
 | `make loadtest-browse` / `loadtest-rate-burst` | Manual ad-hoc k6 load checks (developer tooling) |
 
@@ -309,17 +308,17 @@ composed via `Registry` in `cmd/server/main.go`. Module-specific
 dependencies are passed to each module's constructor; the shared
 `Dependencies` struct is kept deliberately minimal. See
 [`internal/modregistry`](internal/modregistry) for the contract.
- 
+
 **Handler design.** Handlers are intentionally "fat" and query the database
 directly via sqlc. There is no service layer, no DTOs, and no per-module
 interfaces — these solve problems this stack does not have. Split a handler
 only when concerns are genuinely mixed or logic is duplicated.
- 
+
 **Generated code is not edited by hand.** `**/*_templ.go` (templ), the
 sqlc-generated Go, and `cmd/server/public/css/output.css` (Tailwind) are all
 produced by `make generate`. Change the source (`.templ`, `db/queries/*.sql`,
 or the Tailwind input) and regenerate — never edit the output.
- 
+
 The full set of conventions lives in [AGENTS.md](AGENTS.md); contributor-facing
 highlights are summarised in [CONTRIBUTING.md](CONTRIBUTING.md).
 
