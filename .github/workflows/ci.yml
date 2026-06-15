@@ -39,6 +39,7 @@ permissions:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }} # e.g. ghcr.io/3lbits/vigil
+  SEMGREP_VERSION: "1.166.0"
 
 jobs:
   lint:
@@ -51,6 +52,12 @@ jobs:
           egress-policy: audit
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v4
+        with:
+          install_args: >-
+            go
+            bun
+            go:github.com/a-h/templ/cmd/templ
+            golangci-lint
       - name: Generate templ # generated code must exist for the linter to typecheck
         run: templ generate ./...
       - name: Stub Tailwind output # CSS isn't needed to compile Go
@@ -74,6 +81,11 @@ jobs:
           egress-policy: audit
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v4
+        with:
+          install_args: >-
+            go
+            bun
+            go:github.com/a-h/templ/cmd/templ
       - name: Generate templ
         run: templ generate ./...
       - name: Stub Tailwind output
@@ -100,6 +112,12 @@ jobs:
           fetch-depth: 0 # full history is required by the gitleaks history scan
           persist-credentials: false # keep the checkout token out of git config
       - uses: jdx/mise-action@v4
+        with:
+          install_args: >-
+            go
+            bun
+            go:github.com/a-h/templ/cmd/templ
+            go:golang.org/x/vuln/cmd/govulncheck
       - name: Generate templ
         run: templ generate ./...
       - name: Stub Tailwind output
@@ -116,6 +134,8 @@ jobs:
       # step still runs (if: always) and findings reach the Security tab.
       - name: Semgrep
         run: |
+          python3 -m pip install --quiet --user "semgrep==${SEMGREP_VERSION}"
+          export PATH="$HOME/.local/bin:$PATH"
           semgrep scan --error --sarif --output semgrep.sarif \
             --config p/golang \
             --config p/secrets \

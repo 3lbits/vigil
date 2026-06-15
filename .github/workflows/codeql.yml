@@ -40,6 +40,10 @@ jobs:
           egress-policy: audit
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v4
+        with:
+          install_args: >-
+            go
+            go:github.com/a-h/templ/cmd/templ
       - name: Generate templ
         run: templ generate ./...
       - name: Stub Tailwind output # autobuild must be able to compile
