@@ -37,7 +37,7 @@ func Run(ctx context.Context, cfg *config.Config, opts Options) error {
 		return err
 	}
 
-	handler := withMiddleware(cfg, state, sm, mux)
+	handler := withMiddleware(ctx, cfg, state, sm, mux)
 	srv := &http.Server{
 		Addr:         ":" + cfg.Port,
 		Handler:      handler,

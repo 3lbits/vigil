@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -22,6 +23,21 @@ func loginExemptRoutes() ([]middleware.PublicRoute, []string) {
 		{Method: http.MethodGet, Path: "/login"},
 	}
 	publicPrefixes := []string{"/public/", "/auth/"}
+	return publicRoutes, publicPrefixes
+}
+
+// loginExemptRoutesNais returns the public routes for NaisAuth mode. The /oauth2/
+// prefix is owned by the Wonderwall proxy and never processed by the app, but
+// we exempt it here defensively. /healthz and /readyz must be reachable by the
+// NAIS load balancer without a bearer token.
+func loginExemptRoutesNais() ([]middleware.PublicRoute, []string) {
+	publicRoutes := []middleware.PublicRoute{
+		{Method: http.MethodGet, Path: "/healthz"},
+		{Method: http.MethodGet, Path: "/readyz"},
+		{Method: http.MethodPost, Path: "/locale"},
+		{Method: http.MethodGet, Path: "/login"},
+	}
+	publicPrefixes := []string{"/public/", "/oauth2/"}
 	return publicRoutes, publicPrefixes
 }
 
@@ -60,14 +76,15 @@ func globalRateLimitMiddleware(cfg *config.Config) func(http.Handler) http.Handl
 	}
 }
 
-func withMiddleware(cfg *config.Config, state appState, sm *scs.SessionManager, mux *http.ServeMux) http.Handler {
+func withMiddleware(ctx context.Context, cfg *config.Config, state appState, sm *scs.SessionManager, mux *http.ServeMux) http.Handler {
 	instMux := obs.NewInstrumentedMux(mux)
 	sourceIP := obs.SourceIPMiddlewareWithTrustedCIDRs(state.trustedCIDRs)
 	globalRateLimit := globalRateLimitMiddleware(cfg)
 	moduleFlags := middleware.ModuleFlagsMiddleware(state.moduleFlags)
 
 	var handler http.Handler
-	if cfg.DevStubAuth {
+	switch {
+	case cfg.DevStubAuth:
 		handler = middleware.Chain(instMux,
 			sourceIP,
 			globalRateLimit,
@@ -79,7 +96,39 @@ func withMiddleware(cfg *config.Config, state appState, sm *scs.SessionManager, 
 			obs.HTTPMetricsMiddleware(state.metrics),
 			obs.PanicMiddleware,
 		)
-	} else {
+	case cfg.NaisAuth:
+		verifier := auth.NewNaviktVerifier(ctx, cfg.NaisIssuer, cfg.NaisClientID, cfg.NaisJWKSURI)
+		naisAuth := auth.NaviktMiddleware(
+			verifier,
+			sm,
+			state.queries,
+			cfg.AdminGroups,
+			cfg.AllowedEmailDomains,
+			cfg.SessionHMACKey,
+		)
+		publicRoutes, publicPrefixes := loginExemptRoutesNais()
+		handler = middleware.Chain(instMux,
+			sourceIP,
+			globalRateLimit,
+			sm.LoadAndSave,
+			naisAuth,
+			middleware.RequireLoginExcept(publicRoutes, publicPrefixes),
+			locale.LangMiddleware(state.bundle),
+			// Bind the CSRF token to the authenticated user's stable DB ID so
+			// that the token survives token refreshes (the bearer token changes
+			// on every Wonderwall session renewal, but the user ID is stable).
+			csrf.Middleware(state.csrfKey, cfg.SessionCookieSecure, func(r *http.Request) string {
+				if u, ok := middleware.FromContext(r.Context()); ok {
+					return u.ID
+				}
+				return ""
+			}),
+			moduleFlags,
+			obs.RequestMiddleware("/healthz", "/readyz", cfg.MetricsPath),
+			obs.HTTPMetricsMiddleware(state.metrics),
+			obs.PanicMiddleware,
+		)
+	default:
 		publicRoutes, publicPrefixes := loginExemptRoutes()
 		handler = middleware.Chain(instMux,
 			sourceIP,

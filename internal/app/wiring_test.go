@@ -236,11 +236,11 @@ func TestWithMiddleware_BothBranches(t *testing.T) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusOK) })
 
-	h1 := withMiddleware(cfgDev, state, sm, mux)
+	h1 := withMiddleware(context.Background(), cfgDev, state, sm, mux)
 	if h1 == nil {
 		t.Fatal("expected dev handler")
 	}
-	h2 := withMiddleware(cfgAuth, state, sm, mux)
+	h2 := withMiddleware(context.Background(), cfgAuth, state, sm, mux)
 	if h2 == nil {
 		t.Fatal("expected auth handler")
 	}

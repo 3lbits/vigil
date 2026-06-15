@@ -123,6 +123,7 @@ go install golang.org/x/vuln/cmd/govulncheck@latest
   app setup needed. This is the easiest way to explore Vigil locally.
 - **`DEV_STUB_AUTH=false`**: enable one or more real providers via
   `AUTH_PROVIDERS=github,entra,oidc`.
+- **`NAIS_AUTH=true`**: NAIS/Wonderwall bearer-token mode (see below).
 
 Provider callbacks:
 
@@ -132,6 +133,44 @@ Provider callbacks:
 | Entra ID | `/auth/entra/callback` |
 | Generic OIDC | `/auth/oidc/callback` |
 
+### NAIS / Wonderwall auth mode
+
+When deploying to [NAV's NAIS platform](https://doc.nais.io/auth/entra-id),
+set `NAIS_AUTH=true`. In this mode the Wonderwall login-proxy sidecar handles
+the full OAuth2 flow; Vigil's only job is to **verify** the
+`Authorization: Bearer <token>` header the proxy injects on every request.
+
+- No `AUTH_PROVIDERS`, no OAuth client secret, and no SCS session store needed.
+- Login/logout UI delegates to the proxy at `/oauth2/login` and `/oauth2/logout`.
+- Users are upserted into the same `users` table as other auth modes
+  (`provider="navikt"`, `provider_id=NAVident`).
+- Members of `ADMIN_GROUPS` receive the `admin` role for the duration of the
+  request; all others use the stored DB role.
+- The Cloud SQL SSL check is skipped (NAIS connects via a local Unix-socket
+  proxy where `sslmode=require` is not applicable).
+- `DATABASE_URL` falls back to `NAIS_DATABASE_VIGIL_VIGIL_URL` when unset
+  (NAIS injects this automatically; the naming depends on the app `vigil`
+  and database `vigil` entries in `.nais/nais.yaml`).
+
+NAIS-specific variables (injected automatically by the platform):
+
+| Variable | Purpose |
+|---|---|
+| `AZURE_OPENID_CONFIG_ISSUER` | Token issuer (required when `NAIS_AUTH=true`) |
+| `AZURE_APP_CLIENT_ID` | Expected token audience (required when `NAIS_AUTH=true`) |
+| `AZURE_OPENID_CONFIG_JWKS_URI` | JWKS signing-key endpoint (required when `NAIS_AUTH=true`) |
+| `NAIS_DATABASE_VIGIL_VIGIL_URL` | Cloud SQL connection string (fallback for `DATABASE_URL`) |
+
+App-managed variables for NAIS:
+
+| Variable | Purpose | Default |
+|---|---|---|
+| `NAIS_AUTH` | Enable Wonderwall bearer-token mode | `false` |
+| `ADMIN_GROUPS` | Comma-separated Entra ID group object IDs whose members get `admin` role | empty |
+
+See `.nais/nais.yaml` for the full NAIS `Application` manifest and
+`.github/workflows/nais-deploy.yml` for the deploy workflow.
+
 ## Configuration
 
 Key environment variables. See `.env.example` for the full list with comments.
@@ -140,12 +179,14 @@ Key environment variables. See `.env.example` for the full list with comments.
 |---|---|---|
 | `PORT` | HTTP port | `8080` |
 | `APP_ENV` | Environment mode (`development`, `staging`, `production`) | `development` |
-| `DATABASE_URL` | PostgreSQL DSN | required |
+| `DATABASE_URL` | PostgreSQL DSN (falls back to `NAIS_DATABASE_VIGIL_VIGIL_URL` on NAIS) | required |
 | `ALLOW_INSECURE_DB_SSL` | Staging-only escape hatch for non-TLS DB (`true` allowed only when `APP_ENV=staging`) | `false` |
 | `DEV_STUB_AUTH` | Enables stub auth | `false` |
 | `DEV_SEED` | Enables `cmd/seed` development dataset seeding (development only) | `false` |
+| `NAIS_AUTH` | Enable NAIS/Wonderwall bearer-token auth mode | `false` |
 | `AUTH_PROVIDERS` | Comma-separated providers (`github,entra,oidc`) | falls back to `AUTH_PROVIDER` |
 | `AUTH_ALLOWED_EMAIL_DOMAINS` | Comma-separated OAuth login allowlist domains (e.g. `example.com,subsidiary.org`) | empty (required when `github` is enabled) |
+| `ADMIN_GROUPS` | Comma-separated Entra ID group IDs for admin promotion (NaisAuth only) | empty |
 | `APP_BASE_URL` | Public app URL (used for OIDC redirects) | `http://localhost:8080` |
 | `SESSION_COOKIE_NAME` | Session cookie name | `vigil_session` |
 | `SESSION_COOKIE_SECURE` | Set `Secure` flag on session cookie | `true` (unless explicitly `false`) |
@@ -162,6 +203,7 @@ Key environment variables. See `.env.example` for the full list with comments.
 - OAuth callback first tries to claim a pre-provisioned pending user by email.
 - If no pending user exists, Vigil creates a new `viewer` user for that identity.
 - When `github` is enabled, `AUTH_ALLOWED_EMAIL_DOMAINS` must be set or startup fails.
+- In NaisAuth mode, the same claim-then-upsert logic applies keyed on NAVident.
 
 For public deployments, do not expose GitHub login without a strict domain allowlist.
 

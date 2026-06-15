@@ -1,0 +1,58 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: vigil
+  namespace: <your-team>
+  labels:
+    team: <your-team>
+spec:
+  image: {{image}}
+  port: 8080
+  ingresses:
+    - https://vigil.ansatt.nav.no
+  azure:
+    application:
+      enabled: true            # injects AZURE_APP_* and AZURE_OPENID_CONFIG_*
+      allowAllUsers: true
+      claims:
+        extra:
+          - "NAVident"
+        groups:
+          - id: "<admin-group-object-id>"
+    sidecar:
+      enabled: true            # Wonderwall login proxy
+      autoLogin: true          # redirect unauthenticated requests to /oauth2/login
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_17
+        tier: db-g1-small
+        databases:
+          - name: vigil        # NAIS_DATABASE_VIGIL_VIGIL_URL injected automatically
+  liveness:
+    path: /healthz
+    initialDelay: 20
+  readiness:
+    path: /readyz
+    initialDelay: 20
+  prometheus:
+    enabled: true
+    path: /metrics
+  replicas:
+    min: 2
+    max: 2
+  observability:
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
+  env:
+    - name: APP_ENV
+      value: "production"
+    - name: NAIS_AUTH
+      value: "true"
+    - name: AUTH_ALLOWED_EMAIL_DOMAINS
+      value: "nav.no"
+    - name: ADMIN_GROUPS
+      value: "<admin-group-object-id>"
+  envFrom:
+    - secret: vigil             # SESSION_HMAC_KEY and any other secrets

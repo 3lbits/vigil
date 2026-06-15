@@ -86,7 +86,7 @@ func buildMux(ctx context.Context, cfg *config.Config, state appState, opts Opti
 			return nil, nil, fmt.Errorf("register modules: %w", err)
 		}
 	}
-	if !cfg.DevStubAuth {
+	if !cfg.DevStubAuth && !cfg.NaisAuth {
 		providers, err := buildProviders(ctx, cfg)
 		if err != nil {
 			return nil, nil, err
@@ -94,6 +94,16 @@ func buildMux(ctx context.Context, cfg *config.Config, state appState, opts Opti
 		if err := registry.Register(authmodule.New(providers, cfg.AllowedEmailDomains, sm, cfg.SessionHMACKey, cfg.SessionCookieSecure)); err != nil {
 			return nil, nil, fmt.Errorf("register modules: %w", err)
 		}
+	}
+	if cfg.NaisAuth {
+		// Login and logout are delegated to the Wonderwall proxy. These handlers
+		// provide a fallback redirect in case a user navigates here directly.
+		mux.HandleFunc("GET /login", func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "/oauth2/login", http.StatusFound)
+		})
+		mux.HandleFunc("POST /logout", func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "/oauth2/logout", http.StatusFound)
+		})
 	}
 	if err := registry.MountAll(mux, moduleDeps); err != nil {
 		return nil, nil, fmt.Errorf("mount modules: %w", err)

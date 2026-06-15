@@ -17,6 +17,22 @@ type Config struct {
 	DevSeed      bool
 	AvvikEnabled bool
 
+	// NaisAuth enables the NAIS/Wonderwall bearer-token auth mode.
+	// When true, the app verifies the Authorization: Bearer header injected by
+	// the Wonderwall login-proxy sidecar instead of running its own OAuth flow.
+	// Set via NAIS_AUTH=true.
+	NaisAuth bool
+	// NaisIssuer is the Entra ID token issuer. Set via AZURE_OPENID_CONFIG_ISSUER.
+	NaisIssuer string
+	// NaisClientID is the Entra ID application client ID. Set via AZURE_APP_CLIENT_ID.
+	NaisClientID string
+	// NaisJWKSURI is the JWKS endpoint for token signature verification.
+	// Set via AZURE_OPENID_CONFIG_JWKS_URI.
+	NaisJWKSURI string
+	// AdminGroups is the list of Entra ID group object IDs whose members are
+	// granted the admin role at request time. Set via ADMIN_GROUPS (comma-separated).
+	AdminGroups []string
+
 	// AuthProviders is the list of enabled auth providers (e.g. ["github", "entra"]).
 	// Set via AUTH_PROVIDERS (comma-separated) or the legacy AUTH_PROVIDER variable.
 	AuthProviders []string
@@ -63,13 +79,26 @@ type Config struct {
 
 // Load reads config from environment variables and validates required fields.
 func Load() *Config {
+	// NAIS injects the Cloud SQL URL under a dynamically-named variable
+	// (NAIS_DATABASE_<APP>_<DB>_URL). Fall back to it when DATABASE_URL is empty.
+	databaseURL := os.Getenv("DATABASE_URL")
+	if databaseURL == "" {
+		databaseURL = os.Getenv("NAIS_DATABASE_VIGIL_VIGIL_URL")
+	}
+
 	cfg := &Config{
 		Port:         getEnvWithDefault("PORT", "8080"),
 		AppEnv:       getEnvWithDefault("APP_ENV", "development"),
-		DatabaseURL:  os.Getenv("DATABASE_URL"),
+		DatabaseURL:  databaseURL,
 		DevStubAuth:  os.Getenv("DEV_STUB_AUTH") == "true",
 		DevSeed:      os.Getenv("DEV_SEED") == "true",
 		AvvikEnabled: os.Getenv("AVVIK_ENABLED") == "true",
+
+		NaisAuth:     os.Getenv("NAIS_AUTH") == "true",
+		NaisIssuer:   os.Getenv("AZURE_OPENID_CONFIG_ISSUER"),
+		NaisClientID: os.Getenv("AZURE_APP_CLIENT_ID"),
+		NaisJWKSURI:  os.Getenv("AZURE_OPENID_CONFIG_JWKS_URI"),
+		AdminGroups:  parseCSV(os.Getenv("ADMIN_GROUPS"), false),
 
 		AuthProviders: parseProviders(
 			os.Getenv("AUTH_PROVIDERS"),
@@ -105,38 +134,77 @@ func Load() *Config {
 }
 
 func validateConfig(cfg *Config) {
+	validateDevOnlyToggles(cfg)
+	validateAppEnvironment(cfg)
+	validateProductionSecurity(cfg)
+	validateRequiredValues(cfg)
+	validateRateLimitConfig(cfg)
+	validateNaisAuth(cfg)
+	// Cloud SQL on NAIS connects via a local proxy; the connection string does
+	// not include sslmode=require. Skip the SSL check in NaisAuth mode.
+	if !cfg.NaisAuth {
+		validateDBSSLMode(cfg)
+	}
+}
+
+func validateDevOnlyToggles(cfg *Config) {
 	if cfg.DevStubAuth && cfg.AppEnv != "development" {
 		panic("DEV_STUB_AUTH must not be true outside APP_ENV=development")
 	}
 	if cfg.DevSeed && cfg.AppEnv != "development" {
 		panic("DEV_SEED must not be true outside APP_ENV=development")
 	}
+}
 
+func validateAppEnvironment(cfg *Config) {
 	if !isValidAppEnv(cfg.AppEnv) {
 		panic("APP_ENV must be one of development, staging, or production")
 	}
+}
 
-	if cfg.AppEnv == "production" && !cfg.SessionCookieSecure {
+func validateProductionSecurity(cfg *Config) {
+	if cfg.AppEnv != "production" {
+		return
+	}
+	if !cfg.SessionCookieSecure {
 		panic("SESSION_COOKIE_SECURE must not be false in production")
 	}
-
-	if cfg.AppEnv == "production" && cfg.SessionHMACKey == "" {
+	if cfg.SessionHMACKey == "" {
 		panic("SESSION_HMAC_KEY must be set in production")
 	}
+}
 
+func validateRequiredValues(cfg *Config) {
 	if cfg.DatabaseURL == "" {
 		panic("required environment variable DATABASE_URL is not set")
 	}
 	if hasProvider(cfg.AuthProviders, "github") && len(cfg.AllowedEmailDomains) == 0 {
 		panic("AUTH_ALLOWED_EMAIL_DOMAINS must be set when AUTH_PROVIDERS includes github")
 	}
+}
+
+func validateRateLimitConfig(cfg *Config) {
 	if cfg.GlobalRateLimitPerWindow < 0 {
 		panic("GLOBAL_RATE_LIMIT_PER_WINDOW must be >= 0")
 	}
 	if cfg.GlobalRateLimitWindow <= 0 {
 		panic("GLOBAL_RATE_LIMIT_WINDOW must be > 0")
 	}
-	validateDBSSLMode(cfg)
+}
+
+func validateNaisAuth(cfg *Config) {
+	if !cfg.NaisAuth {
+		return
+	}
+	if cfg.NaisIssuer == "" {
+		panic("AZURE_OPENID_CONFIG_ISSUER must be set when NAIS_AUTH=true")
+	}
+	if cfg.NaisClientID == "" {
+		panic("AZURE_APP_CLIENT_ID must be set when NAIS_AUTH=true")
+	}
+	if cfg.NaisJWKSURI == "" {
+		panic("AZURE_OPENID_CONFIG_JWKS_URI must be set when NAIS_AUTH=true")
+	}
 }
 
 func validateDBSSLMode(cfg *Config) {
