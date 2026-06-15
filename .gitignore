@@ -47,3 +47,6 @@ scripts/loadtest/artifacts/
 vigil-db/
 *.sarif
 reports/
+
+/node_modules/
+/cmd/server/public/js/*.min.js

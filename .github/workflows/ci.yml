@@ -50,24 +50,19 @@ jobs:
         with:
           egress-policy: audit
       - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
-        with:
-          go-version-file: go.mod
-          cache: true
-      - name: Install templ
-        run: go install github.com/a-h/templ/cmd/templ@v0.3.1001
+      - uses: jdx/mise-action@v4
       - name: Generate templ # generated code must exist for the linter to typecheck
         run: templ generate ./...
       - name: Stub Tailwind output # CSS isn't needed to compile Go
         run: touch cmd/server/public/css/output.css
+      - name: Vendor JS assets
+        run: make js-vendor
       - name: go vet
         run: go vet ./...
-      # golangci-lint v2 also enforces formatting (gofmt + goimports) via the
+      # golangci-lint also enforces formatting (gofmt + goimports) via the
       # formatters block in .golangci.yml; generated code is excluded there.
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v9
-        with:
-          version: v2.12.2
+        run: golangci-lint run ./...
 
   test:
     name: Test
@@ -78,16 +73,13 @@ jobs:
         with:
           egress-policy: audit
       - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
-        with:
-          go-version-file: go.mod
-          cache: true
-      - name: Install templ
-        run: go install github.com/a-h/templ/cmd/templ@v0.3.1001
+      - uses: jdx/mise-action@v4
       - name: Generate templ
         run: templ generate ./...
       - name: Stub Tailwind output
         run: touch cmd/server/public/css/output.css
+      - name: Vendor JS assets
+        run: make js-vendor
       - name: Tests (race)
         run: go test -race -count=1 -timeout 120s ./...
 
@@ -107,29 +99,23 @@ jobs:
         with:
           fetch-depth: 0 # full history is required by the gitleaks history scan
           persist-credentials: false # keep the checkout token out of git config
-      - uses: actions/setup-go@v6
-        with:
-          go-version-file: go.mod
-          cache: true
-      - name: Install templ
-        run: go install github.com/a-h/templ/cmd/templ@v0.3.1001
+      - uses: jdx/mise-action@v4
       - name: Generate templ
         run: templ generate ./...
       - name: Stub Tailwind output
         run: touch cmd/server/public/css/output.css
+      - name: Vendor JS assets
+        run: make js-vendor
 
       # Tracked at the latest release so scans pick up the newest advisories.
       - name: govulncheck
-        run: |
-          go install golang.org/x/vuln/cmd/govulncheck@latest
-          govulncheck ./...
+        run: govulncheck ./...
 
       # Static analysis plus working-tree secret detection. --error fails the
       # job on any finding; the SARIF report is written first, so the upload
       # step still runs (if: always) and findings reach the Security tab.
       - name: Semgrep
         run: |
-          python3 -m pip install --quiet semgrep
           semgrep scan --error --sarif --output semgrep.sarif \
             --config p/golang \
             --config p/secrets \

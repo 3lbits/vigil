@@ -3,7 +3,9 @@ package app
 import (
 	"context"
 	"crypto/sha256"
+	"crypto/sha512"
 	"database/sql"
+	"encoding/base64"
 	"fmt"
 	"io/fs"
 	"log/slog"
@@ -104,6 +106,24 @@ func bootstrap(ctx context.Context, cfg *config.Config, opts Options) (appState,
 	h.Write(css)
 	layout.AssetVer = fmt.Sprintf("%x", h.Sum(nil)[:4])
 
+	htmxJS, err := fs.ReadFile(opts.StaticFS, "public/js/htmx.min.js")
+	if err != nil {
+		return appState{}, fmt.Errorf("read embedded htmx js: %w", err)
+	}
+	layout.HTMXIntegrity = sri384(htmxJS)
+
+	alpineJS, err := fs.ReadFile(opts.StaticFS, "public/js/alpine.min.js")
+	if err != nil {
+		return appState{}, fmt.Errorf("read embedded alpine js: %w", err)
+	}
+	layout.AlpineIntegrity = sri384(alpineJS)
+
+	mermaidJS, err := fs.ReadFile(opts.StaticFS, "public/js/mermaid.min.js")
+	if err != nil {
+		return appState{}, fmt.Errorf("read embedded mermaid js: %w", err)
+	}
+	layout.MermaidIntegrity = sri384(mermaidJS)
+
 	return appState{
 		obsShutdown:  obsShutdown,
 		pool:         pool,
@@ -117,6 +137,11 @@ func bootstrap(ctx context.Context, cfg *config.Config, opts Options) (appState,
 		trustedCIDRs: trustedCIDRs,
 		moduleFlags:  moduleFlags,
 	}, nil
+}
+
+func sri384(b []byte) string {
+	sum := sha512.Sum384(b)
+	return "sha384-" + base64.StdEncoding.EncodeToString(sum[:])
 }
 
 func startModuleFlagsCache(

@@ -1,14 +1,8 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
-# ── Versions ─────────────────────────────────────────────────────────
-HTMX_VERSION     ?= 2.0.10
-HTMX_SHA384      ?= H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V
-ALPINE_VERSION   ?= 3.15.11
-ALPINE_SHA384    ?= TIk3zaxqa4vMqf5I0fQA5imzQDYj1TODC6n9XoykD/M+27VHsOJcDkic2bhwMHGN
-
 .PHONY: help setup run dev build test lint pre-commit pre-commit-fast \
-        generate db-up db-reset tailwind-install vendor-js clean \
+        generate db-up db-reset tailwind-install js-vendor clean \
         run-op dev-op generate-sqlc generate-templ css-build css-watch \
         semgrep deadcode db-start db-down db-down-clean db-logs db-psql \
         db-reset-pgadmin db-migrate-create loadtest-browse loadtest-rate-burst \
@@ -70,7 +64,7 @@ build: ## Build server binary to bin/server
 	@mkdir -p bin
 	go build -o bin/server ./cmd/server
 
-generate: generate-sqlc generate-templ css-build ## Run all code generation
+generate: generate-sqlc generate-templ css-build js-vendor ## Run all code generation
 
 lint: ## Run golangci-lint
 	golangci-lint run ./...
@@ -123,17 +117,12 @@ loadtest-rate-burst: ## Run ad-hoc k6 burst scenario to observe 429 behavior
 
 ##@ One-time setup
 
-vendor-js: ## Download and integrity-check htmx and Alpine.js
-	curl -sLo cmd/server/public/js/htmx.min.js \
-	  "https://unpkg.com/htmx.org@$(HTMX_VERSION)/dist/htmx.min.js"
-	@actual=$$(openssl dgst -sha384 -binary cmd/server/public/js/htmx.min.js | openssl base64 -A); \
-	[ "$$actual" = "$(HTMX_SHA384)" ] || { echo "ERROR: htmx hash mismatch"; rm cmd/server/public/js/htmx.min.js; exit 1; }
-	@echo "htmx.min.js OK"
-	curl -sLo cmd/server/public/js/alpine.min.js \
-	  "https://cdn.jsdelivr.net/npm/@alpinejs/csp@$(ALPINE_VERSION)/dist/cdn.min.js"
-	@actual=$$(openssl dgst -sha384 -binary cmd/server/public/js/alpine.min.js | openssl base64 -A); \
-	[ "$$actual" = "$(ALPINE_SHA384)" ] || { echo "ERROR: alpine hash mismatch"; rm cmd/server/public/js/alpine.min.js; exit 1; }
-	@echo "alpine.min.js (CSP build) OK"
+js-vendor: ## Install browser JS deps (bun) and copy into the embed dir
+	bun install
+	@mkdir -p cmd/server/public/js
+	cp node_modules/htmx.org/dist/htmx.min.js     cmd/server/public/js/htmx.min.js
+	cp node_modules/@alpinejs/csp/dist/cdn.min.js cmd/server/public/js/alpine.min.js
+	cp node_modules/mermaid/dist/mermaid.min.js   cmd/server/public/js/mermaid.min.js
 
 # ── Maintainer / hidden targets (no help text — won't appear in `make help`) ──
 

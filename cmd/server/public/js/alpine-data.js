@@ -8,6 +8,10 @@ document.addEventListener('alpine:init', () => {
             mermaidLoadPromise = new Promise((resolve, reject) => {
                 const script = document.createElement('script');
                 script.src = '/public/js/mermaid.min.js';
+                const mermaidIntegrity = document.querySelector('meta[name="mermaid-integrity"]')?.content;
+                if (mermaidIntegrity) {
+                    script.integrity = mermaidIntegrity;
+                }
                 script.async = true;
                 script.onload = () => resolve(window.mermaid);
                 script.onerror = () => reject(new Error('Failed to load Mermaid.'));

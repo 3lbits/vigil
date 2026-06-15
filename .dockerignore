@@ -1,6 +1,7 @@
 # Build output
 bin/
 tmp/
+node_modules/
 
 # Dev/test artifacts
 *.test

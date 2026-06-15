@@ -221,7 +221,7 @@ For public deployments, do not expose GitHub login without a strict domain allow
 | `make pre-commit-fast` | Same without semgrep |
 | `make db-up` / `db-reset` | Manage the local PostgreSQL container |
 | `make dev-seed` / `db-reset-seed` | Seed coherent dev data (manual; dev only) |
-| `make vendor-js` | Download and integrity-check htmx and Alpine.js |
+| `make js-vendor` | Install JS deps with Bun and copy htmx/Alpine/Mermaid into `cmd/server/public/js` |
 | `make loadtest-browse` / `loadtest-rate-burst` | Manual ad-hoc k6 load checks (developer tooling) |
 
 Run `make help` for the full list.

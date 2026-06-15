@@ -84,12 +84,13 @@ templ Layout(title string, subtitle string, activePage string, user middleware.S
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title>{ middleware.TopOrgNameFromContext(ctx) } — { title }</title>
 		<meta name="csrf-token" content={ csrf.TokenFromContext(ctx) }/>
+		<meta name="mermaid-integrity" content={ MermaidIntegrity }/>
 		<link rel="stylesheet" href={ "/public/css/output.css?v=" + AssetVer }/>
 		<script nonce={ middleware.CSPNonceFromContext(ctx) }>(function(){var d=localStorage.getItem('darkMode');if(d==='true')document.documentElement.classList.add('dark');})()</script>
 		<script src={ "/public/js/alpine-data.js?v=" + AssetVer } defer></script>
-		<script src={ "/public/js/alpine.min.js?v=" + AssetVer } defer></script>
+		<script src={ "/public/js/alpine.min.js?v=" + AssetVer } integrity={ AlpineIntegrity } defer></script>
 		<meta name="htmx-config" content='{"includeIndicatorStyles": false}'/>
-		<script src={ "/public/js/htmx.min.js?v=" + AssetVer }></script>
+		<script src={ "/public/js/htmx.min.js?v=" + AssetVer } integrity={ HTMXIntegrity }></script>
 		<script nonce={ middleware.CSPNonceFromContext(ctx) }>
 			document.addEventListener("htmx:configRequest", function(e) {
 				var t = document.querySelector('meta[name="csrf-token"]');
