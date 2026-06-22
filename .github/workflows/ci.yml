@@ -50,7 +50,7 @@ jobs:
         uses: step-security/harden-runner@v2
         with:
           egress-policy: audit
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: jdx/mise-action@v4
         with:
           install_args: >-
@@ -79,7 +79,7 @@ jobs:
         uses: step-security/harden-runner@v2
         with:
           egress-policy: audit
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: jdx/mise-action@v4
         with:
           install_args: >-
@@ -107,7 +107,7 @@ jobs:
         uses: step-security/harden-runner@v2
         with:
           egress-policy: audit
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # full history is required by the gitleaks history scan
           persist-credentials: false # keep the checkout token out of git config
@@ -190,7 +190,7 @@ jobs:
       id-token: write # keyless cosign signing via OIDC
       attestations: write # build-provenance and SBOM attestations
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # tags are needed for `git describe`
       # On a release the ref is the tag (refs/tags/v1.2.3), so the baked-in
