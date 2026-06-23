@@ -48,7 +48,7 @@ func TestMeasureList_ShowsCount(t *testing.T) {
 		{Measure: db.Measure{ID: uuid.New(), Name: "Firewall rules", Status: "implemented"}},
 		{Measure: db.Measure{ID: uuid.New(), Name: "MFA enforcement", Status: "planned"}},
 	}
-	doc := renderToDoc(t, MeasureList(measures, "", "", false, "", "", false, 50))
+	doc := renderToDoc(t, MeasureList(measures, "", "", "name", "asc", false, "", "", false, 50))
 
 	el := doc.Find(`[data-testid="measure-count"]`)
 	if el.Length() != 1 {
@@ -62,7 +62,7 @@ func TestMeasureList_ShowsCount(t *testing.T) {
 // ── MeasuresTable ─────────────────────────────────────────────────────────────
 
 func TestMeasuresTable_EmptyState(t *testing.T) {
-	doc := renderToDoc(t, MeasuresTable(nil, false, 50, "", "", false))
+	doc := renderToDoc(t, MeasuresTable(nil, false, 50, "", "", "name", "asc", false))
 
 	if doc.Find(`[data-testid="no-measures-empty"]`).Length() != 1 {
 		t.Error("expected no-measures-empty when list is empty")
@@ -74,7 +74,7 @@ func TestMeasuresTable_RendersRows(t *testing.T) {
 		{Measure: db.Measure{ID: uuid.New(), Name: "Encryption at rest", Status: "implemented"}},
 		{Measure: db.Measure{ID: uuid.New(), Name: "Key rotation", Status: "planned"}},
 	}
-	doc := renderToDoc(t, MeasuresTable(measures, false, 50, "", "", false))
+	doc := renderToDoc(t, MeasuresTable(measures, false, 50, "", "", "name", "asc", false))
 
 	if doc.Find(`[data-testid="no-measures-empty"]`).Length() != 0 {
 		t.Error("should not show empty state when measures exist")
@@ -91,7 +91,7 @@ func TestMeasuresTable_RendersAllPassedRows(t *testing.T) {
 		{Measure: db.Measure{ID: uuid.New(), Name: "Implemented measure", Status: "implemented"}},
 		{Measure: db.Measure{ID: uuid.New(), Name: "Planned measure", Status: "planned"}},
 	}
-	doc := renderToDoc(t, MeasuresTable(measures, false, 50, "implemented", "", false))
+	doc := renderToDoc(t, MeasuresTable(measures, false, 50, "implemented", "", "name", "asc", false))
 
 	rows := doc.Find("tbody tr")
 	if rows.Length() != 2 {
@@ -103,7 +103,7 @@ func TestMeasuresTable_LoadMoreRow(t *testing.T) {
 	measures := []MeasureVM{
 		{Measure: db.Measure{ID: uuid.New(), Name: "Measure 1", Status: "implemented"}},
 	}
-	doc := renderToDoc(t, MeasuresTable(measures, true, 50, "", "", false))
+	doc := renderToDoc(t, MeasuresTable(measures, true, 50, "", "", "name", "asc", false))
 
 	rows := doc.Find("tbody tr")
 	if rows.Length() != 2 {

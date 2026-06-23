@@ -132,7 +132,7 @@ func kindLabel(k string) string {
 
 // ── Activity list ─────────────────────────────────────────────────────────────
 
-templ ActivityList(rows []db.FilterActivitiesRow, filter, kind, owner string, mine bool, flash, flashType string, hasMore bool, pageSize int32) {
+templ ActivityList(rows []db.FilterActivitiesRow, filter, kind, q, sort, dir string, mine bool, flash, flashType string, hasMore bool, pageSize int32) {
 	@ui.Flash(flash, flashType)
 
 	<div class="flex flex-wrap justify-between items-center gap-3 mb-4">
@@ -146,45 +146,24 @@ templ ActivityList(rows []db.FilterActivitiesRow, filter, kind, owner string, mi
 		</a>
 	</div>
 
-	@activityFilterForm(filter, kind, owner, mine)
-
-	<div id="activities-table" aria-live="polite" aria-atomic="false">
-		@ActivityTable(rows, hasMore, pageSize, filter, kind, owner, mine)
-	</div>
-}
-
-templ activityFilterForm(filter, kind, owner string, mine bool) {
-	<p class="sr-only" aria-live="polite">Results update automatically when filters change.</p>
-	<form
-		id="activity-filters"
-		method="GET"
-		action="/activities"
-		hx-get="/activities"
-		hx-target="#activities-table"
-		hx-swap="innerHTML"
-		hx-push-url="true"
-		hx-trigger="change"
-		hx-on::after-request="if(event.detail.successful){document.querySelector('#activities-table [role=region]')?.focus()}"
-		class="flex flex-wrap gap-2 mb-4 items-center"
-	>
-		<label for="activity-filter-status" class="sr-only">Filter by status</label>
-		<select
-			id="activity-filter-status"
-			name="filter"
-			class="text-[12px] border border-sand-300 rounded-md px-2.5 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-		>
+	@ui.FilterBar(ui.FilterBarProps{ID: "activity-filters", Action: "/activities", Target: "#activities-table"}) {
+		<input type="hidden" name="sort" value={ sort }/>
+		<input type="hidden" name="dir" value={ dir }/>
+		@ui.FilterSearch(ui.FilterSearchProps{
+			Name:    "q",
+			Value:   q,
+			Columns: []string{"label_activity", "label_owner"},
+			Action:  "/activities",
+			Target:  "#activities-table",
+		})
+		@ui.FilterSelect("filter", locale.T(ctx, "filter_all_statuses")) {
 			<option value="" selected?={ filter == "" || filter == "all" }>{ locale.T(ctx, "filter_all_statuses") }</option>
 			<option value="planned" selected?={ filter == "planned" }>{ locale.T(ctx, "status_planned") }</option>
 			<option value="in_progress" selected?={ filter == "in_progress" }>{ locale.T(ctx, "status_in_progress") }</option>
 			<option value="overdue" selected?={ filter == "overdue" }>{ locale.T(ctx, "status_overdue") }</option>
 			<option value="completed" selected?={ filter == "completed" }>{ locale.T(ctx, "status_completed") }</option>
-		</select>
-		<label for="activity-filter-kind" class="sr-only">Filter by kind</label>
-		<select
-			id="activity-filter-kind"
-			name="kind"
-			class="text-[12px] border border-sand-300 rounded-md px-2.5 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-		>
+		}
+		@ui.FilterSelect("kind", locale.T(ctx, "filter_all_kinds")) {
 			<option value="" selected?={ kind == "" || kind == "all" }>{ locale.T(ctx, "filter_all_kinds") }</option>
 			<option value="training" selected?={ kind == "training" }>{ locale.T(ctx, "kind_training") }</option>
 			<option value="exercise" selected?={ kind == "exercise" }>{ locale.T(ctx, "kind_exercise") }</option>
@@ -192,30 +171,16 @@ templ activityFilterForm(filter, kind, owner string, mine bool) {
 			<option value="audit" selected?={ kind == "audit" }>{ locale.T(ctx, "kind_audit") }</option>
 			<option value="remediation" selected?={ kind == "remediation" }>{ locale.T(ctx, "kind_remediation") }</option>
 			<option value="review" selected?={ kind == "review" }>{ locale.T(ctx, "kind_review") }</option>
-		</select>
-		<label for="activity-filter-owner" class="sr-only">Filter by owner</label>
-		<input
-			id="activity-filter-owner"
-			name="owner"
-			type="text"
-			value={ owner }
-			placeholder={ locale.T(ctx, "placeholder_filter_owner") }
-			hx-get="/activities"
-			hx-target="#activities-table"
-			hx-swap="innerHTML"
-			hx-push-url="true"
-			hx-include="closest form"
-			hx-trigger="input changed delay:300ms"
-			class="text-[12px] border border-sand-300 rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 w-44"
-		/>
-		<label class="flex items-center gap-1.5 text-[12px] text-sand-700 cursor-pointer select-none">
-			<input type="checkbox" name="mine" checked?={ mine } class="rounded"/>
-			{ locale.T(ctx, "label_mine_only") }
-		</label>
-	</form>
+		}
+		@ui.FilterMine(mine, "label_mine_only")
+	}
+
+	<div id="activities-table" aria-live="polite" aria-atomic="false">
+		@ActivityTable(rows, hasMore, pageSize, filter, kind, q, sort, dir, mine)
+	</div>
 }
 
-templ ActivityTable(rows []db.FilterActivitiesRow, hasMore bool, pageSize int32, filter, kind, owner string, mine bool) {
+templ ActivityTable(rows []db.FilterActivitiesRow, hasMore bool, pageSize int32, filter, kind, q, sort, dir string, mine bool) {
 	if len(rows) == 0 {
 		@ui.EmptyState(ui.EmptyStateProps{
 			Class: "border-solid border-sand-300/60 rounded-[10px] p-8 bg-white dark:bg-zinc-900",
@@ -241,19 +206,19 @@ templ ActivityTable(rows []db.FilterActivitiesRow, hasMore bool, pageSize int32,
 						},
 					}) {
 						@ui.Tr(ui.TrProps{}) {
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5 text-[11px]"}}) { { locale.T(ctx, "label_activity") } }
+							@ui.SortTh(locale.T(ctx, "label_activity"), "title", ui.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "px-4 py-2.5 text-[11px]")
 							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { { locale.T(ctx, "label_measure") } }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { { locale.T(ctx, "label_kind") } }
+							@ui.SortTh(locale.T(ctx, "label_kind"), "kind", ui.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "py-2.5 text-[11px]")
 							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { { locale.T(ctx, "label_priority") } }
 							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { { locale.T(ctx, "label_recurrence") } }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { { locale.T(ctx, "label_owner") } }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { { locale.T(ctx, "label_due") } }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { { locale.T(ctx, "label_status") } }
+							@ui.SortTh(locale.T(ctx, "label_owner"), "owner", ui.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "py-2.5 text-[11px]")
+							@ui.SortTh(locale.T(ctx, "label_due"), "due_date", ui.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "py-2.5 text-[11px]")
+							@ui.SortTh(locale.T(ctx, "label_status"), "status", ui.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "py-2.5 text-[11px]")
 							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5"}}) { <span class="sr-only">{ locale.T(ctx, "label_actions") }</span> }
 						}
 					}
 					<tbody>
-						@ActivityRows(rows, hasMore, pageSize, filter, kind, owner, mine)
+						@ActivityRows(rows, hasMore, pageSize, filter, kind, q, sort, dir, mine)
 					</tbody>
 				}
 			</div>
@@ -261,7 +226,7 @@ templ ActivityTable(rows []db.FilterActivitiesRow, hasMore bool, pageSize int32,
 	}
 }
 
-templ ActivityRows(rows []db.FilterActivitiesRow, hasMore bool, nextOffset int32, filter, kind, owner string, mine bool) {
+templ ActivityRows(rows []db.FilterActivitiesRow, hasMore bool, nextOffset int32, filter, kind, q, sort, dir string, mine bool) {
 	for _, a := range rows {
 		@ui.Tr(ui.TrProps{
 			Attrs: templ.Attributes{
@@ -335,7 +300,7 @@ templ ActivityRows(rows []db.FilterActivitiesRow, hasMore bool, nextOffset int32
 				},
 			}) {
 				<a
-					href={ templ.SafeURL("/activities?offset=" + fmt.Sprint(nextOffset) + "&filter=" + filter + "&kind=" + kind + "&owner=" + owner + "&mine=" + listMineQueryValue(mine)) }
+					href={ templ.SafeURL("/activities?offset=" + fmt.Sprint(nextOffset) + "&filter=" + filter + "&kind=" + kind + "&q=" + q + "&sort=" + sort + "&dir=" + dir + "&mine=" + listMineQueryValue(mine)) }
 					hx-get="/activities"
 					hx-include="#activity-filters"
 					hx-vals={ fmt.Sprintf(`{"offset":"%d"}`, nextOffset) }

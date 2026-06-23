@@ -49,7 +49,11 @@ type Querier interface {
 	DeleteSessionsByUserID(ctx context.Context, userID uuid.NullUUID) error
 	DeleteUser(ctx context.Context, id uuid.UUID) error
 	FilterActivities(ctx context.Context, arg FilterActivitiesParams) ([]FilterActivitiesRow, error)
+	FilterAllRisks(ctx context.Context, q_ interface{}) ([]FilterAllRisksRow, error)
+	FilterAllRisksForUser(ctx context.Context, arg FilterAllRisksForUserParams) ([]FilterAllRisksForUserRow, error)
 	FilterMeasures(ctx context.Context, arg FilterMeasuresParams) ([]Measure, error)
+	FilterRiskAssessments(ctx context.Context, q_ interface{}) ([]RiskAssessment, error)
+	FilterRiskAssessmentsForUser(ctx context.Context, arg FilterRiskAssessmentsForUserParams) ([]RiskAssessment, error)
 	FlagRiskForReview(ctx context.Context, id uuid.UUID) error
 	GetActivity(ctx context.Context, id uuid.UUID) (GetActivityRow, error)
 	GetAppSettings(ctx context.Context) (AppSetting, error)

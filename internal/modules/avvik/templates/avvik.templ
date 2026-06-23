@@ -27,7 +27,7 @@ type DetailData struct {
 	CanContribute bool
 }
 
-templ AvvikList(items []db.Avvik, orgs []db.Organization, status, risk, orgUnit string, mine bool) {
+templ AvvikList(items []db.Avvik, orgs []db.Organization, q, status, risk, orgUnit string, mine bool) {
 	<div class="flex items-center justify-between mb-4">
 		<p class="text-[13px] text-sand-700">{ fmt.Sprintf("%d avvik", len(items)) }</p>
 		<a href="/avvik/new" class="text-xs font-medium py-1.5 px-3.5 rounded-md border border-sand-400 hover:bg-sand-100 transition-colors flex items-center gap-1.5">
@@ -35,11 +35,15 @@ templ AvvikList(items []db.Avvik, orgs []db.Organization, status, risk, orgUnit 
 			New Avvik
 		</a>
 	</div>
-	<form method="GET" action="/avvik" class="flex flex-wrap gap-2 mb-4 items-center">
-		@ui.Select(ui.SelectProps{
-			Name:  "status",
-			Class: "text-[12px] px-2.5 py-1.5",
-		}) {
+	@ui.FilterBar(ui.FilterBarProps{Action: "/avvik", Target: "#avvik-table"}) {
+		@ui.FilterSearch(ui.FilterSearchProps{
+			Name:    "q",
+			Value:   q,
+			Columns: []string{"label_title", "label_description"},
+			Action:  "/avvik",
+			Target:  "#avvik-table",
+		})
+		@ui.FilterSelect("status", "Filter by status") {
 			<option value="" selected?={ status == "" }>All status</option>
 			<option value="new" selected?={ status == "new" }>new</option>
 			<option value="triaging" selected?={ status == "triaging" }>triaging</option>
@@ -47,30 +51,20 @@ templ AvvikList(items []db.Avvik, orgs []db.Organization, status, risk, orgUnit 
 			<option value="mitigating" selected?={ status == "mitigating" }>mitigating</option>
 			<option value="closed" selected?={ status == "closed" }>closed</option>
 		}
-		@ui.Select(ui.SelectProps{
-			Name:  "risk",
-			Class: "text-[12px] px-2.5 py-1.5",
-		}) {
+		@ui.FilterSelect("risk", "Filter by risk") {
 			<option value="" selected?={ risk == "" }>All risk</option>
 			<option value="low" selected?={ risk == "low" }>low</option>
 			<option value="medium" selected?={ risk == "medium" }>medium</option>
 			<option value="high" selected?={ risk == "high" }>high</option>
 		}
-		@ui.Select(ui.SelectProps{
-			Name:  "org_unit",
-			Class: "text-[12px] px-2.5 py-1.5",
-		}) {
+		@ui.FilterSelect("org_unit", "Filter by org unit") {
 			<option value="" selected?={ orgUnit == "" }>All org units</option>
 			for _, org := range orgs {
 				<option value={ org.ID.String() } selected?={ orgUnit == org.ID.String() }>{ org.Name }</option>
 			}
 		}
-		<label class="flex items-center gap-1.5 text-[12px] text-sand-700 cursor-pointer select-none">
-			<input type="checkbox" name="mine" checked?={ mine } class="rounded"/>
-			Mine
-		</label>
-		<button type="submit" class="text-xs border border-sand-300 rounded-md px-3 py-1.5 hover:bg-sand-100">Filter</button>
-	</form>
+		@ui.FilterMine(mine, "label_mine_only")
+	}
 	<div id="avvik-table">
 		@AvvikTable(items)
 	</div>

@@ -160,26 +160,43 @@ LEFT JOIN measures m ON a.measure_id = m.id
 WHERE
     ($1 = '' OR a.status = $1)
     AND ($2 = '' OR a.kind = $2)
-    AND ($3 = '' OR a.owner ILIKE '%' || $3 || '%')
+    AND ($3 = '' OR a.title ILIKE '%' || $3 || '%' OR a.owner ILIKE '%' || $3 || '%' OR a.description ILIKE '%' || $3 || '%')
     AND (NOT $4::boolean OR a.assignee_id = $5::uuid)
 ORDER BY
-    CASE a.status
-        WHEN 'overdue'     THEN 0
-        WHEN 'in_progress' THEN 1
-        WHEN 'planned'     THEN 2
-        ELSE 3
-    END,
-    a.due_date ASC NULLS LAST,
-    a.created_at DESC
-LIMIT $7 OFFSET $6
+    CASE WHEN $6 = 'default' THEN
+        CASE a.status
+            WHEN 'overdue'     THEN 0
+            WHEN 'in_progress' THEN 1
+            WHEN 'planned'     THEN 2
+            ELSE 3
+        END
+    END ASC,
+    CASE WHEN $6 = 'default' THEN a.due_date END ASC NULLS LAST,
+    CASE WHEN $6 = 'default' THEN a.created_at END DESC,
+    CASE WHEN $6 = 'title' AND $7 = 'asc' THEN a.title END ASC,
+    CASE WHEN $6 = 'title' AND $7 = 'desc' THEN a.title END DESC,
+    CASE WHEN $6 = 'kind' AND $7 = 'asc' THEN a.kind END ASC,
+    CASE WHEN $6 = 'kind' AND $7 = 'desc' THEN a.kind END DESC,
+    CASE WHEN $6 = 'owner' AND $7 = 'asc' THEN a.owner END ASC,
+    CASE WHEN $6 = 'owner' AND $7 = 'desc' THEN a.owner END DESC,
+    CASE WHEN $6 = 'due_date' AND $7 = 'asc' THEN a.due_date END ASC NULLS LAST,
+    CASE WHEN $6 = 'due_date' AND $7 = 'desc' THEN a.due_date END DESC NULLS LAST,
+    CASE WHEN $6 = 'status' AND $7 = 'asc' THEN a.status END ASC,
+    CASE WHEN $6 = 'status' AND $7 = 'desc' THEN a.status END DESC,
+    CASE WHEN $6 = 'created_at' AND $7 = 'asc' THEN a.created_at END ASC,
+    CASE WHEN $6 = 'created_at' AND $7 = 'desc' THEN a.created_at END DESC,
+    a.id ASC
+LIMIT $9 OFFSET $8
 `
 
 type FilterActivitiesParams struct {
 	Status     interface{} `json:"status"`
 	Kind       interface{} `json:"kind"`
-	Owner      interface{} `json:"owner"`
+	Q          interface{} `json:"q"`
 	Mine       bool        `json:"mine"`
 	AssigneeID uuid.UUID   `json:"assignee_id"`
+	Sort       interface{} `json:"sort"`
+	Dir        interface{} `json:"dir"`
 	PageOffset int32       `json:"page_offset"`
 	PageSize   int32       `json:"page_size"`
 }
@@ -212,9 +229,11 @@ func (q *Queries) FilterActivities(ctx context.Context, arg FilterActivitiesPara
 	rows, err := q.db.QueryContext(ctx, filterActivities,
 		arg.Status,
 		arg.Kind,
-		arg.Owner,
+		arg.Q,
 		arg.Mine,
 		arg.AssigneeID,
+		arg.Sort,
+		arg.Dir,
 		arg.PageOffset,
 		arg.PageSize,
 	)

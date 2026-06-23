@@ -19,6 +19,7 @@ type AssessmentListPageVM struct {
 	Flash         string
 	FlashType     string
 	CurrentUserID string
+	Q             string
 }
 
 type WizardStep1VM struct {

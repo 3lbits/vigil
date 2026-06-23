@@ -248,6 +248,18 @@ func (StubQuerier) ListMeasureRiskLinkIDs(_ context.Context) ([]uuid.UUID, error
 }
 func (StubQuerier) ListTopRisks(_ context.Context) ([]db.ListTopRisksRow, error) { return nil, nil }
 func (StubQuerier) ListAllRisks(_ context.Context) ([]db.ListAllRisksRow, error) { return nil, nil }
+func (StubQuerier) FilterAllRisks(_ context.Context, _ interface{}) ([]db.FilterAllRisksRow, error) {
+	return nil, nil
+}
+func (StubQuerier) FilterAllRisksForUser(_ context.Context, _ db.FilterAllRisksForUserParams) ([]db.FilterAllRisksForUserRow, error) {
+	return nil, nil
+}
+func (StubQuerier) FilterRiskAssessments(_ context.Context, _ interface{}) ([]db.RiskAssessment, error) {
+	return nil, nil
+}
+func (StubQuerier) FilterRiskAssessmentsForUser(_ context.Context, _ db.FilterRiskAssessmentsForUserParams) ([]db.RiskAssessment, error) {
+	return nil, nil
+}
 func (StubQuerier) SearchMeasures(_ context.Context, _ string) ([]db.Measure, error) {
 	return nil, nil
 }

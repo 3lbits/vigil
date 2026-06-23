@@ -59,6 +59,10 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, _ := middleware.FromContext(r.Context())
+	if r.Header.Get("HX-Request") == "true" {
+		httputil.Render(w, r, assetstemplates.AssetTable(rows, hasMore, offset+assetsPageSize, search, status))
+		return
+	}
 	httputil.Render(w, r, layout.Layout("page_assets_title", "page_assets_subtitle", "assets", user,
 		assetstemplates.AssetList(rows, search, status, flash, flashType, hasMore, offset+assetsPageSize),
 	))

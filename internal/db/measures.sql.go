@@ -105,17 +105,28 @@ const filterMeasures = `-- name: FilterMeasures :many
 SELECT id, name, description, category, owner, status, created_at, updated_at, last_verified_at, assignee_id, ref_num FROM measures
 WHERE
     ($1 = '' OR status = $1)
-    AND ($2 = '' OR owner ILIKE '%' || $2 || '%')
+    AND ($2 = '' OR name ILIKE '%' || $2 || '%' OR owner ILIKE '%' || $2 || '%' OR description ILIKE '%' || $2 || '%')
     AND (NOT $3::boolean OR assignee_id = $4::uuid)
-ORDER BY name
-LIMIT $6 OFFSET $5
+ORDER BY
+    CASE WHEN $5 = 'name' AND $6 = 'asc' THEN name END ASC,
+    CASE WHEN $5 = 'name' AND $6 = 'desc' THEN name END DESC,
+    CASE WHEN $5 = 'status' AND $6 = 'asc' THEN status END ASC,
+    CASE WHEN $5 = 'status' AND $6 = 'desc' THEN status END DESC,
+    CASE WHEN $5 = 'owner' AND $6 = 'asc' THEN owner END ASC,
+    CASE WHEN $5 = 'owner' AND $6 = 'desc' THEN owner END DESC,
+    CASE WHEN $5 = 'updated_at' AND $6 = 'asc' THEN updated_at END ASC,
+    CASE WHEN $5 = 'updated_at' AND $6 = 'desc' THEN updated_at END DESC,
+    id ASC
+LIMIT $8 OFFSET $7
 `
 
 type FilterMeasuresParams struct {
 	Status     interface{} `json:"status"`
-	Owner      interface{} `json:"owner"`
+	Q          interface{} `json:"q"`
 	Mine       bool        `json:"mine"`
 	AssigneeID uuid.UUID   `json:"assignee_id"`
+	Sort       interface{} `json:"sort"`
+	Dir        interface{} `json:"dir"`
 	PageOffset int32       `json:"page_offset"`
 	PageSize   int32       `json:"page_size"`
 }
@@ -123,9 +134,11 @@ type FilterMeasuresParams struct {
 func (q *Queries) FilterMeasures(ctx context.Context, arg FilterMeasuresParams) ([]Measure, error) {
 	rows, err := q.db.QueryContext(ctx, filterMeasures,
 		arg.Status,
-		arg.Owner,
+		arg.Q,
 		arg.Mine,
 		arg.AssigneeID,
+		arg.Sort,
+		arg.Dir,
 		arg.PageOffset,
 		arg.PageSize,
 	)

@@ -40,6 +40,15 @@ var (
 
 const activitiesPageSize int32 = 50
 
+func normalizeActivitySort(raw string) string {
+	switch raw {
+	case "default", "title", "kind", "owner", "due_date", "status", "created_at":
+		return raw
+	default:
+		return "default"
+	}
+}
+
 // List renders activities with server-side filtering and load-more pagination.
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	if err := h.q.MarkOverdueActivities(r.Context()); err != nil {
@@ -49,7 +58,9 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := q.Get("filter")
 	kind := q.Get("kind")
-	owner := q.Get("owner")
+	search := q.Get("q")
+	sort := normalizeActivitySort(q.Get("sort"))
+	dir := httputil.NormalizeSortDir(q.Get("dir"))
 	mine := q.Get("mine") == "on"
 	flash := q.Get("flash")
 	flashType := q.Get("type")
@@ -69,7 +80,9 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	rows, err := h.q.FilterActivities(r.Context(), db.FilterActivitiesParams{
 		Status:     filter,
 		Kind:       kind,
-		Owner:      owner,
+		Q:          search,
+		Sort:       sort,
+		Dir:        dir,
 		Mine:       mine,
 		AssigneeID: assigneeID,
 		PageSize:   activitiesPageSize + 1,
@@ -92,17 +105,17 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if isHTMX && offset > 0 {
-		httputil.Render(w, r, activitiestemplates.ActivityRows(rows, hasMore, offset+activitiesPageSize, filter, kind, owner, mine))
+		httputil.Render(w, r, activitiestemplates.ActivityRows(rows, hasMore, offset+activitiesPageSize, filter, kind, search, sort, dir, mine))
 		return
 	}
 
 	if isHTMX {
-		httputil.Render(w, r, activitiestemplates.ActivityTable(rows, hasMore, activitiesPageSize, filter, kind, owner, mine))
+		httputil.Render(w, r, activitiestemplates.ActivityTable(rows, hasMore, activitiesPageSize, filter, kind, search, sort, dir, mine))
 		return
 	}
 
 	httputil.Render(w, r, layout.Layout("Activities", "Compliance activity register", "activities", user,
-		activitiestemplates.ActivityList(rows, filter, kind, owner, mine, flash, flashType, hasMore, activitiesPageSize),
+		activitiestemplates.ActivityList(rows, filter, kind, search, sort, dir, mine, flash, flashType, hasMore, activitiesPageSize),
 	))
 }
 

@@ -33,11 +33,22 @@ func NewHandler(q db.Querier, engine *authz.Engine) *Handler {
 
 const measuresPageSize int32 = 50
 
+func normalizeMeasureSort(raw string) string {
+	switch raw {
+	case "name", "status", "owner", "updated_at":
+		return raw
+	default:
+		return "name"
+	}
+}
+
 // buildFilteredMeasureVMs fetches filtered measures and joins framework short names.
-func (h *Handler) buildFilteredMeasureVMs(ctx context.Context, status, owner string, mine bool, assigneeID uuid.UUID, limit, offset int32) ([]measurestemplates.MeasureVM, error) {
+func (h *Handler) buildFilteredMeasureVMs(ctx context.Context, status, q, sort, dir string, mine bool, assigneeID uuid.UUID, limit, offset int32) ([]measurestemplates.MeasureVM, error) {
 	measures, err := h.q.FilterMeasures(ctx, db.FilterMeasuresParams{
 		Status:     status,
-		Owner:      owner,
+		Q:          q,
+		Sort:       sort,
+		Dir:        dir,
 		Mine:       mine,
 		AssigneeID: assigneeID,
 		PageSize:   limit,
@@ -105,7 +116,9 @@ func measureOwnerDisplayName(u db.User) string {
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := q.Get("filter")
-	owner := q.Get("owner")
+	search := q.Get("q")
+	sort := normalizeMeasureSort(q.Get("sort"))
+	dir := httputil.NormalizeSortDir(q.Get("dir"))
 	mine := q.Get("mine") == "on"
 	flash := q.Get("flash")
 	flashType := q.Get("type")
@@ -122,7 +135,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 		assigneeID, _ = uuid.Parse(user.ID)
 	}
 
-	vms, err := h.buildFilteredMeasureVMs(r.Context(), filter, owner, mine, assigneeID, measuresPageSize+1, offset)
+	vms, err := h.buildFilteredMeasureVMs(r.Context(), filter, search, sort, dir, mine, assigneeID, measuresPageSize+1, offset)
 	if err != nil {
 		slog.Error("list measures", "error", err)
 		http.Error(w, "failed to load measures", http.StatusInternalServerError)
@@ -140,17 +153,17 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if isHTMX && offset > 0 {
-		httputil.Render(w, r, measurestemplates.MeasureRows(vms, hasMore, offset+measuresPageSize, filter, owner, mine))
+		httputil.Render(w, r, measurestemplates.MeasureRows(vms, hasMore, offset+measuresPageSize, filter, search, sort, dir, mine))
 		return
 	}
 
 	if isHTMX {
-		httputil.Render(w, r, measurestemplates.MeasuresTable(vms, hasMore, measuresPageSize, filter, owner, mine))
+		httputil.Render(w, r, measurestemplates.MeasuresTable(vms, hasMore, measuresPageSize, filter, search, sort, dir, mine))
 		return
 	}
 
 	httputil.Render(w, r, layout.Layout("Measures", "Security controls and measures", "measures", user,
-		measurestemplates.MeasureList(vms, filter, owner, mine, flash, flashType, hasMore, measuresPageSize),
+		measurestemplates.MeasureList(vms, filter, search, sort, dir, mine, flash, flashType, hasMore, measuresPageSize),
 	))
 }
 

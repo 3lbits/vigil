@@ -47,6 +47,19 @@ WHERE ra.is_public = true
    OR rap.user_id = $1
 ORDER BY ra.updated_at DESC;
 
+-- name: FilterRiskAssessments :many
+SELECT * FROM risk_assessments
+WHERE (sqlc.arg(q) = '' OR name ILIKE '%' || sqlc.arg(q) || '%' OR scope ILIKE '%' || sqlc.arg(q) || '%')
+ORDER BY updated_at DESC;
+
+-- name: FilterRiskAssessmentsForUser :many
+SELECT DISTINCT ra.*
+FROM risk_assessments ra
+LEFT JOIN risk_assessment_participants rap ON rap.assessment_id = ra.id
+WHERE (ra.is_public = true OR ra.risk_owner_id = sqlc.arg(user_id)::uuid OR ra.created_by = sqlc.arg(user_id)::uuid OR rap.user_id = sqlc.arg(user_id)::uuid)
+  AND (sqlc.arg(q) = '' OR ra.name ILIKE '%' || sqlc.arg(q) || '%' OR ra.scope ILIKE '%' || sqlc.arg(q) || '%')
+ORDER BY ra.updated_at DESC;
+
 -- name: GetRiskAssessment :one
 SELECT * FROM risk_assessments WHERE id = $1;
 
@@ -131,6 +144,23 @@ ORDER BY COALESCE(likelihood_current, 0) * COALESCE(consequence_current, 0) DESC
 SELECT r.*, ra.name AS assessment_name, ra.ref_num AS assessment_ref_num
 FROM risks r
 JOIN risk_assessments ra ON ra.id = r.assessment_id
+ORDER BY COALESCE(r.likelihood_current, 0) * COALESCE(r.consequence_current, 0) DESC, r.created_at DESC;
+
+-- name: FilterAllRisks :many
+SELECT r.*, ra.name AS assessment_name, ra.ref_num AS assessment_ref_num
+FROM risks r
+JOIN risk_assessments ra ON ra.id = r.assessment_id
+WHERE (sqlc.arg(q) = '' OR r.name ILIKE '%' || sqlc.arg(q) || '%' OR r.description ILIKE '%' || sqlc.arg(q) || '%' OR ra.name ILIKE '%' || sqlc.arg(q) || '%')
+ORDER BY COALESCE(r.likelihood_current, 0) * COALESCE(r.consequence_current, 0) DESC, r.created_at DESC;
+
+-- name: FilterAllRisksForUser :many
+SELECT r.*, ra.name AS assessment_name, ra.ref_num AS assessment_ref_num
+FROM risks r
+JOIN risk_assessments ra ON ra.id = r.assessment_id
+WHERE (ra.is_public = true OR ra.risk_owner_id = sqlc.arg(user_id)::uuid OR ra.created_by = sqlc.arg(user_id)::uuid OR EXISTS (
+    SELECT 1 FROM risk_assessment_participants rap WHERE rap.assessment_id = ra.id AND rap.user_id = sqlc.arg(user_id)::uuid
+))
+  AND (sqlc.arg(q) = '' OR r.name ILIKE '%' || sqlc.arg(q) || '%' OR r.description ILIKE '%' || sqlc.arg(q) || '%')
 ORDER BY COALESCE(r.likelihood_current, 0) * COALESCE(r.consequence_current, 0) DESC, r.created_at DESC;
 
 -- name: ListOwnedRisks :many

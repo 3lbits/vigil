@@ -305,6 +305,290 @@ func (q *Queries) DeleteRiskAssessment(ctx context.Context, id uuid.UUID) error 
 	return err
 }
 
+const filterAllRisks = `-- name: FilterAllRisks :many
+SELECT r.id, r.assessment_id, r.name, r.likelihood_current, r.consequence_current, r.likelihood_target, r.consequence_target, r.risk_decision, r.status, r.created_at, r.updated_at, r.description, r.likelihood_reasoning, r.consequence_reasoning, r.owner_id, r.decision_notes, r.ref_num, r.review_needed, r.review_due, r.assessed_at, r.assessed_by, r.assessment_rationale, ra.name AS assessment_name, ra.ref_num AS assessment_ref_num
+FROM risks r
+JOIN risk_assessments ra ON ra.id = r.assessment_id
+WHERE ($1 = '' OR r.name ILIKE '%' || $1 || '%' OR r.description ILIKE '%' || $1 || '%' OR ra.name ILIKE '%' || $1 || '%')
+ORDER BY COALESCE(r.likelihood_current, 0) * COALESCE(r.consequence_current, 0) DESC, r.created_at DESC
+`
+
+type FilterAllRisksRow struct {
+	ID                   uuid.UUID     `json:"id"`
+	AssessmentID         uuid.UUID     `json:"assessment_id"`
+	Name                 string        `json:"name"`
+	LikelihoodCurrent    sql.NullInt32 `json:"likelihood_current"`
+	ConsequenceCurrent   sql.NullInt32 `json:"consequence_current"`
+	LikelihoodTarget     sql.NullInt32 `json:"likelihood_target"`
+	ConsequenceTarget    sql.NullInt32 `json:"consequence_target"`
+	RiskDecision         string        `json:"risk_decision"`
+	Status               string        `json:"status"`
+	CreatedAt            time.Time     `json:"created_at"`
+	UpdatedAt            time.Time     `json:"updated_at"`
+	Description          string        `json:"description"`
+	LikelihoodReasoning  string        `json:"likelihood_reasoning"`
+	ConsequenceReasoning string        `json:"consequence_reasoning"`
+	OwnerID              uuid.NullUUID `json:"owner_id"`
+	DecisionNotes        string        `json:"decision_notes"`
+	RefNum               sql.NullInt32 `json:"ref_num"`
+	ReviewNeeded         bool          `json:"review_needed"`
+	ReviewDue            sql.NullTime  `json:"review_due"`
+	AssessedAt           sql.NullTime  `json:"assessed_at"`
+	AssessedBy           uuid.NullUUID `json:"assessed_by"`
+	AssessmentRationale  string        `json:"assessment_rationale"`
+	AssessmentName       string        `json:"assessment_name"`
+	AssessmentRefNum     sql.NullInt32 `json:"assessment_ref_num"`
+}
+
+func (q *Queries) FilterAllRisks(ctx context.Context, q_ interface{}) ([]FilterAllRisksRow, error) {
+	rows, err := q.db.QueryContext(ctx, filterAllRisks, q_)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FilterAllRisksRow
+	for rows.Next() {
+		var i FilterAllRisksRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.AssessmentID,
+			&i.Name,
+			&i.LikelihoodCurrent,
+			&i.ConsequenceCurrent,
+			&i.LikelihoodTarget,
+			&i.ConsequenceTarget,
+			&i.RiskDecision,
+			&i.Status,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Description,
+			&i.LikelihoodReasoning,
+			&i.ConsequenceReasoning,
+			&i.OwnerID,
+			&i.DecisionNotes,
+			&i.RefNum,
+			&i.ReviewNeeded,
+			&i.ReviewDue,
+			&i.AssessedAt,
+			&i.AssessedBy,
+			&i.AssessmentRationale,
+			&i.AssessmentName,
+			&i.AssessmentRefNum,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const filterAllRisksForUser = `-- name: FilterAllRisksForUser :many
+SELECT r.id, r.assessment_id, r.name, r.likelihood_current, r.consequence_current, r.likelihood_target, r.consequence_target, r.risk_decision, r.status, r.created_at, r.updated_at, r.description, r.likelihood_reasoning, r.consequence_reasoning, r.owner_id, r.decision_notes, r.ref_num, r.review_needed, r.review_due, r.assessed_at, r.assessed_by, r.assessment_rationale, ra.name AS assessment_name, ra.ref_num AS assessment_ref_num
+FROM risks r
+JOIN risk_assessments ra ON ra.id = r.assessment_id
+WHERE (ra.is_public = true OR ra.risk_owner_id = $1::uuid OR ra.created_by = $1::uuid OR EXISTS (
+    SELECT 1 FROM risk_assessment_participants rap WHERE rap.assessment_id = ra.id AND rap.user_id = $1::uuid
+))
+  AND ($2 = '' OR r.name ILIKE '%' || $2 || '%' OR r.description ILIKE '%' || $2 || '%')
+ORDER BY COALESCE(r.likelihood_current, 0) * COALESCE(r.consequence_current, 0) DESC, r.created_at DESC
+`
+
+type FilterAllRisksForUserParams struct {
+	UserID uuid.UUID   `json:"user_id"`
+	Q      interface{} `json:"q"`
+}
+
+type FilterAllRisksForUserRow struct {
+	ID                   uuid.UUID     `json:"id"`
+	AssessmentID         uuid.UUID     `json:"assessment_id"`
+	Name                 string        `json:"name"`
+	LikelihoodCurrent    sql.NullInt32 `json:"likelihood_current"`
+	ConsequenceCurrent   sql.NullInt32 `json:"consequence_current"`
+	LikelihoodTarget     sql.NullInt32 `json:"likelihood_target"`
+	ConsequenceTarget    sql.NullInt32 `json:"consequence_target"`
+	RiskDecision         string        `json:"risk_decision"`
+	Status               string        `json:"status"`
+	CreatedAt            time.Time     `json:"created_at"`
+	UpdatedAt            time.Time     `json:"updated_at"`
+	Description          string        `json:"description"`
+	LikelihoodReasoning  string        `json:"likelihood_reasoning"`
+	ConsequenceReasoning string        `json:"consequence_reasoning"`
+	OwnerID              uuid.NullUUID `json:"owner_id"`
+	DecisionNotes        string        `json:"decision_notes"`
+	RefNum               sql.NullInt32 `json:"ref_num"`
+	ReviewNeeded         bool          `json:"review_needed"`
+	ReviewDue            sql.NullTime  `json:"review_due"`
+	AssessedAt           sql.NullTime  `json:"assessed_at"`
+	AssessedBy           uuid.NullUUID `json:"assessed_by"`
+	AssessmentRationale  string        `json:"assessment_rationale"`
+	AssessmentName       string        `json:"assessment_name"`
+	AssessmentRefNum     sql.NullInt32 `json:"assessment_ref_num"`
+}
+
+func (q *Queries) FilterAllRisksForUser(ctx context.Context, arg FilterAllRisksForUserParams) ([]FilterAllRisksForUserRow, error) {
+	rows, err := q.db.QueryContext(ctx, filterAllRisksForUser, arg.UserID, arg.Q)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FilterAllRisksForUserRow
+	for rows.Next() {
+		var i FilterAllRisksForUserRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.AssessmentID,
+			&i.Name,
+			&i.LikelihoodCurrent,
+			&i.ConsequenceCurrent,
+			&i.LikelihoodTarget,
+			&i.ConsequenceTarget,
+			&i.RiskDecision,
+			&i.Status,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Description,
+			&i.LikelihoodReasoning,
+			&i.ConsequenceReasoning,
+			&i.OwnerID,
+			&i.DecisionNotes,
+			&i.RefNum,
+			&i.ReviewNeeded,
+			&i.ReviewDue,
+			&i.AssessedAt,
+			&i.AssessedBy,
+			&i.AssessmentRationale,
+			&i.AssessmentName,
+			&i.AssessmentRefNum,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const filterRiskAssessments = `-- name: FilterRiskAssessments :many
+SELECT id, name, scope, analysis_object, security_objectives, business_objectives, type, status, current_step, last_reviewed_at, created_by, created_at, updated_at, risk_owner_id, org_id, ref_num, acceptance_note, is_public, threat_assessment_enabled, threat_app_description, threat_information_flow FROM risk_assessments
+WHERE ($1 = '' OR name ILIKE '%' || $1 || '%' OR scope ILIKE '%' || $1 || '%')
+ORDER BY updated_at DESC
+`
+
+func (q *Queries) FilterRiskAssessments(ctx context.Context, q_ interface{}) ([]RiskAssessment, error) {
+	rows, err := q.db.QueryContext(ctx, filterRiskAssessments, q_)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []RiskAssessment
+	for rows.Next() {
+		var i RiskAssessment
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Scope,
+			&i.AnalysisObject,
+			&i.SecurityObjectives,
+			&i.BusinessObjectives,
+			&i.Type,
+			&i.Status,
+			&i.CurrentStep,
+			&i.LastReviewedAt,
+			&i.CreatedBy,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.RiskOwnerID,
+			&i.OrgID,
+			&i.RefNum,
+			&i.AcceptanceNote,
+			&i.IsPublic,
+			&i.ThreatAssessmentEnabled,
+			&i.ThreatAppDescription,
+			&i.ThreatInformationFlow,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const filterRiskAssessmentsForUser = `-- name: FilterRiskAssessmentsForUser :many
+SELECT DISTINCT ra.id, ra.name, ra.scope, ra.analysis_object, ra.security_objectives, ra.business_objectives, ra.type, ra.status, ra.current_step, ra.last_reviewed_at, ra.created_by, ra.created_at, ra.updated_at, ra.risk_owner_id, ra.org_id, ra.ref_num, ra.acceptance_note, ra.is_public, ra.threat_assessment_enabled, ra.threat_app_description, ra.threat_information_flow
+FROM risk_assessments ra
+LEFT JOIN risk_assessment_participants rap ON rap.assessment_id = ra.id
+WHERE (ra.is_public = true OR ra.risk_owner_id = $1::uuid OR ra.created_by = $1::uuid OR rap.user_id = $1::uuid)
+  AND ($2 = '' OR ra.name ILIKE '%' || $2 || '%' OR ra.scope ILIKE '%' || $2 || '%')
+ORDER BY ra.updated_at DESC
+`
+
+type FilterRiskAssessmentsForUserParams struct {
+	UserID uuid.UUID   `json:"user_id"`
+	Q      interface{} `json:"q"`
+}
+
+func (q *Queries) FilterRiskAssessmentsForUser(ctx context.Context, arg FilterRiskAssessmentsForUserParams) ([]RiskAssessment, error) {
+	rows, err := q.db.QueryContext(ctx, filterRiskAssessmentsForUser, arg.UserID, arg.Q)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []RiskAssessment
+	for rows.Next() {
+		var i RiskAssessment
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Scope,
+			&i.AnalysisObject,
+			&i.SecurityObjectives,
+			&i.BusinessObjectives,
+			&i.Type,
+			&i.Status,
+			&i.CurrentStep,
+			&i.LastReviewedAt,
+			&i.CreatedBy,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.RiskOwnerID,
+			&i.OrgID,
+			&i.RefNum,
+			&i.AcceptanceNote,
+			&i.IsPublic,
+			&i.ThreatAssessmentEnabled,
+			&i.ThreatAppDescription,
+			&i.ThreatInformationFlow,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const flagRiskForReview = `-- name: FlagRiskForReview :exec
 UPDATE risks
 SET review_needed = TRUE,

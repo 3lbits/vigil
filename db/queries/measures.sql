@@ -2,9 +2,18 @@
 SELECT * FROM measures
 WHERE
     (sqlc.arg(status) = '' OR status = sqlc.arg(status))
-    AND (sqlc.arg(owner) = '' OR owner ILIKE '%' || sqlc.arg(owner) || '%')
+    AND (sqlc.arg(q) = '' OR name ILIKE '%' || sqlc.arg(q) || '%' OR owner ILIKE '%' || sqlc.arg(q) || '%' OR description ILIKE '%' || sqlc.arg(q) || '%')
     AND (NOT sqlc.arg(mine)::boolean OR assignee_id = sqlc.arg(assignee_id)::uuid)
-ORDER BY name
+ORDER BY
+    CASE WHEN sqlc.arg(sort) = 'name' AND sqlc.arg(dir) = 'asc' THEN name END ASC,
+    CASE WHEN sqlc.arg(sort) = 'name' AND sqlc.arg(dir) = 'desc' THEN name END DESC,
+    CASE WHEN sqlc.arg(sort) = 'status' AND sqlc.arg(dir) = 'asc' THEN status END ASC,
+    CASE WHEN sqlc.arg(sort) = 'status' AND sqlc.arg(dir) = 'desc' THEN status END DESC,
+    CASE WHEN sqlc.arg(sort) = 'owner' AND sqlc.arg(dir) = 'asc' THEN owner END ASC,
+    CASE WHEN sqlc.arg(sort) = 'owner' AND sqlc.arg(dir) = 'desc' THEN owner END DESC,
+    CASE WHEN sqlc.arg(sort) = 'updated_at' AND sqlc.arg(dir) = 'asc' THEN updated_at END ASC,
+    CASE WHEN sqlc.arg(sort) = 'updated_at' AND sqlc.arg(dir) = 'desc' THEN updated_at END DESC,
+    id ASC
 LIMIT sqlc.arg(page_size) OFFSET sqlc.arg(page_offset);
 
 -- name: ListMeasures :many

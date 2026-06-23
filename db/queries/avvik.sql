@@ -8,7 +8,8 @@ WHERE
     (sqlc.narg(ksi)::bool IS NULL OR ksi = sqlc.narg(ksi)::bool) AND
     (sqlc.narg(market_sensitive)::bool IS NULL OR market_sensitive = sqlc.narg(market_sensitive)::bool) AND
     (sqlc.narg(org_unit_id)::uuid IS NULL OR org_unit_id = sqlc.narg(org_unit_id)::uuid) AND
-    (NOT sqlc.arg(mine)::bool OR assigned_to = sqlc.arg(assignee_id)::uuid)
+    (NOT sqlc.arg(mine)::bool OR assigned_to = sqlc.arg(assignee_id)::uuid) AND
+    (sqlc.arg(q) = '' OR title ILIKE '%' || sqlc.arg(q) || '%' OR description ILIKE '%' || sqlc.arg(q) || '%')
 ORDER BY updated_at DESC
 LIMIT sqlc.arg(page_size)
 OFFSET sqlc.arg(page_offset);

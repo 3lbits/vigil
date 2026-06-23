@@ -19,7 +19,7 @@ func measureRef(n sql.NullInt32) string {
 
 // ── Measure list ──
 
-templ MeasureList(measures []MeasureVM, filter, owner string, mine bool, flash, flashType string, hasMore bool, pageSize int32) {
+templ MeasureList(measures []MeasureVM, filter, q, sort, dir string, mine bool, flash, flashType string, hasMore bool, pageSize int32) {
 	@ui.Flash(flash, flashType)
 
 	<div class="flex flex-wrap justify-between items-center gap-3 mb-4">
@@ -30,67 +30,32 @@ templ MeasureList(measures []MeasureVM, filter, owner string, mine bool, flash, 
 		</a>
 	</div>
 
-	@measuresFilterForm(filter, owner, mine)
-
-	<!-- Table (htmx swap target) -->
-	<div id="measures-table" aria-live="polite" aria-atomic="false">
-		@MeasuresTable(measures, hasMore, pageSize, filter, owner, mine)
-	</div>
-}
-
-templ measuresFilterForm(filter, owner string, mine bool) {
-	<p class="sr-only" aria-live="polite">Results update automatically when filters change.</p>
-	<form
-		id="measures-filters"
-		method="GET"
-		action="/measures"
-		hx-get="/measures"
-		hx-target="#measures-table"
-		hx-swap="innerHTML"
-		hx-push-url="true"
-		hx-trigger="change"
-		hx-on::after-request="if(event.detail.successful){document.querySelector('#measures-table [role=region]')?.focus()}"
-		class="flex flex-wrap gap-2 mb-4 items-center"
-	>
-		@ui.Select(ui.SelectProps{
-			ID:    "measure-filter-status",
-			Name:  "filter",
-			Class: "w-auto text-[12px] px-2.5 py-1.5",
-			Attrs: templ.Attributes{
-				"aria-label": "Filter by status",
-			},
-		}) {
+	@ui.FilterBar(ui.FilterBarProps{ID: "measures-filters", Action: "/measures", Target: "#measures-table"}) {
+		<input type="hidden" name="sort" value={ sort }/>
+		<input type="hidden" name="dir" value={ dir }/>
+		@ui.FilterSearch(ui.FilterSearchProps{
+			Name:    "q",
+			Value:   q,
+			Columns: []string{"label_name", "label_owner"},
+			Action:  "/measures",
+			Target:  "#measures-table",
+		})
+		@ui.FilterSelect("filter", locale.T(ctx, "filter_all_statuses")) {
 			<option value="" selected?={ filter == "" || filter == "all" }>{ locale.T(ctx, "filter_all_statuses") }</option>
 			<option value="implemented" selected?={ filter == "implemented" }>{ locale.T(ctx, "status_implemented") }</option>
 			<option value="in_progress" selected?={ filter == "in_progress" }>{ locale.T(ctx, "status_in_progress") }</option>
 			<option value="planned" selected?={ filter == "planned" }>{ locale.T(ctx, "status_planned") }</option>
 			<option value="deprecated" selected?={ filter == "deprecated" }>{ locale.T(ctx, "status_deprecated") }</option>
 		}
-		@ui.Input(ui.InputProps{
-			ID:          "measure-filter-owner",
-			Name:        "owner",
-			Type:        "text",
-			Value:       owner,
-			Placeholder: locale.T(ctx, "placeholder_filter_owner"),
-			Class:       "w-44 text-[12px] px-2.5 py-1.5",
-			Attrs: templ.Attributes{
-				"aria-label":    "Filter by owner",
-				"hx-get":        "/measures",
-				"hx-target":     "#measures-table",
-				"hx-swap":       "innerHTML",
-				"hx-push-url":   "true",
-				"hx-include":    "closest form",
-				"hx-trigger":    "input changed delay:300ms",
-			},
-		})
-		<label class="flex items-center gap-1.5 text-[12px] text-sand-700 cursor-pointer select-none">
-			<input type="checkbox" name="mine" checked?={ mine } class="rounded"/>
-			{ locale.T(ctx, "label_mine_only") }
-		</label>
-	</form>
+		@ui.FilterMine(mine, "label_mine_only")
+	}
+
+	<div id="measures-table" aria-live="polite" aria-atomic="false">
+		@MeasuresTable(measures, hasMore, pageSize, filter, q, sort, dir, mine)
+	</div>
 }
 
-templ MeasuresTable(measures []MeasureVM, hasMore bool, pageSize int32, filter, owner string, mine bool) {
+templ MeasuresTable(measures []MeasureVM, hasMore bool, pageSize int32, filter, q, sort, dir string, mine bool) {
 	if len(measures) == 0 {
 		@ui.EmptyState(ui.EmptyStateProps{
 			TestID: "no-measures-empty",
@@ -117,15 +82,15 @@ templ MeasuresTable(measures []MeasureVM, hasMore bool, pageSize int32, filter, 
 						},
 					}) {
 						@ui.Tr(ui.TrProps{}) {
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px]"}}) { { locale.T(ctx, "label_measure") } }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { { locale.T(ctx, "label_status") } }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { { locale.T(ctx, "label_owner") } }
+							@ui.SortTh(locale.T(ctx, "label_measure"), "name", ui.SortState{Col: sort, Dir: dir}, "/measures", "#measures-table", "measures-filters", "px-4 text-[11px]")
+							@ui.SortTh(locale.T(ctx, "label_status"), "status", ui.SortState{Col: sort, Dir: dir}, "/measures", "#measures-table", "measures-filters", "text-[11px]")
+							@ui.SortTh(locale.T(ctx, "label_owner"), "owner", ui.SortState{Col: sort, Dir: dir}, "/measures", "#measures-table", "measures-filters", "text-[11px]")
 							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { { locale.T(ctx, "label_frameworks") } }
 							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-right px-4 text-[11px]"}}) { <span class="sr-only">{ locale.T(ctx, "label_actions") }</span> }
 						}
 					}
 					<tbody>
-						@MeasureRows(measures, hasMore, pageSize, filter, owner, mine)
+						@MeasureRows(measures, hasMore, pageSize, filter, q, sort, dir, mine)
 					</tbody>
 				}
 			</div>
@@ -133,7 +98,7 @@ templ MeasuresTable(measures []MeasureVM, hasMore bool, pageSize int32, filter, 
 	}
 }
 
-templ MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, owner string, mine bool) {
+templ MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, q, sort, dir string, mine bool) {
 	for _, mvm := range measures {
 		@ui.Tr(ui.TrProps{
 			Attrs: templ.Attributes{
@@ -192,7 +157,7 @@ templ MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, 
 				},
 			}) {
 				<a
-					href={ templ.SafeURL("/measures?offset=" + fmt.Sprint(nextOffset) + "&filter=" + filter + "&owner=" + owner + "&mine=" + listMineQueryValue(mine)) }
+					href={ templ.SafeURL("/measures?offset=" + fmt.Sprint(nextOffset) + "&filter=" + filter + "&q=" + q + "&sort=" + sort + "&dir=" + dir + "&mine=" + listMineQueryValue(mine)) }
 					hx-get="/measures"
 					hx-include="#measures-filters"
 					hx-vals={ fmt.Sprintf(`{"offset":"%d"}`, nextOffset) }

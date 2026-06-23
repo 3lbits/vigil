@@ -47,6 +47,7 @@ var (
 
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	user, _ := middleware.FromContext(r.Context())
+	search := r.URL.Query().Get("q")
 	args := db.ListAvvikParams{
 		Status:          nullString(r.URL.Query().Get("status")),
 		RiskLevel:       nullString(r.URL.Query().Get("risk")),
@@ -55,6 +56,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 		MarketSensitive: nullBoolFromQuery(r.URL.Query().Get("market_sensitive")),
 		OrgUnitID:       parseNullUUID(r.URL.Query().Get("org_unit")),
 		Mine:            r.URL.Query().Get("mine") == "on",
+		Q:               search,
 		PageOffset:      0,
 		PageSize:        100,
 	}
@@ -79,7 +81,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	httputil.Render(w, r, layout.Layout("Avvik", "Avvik — nonconformities and security events", "avvik", user,
-		avviktemplates.AvvikList(items, orgs, r.URL.Query().Get("status"), r.URL.Query().Get("risk"), r.URL.Query().Get("org_unit"), args.Mine),
+		avviktemplates.AvvikList(items, orgs, search, r.URL.Query().Get("status"), r.URL.Query().Get("risk"), r.URL.Query().Get("org_unit"), args.Mine),
 	))
 }
 

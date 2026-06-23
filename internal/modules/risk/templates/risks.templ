@@ -33,6 +33,21 @@ templ AssessmentList(vm AssessmentListPageVM) {
 			{ locale.T(ctx, "action_new_assessment") }
 		</a>
 	</div>
+	@ui.FilterBar(ui.FilterBarProps{Action: "/risks", Target: "#assessment-list"}) {
+		@ui.FilterSearch(ui.FilterSearchProps{
+			Name:    "q",
+			Value:   vm.Q,
+			Columns: []string{"label_name", "label_scope"},
+			Action:  "/risks",
+			Target:  "#assessment-list",
+		})
+	}
+	<div id="assessment-list" aria-live="polite" aria-atomic="false">
+		@AssessmentItems(vm)
+	</div>
+}
+
+templ AssessmentItems(vm AssessmentListPageVM) {
 	// Pending-acceptance callout for the risk owner
 	if pendingCount := countPendingForOwner(vm.Assessments, vm.CurrentUserID); pendingCount > 0 {
 		<div class="mb-4 rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 text-[13px] text-orange-800">
@@ -455,7 +470,25 @@ func participantNames(users []db.User) string {
 
 // ── Risk register (flat list across all assessments) ─────────────────────────
 
-templ RiskRegister(risks []db.ListAllRisksRow, lowMax, highMin int) {
+templ RiskRegisterPage(risks []db.ListAllRisksRow, q string, lowMax, highMin int) {
+	<div class="flex items-center justify-between mb-4">
+		<p class="text-[13px] text-sand-700">{ fmt.Sprintf("%d risks", len(risks)) }</p>
+	</div>
+	@ui.FilterBar(ui.FilterBarProps{Action: "/risks/register", Target: "#risk-register-table"}) {
+		@ui.FilterSearch(ui.FilterSearchProps{
+			Name:    "q",
+			Value:   q,
+			Columns: []string{"label_name", "label_description"},
+			Action:  "/risks/register",
+			Target:  "#risk-register-table",
+		})
+	}
+	<div id="risk-register-table" aria-live="polite" aria-atomic="false">
+		@RiskRegister(risks, q, lowMax, highMin)
+	</div>
+}
+
+templ RiskRegister(risks []db.ListAllRisksRow, q string, lowMax, highMin int) {
 	if len(risks) == 0 {
 		@ui.EmptyState(ui.EmptyStateProps{
 			Class: "p-10",

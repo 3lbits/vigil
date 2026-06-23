@@ -1,0 +1,70 @@
+package ui
+
+import "fmt"
+
+type SortState struct {
+	Col string
+	Dir string
+}
+
+func sortNextDir(state SortState, col string) string {
+	if state.Col != col {
+		return "asc"
+	}
+	if state.Dir == "asc" {
+		return "desc"
+	}
+	return "asc"
+}
+
+func sortAria(state SortState, col string) string {
+	if state.Col != col {
+		return "none"
+	}
+	if state.Dir == "desc" {
+		return "descending"
+	}
+	return "ascending"
+}
+
+func sortArrow(state SortState, col string) string {
+	if state.Col != col {
+		return ""
+	}
+	if state.Dir == "desc" {
+		return "↓"
+	}
+	return "↑"
+}
+
+func sortAttrs(state SortState, col, action, target, formID string) templ.Attributes {
+	return templ.Attributes{
+		"role":        "button",
+		"tabindex":    "0",
+		"hx-get":      action,
+		"hx-target":   target,
+		"hx-swap":     "innerHTML",
+		"hx-push-url": "true",
+		"hx-include":  "#" + formID,
+		"hx-vals":     fmt.Sprintf(`{"sort":"%s","dir":"%s","offset":"0"}`, col, sortNextDir(state, col)),
+		"hx-trigger":  "click, keyup[key=='Enter'||key==' ']",
+		"class":       "inline-flex items-center gap-1 cursor-pointer select-none",
+	}
+}
+
+templ SortTh(label, col string, state SortState, action, target, formID string, class string) {
+	@Th(ThProps{
+		Attrs: templ.Attributes{
+			"scope":     "col",
+			"aria-sort": sortAria(state, col),
+			"class":     class,
+		},
+	}) {
+		<span { sortAttrs(state, col, action, target, formID)... }>
+			{ label }
+			if sortArrow(state, col) != "" {
+				<span aria-hidden="true">{ sortArrow(state, col) }</span>
+			}
+		</span>
+	}
+}

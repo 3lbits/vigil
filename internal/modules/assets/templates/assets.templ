@@ -24,19 +24,29 @@ templ AssetList(assets []db.Asset, q, status, flash, flashType string, hasMore b
 		</a>
 	</div>
 
-	<form method="GET" action="/assets" class="flex flex-wrap gap-2 mb-4 items-center">
-		<label for="assets-q" class="sr-only">{ locale.T(ctx, "assets_search_assets") }</label>
-		<input id="assets-q" name="q" type="search" value={ q } placeholder={ locale.T(ctx, "assets_search_name_or_owner") } class="text-[12px] border border-sand-300 rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 w-60"/>
-		<label for="assets-status" class="sr-only">{ locale.T(ctx, "assets_filter_status") }</label>
-		<select id="assets-status" name="status" class="text-[12px] border border-sand-300 rounded-md px-2.5 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+	@ui.FilterBar(ui.FilterBarProps{Action: "/assets", Target: "#assets-table"}) {
+		@ui.FilterSearch(ui.FilterSearchProps{
+			Name:    "q",
+			Value:   q,
+			Columns: []string{"label_name", "label_asset_owner"},
+			Class:   "w-60",
+			Action:  "/assets",
+			Target:  "#assets-table",
+		})
+		@ui.FilterSelect("status", locale.T(ctx, "assets_filter_status")) {
 			<option value="" selected?={ status == "" }>{ locale.T(ctx, "filter_all_statuses") }</option>
 			<option value="active" selected?={ status == "active" }>{ locale.T(ctx, "status_active") }</option>
 			<option value="planned" selected?={ status == "planned" }>{ locale.T(ctx, "status_planned") }</option>
 			<option value="retired" selected?={ status == "retired" }>{ locale.T(ctx, "status_retired") }</option>
-		</select>
-		<button type="submit" class="text-[12px] px-3 py-1.5 rounded border border-sand-300 hover:bg-sand-50 transition-colors">{ locale.T(ctx, "action_search") }</button>
-	</form>
+		}
+	}
 
+	<div id="assets-table" aria-live="polite" aria-atomic="false">
+		@AssetTable(assets, hasMore, nextOffset, q, status)
+	</div>
+}
+
+templ AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status string) {
 	if len(assets) == 0 {
 		@ui.EmptyState(ui.EmptyStateProps{
 			Class: "border-solid border-sand-300/60 rounded-[10px] p-8 bg-white dark:bg-zinc-900",

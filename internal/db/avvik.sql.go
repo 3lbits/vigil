@@ -310,10 +310,11 @@ WHERE
     ($4::bool IS NULL OR ksi = $4::bool) AND
     ($5::bool IS NULL OR market_sensitive = $5::bool) AND
     ($6::uuid IS NULL OR org_unit_id = $6::uuid) AND
-    (NOT $7::bool OR assigned_to = $8::uuid)
+    (NOT $7::bool OR assigned_to = $8::uuid) AND
+    ($9 = '' OR title ILIKE '%' || $9 || '%' OR description ILIKE '%' || $9 || '%')
 ORDER BY updated_at DESC
-LIMIT $10
-OFFSET $9
+LIMIT $11
+OFFSET $10
 `
 
 type ListAvvikParams struct {
@@ -325,6 +326,7 @@ type ListAvvikParams struct {
 	OrgUnitID       uuid.NullUUID  `json:"org_unit_id"`
 	Mine            bool           `json:"mine"`
 	AssigneeID      uuid.UUID      `json:"assignee_id"`
+	Q               interface{}    `json:"q"`
 	PageOffset      int32          `json:"page_offset"`
 	PageSize        int32          `json:"page_size"`
 }
@@ -339,6 +341,7 @@ func (q *Queries) ListAvvik(ctx context.Context, arg ListAvvikParams) ([]Avvik, 
 		arg.OrgUnitID,
 		arg.Mine,
 		arg.AssigneeID,
+		arg.Q,
 		arg.PageOffset,
 		arg.PageSize,
 	)

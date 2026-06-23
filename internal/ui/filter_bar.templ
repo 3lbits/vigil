@@ -1,0 +1,164 @@
+package ui
+
+import (
+	"context"
+	"fmt"
+	"strings"
+	"github.com/3lbits/vigil/internal/locale"
+)
+
+// FilterBarProps configures a list-filter form wrapper.
+type FilterBarProps struct {
+	ID     string // form element ID; required when Target is set (used by hx-include)
+	Action string // GET endpoint, e.g. "/measures"
+	Target string // HTMX swap target, e.g. "#measures-table"; empty = plain-submit mode
+	Class  string
+}
+
+// filterBarClass is the shared visual style for all list filter bars.
+// w-fit keeps it compact on wide screens; max-w-full prevents overflow on mobile.
+const filterBarClass = "flex flex-wrap gap-2 items-center px-3 py-2 bg-sand-50 dark:bg-zinc-800/50 border border-sand-200 dark:border-zinc-700/60 rounded-lg mb-4 w-fit max-w-full"
+
+// FilterBar renders a consistent list-filter form.
+// Live mode (Target non-empty): HTMX-driven with hx-trigger="change" and an a11y announcement.
+// Submit mode (Target empty): plain GET form; include FilterSubmit in children.
+templ FilterBar(p FilterBarProps) {
+	if p.Target != "" {
+		<p class="sr-only" aria-live="polite">Results update automatically when filters change.</p>
+	}
+	<form
+		id={ p.ID }
+		method="GET"
+		action={ templ.SafeURL(p.Action) }
+		class={ cx(filterBarClass, p.Class) }
+		{ filterBarLiveAttrs(p)... }
+	>
+		{ children... }
+	</form>
+}
+
+// filterBarLiveAttrs returns the HTMX attributes for live-filter mode.
+// hx-trigger targets selects and checkboxes only — text search handles its own debounced hx-get.
+// hx-on::after-request is passed via Attributes to avoid templ treating it as a script.
+func filterBarLiveAttrs(p FilterBarProps) templ.Attributes {
+	return templ.Attributes{
+		"hx-get":      p.Action,
+		"hx-target":   p.Target,
+		"hx-swap":     "innerHTML",
+		"hx-push-url": "true",
+		"hx-trigger":  "change from:select, change from:input[type='checkbox']",
+		"hx-on::after-request": fmt.Sprintf(
+			"if(event.detail.successful){document.querySelector('%s [role=region]')?.focus()}",
+			p.Target,
+		),
+	}
+}
+
+// FilterSearchProps configures the text search input in a filter bar.
+type FilterSearchProps struct {
+	ID          string
+	Name        string   // query param name; defaults to "q"
+	Value       string
+	Placeholder string   // explicit placeholder; overridden by Columns if empty
+	Columns     []string // locale keys of searchable columns, e.g. ["label_name","label_owner"]; generates placeholder
+	FormID      string   // bare ID of enclosing form (without #); used for hx-include
+	Action      string   // endpoint for HTMX live search on this input; empty = no HTMX
+	Target      string   // HTMX swap target; must be set together with Action
+	Class       string   // appended to the default filter control class + "pl-8 w-full"
+}
+
+// FilterSearch renders a prominent text search input with a search icon.
+// Debounced HTMX live-search fires on the input itself (300ms) when Action+Target are set.
+// The enclosing FilterBar's hx-trigger intentionally excludes text inputs, so there's no double-fire.
+templ FilterSearch(p FilterSearchProps) {
+	<label for={ filterSearchID(p) } class="sr-only">{ filterSearchPlaceholder(ctx, p) }</label>
+	<div class="relative flex items-center flex-1 min-w-64 sm:min-w-72">
+		<span class="absolute left-2.5 flex items-center text-sand-400 dark:text-zinc-500 pointer-events-none">
+			@IconSVG("search", 13)
+		</span>
+		<input
+			id={ filterSearchID(p) }
+			name={ filterSearchName(p) }
+			type="text"
+			value={ p.Value }
+			placeholder={ filterSearchPlaceholder(ctx, p) }
+			class={ cx(filterControlClass, "pl-8 w-full text-[13px]", p.Class) }
+			autocomplete="off"
+			{ filterSearchAttrs(p)... }
+		/>
+	</div>
+}
+
+// filterSearchPlaceholder returns the placeholder string, generating it from Columns locale keys if Placeholder is empty.
+func filterSearchPlaceholder(ctx context.Context, p FilterSearchProps) string {
+	if p.Placeholder != "" {
+		return p.Placeholder
+	}
+	if len(p.Columns) == 0 {
+		return ""
+	}
+	parts := make([]string, len(p.Columns))
+	for i, key := range p.Columns {
+		parts[i] = locale.T(ctx, key)
+	}
+	return "Search " + strings.Join(parts, ", ") + "…"
+}
+
+// filterControlClass is the shared CSS for filter bar controls.
+// Smaller than formControlClass (used in edit forms) to fit the compact filter bar.
+const filterControlClass = "text-[12px] border border-sand-300 dark:border-zinc-600 rounded-md px-2.5 py-1.5 bg-white dark:bg-zinc-900 text-sand-900 dark:text-zinc-100 outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+
+func filterSearchID(p FilterSearchProps) string {
+	if p.ID != "" {
+		return p.ID
+	}
+	return filterSearchName(p) + "-search"
+}
+
+func filterSearchName(p FilterSearchProps) string {
+	if p.Name != "" {
+		return p.Name
+	}
+	return "q"
+}
+
+func filterSearchAttrs(p FilterSearchProps) templ.Attributes {
+	if p.Action == "" || p.Target == "" {
+		return templ.Attributes{}
+	}
+	include := "closest form"
+	if p.FormID != "" {
+		include = "#" + p.FormID
+	}
+	return templ.Attributes{
+		"hx-get":      p.Action,
+		"hx-target":   p.Target,
+		"hx-swap":     "innerHTML",
+		"hx-push-url": "true",
+		"hx-include":  include,
+		"hx-trigger":  "input changed delay:300ms",
+	}
+}
+
+// FilterMine renders a "mine only" checkbox with consistent filter-bar styling.
+templ FilterMine(checked bool, labelKey string) {
+	<label class="flex items-center gap-1.5 text-[12px] text-sand-700 dark:text-zinc-300 cursor-pointer select-none">
+		<input type="checkbox" name="mine" checked?={ checked } class="rounded"/>
+		{ locale.T(ctx, labelKey) }
+	</label>
+}
+
+// FilterSelect renders a compact <select> for filter bars.
+// w-auto overrides global/form styles that otherwise force selects to full width.
+templ FilterSelect(name, ariaLabel string) {
+	<select name={ name } aria-label={ ariaLabel } class={ cx(filterControlClass, "w-auto min-w-40") }>
+		{ children... }
+	</select>
+}
+
+// FilterSubmit renders a submit button for non-live (submit-mode) filter bars.
+templ FilterSubmit(labelKey string) {
+	<button type="submit" class="text-[12px] px-3 py-1.5 rounded-md border border-sand-300 dark:border-zinc-600 hover:bg-sand-50 dark:hover:bg-zinc-800 transition-colors">
+		{ locale.T(ctx, labelKey) }
+	</button>
+}

@@ -26,17 +26,32 @@ LEFT JOIN measures m ON a.measure_id = m.id
 WHERE
     (sqlc.arg(status) = '' OR a.status = sqlc.arg(status))
     AND (sqlc.arg(kind) = '' OR a.kind = sqlc.arg(kind))
-    AND (sqlc.arg(owner) = '' OR a.owner ILIKE '%' || sqlc.arg(owner) || '%')
+    AND (sqlc.arg(q) = '' OR a.title ILIKE '%' || sqlc.arg(q) || '%' OR a.owner ILIKE '%' || sqlc.arg(q) || '%' OR a.description ILIKE '%' || sqlc.arg(q) || '%')
     AND (NOT sqlc.arg(mine)::boolean OR a.assignee_id = sqlc.arg(assignee_id)::uuid)
 ORDER BY
-    CASE a.status
-        WHEN 'overdue'     THEN 0
-        WHEN 'in_progress' THEN 1
-        WHEN 'planned'     THEN 2
-        ELSE 3
-    END,
-    a.due_date ASC NULLS LAST,
-    a.created_at DESC
+    CASE WHEN sqlc.arg(sort) = 'default' THEN
+        CASE a.status
+            WHEN 'overdue'     THEN 0
+            WHEN 'in_progress' THEN 1
+            WHEN 'planned'     THEN 2
+            ELSE 3
+        END
+    END ASC,
+    CASE WHEN sqlc.arg(sort) = 'default' THEN a.due_date END ASC NULLS LAST,
+    CASE WHEN sqlc.arg(sort) = 'default' THEN a.created_at END DESC,
+    CASE WHEN sqlc.arg(sort) = 'title' AND sqlc.arg(dir) = 'asc' THEN a.title END ASC,
+    CASE WHEN sqlc.arg(sort) = 'title' AND sqlc.arg(dir) = 'desc' THEN a.title END DESC,
+    CASE WHEN sqlc.arg(sort) = 'kind' AND sqlc.arg(dir) = 'asc' THEN a.kind END ASC,
+    CASE WHEN sqlc.arg(sort) = 'kind' AND sqlc.arg(dir) = 'desc' THEN a.kind END DESC,
+    CASE WHEN sqlc.arg(sort) = 'owner' AND sqlc.arg(dir) = 'asc' THEN a.owner END ASC,
+    CASE WHEN sqlc.arg(sort) = 'owner' AND sqlc.arg(dir) = 'desc' THEN a.owner END DESC,
+    CASE WHEN sqlc.arg(sort) = 'due_date' AND sqlc.arg(dir) = 'asc' THEN a.due_date END ASC NULLS LAST,
+    CASE WHEN sqlc.arg(sort) = 'due_date' AND sqlc.arg(dir) = 'desc' THEN a.due_date END DESC NULLS LAST,
+    CASE WHEN sqlc.arg(sort) = 'status' AND sqlc.arg(dir) = 'asc' THEN a.status END ASC,
+    CASE WHEN sqlc.arg(sort) = 'status' AND sqlc.arg(dir) = 'desc' THEN a.status END DESC,
+    CASE WHEN sqlc.arg(sort) = 'created_at' AND sqlc.arg(dir) = 'asc' THEN a.created_at END ASC,
+    CASE WHEN sqlc.arg(sort) = 'created_at' AND sqlc.arg(dir) = 'desc' THEN a.created_at END DESC,
+    a.id ASC
 LIMIT sqlc.arg(page_size) OFFSET sqlc.arg(page_offset);
 
 -- name: ListActivities :many

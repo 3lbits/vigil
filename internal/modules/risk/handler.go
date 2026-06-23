@@ -33,22 +33,24 @@ func NewHandler(q db.Querier, engine *authz.Engine) *Handler {
 
 // ── Assessment list ──────────────────────────────────────────────────────────
 
-func (h *Handler) listAssessments(r *http.Request, user middleware.SessionUser) ([]db.RiskAssessment, error) {
+func (h *Handler) filterAssessments(r *http.Request, user middleware.SessionUser, q string) ([]db.RiskAssessment, error) {
 	if user.Role == "admin" || user.Role == "editor" {
-		rows, err := h.q.ListRiskAssessments(r.Context())
-		return rows, err
+		return h.q.FilterRiskAssessments(r.Context(), q)
 	}
 	userID, _ := uuid.Parse(user.ID)
-	rows, err := h.q.ListRiskAssessmentsForUser(r.Context(), uuid.NullUUID{UUID: userID, Valid: true})
-	return rows, err
+	return h.q.FilterRiskAssessmentsForUser(r.Context(), db.FilterRiskAssessmentsForUserParams{
+		UserID: userID,
+		Q:      q,
+	})
 }
 
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	user, _ := middleware.FromContext(r.Context())
 	flash := r.URL.Query().Get("flash")
 	flashType := r.URL.Query().Get("type")
+	q := r.URL.Query().Get("q")
 
-	assessments, err := h.listAssessments(r, user)
+	assessments, err := h.filterAssessments(r, user, q)
 	if err != nil {
 		slog.Error("list risk assessments", "error", err)
 		http.Error(w, "failed to load assessments", http.StatusInternalServerError)
@@ -73,13 +75,21 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
+	vm := risktemplates.AssessmentListPageVM{
+		Assessments:   vms,
+		Flash:         flash,
+		FlashType:     flashType,
+		CurrentUserID: user.ID,
+		Q:             q,
+	}
+
+	if r.Header.Get("HX-Request") == "true" {
+		httputil.Render(w, r, risktemplates.AssessmentItems(vm))
+		return
+	}
+
 	httputil.Render(w, r, layout.Layout("Risk assessments", "NS 5814 risk assessments", "risk", user,
-		risktemplates.AssessmentList(risktemplates.AssessmentListPageVM{
-			Assessments:   vms,
-			Flash:         flash,
-			FlashType:     flashType,
-			CurrentUserID: user.ID,
-		}),
+		risktemplates.AssessmentList(vm),
 	))
 }
 
@@ -87,19 +97,23 @@ func (h *Handler) RiskRegister(w http.ResponseWriter, r *http.Request) {
 	user, _ := middleware.FromContext(r.Context())
 	gs, _ := h.q.GetRiskGlobalSettings(r.Context())
 	lowMax, highMin := thresholdDefaults(int(gs.LowMax), int(gs.HighMin))
+	q := r.URL.Query().Get("q")
 
 	var risks []db.ListAllRisksRow
 	if user.Role == "admin" || user.Role == "editor" {
-		var err error
-		risks, err = h.q.ListAllRisks(r.Context())
+		rows, err := h.q.FilterAllRisks(r.Context(), q)
 		if err != nil {
 			slog.Error("list all risks", "error", err)
 			http.Error(w, "failed to load risks", http.StatusInternalServerError)
 			return
 		}
+		risks = make([]db.ListAllRisksRow, len(rows))
+		for i, row := range rows {
+			risks[i] = db.ListAllRisksRow(row)
+		}
 	} else {
 		userID, _ := uuid.Parse(user.ID)
-		rows, err := h.q.ListAllRisksForUser(r.Context(), userID)
+		rows, err := h.q.FilterAllRisksForUser(r.Context(), db.FilterAllRisksForUserParams{UserID: userID, Q: q})
 		if err != nil {
 			slog.Error("list risks for user", "error", err)
 			http.Error(w, "failed to load risks", http.StatusInternalServerError)
@@ -111,8 +125,13 @@ func (h *Handler) RiskRegister(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	if r.Header.Get("HX-Request") == "true" {
+		httputil.Render(w, r, risktemplates.RiskRegister(risks, q, lowMax, highMin))
+		return
+	}
+
 	httputil.Render(w, r, layout.Layout("Risk register", "All risks across assessments", "risk-register", user,
-		risktemplates.RiskRegister(risks, lowMax, highMin),
+		risktemplates.RiskRegisterPage(risks, q, lowMax, highMin),
 	))
 }
 
