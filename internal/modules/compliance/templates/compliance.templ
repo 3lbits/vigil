@@ -600,13 +600,13 @@ templ requirementLinksSection(vm RequirementEditVM) {
 			<label for="measure-link-search" class="block text-[12px] font-medium text-sand-700 dark:text-zinc-300">Search and link measure</label>
 			@ui.Input(ui.InputProps{
 				ID:          "measure-link-search",
-				Type:        "search",
+				Type:        "text",
 				Name:        "q",
 				Placeholder: "Type measure name...",
+				Class:       "text-[13px]",
 				Attrs: templ.Attributes{
-					"class":      "text-[13px]",
-					"hx-get":     templ.SafeURL("/compliance/requirements/" + vm.Requirement.ID.String() + "/measures/search"),
-					"hx-trigger": "input changed delay:250ms, search",
+					"hx-get":     "/compliance/requirements/" + vm.Requirement.ID.String() + "/measures/search",
+					"hx-trigger": "input delay:250ms, search",
 					"hx-target":  "#requirement-measure-search-results-" + vm.Requirement.ID.String(),
 					"hx-swap":    "innerHTML",
 				},

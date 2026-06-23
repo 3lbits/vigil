@@ -3400,13 +3400,13 @@ func measureLinksSection(vm MeasureEditVM) templ.Component {
 		}
 		templ_7745c5c3_Err = ui.Input(ui.InputProps{
 			ID:          "requirement-link-search",
-			Type:        "search",
+			Type:        "text",
 			Name:        "q",
 			Placeholder: "Type ref or title...",
+			Class:       "text-[13px]",
 			Attrs: templ.Attributes{
-				"class":      "text-[13px]",
-				"hx-get":     templ.SafeURL("/measures/" + vm.Measure.ID.String() + "/requirements/search"),
-				"hx-trigger": "input changed delay:250ms, search",
+				"hx-get":     "/measures/" + vm.Measure.ID.String() + "/requirements/search",
+				"hx-trigger": "input delay:250ms, search",
 				"hx-target":  "#measure-requirement-search-results-" + vm.Measure.ID.String(),
 				"hx-swap":    "innerHTML",
 			},

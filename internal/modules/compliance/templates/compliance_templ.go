@@ -2854,13 +2854,13 @@ func requirementLinksSection(vm RequirementEditVM) templ.Component {
 		}
 		templ_7745c5c3_Err = ui.Input(ui.InputProps{
 			ID:          "measure-link-search",
-			Type:        "search",
+			Type:        "text",
 			Name:        "q",
 			Placeholder: "Type measure name...",
+			Class:       "text-[13px]",
 			Attrs: templ.Attributes{
-				"class":      "text-[13px]",
-				"hx-get":     templ.SafeURL("/compliance/requirements/" + vm.Requirement.ID.String() + "/measures/search"),
-				"hx-trigger": "input changed delay:250ms, search",
+				"hx-get":     "/compliance/requirements/" + vm.Requirement.ID.String() + "/measures/search",
+				"hx-trigger": "input delay:250ms, search",
 				"hx-target":  "#requirement-measure-search-results-" + vm.Requirement.ID.String(),
 				"hx-swap":    "innerHTML",
 			},

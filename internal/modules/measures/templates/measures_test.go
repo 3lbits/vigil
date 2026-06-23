@@ -110,3 +110,33 @@ func TestMeasuresTable_LoadMoreRow(t *testing.T) {
 		t.Errorf("expected 1 data row + 1 load-more row, got %d", rows.Length())
 	}
 }
+
+// ── measureLinksSection (link-search input) ────────────────────────────────────
+
+// TestMeasureLinksSection_RequirementSearchHasHxGet guards two regressions in the
+// requirement link-search input:
+//   - hx-get must be present and non-empty. Passing the URL as templ.SafeURL inside
+//     an Attrs map silently drops it (templ.RenderAttributes type-switches on the
+//     exact dynamic type and has no SafeURL case), so htmx never fired a request.
+//   - the live-search "text-[13px]" class must survive. It used to be passed via
+//     Attrs["class"], producing a duplicate class attribute the HTML parser discards;
+//     it now goes through InputProps.Class so it merges into the single class attr.
+func TestMeasureLinksSection_RequirementSearchHasHxGet(t *testing.T) {
+	id := uuid.New()
+	doc := renderToDoc(t, measureLinksSection(MeasureEditVM{Measure: db.Measure{ID: id}}))
+
+	input := doc.Find("#requirement-link-search")
+	if input.Length() != 1 {
+		t.Fatalf("expected requirement-link-search input, found %d", input.Length())
+	}
+	hxGet, ok := input.Attr("hx-get")
+	if !ok || hxGet == "" {
+		t.Fatalf("hx-get missing or empty (SafeURL-in-Attrs regression): %q", hxGet)
+	}
+	if !strings.Contains(hxGet, "/measures/"+id.String()+"/requirements/search") {
+		t.Errorf("unexpected hx-get target: %q", hxGet)
+	}
+	if class, _ := input.Attr("class"); !strings.Contains(class, "text-[13px]") {
+		t.Errorf("text-[13px] class dropped (duplicate-class regression): %q", class)
+	}
+}
