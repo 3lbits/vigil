@@ -51,7 +51,7 @@ jobs:
         with:
           egress-policy: audit
       - uses: actions/checkout@v7
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@v4.2.3
         with:
           install_args: >-
             go
@@ -80,7 +80,7 @@ jobs:
         with:
           egress-policy: audit
       - uses: actions/checkout@v7
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@v4.2.3
         with:
           install_args: >-
             go
@@ -111,7 +111,7 @@ jobs:
         with:
           fetch-depth: 0 # full history is required by the gitleaks history scan
           persist-credentials: false # keep the checkout token out of git config
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@v4.2.3
         with:
           install_args: >-
             go
