@@ -264,30 +264,36 @@ templ DashboardContent(stats Stats, frameworks []FrameworkSummary, frameworkFilt
 	<!-- KPI row -->
 	<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
 		@ui.Card(ui.CardProps{}) {
-			<div class="text-xs text-sand-700 dark:text-zinc-400 mb-2">{ locale.T(ctx, "kpi_frameworks_requirements") }</div>
-			<div class="text-[30px] font-bold text-sand-900 dark:text-zinc-100 font-mono leading-none">{ fmt.Sprint(stats.RequirementsCount) }</div>
-			<div class="text-[11px] text-sand-700 dark:text-zinc-400 mt-2">
-				{ locale.T(ctx, "dash_fw_type_counts", map[string]any{
-					"Total": stats.FrameworksCount,
-					"Reg":   typeCount(frameworks, "regulation"),
-					"Std":   typeCount(frameworks, "standard"),
-					"Dir":   typeCount(frameworks, "directive"),
-				}) }
+			<div class="p-5">
+				<div class="text-xs text-sand-700 dark:text-zinc-400 mb-2">{ locale.T(ctx, "kpi_frameworks_requirements") }</div>
+				<div class="text-[30px] font-bold text-sand-900 dark:text-zinc-100 font-mono leading-none">{ fmt.Sprint(stats.RequirementsCount) }</div>
+				<div class="text-[11px] text-sand-700 dark:text-zinc-400 mt-2">
+					{ locale.T(ctx, "dash_fw_type_counts", map[string]any{
+						"Total": stats.FrameworksCount,
+						"Reg":   typeCount(frameworks, "regulation"),
+						"Std":   typeCount(frameworks, "standard"),
+						"Dir":   typeCount(frameworks, "directive"),
+					}) }
+				</div>
 			</div>
 		}
 		@ui.Card(ui.CardProps{
 			Accent: kpiTopColor(stats.CoveredPct()),
 		}) {
+			<div class="p-5">
 			<div class="text-xs text-sand-700 dark:text-zinc-400 mb-2">{ locale.T(ctx, "kpi_requirements_covered") }</div>
 			<div class="text-[30px] font-bold text-sand-900 dark:text-zinc-100 font-mono leading-none">{ fmt.Sprint(stats.CoveredRequirementsCount) }</div>
 			<div class="text-[11px] text-sand-700 dark:text-zinc-400 mt-2">{ locale.T(ctx, "dash_overall_coverage", map[string]any{"Pct": stats.CoveredPct()}) }</div>
+			</div>
 		}
 		@ui.Card(ui.CardProps{
 			Accent: kpiTopColor(stats.ImplementedPct()),
 		}) {
+			<div class="p-5">
 			<div class="text-xs text-sand-700 dark:text-zinc-400 mb-2">{ locale.T(ctx, "kpi_measures_defined") }</div>
 			<div class="text-[30px] font-bold text-sand-900 dark:text-zinc-100 font-mono leading-none">{ fmt.Sprint(stats.MeasuresCount) }</div>
 			<div class="text-[11px] text-sand-700 dark:text-zinc-400 mt-2">{ locale.T(ctx, "dash_reqs_without_measure", map[string]any{"Count": stats.UncoveredRequirementsCount()}) }</div>
+			</div>
 		}
 		if flags.RiskEnabled {
 		@ui.Card(ui.CardProps{
@@ -353,7 +359,7 @@ templ DashboardContent(stats Stats, frameworks []FrameworkSummary, frameworkFilt
 	<!-- Risk management -->
 	if flags.RiskEnabled {
 	@ui.Card(ui.CardProps{}) {
-		<div class="flex items-center justify-between mb-4">
+		<div class="flex items-center justify-between mb-4 p-5">
 			<h2 class="text-[15px] font-bold">{ locale.T(ctx, "section_risk_management") }</h2>
 			<div class="flex items-center gap-2">
 				<form method="GET" action="/" class="flex items-center gap-1.5">
@@ -421,7 +427,7 @@ templ DashboardContent(stats Stats, frameworks []FrameworkSummary, frameworkFilt
 				{ locale.T(ctx, "risk_none_assessed") } <a href="/risks/new" class="text-blue-600 hover:underline">{ locale.T(ctx, "dash_start_first_assessment") }</a>
 			</div>
 		} else {
-			<div class="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-8">
+			<div class="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-8 p-5">
 				<!-- Risk heat map -->
 				<div>
 					<div class="text-xs font-semibold text-sand-700 mb-3">{ locale.T(ctx, "dash_current_risk_map") }</div>
@@ -473,6 +479,7 @@ templ DashboardContent(stats Stats, frameworks []FrameworkSummary, frameworkFilt
 	<!-- Recent activity -->
 	if flags.ActivitiesEnabled {
 	@ui.Card(ui.CardProps{}) {
+		<div class="p-5">
 		<div class="flex items-center justify-between mb-3">
 			<h2 class="text-[14px] font-bold">{ locale.T(ctx, "section_recent_activity") }</h2>
 			<div class="flex items-center gap-3">
@@ -525,6 +532,7 @@ templ DashboardContent(stats Stats, frameworks []FrameworkSummary, frameworkFilt
 				}
 			}
 		</ul>
+		</div>
 	}
 	}
 	<!-- My work -->
@@ -532,6 +540,7 @@ templ DashboardContent(stats Stats, frameworks []FrameworkSummary, frameworkFilt
 		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5">
 			if flags.ActivitiesEnabled {
 			@ui.Card(ui.CardProps{}) {
+				<div class="p-5">
 				<div class="flex items-center justify-between mb-3">
 					<h2 class="text-[14px] font-bold">{ locale.T(ctx, "section_my_activities") }</h2>
 					<a href="/activities" class="text-[12px] text-sand-700 dark:text-zinc-400 hover:text-sand-900 dark:hover:text-zinc-100 flex items-center gap-1">
@@ -559,9 +568,11 @@ templ DashboardContent(stats Stats, frameworks []FrameworkSummary, frameworkFilt
 						}
 					</ul>
 				}
+				</div>
 			}
 			}
 			@ui.Card(ui.CardProps{}) {
+				<div class="p-5">
 				<div class="flex items-center justify-between mb-3">
 					<h2 class="text-[14px] font-bold">{ locale.T(ctx, "section_my_measures") }</h2>
 					<a href="/measures" class="text-[12px] text-sand-700 dark:text-zinc-400 hover:text-sand-900 dark:hover:text-zinc-100 flex items-center gap-1">
@@ -586,6 +597,7 @@ templ DashboardContent(stats Stats, frameworks []FrameworkSummary, frameworkFilt
 						}
 					</ul>
 				}
+				</div>
 			}
 		</div>
 	}
@@ -594,6 +606,7 @@ templ DashboardContent(stats Stats, frameworks []FrameworkSummary, frameworkFilt
 		<!-- Framework list -->
 		if flags.ComplianceEnabled {
 		@ui.Card(ui.CardProps{}) {
+			<div class="p-5">
 			<div class="flex items-center justify-between mb-3">
 				<h2 class="text-[14px] font-bold">{ locale.T(ctx, "section_regulations_standards") }</h2>
 				<a href="/compliance/frameworks/new" class="text-[12px] text-sand-700 hover:text-sand-700 flex items-center gap-1 transition-colors">
@@ -636,10 +649,12 @@ templ DashboardContent(stats Stats, frameworks []FrameworkSummary, frameworkFilt
 					}
 				</ul>
 			}
+			</div>
 		}
 		}
 		<!-- Quick navigation -->
 		@ui.Card(ui.CardProps{}) {
+			<div class="p-5">
 			<h2 class="text-[14px] font-bold mb-3">{ locale.T(ctx, "section_quick_navigation") }</h2>
 			<div class="flex flex-col gap-2.5">
 				if flags.ComplianceEnabled {
@@ -651,7 +666,9 @@ templ DashboardContent(stats Stats, frameworks []FrameworkSummary, frameworkFilt
 				}
 				@quickLink("link", locale.T(ctx, "dash_overlap_analysis"), locale.T(ctx, "dash_overlap_desc"), "/compliance", "", locale.T(ctx, "label_coming"))
 			</div>
+			</div>
 		}
+		
 	</div>
 }
 

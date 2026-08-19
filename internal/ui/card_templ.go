@@ -36,7 +36,7 @@ func Card(p CardProps) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{cx("rounded-xl border border-sand-200 bg-white dark:border-zinc-700 dark:bg-zinc-900 p-5 overflow-hidden", cardAccent(p.Accent))}
+		var templ_7745c5c3_Var2 = []any{cx("rounded-xl border border-sand-200 bg-white dark:border-zinc-700 dark:bg-zinc-900 overflow-hidden", cardAccent(p.Accent))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
