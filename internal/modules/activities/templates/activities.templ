@@ -19,115 +19,42 @@ func activityRef(n sql.NullInt32) string {
 
 // ── Status / type helpers ─────────────────────────────────────────────────────
 
+var activityStatusColor = map[string]ui.TagColor{
+	"completed":   ui.TagSuccess,
+	"in_progress": ui.TagInfo,     // was blue via Class override
+	"overdue":     ui.TagDanger,
+}
+
+var activityKindColor = map[string]ui.TagColor{
+	"training":    ui.TagInfo,
+	"exercise":    ui.TagMetaPurple,
+	"assessment":  ui.TagMetaPurple,
+	"audit":       ui.TagWarning,
+	"remediation": ui.TagMetaOrange,
+	"review":      ui.TagMetaTeal,
+}
+
+var activityPriorityColor = map[string]ui.TagColor{
+	"high": ui.TagDanger,
+	"low":  ui.TagNeutral,
+}
+
 templ statusBadge(status string) {
-	switch status {
-		case "completed":
-			@ui.Badge(ui.BadgeProps{
-				Variant: "success",
-			}) { { locale.T(ctx, "status_completed") } }
-		case "in_progress":
-			@ui.Badge(ui.BadgeProps{
-				Variant: "default",
-				Class:   "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
-			}) { { locale.T(ctx, "status_in_progress") } }
-		case "overdue":
-			@ui.Badge(ui.BadgeProps{
-				Variant: "danger",
-			}) { { locale.T(ctx, "status_overdue") } }
-		default:
-			@ui.Badge(ui.BadgeProps{
-				Variant: "default",
-			}) { { locale.T(ctx, "status_planned") } }
-	}
+	@ui.BadgeTag(activityStatusColor[status], locale.T(ctx, "status_"+status))
 }
 
 templ recurrenceBadge(recurrence string) {
 	if recurrence != "none" {
-		@ui.Badge(ui.BadgeProps{
-			Variant: "default",
-			Class:   "text-[10px] px-1.5 rounded bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950 dark:text-violet-300 dark:border-violet-800",
-		}) {
-			{ locale.T(ctx, "recurrence_" + recurrence) }
-		}
-	}
-}
-
-func recurrenceLabel(r string) string {
-	switch r {
-	case "monthly":
-		return "Monthly"
-	case "tertially":
-		return "Tertially"
-	case "annual":
-		return "Annual"
-	case "ad_hoc":
-		return "Ad-hoc"
-	default:
-		return ""
+		@ui.BadgeTag(ui.TagMetaPurple, locale.T(ctx, "recurrence_"+recurrence))
 	}
 }
 
 templ priorityBadge(priority string) {
-	switch priority {
-		case "high":
-			@ui.Badge(ui.BadgeProps{
-				Variant: "danger",
-				Class:   "text-[10px] px-1.5 rounded",
-			}) { { locale.T(ctx, "priority_high") } }
-		case "low":
-			@ui.Badge(ui.BadgeProps{
-				Variant: "default",
-				Class:   "text-[10px] px-1.5 rounded",
-			}) { { locale.T(ctx, "priority_low") } }
-		default:
-			@ui.Badge(ui.BadgeProps{
-				Variant: "warning",
-				Class:   "text-[10px] px-1.5 rounded",
-			}) { { locale.T(ctx, "priority_medium") } }
-	}
+	@ui.BadgeTag(activityPriorityColor[priority], locale.T(ctx, "priority_"+priority))
 }
 
 templ kindBadge(kind string) {
-	@ui.Badge(ui.BadgeProps{
-		Variant: "default",
-		Class:   kindBadgeClass(kind),
-	}) {
-		{ locale.T(ctx, "kind_" + kind) }
-	}
-}
-
-func kindBadgeClass(kind string) string {
-	switch kind {
-	case "training":
-		return "text-[10px] px-1.5 rounded bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800"
-	case "exercise":
-		return "text-[10px] px-1.5 rounded bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800"
-	case "assessment":
-		return "text-[10px] px-1.5 rounded bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-800"
-	case "audit":
-		return "text-[10px] px-1.5 rounded bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800"
-	case "remediation":
-		return "text-[10px] px-1.5 rounded bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800"
-	default:
-		return "text-[10px] px-1.5 rounded bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950 dark:text-teal-300 dark:border-teal-800"
-	}
-}
-
-func kindLabel(k string) string {
-	switch k {
-	case "training":
-		return "Training"
-	case "exercise":
-		return "Exercise"
-	case "assessment":
-		return "Assessment"
-	case "audit":
-		return "Audit"
-	case "remediation":
-		return "Remediation"
-	default:
-		return "Review"
-	}
+	@ui.BadgeTag(activityKindColor[kind], locale.T(ctx, "kind_"+kind))
 }
 
 // ── Activity list ─────────────────────────────────────────────────────────────

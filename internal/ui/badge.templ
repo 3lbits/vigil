@@ -28,6 +28,41 @@ templ Badge(p BadgeProps) {
 	</span>
 }
 
+type TagColor string
+
+const (
+	// Semantic — the colour carries meaning.
+	TagNeutral TagColor = ""
+	TagSuccess TagColor = "success"
+	TagWarning TagColor = "warning"
+	TagDanger  TagColor = "danger"
+	TagInfo    TagColor = "info"
+
+	// Meta — categorical distinction only. Use for things like activity kind,
+	// where colour aids scanning but implies nothing. Never to signal state.
+	TagMetaPurple TagColor = "meta-purple"
+	TagMetaTeal   TagColor = "meta-teal"
+	TagMetaOrange TagColor = "meta-orange"
+)
+
+var badgeTagColors = map[TagColor]string{
+	TagNeutral: "bg-sand-100 dark:bg-zinc-800 text-sand-700 dark:text-zinc-300 border border-sand-300 dark:border-zinc-600",
+	TagSuccess: "bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800",
+	TagWarning: "bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800",
+	TagDanger:  "bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800",
+	TagInfo:    "bg-blue-50 dark:bg-blue-950 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800",
+
+	TagMetaPurple: "bg-purple-50 dark:bg-purple-950 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800",
+	TagMetaTeal:   "bg-teal-50 dark:bg-teal-950 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800",
+	TagMetaOrange: "bg-orange-50 dark:bg-orange-950 text-orange-800 dark:text-orange-300 border border-orange-200 dark:border-orange-800",
+}
+
+const badgeTagBase = "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
+
+templ BadgeTag(color TagColor, text string) {
+	<span class={ badgeTagBase, badgeTagColors[color] }>{ text }</span>
+}
+
 templ StatusBadge(status string) {
 	switch status {
 		case "implemented":
@@ -43,24 +78,3 @@ templ StatusBadge(status string) {
 	}
 }
 
-type TagColor string
-
-const (
-	TagNeutral TagColor = ""
-	TagSuccess TagColor = "success"
-	TagWarning TagColor = "warning"
-	TagDanger  TagColor = "danger"
-)
-
-const badgeTagBase = "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
-
-var badgeTagColors = map[TagColor]string{
-	TagNeutral: "bg-sand-100 dark:bg-zinc-800 text-sand-700 dark:text-zinc-300 border border-sand-300 dark:border-zinc-600",
-	TagSuccess: "bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800",
-	TagWarning: "bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800",
-	TagDanger:  "bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800",
-}
-
-templ BadgeTag(color TagColor, text string) {
-	<span class={ badgeTagBase, badgeTagColors[color] }>{ text }</span>
-}
