@@ -352,10 +352,7 @@ templ DashboardContent(stats Stats, frameworks []FrameworkSummary, frameworkFilt
 	</div>
 	<!-- Risk management -->
 	if flags.RiskEnabled {
-	@ui.Card(ui.CardProps{
-		Class:   "mb-5",
-		Padding: "p-6",
-	}) {
+	@ui.Card(ui.CardProps{}) {
 		<div class="flex items-center justify-between mb-4">
 			<h2 class="text-[15px] font-bold">{ locale.T(ctx, "section_risk_management") }</h2>
 			<div class="flex items-center gap-2">
@@ -475,9 +472,7 @@ templ DashboardContent(stats Stats, frameworks []FrameworkSummary, frameworkFilt
 	}
 	<!-- Recent activity -->
 	if flags.ActivitiesEnabled {
-	@ui.Card(ui.CardProps{
-		Class: "mb-5",
-	}) {
+	@ui.Card(ui.CardProps{}) {
 		<div class="flex items-center justify-between mb-3">
 			<h2 class="text-[14px] font-bold">{ locale.T(ctx, "section_recent_activity") }</h2>
 			<div class="flex items-center gap-3">

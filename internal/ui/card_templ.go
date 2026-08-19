@@ -11,10 +11,8 @@ import templruntime "github.com/a-h/templ/runtime"
 import "strings"
 
 type CardProps struct {
-	Class   string
-	Padding string
-	Accent  string
-	Attrs   templ.Attributes
+	Accent string
+	Attrs  templ.Attributes
 }
 
 func Card(p CardProps) templ.Component {
@@ -38,7 +36,7 @@ func Card(p CardProps) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{cx("rounded-xl border border-sand-200 bg-white dark:border-zinc-700 dark:bg-zinc-900", cardPadding(p.Padding), cardAccent(p.Accent), p.Class)}
+		var templ_7745c5c3_Var2 = []any{cx("rounded-xl border border-sand-200 bg-white dark:border-zinc-700 dark:bg-zinc-900 p-5 overflow-hidden", cardAccent(p.Accent))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -78,13 +76,6 @@ func Card(p CardProps) templ.Component {
 		}
 		return nil
 	})
-}
-
-func cardPadding(padding string) string {
-	if strings.TrimSpace(padding) == "" {
-		return "p-5"
-	}
-	return padding
 }
 
 func cardAccent(accent string) string {

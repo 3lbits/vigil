@@ -466,7 +466,7 @@ func MeasuresTable(measures []MeasureVM, hasMore bool, pageSize int32, filter, q
 								var templ_7745c5c3_Var21 string
 								templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_frameworks"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 88, Col: 128}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 85, Col: 128}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 								if templ_7745c5c3_Err != nil {
@@ -501,7 +501,7 @@ func MeasuresTable(measures []MeasureVM, hasMore bool, pageSize int32, filter, q
 								var templ_7745c5c3_Var23 string
 								templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_actions"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 89, Col: 163}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 86, Col: 163}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 								if templ_7745c5c3_Err != nil {
@@ -561,10 +561,7 @@ func MeasuresTable(measures []MeasureVM, hasMore bool, pageSize int32, filter, q
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = ui.Card(ui.CardProps{
-				Class:   "border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden",
-				Padding: "p-0",
-			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = ui.Card(ui.CardProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -631,7 +628,7 @@ func MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, q
 						var templ_7745c5c3_Var27 string
 						templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(measureRef(mvm.Measure.RefNum))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 111, Col: 116}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 108, Col: 116}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 						if templ_7745c5c3_Err != nil {
@@ -649,7 +646,7 @@ func MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, q
 					var templ_7745c5c3_Var28 templ.SafeURL
 					templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/measures/" + mvm.Measure.ID.String()))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 113, Col: 68}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 110, Col: 68}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 					if templ_7745c5c3_Err != nil {
@@ -662,7 +659,7 @@ func MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, q
 					var templ_7745c5c3_Var29 string
 					templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(mvm.Measure.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 113, Col: 154}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 110, Col: 154}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 					if templ_7745c5c3_Err != nil {
@@ -680,7 +677,7 @@ func MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, q
 						var templ_7745c5c3_Var30 string
 						templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(mvm.Measure.Category)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 116, Col: 66}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 113, Col: 66}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 						if templ_7745c5c3_Err != nil {
@@ -748,7 +745,7 @@ func MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, q
 						var templ_7745c5c3_Var33 string
 						templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(mvm.OwnerDisplay)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 126, Col: 23}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 123, Col: 23}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 						if templ_7745c5c3_Err != nil {
@@ -795,7 +792,7 @@ func MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, q
 						var templ_7745c5c3_Var35 string
 						templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(fw)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 135, Col: 174}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 132, Col: 174}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 						if templ_7745c5c3_Err != nil {
@@ -839,7 +836,7 @@ func MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, q
 					var templ_7745c5c3_Var37 templ.SafeURL
 					templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/measures/" + mvm.Measure.ID.String() + "/edit"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 140, Col: 77}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 137, Col: 77}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 					if templ_7745c5c3_Err != nil {
@@ -852,7 +849,7 @@ func MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, q
 					var templ_7745c5c3_Var38 string
 					templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.ResolveAttributeValue("Edit measure " + mvm.Measure.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 141, Col: 52}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 138, Col: 52}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var38)
 					if templ_7745c5c3_Err != nil {
@@ -911,7 +908,7 @@ func MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, q
 					var templ_7745c5c3_Var41 templ.SafeURL
 					templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/measures?offset=" + fmt.Sprint(nextOffset) + "&filter=" + filter + "&q=" + q + "&sort=" + sort + "&dir=" + dir + "&mine=" + listMineQueryValue(mine)))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 160, Col: 177}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 157, Col: 177}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 					if templ_7745c5c3_Err != nil {
@@ -924,7 +921,7 @@ func MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, q
 					var templ_7745c5c3_Var42 string
 					templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf(`{"offset":"%d"}`, nextOffset))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 163, Col: 57}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 160, Col: 57}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var42)
 					if templ_7745c5c3_Err != nil {
@@ -1101,7 +1098,7 @@ func MeasureCoreFields() templ.Component {
 			var templ_7745c5c3_Var48 string
 			templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_due_date_measure_hint"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 215, Col: 92}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 212, Col: 92}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var48))
 			if templ_7745c5c3_Err != nil {
@@ -1158,7 +1155,7 @@ func MeasureForm(m *db.Measure, users []db.User, flash, flashType string) templ.
 		var templ_7745c5c3_Var50 templ.SafeURL
 		templ_7745c5c3_Var50, templ_7745c5c3_Err = templ.JoinURLErrs(measureFormAction(m))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 226, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 223, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var50))
 		if templ_7745c5c3_Err != nil {
@@ -1171,7 +1168,7 @@ func MeasureForm(m *db.Measure, users []db.User, flash, flashType string) templ.
 		var templ_7745c5c3_Var51 string
 		templ_7745c5c3_Var51, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 227, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 224, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var51)
 		if templ_7745c5c3_Err != nil {
@@ -1253,7 +1250,7 @@ func MeasureForm(m *db.Measure, users []db.User, flash, flashType string) templ.
 					var templ_7745c5c3_Var54 string
 					templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.ResolveAttributeValue(opt.Val)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 248, Col: 29}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 245, Col: 29}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var54)
 					if templ_7745c5c3_Err != nil {
@@ -1276,7 +1273,7 @@ func MeasureForm(m *db.Measure, users []db.User, flash, flashType string) templ.
 					var templ_7745c5c3_Var55 string
 					templ_7745c5c3_Var55, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, opt.Key))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 248, Col: 110}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 245, Col: 110}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var55))
 					if templ_7745c5c3_Err != nil {
@@ -1322,7 +1319,7 @@ func MeasureForm(m *db.Measure, users []db.User, flash, flashType string) templ.
 				var templ_7745c5c3_Var57 string
 				templ_7745c5c3_Var57, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_create_measure"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 260, Col: 46}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 257, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var57))
 				if templ_7745c5c3_Err != nil {
@@ -1332,7 +1329,7 @@ func MeasureForm(m *db.Measure, users []db.User, flash, flashType string) templ.
 				var templ_7745c5c3_Var58 string
 				templ_7745c5c3_Var58, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_save_changes"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 262, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 259, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var58))
 				if templ_7745c5c3_Err != nil {
@@ -1356,7 +1353,7 @@ func MeasureForm(m *db.Measure, users []db.User, flash, flashType string) templ.
 		var templ_7745c5c3_Var59 string
 		templ_7745c5c3_Var59, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_cancel"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 266, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 263, Col: 37}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var59))
 		if templ_7745c5c3_Err != nil {
@@ -1374,7 +1371,7 @@ func MeasureForm(m *db.Measure, users []db.User, flash, flashType string) templ.
 			var templ_7745c5c3_Var60 string
 			templ_7745c5c3_Var60, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL("/measures/" + m.ID.String() + "/delete"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 271, Col: 74}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 268, Col: 74}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var60)
 			if templ_7745c5c3_Err != nil {
@@ -1387,7 +1384,7 @@ func MeasureForm(m *db.Measure, users []db.User, flash, flashType string) templ.
 			var templ_7745c5c3_Var61 string
 			templ_7745c5c3_Var61, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_delete"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 276, Col: 38}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 273, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var61))
 			if templ_7745c5c3_Err != nil {
@@ -1477,7 +1474,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 			var templ_7745c5c3_Var63 templ.SafeURL
 			templ_7745c5c3_Var63, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/measures/" + vm.Measure.ID.String() + "/edit"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 322, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 319, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var63))
 			if templ_7745c5c3_Err != nil {
@@ -1513,7 +1510,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 			var templ_7745c5c3_Var64 string
 			templ_7745c5c3_Var64, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Measure.Category)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 338, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 335, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var64))
 			if templ_7745c5c3_Err != nil {
@@ -1532,7 +1529,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 			var templ_7745c5c3_Var65 string
 			templ_7745c5c3_Var65, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Measure.Owner)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 342, Col: 49}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 339, Col: 49}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var65))
 			if templ_7745c5c3_Err != nil {
@@ -1551,7 +1548,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 			var templ_7745c5c3_Var66 string
 			templ_7745c5c3_Var66, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Measure.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 346, Col: 55}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 343, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var66))
 			if templ_7745c5c3_Err != nil {
@@ -1574,7 +1571,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 			var templ_7745c5c3_Var67 string
 			templ_7745c5c3_Var67, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "section_documentation"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 352, Col: 115}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 349, Col: 115}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var67))
 			if templ_7745c5c3_Err != nil {
@@ -1592,7 +1589,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 				var templ_7745c5c3_Var68 templ.SafeURL
 				templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(lnk.Url))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 356, Col: 38}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 353, Col: 38}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var68))
 				if templ_7745c5c3_Err != nil {
@@ -1606,7 +1603,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 					var templ_7745c5c3_Var69 string
 					templ_7745c5c3_Var69, templ_7745c5c3_Err = templ.JoinStringErrs(lnk.Label)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 359, Col: 19}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 356, Col: 19}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var69))
 					if templ_7745c5c3_Err != nil {
@@ -1616,7 +1613,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 					var templ_7745c5c3_Var70 string
 					templ_7745c5c3_Var70, templ_7745c5c3_Err = templ.JoinStringErrs(lnk.Url)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 361, Col: 17}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 358, Col: 17}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var70))
 					if templ_7745c5c3_Err != nil {
@@ -1640,7 +1637,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 		var templ_7745c5c3_Var71 string
 		templ_7745c5c3_Var71, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "section_requirements"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 372, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 369, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var71))
 		if templ_7745c5c3_Err != nil {
@@ -1653,7 +1650,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 		var templ_7745c5c3_Var72 string
 		templ_7745c5c3_Var72, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(len(vm.LinkedReqs)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 373, Col: 93}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 370, Col: 93}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var72))
 		if templ_7745c5c3_Err != nil {
@@ -1671,7 +1668,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 			var templ_7745c5c3_Var73 string
 			templ_7745c5c3_Var73, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "req_none_linked_yet"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 376, Col: 97}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 373, Col: 97}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var73))
 			if templ_7745c5c3_Err != nil {
@@ -1852,7 +1849,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 							var templ_7745c5c3_Var82 string
 							templ_7745c5c3_Var82, templ_7745c5c3_Err = templ.JoinStringErrs(req.FrameworkShortName)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 400, Col: 197}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 397, Col: 197}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var82))
 							if templ_7745c5c3_Err != nil {
@@ -1917,7 +1914,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 							var templ_7745c5c3_Var85 templ.SafeURL
 							templ_7745c5c3_Var85, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/compliance/requirements/" + req.ID.String()))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 404, Col: 79}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 401, Col: 79}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var85))
 							if templ_7745c5c3_Err != nil {
@@ -1930,7 +1927,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 							var templ_7745c5c3_Var86 string
 							templ_7745c5c3_Var86, templ_7745c5c3_Err = templ.JoinStringErrs(req.Title)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 404, Col: 137}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 401, Col: 137}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var86))
 							if templ_7745c5c3_Err != nil {
@@ -1979,7 +1976,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 		var templ_7745c5c3_Var87 string
 		templ_7745c5c3_Var87, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "section_activities"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 416, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 413, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var87))
 		if templ_7745c5c3_Err != nil {
@@ -1992,7 +1989,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 		var templ_7745c5c3_Var88 string
 		templ_7745c5c3_Var88, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(len(vm.Activities)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 417, Col: 93}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 414, Col: 93}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var88))
 		if templ_7745c5c3_Err != nil {
@@ -2010,7 +2007,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 			var templ_7745c5c3_Var89 string
 			templ_7745c5c3_Var89, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "activities_none_linked"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 420, Col: 81}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 417, Col: 81}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var89))
 			if templ_7745c5c3_Err != nil {
@@ -2191,7 +2188,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 							var templ_7745c5c3_Var98 templ.SafeURL
 							templ_7745c5c3_Var98, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/activities/" + a.ID.String()))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 444, Col: 64}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 441, Col: 64}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var98))
 							if templ_7745c5c3_Err != nil {
@@ -2204,7 +2201,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 							var templ_7745c5c3_Var99 string
 							templ_7745c5c3_Var99, templ_7745c5c3_Err = templ.JoinStringErrs(a.Title)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 444, Col: 120}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 441, Col: 120}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var99))
 							if templ_7745c5c3_Err != nil {
@@ -2266,7 +2263,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 								var templ_7745c5c3_Var102 string
 								templ_7745c5c3_Var102, templ_7745c5c3_Err = templ.JoinStringErrs(a.DueDate.Time.Format("2006-01-02"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 449, Col: 47}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 446, Col: 47}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var102))
 								if templ_7745c5c3_Err != nil {
@@ -2322,7 +2319,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 			var templ_7745c5c3_Var103 string
 			templ_7745c5c3_Var103, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "section_linked_risks"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 465, Col: 43}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 462, Col: 43}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var103))
 			if templ_7745c5c3_Err != nil {
@@ -2335,7 +2332,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 			var templ_7745c5c3_Var104 string
 			templ_7745c5c3_Var104, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(len(vm.LinkedRisks)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 466, Col: 95}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 463, Col: 95}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var104))
 			if templ_7745c5c3_Err != nil {
@@ -2358,7 +2355,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 				var templ_7745c5c3_Var106 templ.SafeURL
 				templ_7745c5c3_Var106, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/risks/" + risk.AssessmentID.String() + "/risks/" + risk.ID.String()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 471, Col: 97}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 468, Col: 97}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var106))
 				if templ_7745c5c3_Err != nil {
@@ -2384,7 +2381,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 				var templ_7745c5c3_Var108 string
 				templ_7745c5c3_Var108, templ_7745c5c3_Err = templ.JoinStringErrs(risk.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 474, Col: 81}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 471, Col: 81}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var108))
 				if templ_7745c5c3_Err != nil {
@@ -2420,7 +2417,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 					var templ_7745c5c3_Var111 string
 					templ_7745c5c3_Var111, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(int(risk.LikelihoodCurrent.Int32) * int(risk.ConsequenceCurrent.Int32)))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 478, Col: 97}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 475, Col: 97}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var111))
 					if templ_7745c5c3_Err != nil {
@@ -2433,7 +2430,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 					var templ_7745c5c3_Var112 string
 					templ_7745c5c3_Var112, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_now"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 479, Col: 74}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 476, Col: 74}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var112))
 					if templ_7745c5c3_Err != nil {
@@ -2474,7 +2471,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 					var templ_7745c5c3_Var115 string
 					templ_7745c5c3_Var115, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(int(risk.LikelihoodTarget.Int32) * int(risk.ConsequenceTarget.Int32)))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 485, Col: 95}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 482, Col: 95}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var115))
 					if templ_7745c5c3_Err != nil {
@@ -2487,7 +2484,7 @@ func MeasureDetail(vm MeasureDetailVM) templ.Component {
 					var templ_7745c5c3_Var116 string
 					templ_7745c5c3_Var116, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_target_score"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 486, Col: 83}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 483, Col: 83}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var116))
 					if templ_7745c5c3_Err != nil {
@@ -2613,7 +2610,7 @@ func measureRecentChanges(auditLog []db.ListAuditLogForMeasureRow, wrapperClass 
 		var templ_7745c5c3_Var121 string
 		templ_7745c5c3_Var121, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_recent_changes_toggle"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 520, Col: 150}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 517, Col: 150}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var121))
 		if templ_7745c5c3_Err != nil {
@@ -2642,7 +2639,7 @@ func measureRecentChanges(auditLog []db.ListAuditLogForMeasureRow, wrapperClass 
 			var templ_7745c5c3_Var123 string
 			templ_7745c5c3_Var123, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_recent_changes"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 523, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 520, Col: 68}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var123))
 			if templ_7745c5c3_Err != nil {
@@ -2691,7 +2688,7 @@ func measureRecentChanges(auditLog []db.ListAuditLogForMeasureRow, wrapperClass 
 						var templ_7745c5c3_Var127 string
 						templ_7745c5c3_Var127, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_event"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 530, Col: 152}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 527, Col: 152}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var127))
 						if templ_7745c5c3_Err != nil {
@@ -2722,7 +2719,7 @@ func measureRecentChanges(auditLog []db.ListAuditLogForMeasureRow, wrapperClass 
 						var templ_7745c5c3_Var129 string
 						templ_7745c5c3_Var129, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_by"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 531, Col: 144}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 528, Col: 144}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var129))
 						if templ_7745c5c3_Err != nil {
@@ -2753,7 +2750,7 @@ func measureRecentChanges(auditLog []db.ListAuditLogForMeasureRow, wrapperClass 
 						var templ_7745c5c3_Var131 string
 						templ_7745c5c3_Var131, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_when"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 532, Col: 146}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 529, Col: 146}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var131))
 						if templ_7745c5c3_Err != nil {
@@ -2813,7 +2810,7 @@ func measureRecentChanges(auditLog []db.ListAuditLogForMeasureRow, wrapperClass 
 						var templ_7745c5c3_Var134 string
 						templ_7745c5c3_Var134, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_no_changes_yet"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 547, Col: 51}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 544, Col: 51}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var134))
 						if templ_7745c5c3_Err != nil {
@@ -2870,7 +2867,7 @@ func measureRecentChanges(auditLog []db.ListAuditLogForMeasureRow, wrapperClass 
 								var templ_7745c5c3_Var137 string
 								templ_7745c5c3_Var137, templ_7745c5c3_Err = templ.JoinStringErrs(measureAuditEventLabel(entry.Event))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 557, Col: 121}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 554, Col: 121}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var137))
 								if templ_7745c5c3_Err != nil {
@@ -2902,7 +2899,7 @@ func measureRecentChanges(auditLog []db.ListAuditLogForMeasureRow, wrapperClass 
 									var templ_7745c5c3_Var139 string
 									templ_7745c5c3_Var139, templ_7745c5c3_Err = templ.JoinStringErrs(entry.UserName)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 560, Col: 27}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 557, Col: 27}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var139))
 									if templ_7745c5c3_Err != nil {
@@ -2939,7 +2936,7 @@ func measureRecentChanges(auditLog []db.ListAuditLogForMeasureRow, wrapperClass 
 								var templ_7745c5c3_Var141 string
 								templ_7745c5c3_Var141, templ_7745c5c3_Err = templ.JoinStringErrs(entry.EventTime.Format("2 Jan 2006 15:04"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 565, Col: 147}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 562, Col: 147}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var141))
 								if templ_7745c5c3_Err != nil {
@@ -3010,7 +3007,7 @@ func measureLinksSection(vm MeasureEditVM) templ.Component {
 		var templ_7745c5c3_Var143 string
 		templ_7745c5c3_Var143, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "section_requirements"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 578, Col: 113}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 575, Col: 113}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var143))
 		if templ_7745c5c3_Err != nil {
@@ -3028,7 +3025,7 @@ func measureLinksSection(vm MeasureEditVM) templ.Component {
 			var templ_7745c5c3_Var144 string
 			templ_7745c5c3_Var144, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "req_none_linked_yet"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 580, Col: 83}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 577, Col: 83}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var144))
 			if templ_7745c5c3_Err != nil {
@@ -3235,7 +3232,7 @@ func measureLinksSection(vm MeasureEditVM) templ.Component {
 							var templ_7745c5c3_Var154 string
 							templ_7745c5c3_Var154, templ_7745c5c3_Err = templ.JoinStringErrs(req.FrameworkShortName)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 605, Col: 197}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 602, Col: 197}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var154))
 							if templ_7745c5c3_Err != nil {
@@ -3326,7 +3323,7 @@ func measureLinksSection(vm MeasureEditVM) templ.Component {
 							var templ_7745c5c3_Var158 templ.SafeURL
 							templ_7745c5c3_Var158, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/measures/" + vm.Measure.ID.String() + "/requirements/" + req.ID.String() + "/delete"))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 610, Col: 139}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 607, Col: 139}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var158))
 							if templ_7745c5c3_Err != nil {
@@ -3339,7 +3336,7 @@ func measureLinksSection(vm MeasureEditVM) templ.Component {
 							var templ_7745c5c3_Var159 string
 							templ_7745c5c3_Var159, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 611, Col: 78}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 608, Col: 78}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var159)
 							if templ_7745c5c3_Err != nil {
@@ -3352,7 +3349,7 @@ func measureLinksSection(vm MeasureEditVM) templ.Component {
 							var templ_7745c5c3_Var160 string
 							templ_7745c5c3_Var160, templ_7745c5c3_Err = templ.ResolveAttributeValue("Remove requirement " + req.Ref + ": " + req.Title)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 612, Col: 95}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 609, Col: 95}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var160)
 							if templ_7745c5c3_Err != nil {
@@ -3454,7 +3451,7 @@ func MeasureRequirementSearchResults(measureID string, requirements []db.ListReq
 		var templ_7745c5c3_Var162 string
 		templ_7745c5c3_Var162, templ_7745c5c3_Err = templ.ResolveAttributeValue("measure-requirement-search-results-" + measureID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 642, Col: 60}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 639, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var162)
 		if templ_7745c5c3_Err != nil {
@@ -3527,7 +3524,7 @@ func MeasureRequirementSearchResults(measureID string, requirements []db.ListReq
 							var templ_7745c5c3_Var166 string
 							templ_7745c5c3_Var166, templ_7745c5c3_Err = templ.JoinStringErrs(req.FrameworkShortName)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 659, Col: 197}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 656, Col: 197}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var166))
 							if templ_7745c5c3_Err != nil {
@@ -3618,7 +3615,7 @@ func MeasureRequirementSearchResults(measureID string, requirements []db.ListReq
 							var templ_7745c5c3_Var170 templ.SafeURL
 							templ_7745c5c3_Var170, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/measures/" + measureID + "/requirements"))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 664, Col: 95}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 661, Col: 95}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var170))
 							if templ_7745c5c3_Err != nil {
@@ -3631,7 +3628,7 @@ func MeasureRequirementSearchResults(measureID string, requirements []db.ListReq
 							var templ_7745c5c3_Var171 string
 							templ_7745c5c3_Var171, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 665, Col: 78}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 662, Col: 78}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var171)
 							if templ_7745c5c3_Err != nil {
@@ -3644,7 +3641,7 @@ func MeasureRequirementSearchResults(measureID string, requirements []db.ListReq
 							var templ_7745c5c3_Var172 string
 							templ_7745c5c3_Var172, templ_7745c5c3_Err = templ.ResolveAttributeValue(req.ID.String())
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 666, Col: 76}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 663, Col: 76}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var172)
 							if templ_7745c5c3_Err != nil {
@@ -3657,7 +3654,7 @@ func MeasureRequirementSearchResults(measureID string, requirements []db.ListReq
 							var templ_7745c5c3_Var173 string
 							templ_7745c5c3_Var173, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_link_requirement"))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 667, Col: 128}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 664, Col: 128}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var173))
 							if templ_7745c5c3_Err != nil {
@@ -3735,7 +3732,7 @@ func measureDocSection(vm MeasureEditVM) templ.Component {
 		var templ_7745c5c3_Var175 string
 		templ_7745c5c3_Var175, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "section_documentation"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 681, Col: 114}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 678, Col: 114}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var175))
 		if templ_7745c5c3_Err != nil {
@@ -3758,7 +3755,7 @@ func measureDocSection(vm MeasureEditVM) templ.Component {
 				var templ_7745c5c3_Var176 templ.SafeURL
 				templ_7745c5c3_Var176, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(lnk.Url))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 687, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 684, Col: 39}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var176))
 				if templ_7745c5c3_Err != nil {
@@ -3772,7 +3769,7 @@ func measureDocSection(vm MeasureEditVM) templ.Component {
 					var templ_7745c5c3_Var177 string
 					templ_7745c5c3_Var177, templ_7745c5c3_Err = templ.JoinStringErrs(lnk.Label)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 690, Col: 20}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 687, Col: 20}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var177))
 					if templ_7745c5c3_Err != nil {
@@ -3782,7 +3779,7 @@ func measureDocSection(vm MeasureEditVM) templ.Component {
 					var templ_7745c5c3_Var178 string
 					templ_7745c5c3_Var178, templ_7745c5c3_Err = templ.JoinStringErrs(lnk.Url)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 692, Col: 18}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 689, Col: 18}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var178))
 					if templ_7745c5c3_Err != nil {
@@ -3801,7 +3798,7 @@ func measureDocSection(vm MeasureEditVM) templ.Component {
 					var templ_7745c5c3_Var179 string
 					templ_7745c5c3_Var179, templ_7745c5c3_Err = templ.JoinStringErrs(lnk.Url)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 696, Col: 91}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 693, Col: 91}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var179))
 					if templ_7745c5c3_Err != nil {
@@ -3819,7 +3816,7 @@ func measureDocSection(vm MeasureEditVM) templ.Component {
 				var templ_7745c5c3_Var180 templ.SafeURL
 				templ_7745c5c3_Var180, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/measures/" + vm.Measure.ID.String() + "/links/" + lnk.ID.String() + "/delete"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 699, Col: 129}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 696, Col: 129}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var180))
 				if templ_7745c5c3_Err != nil {
@@ -3832,7 +3829,7 @@ func measureDocSection(vm MeasureEditVM) templ.Component {
 				var templ_7745c5c3_Var181 string
 				templ_7745c5c3_Var181, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 700, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 697, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var181)
 				if templ_7745c5c3_Err != nil {
@@ -3845,7 +3842,7 @@ func measureDocSection(vm MeasureEditVM) templ.Component {
 				var templ_7745c5c3_Var182 string
 				templ_7745c5c3_Var182, templ_7745c5c3_Err = templ.ResolveAttributeValue("Remove link " + lnk.Url)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 701, Col: 66}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 698, Col: 66}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var182)
 				if templ_7745c5c3_Err != nil {
@@ -3873,7 +3870,7 @@ func measureDocSection(vm MeasureEditVM) templ.Component {
 		var templ_7745c5c3_Var183 templ.SafeURL
 		templ_7745c5c3_Var183, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/measures/" + vm.Measure.ID.String() + "/links"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 709, Col: 94}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 706, Col: 94}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var183))
 		if templ_7745c5c3_Err != nil {
@@ -3886,7 +3883,7 @@ func measureDocSection(vm MeasureEditVM) templ.Component {
 		var templ_7745c5c3_Var184 string
 		templ_7745c5c3_Var184, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 710, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 707, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var184)
 		if templ_7745c5c3_Err != nil {
@@ -3933,7 +3930,7 @@ func measureDocSection(vm MeasureEditVM) templ.Component {
 		var templ_7745c5c3_Var185 string
 		templ_7745c5c3_Var185, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_add_link"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 733, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 730, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var185))
 		if templ_7745c5c3_Err != nil {
@@ -4119,7 +4116,7 @@ func measureAssigneePicker(m *db.Measure, users []db.User) templ.Component {
 					var templ_7745c5c3_Var193 string
 					templ_7745c5c3_Var193, templ_7745c5c3_Err = templ.ResolveAttributeValue(u.ID.String())
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 779, Col: 34}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 776, Col: 34}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var193)
 					if templ_7745c5c3_Err != nil {
@@ -4142,7 +4139,7 @@ func measureAssigneePicker(m *db.Measure, users []db.User) templ.Component {
 					var templ_7745c5c3_Var194 string
 					templ_7745c5c3_Var194, templ_7745c5c3_Err = templ.JoinStringErrs(u.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 779, Col: 92}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 776, Col: 92}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var194))
 					if templ_7745c5c3_Err != nil {
@@ -4155,7 +4152,7 @@ func measureAssigneePicker(m *db.Measure, users []db.User) templ.Component {
 					var templ_7745c5c3_Var195 string
 					templ_7745c5c3_Var195, templ_7745c5c3_Err = templ.JoinStringErrs(u.Email)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 779, Col: 105}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 776, Col: 105}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var195))
 					if templ_7745c5c3_Err != nil {
@@ -4218,7 +4215,7 @@ func measureAssigneePicker(m *db.Measure, users []db.User) templ.Component {
 				var templ_7745c5c3_Var197 string
 				templ_7745c5c3_Var197, templ_7745c5c3_Err = templ.ResolveAttributeValue(u.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 796, Col: 27}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 793, Col: 27}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var197)
 				if templ_7745c5c3_Err != nil {
@@ -4231,7 +4228,7 @@ func measureAssigneePicker(m *db.Measure, users []db.User) templ.Component {
 				var templ_7745c5c3_Var198 string
 				templ_7745c5c3_Var198, templ_7745c5c3_Err = templ.ResolveAttributeValue(u.Email)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 796, Col: 45}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/measures/templates/measures.templ`, Line: 793, Col: 45}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var198)
 				if templ_7745c5c3_Err != nil {

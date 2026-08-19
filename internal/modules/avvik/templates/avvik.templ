@@ -78,10 +78,7 @@ templ AvvikTable(items []db.Avvik) {
 			No avvik yet.
 		}
 	} else {
-		@ui.Card(ui.CardProps{
-			Class:   "border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden",
-			Padding: "p-0",
-		}) {
+		@ui.Card(ui.CardProps{}) {
 			@ui.Table(ui.TableProps{}) {
 				@ui.THead(ui.THeadProps{}) {
 					@ui.Tr(ui.TrProps{

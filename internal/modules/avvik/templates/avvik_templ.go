@@ -636,7 +636,7 @@ func AvvikTable(items []db.Avvik) templ.Component {
 								var templ_7745c5c3_Var22 templ.SafeURL
 								templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinURLErrs("/avvik/" + a.ID.String())
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 107, Col: 43}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 104, Col: 43}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 								if templ_7745c5c3_Err != nil {
@@ -649,7 +649,7 @@ func AvvikTable(items []db.Avvik) templ.Component {
 								var templ_7745c5c3_Var23 string
 								templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(a.Title)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 107, Col: 111}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 104, Col: 111}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 								if templ_7745c5c3_Err != nil {
@@ -702,7 +702,7 @@ func AvvikTable(items []db.Avvik) templ.Component {
 									var templ_7745c5c3_Var26 string
 									templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(a.Status)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 114, Col: 19}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 111, Col: 19}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 									if templ_7745c5c3_Err != nil {
@@ -751,7 +751,7 @@ func AvvikTable(items []db.Avvik) templ.Component {
 									var templ_7745c5c3_Var29 string
 									templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(a.RiskLevel)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 119, Col: 22}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 116, Col: 22}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 									if templ_7745c5c3_Err != nil {
@@ -890,7 +890,7 @@ func AvvikTable(items []db.Avvik) templ.Component {
 								var templ_7745c5c3_Var35 string
 								templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(ageText(a.DiscoveredAt))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 134, Col: 33}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 131, Col: 33}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 								if templ_7745c5c3_Err != nil {
@@ -925,10 +925,7 @@ func AvvikTable(items []db.Avvik) templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = ui.Card(ui.CardProps{
-				Class:   "border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden",
-				Padding: "p-0",
-			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = ui.Card(ui.CardProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -965,7 +962,7 @@ func NewAvvikForm(orgs []db.Organization, users []db.User) templ.Component {
 		var templ_7745c5c3_Var37 string
 		templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 146, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 143, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var37)
 		if templ_7745c5c3_Err != nil {
@@ -1136,7 +1133,7 @@ func NewAvvikForm(orgs []db.Organization, users []db.User) templ.Component {
 			var templ_7745c5c3_Var43 string
 			templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.ResolveAttributeValue(u.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 202, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 199, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var43)
 			if templ_7745c5c3_Err != nil {
@@ -1149,7 +1146,7 @@ func NewAvvikForm(orgs []db.Organization, users []db.User) templ.Component {
 			var templ_7745c5c3_Var44 string
 			templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.ResolveAttributeValue(u.Email)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 202, Col: 46}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 199, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var44)
 			if templ_7745c5c3_Err != nil {
@@ -1162,7 +1159,7 @@ func NewAvvikForm(orgs []db.Organization, users []db.User) templ.Component {
 			var templ_7745c5c3_Var45 string
 			templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.ResolveAttributeValue(u.Email)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 203, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 200, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var45)
 			if templ_7745c5c3_Err != nil {
@@ -1175,7 +1172,7 @@ func NewAvvikForm(orgs []db.Organization, users []db.User) templ.Component {
 			var templ_7745c5c3_Var46 string
 			templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.ResolveAttributeValue(u.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 203, Col: 46}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 200, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var46)
 			if templ_7745c5c3_Err != nil {
@@ -1245,7 +1242,7 @@ func NewAvvikForm(orgs []db.Organization, users []db.User) templ.Component {
 				var templ_7745c5c3_Var49 string
 				templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.ResolveAttributeValue(u.ID.String())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 226, Col: 35}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 223, Col: 35}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var49)
 				if templ_7745c5c3_Err != nil {
@@ -1258,7 +1255,7 @@ func NewAvvikForm(orgs []db.Organization, users []db.User) templ.Component {
 				var templ_7745c5c3_Var50 string
 				templ_7745c5c3_Var50, templ_7745c5c3_Err = templ.JoinStringErrs(u.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 226, Col: 46}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 223, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var50))
 				if templ_7745c5c3_Err != nil {
@@ -1319,7 +1316,7 @@ func NewAvvikForm(orgs []db.Organization, users []db.User) templ.Component {
 					var templ_7745c5c3_Var53 string
 					templ_7745c5c3_Var53, templ_7745c5c3_Err = templ.ResolveAttributeValue(org.ID.String())
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 238, Col: 37}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 235, Col: 37}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var53)
 					if templ_7745c5c3_Err != nil {
@@ -1332,7 +1329,7 @@ func NewAvvikForm(orgs []db.Organization, users []db.User) templ.Component {
 					var templ_7745c5c3_Var54 string
 					templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.JoinStringErrs(org.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 238, Col: 50}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 235, Col: 50}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var54))
 					if templ_7745c5c3_Err != nil {
@@ -1430,7 +1427,7 @@ func AvvikDetail(d DetailData) templ.Component {
 			var templ_7745c5c3_Var57 string
 			templ_7745c5c3_Var57, templ_7745c5c3_Err = templ.JoinStringErrs(deadlineText(d.Avvik.GdprDeadlineAt.Time))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 264, Col: 62}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 261, Col: 62}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var57))
 			if templ_7745c5c3_Err != nil {
@@ -1547,7 +1544,7 @@ func avvikRecentChanges(events []db.AvvikEvent) templ.Component {
 		var templ_7745c5c3_Var59 string
 		templ_7745c5c3_Var59, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_recent_changes_toggle"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 297, Col: 131}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 294, Col: 131}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var59))
 		if templ_7745c5c3_Err != nil {
@@ -1576,7 +1573,7 @@ func avvikRecentChanges(events []db.AvvikEvent) templ.Component {
 			var templ_7745c5c3_Var61 string
 			templ_7745c5c3_Var61, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_recent_changes"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 300, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 297, Col: 68}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var61))
 			if templ_7745c5c3_Err != nil {
@@ -1625,7 +1622,7 @@ func avvikRecentChanges(events []db.AvvikEvent) templ.Component {
 						var templ_7745c5c3_Var65 string
 						templ_7745c5c3_Var65, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_event"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 307, Col: 152}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 304, Col: 152}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var65))
 						if templ_7745c5c3_Err != nil {
@@ -1656,7 +1653,7 @@ func avvikRecentChanges(events []db.AvvikEvent) templ.Component {
 						var templ_7745c5c3_Var67 string
 						templ_7745c5c3_Var67, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_by"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 308, Col: 144}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 305, Col: 144}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var67))
 						if templ_7745c5c3_Err != nil {
@@ -1687,7 +1684,7 @@ func avvikRecentChanges(events []db.AvvikEvent) templ.Component {
 						var templ_7745c5c3_Var69 string
 						templ_7745c5c3_Var69, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_when"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 309, Col: 146}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 306, Col: 146}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var69))
 						if templ_7745c5c3_Err != nil {
@@ -1747,7 +1744,7 @@ func avvikRecentChanges(events []db.AvvikEvent) templ.Component {
 						var templ_7745c5c3_Var72 string
 						templ_7745c5c3_Var72, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_no_changes_yet"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 319, Col: 139}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 316, Col: 139}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var72))
 						if templ_7745c5c3_Err != nil {
@@ -1799,7 +1796,7 @@ func avvikRecentChanges(events []db.AvvikEvent) templ.Component {
 								var templ_7745c5c3_Var75 string
 								templ_7745c5c3_Var75, templ_7745c5c3_Err = templ.JoinStringErrs(e.EventType)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 329, Col: 97}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 326, Col: 97}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var75))
 								if templ_7745c5c3_Err != nil {
@@ -1830,7 +1827,7 @@ func avvikRecentChanges(events []db.AvvikEvent) templ.Component {
 								var templ_7745c5c3_Var77 string
 								templ_7745c5c3_Var77, templ_7745c5c3_Err = templ.JoinStringErrs(e.ActorLabel)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 330, Col: 95}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 327, Col: 95}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var77))
 								if templ_7745c5c3_Err != nil {
@@ -1861,7 +1858,7 @@ func avvikRecentChanges(events []db.AvvikEvent) templ.Component {
 								var templ_7745c5c3_Var79 string
 								templ_7745c5c3_Var79, templ_7745c5c3_Err = templ.JoinStringErrs(e.OccurredAt.Format("2 Jan 2006 15:04"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 331, Col: 144}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 328, Col: 144}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var79))
 								if templ_7745c5c3_Err != nil {
@@ -1994,7 +1991,7 @@ func detailsTab(d DetailData) templ.Component {
 		var templ_7745c5c3_Var82 string
 		templ_7745c5c3_Var82, templ_7745c5c3_Err = templ.JoinStringErrs(d.Avvik.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 364, Col: 60}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 361, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var82))
 		if templ_7745c5c3_Err != nil {
@@ -2007,7 +2004,7 @@ func detailsTab(d DetailData) templ.Component {
 		var templ_7745c5c3_Var83 string
 		templ_7745c5c3_Var83, templ_7745c5c3_Err = templ.JoinStringErrs(d.Avvik.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 365, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 362, Col: 81}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var83))
 		if templ_7745c5c3_Err != nil {
@@ -2020,7 +2017,7 @@ func detailsTab(d DetailData) templ.Component {
 		var templ_7745c5c3_Var84 string
 		templ_7745c5c3_Var84, templ_7745c5c3_Err = templ.JoinStringErrs(d.Avvik.Status)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 366, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 363, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var84))
 		if templ_7745c5c3_Err != nil {
@@ -2033,7 +2030,7 @@ func detailsTab(d DetailData) templ.Component {
 		var templ_7745c5c3_Var85 string
 		templ_7745c5c3_Var85, templ_7745c5c3_Err = templ.JoinStringErrs(d.Avvik.RiskLevel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 366, Col: 102}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 363, Col: 102}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var85))
 		if templ_7745c5c3_Err != nil {
@@ -2056,7 +2053,7 @@ func detailsTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var86 templ.SafeURL
 			templ_7745c5c3_Var86, templ_7745c5c3_Err = templ.JoinURLErrs("/avvik/" + d.Avvik.ID.String() + "/triage")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 371, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 368, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var86))
 			if templ_7745c5c3_Err != nil {
@@ -2069,7 +2066,7 @@ func detailsTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var87 string
 			templ_7745c5c3_Var87, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 372, Col: 71}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 369, Col: 71}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var87)
 			if templ_7745c5c3_Err != nil {
@@ -2112,7 +2109,7 @@ func detailsTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var88 string
 			templ_7745c5c3_Var88, templ_7745c5c3_Err = templ.ResolveAttributeValue(d.Avvik.KsiInformationOwner)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 379, Col: 87}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 376, Col: 87}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var88)
 			if templ_7745c5c3_Err != nil {
@@ -2155,7 +2152,7 @@ func detailsTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var89 templ.SafeURL
 			templ_7745c5c3_Var89, templ_7745c5c3_Err = templ.JoinURLErrs("/avvik/" + d.Avvik.ID.String() + "/status")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 388, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 385, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var89))
 			if templ_7745c5c3_Err != nil {
@@ -2168,7 +2165,7 @@ func detailsTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var90 string
 			templ_7745c5c3_Var90, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 389, Col: 71}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 386, Col: 71}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var90)
 			if templ_7745c5c3_Err != nil {
@@ -2260,7 +2257,7 @@ func timelineTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var92 templ.SafeURL
 			templ_7745c5c3_Var92, templ_7745c5c3_Err = templ.JoinURLErrs("/avvik/" + d.Avvik.ID.String() + "/notes")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 408, Col: 74}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 405, Col: 74}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var92))
 			if templ_7745c5c3_Err != nil {
@@ -2273,7 +2270,7 @@ func timelineTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var93 string
 			templ_7745c5c3_Var93, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 409, Col: 72}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 406, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var93)
 			if templ_7745c5c3_Err != nil {
@@ -2292,7 +2289,7 @@ func timelineTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var94 string
 			templ_7745c5c3_Var94, templ_7745c5c3_Err = templ.JoinStringErrs(e.OccurredAt.Format(time.RFC3339))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 416, Col: 78}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 413, Col: 78}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var94))
 			if templ_7745c5c3_Err != nil {
@@ -2305,7 +2302,7 @@ func timelineTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var95 string
 			templ_7745c5c3_Var95, templ_7745c5c3_Err = templ.JoinStringErrs(e.EventType)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 416, Col: 97}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 413, Col: 97}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var95))
 			if templ_7745c5c3_Err != nil {
@@ -2318,7 +2315,7 @@ func timelineTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var96 string
 			templ_7745c5c3_Var96, templ_7745c5c3_Err = templ.JoinStringErrs(e.ActorLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 416, Col: 117}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 413, Col: 117}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var96))
 			if templ_7745c5c3_Err != nil {
@@ -2331,7 +2328,7 @@ func timelineTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var97 string
 			templ_7745c5c3_Var97, templ_7745c5c3_Err = templ.JoinStringErrs(string(e.Payload))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 417, Col: 87}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 414, Col: 87}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var97))
 			if templ_7745c5c3_Err != nil {
@@ -2383,7 +2380,7 @@ func measuresTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var99 templ.SafeURL
 			templ_7745c5c3_Var99, templ_7745c5c3_Err = templ.JoinURLErrs("/avvik/" + d.Avvik.ID.String() + "/measures")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 426, Col: 77}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 423, Col: 77}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var99))
 			if templ_7745c5c3_Err != nil {
@@ -2396,7 +2393,7 @@ func measuresTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var100 string
 			templ_7745c5c3_Var100, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 427, Col: 72}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 424, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var100)
 			if templ_7745c5c3_Err != nil {
@@ -2414,7 +2411,7 @@ func measuresTab(d DetailData) templ.Component {
 				var templ_7745c5c3_Var101 string
 				templ_7745c5c3_Var101, templ_7745c5c3_Err = templ.ResolveAttributeValue(m.ID.String())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 433, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 430, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var101)
 				if templ_7745c5c3_Err != nil {
@@ -2427,7 +2424,7 @@ func measuresTab(d DetailData) templ.Component {
 				var templ_7745c5c3_Var102 string
 				templ_7745c5c3_Var102, templ_7745c5c3_Err = templ.JoinStringErrs(m.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 433, Col: 47}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 430, Col: 47}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var102))
 				if templ_7745c5c3_Err != nil {
@@ -2459,7 +2456,7 @@ func measuresTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var103 templ.SafeURL
 			templ_7745c5c3_Var103, templ_7745c5c3_Err = templ.JoinURLErrs("/measures/" + m.ID.String())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 450, Col: 43}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 447, Col: 43}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var103))
 			if templ_7745c5c3_Err != nil {
@@ -2472,7 +2469,7 @@ func measuresTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var104 string
 			templ_7745c5c3_Var104, templ_7745c5c3_Err = templ.JoinStringErrs(m.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 450, Col: 102}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 447, Col: 102}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var104))
 			if templ_7745c5c3_Err != nil {
@@ -2490,7 +2487,7 @@ func measuresTab(d DetailData) templ.Component {
 				var templ_7745c5c3_Var105 string
 				templ_7745c5c3_Var105, templ_7745c5c3_Err = templ.ResolveAttributeValue("/avvik/" + d.Avvik.ID.String() + "/measures/" + m.ID.String())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 453, Col: 81}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 450, Col: 81}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var105)
 				if templ_7745c5c3_Err != nil {
@@ -2547,7 +2544,7 @@ func activitiesTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var107 templ.SafeURL
 			templ_7745c5c3_Var107, templ_7745c5c3_Err = templ.JoinURLErrs("/avvik/" + d.Avvik.ID.String() + "/activities")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 469, Col: 79}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 466, Col: 79}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var107))
 			if templ_7745c5c3_Err != nil {
@@ -2560,7 +2557,7 @@ func activitiesTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var108 string
 			templ_7745c5c3_Var108, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 470, Col: 72}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 467, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var108)
 			if templ_7745c5c3_Err != nil {
@@ -2578,7 +2575,7 @@ func activitiesTab(d DetailData) templ.Component {
 				var templ_7745c5c3_Var109 string
 				templ_7745c5c3_Var109, templ_7745c5c3_Err = templ.ResolveAttributeValue(a.ID.String())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 475, Col: 35}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 472, Col: 35}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var109)
 				if templ_7745c5c3_Err != nil {
@@ -2591,7 +2588,7 @@ func activitiesTab(d DetailData) templ.Component {
 				var templ_7745c5c3_Var110 string
 				templ_7745c5c3_Var110, templ_7745c5c3_Err = templ.JoinStringErrs(a.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 475, Col: 47}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 472, Col: 47}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var110))
 				if templ_7745c5c3_Err != nil {
@@ -2623,7 +2620,7 @@ func activitiesTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var111 templ.SafeURL
 			templ_7745c5c3_Var111, templ_7745c5c3_Err = templ.JoinURLErrs("/activities/" + a.ID.String())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 486, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 483, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var111))
 			if templ_7745c5c3_Err != nil {
@@ -2636,7 +2633,7 @@ func activitiesTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var112 string
 			templ_7745c5c3_Var112, templ_7745c5c3_Err = templ.JoinStringErrs(a.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 486, Col: 105}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 483, Col: 105}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var112))
 			if templ_7745c5c3_Err != nil {
@@ -2654,7 +2651,7 @@ func activitiesTab(d DetailData) templ.Component {
 				var templ_7745c5c3_Var113 string
 				templ_7745c5c3_Var113, templ_7745c5c3_Err = templ.ResolveAttributeValue("/avvik/" + d.Avvik.ID.String() + "/activities/" + a.ID.String())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 489, Col: 83}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 486, Col: 83}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var113)
 				if templ_7745c5c3_Err != nil {
@@ -2711,7 +2708,7 @@ func evidenceTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var115 templ.SafeURL
 			templ_7745c5c3_Var115, templ_7745c5c3_Err = templ.JoinURLErrs("/avvik/" + d.Avvik.ID.String() + "/attachments")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 505, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 502, Col: 80}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var115))
 			if templ_7745c5c3_Err != nil {
@@ -2724,7 +2721,7 @@ func evidenceTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var116 string
 			templ_7745c5c3_Var116, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 506, Col: 72}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 503, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var116)
 			if templ_7745c5c3_Err != nil {
@@ -2743,7 +2740,7 @@ func evidenceTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var117 templ.SafeURL
 			templ_7745c5c3_Var117, templ_7745c5c3_Err = templ.JoinURLErrs(a.StorageKey)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 514, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 511, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var117))
 			if templ_7745c5c3_Err != nil {
@@ -2756,7 +2753,7 @@ func evidenceTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var118 string
 			templ_7745c5c3_Var118, templ_7745c5c3_Err = templ.JoinStringErrs(a.Filename)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 514, Col: 91}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 511, Col: 91}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var118))
 			if templ_7745c5c3_Err != nil {
@@ -2769,7 +2766,7 @@ func evidenceTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var119 string
 			templ_7745c5c3_Var119, templ_7745c5c3_Err = templ.JoinStringErrs(a.UploadedAt.Format(time.RFC3339))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 515, Col: 78}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 512, Col: 78}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var119))
 			if templ_7745c5c3_Err != nil {
@@ -2821,7 +2818,7 @@ func notificationsTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var121 templ.SafeURL
 			templ_7745c5c3_Var121, templ_7745c5c3_Err = templ.JoinURLErrs("/avvik/" + d.Avvik.ID.String() + "/notifications")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 524, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 521, Col: 82}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var121))
 			if templ_7745c5c3_Err != nil {
@@ -2834,7 +2831,7 @@ func notificationsTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var122 string
 			templ_7745c5c3_Var122, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 525, Col: 72}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 522, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var122)
 			if templ_7745c5c3_Err != nil {
@@ -2853,7 +2850,7 @@ func notificationsTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var123 string
 			templ_7745c5c3_Var123, templ_7745c5c3_Err = templ.JoinStringErrs(n.Audience)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 542, Col: 41}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 539, Col: 41}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var123))
 			if templ_7745c5c3_Err != nil {
@@ -2866,7 +2863,7 @@ func notificationsTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var124 string
 			templ_7745c5c3_Var124, templ_7745c5c3_Err = templ.JoinStringErrs(n.SentAt.Format(time.RFC3339))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 543, Col: 74}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 540, Col: 74}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var124))
 			if templ_7745c5c3_Err != nil {
@@ -2884,7 +2881,7 @@ func notificationsTab(d DetailData) templ.Component {
 				var templ_7745c5c3_Var125 string
 				templ_7745c5c3_Var125, templ_7745c5c3_Err = templ.JoinStringErrs(n.Notes)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 545, Col: 58}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 542, Col: 58}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var125))
 				if templ_7745c5c3_Err != nil {
@@ -2946,7 +2943,7 @@ func closureTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var127 templ.SafeURL
 			templ_7745c5c3_Var127, templ_7745c5c3_Err = templ.JoinURLErrs("/avvik/" + d.Avvik.ID.String() + "/closure-flags")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 557, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 554, Col: 82}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var127))
 			if templ_7745c5c3_Err != nil {
@@ -2959,7 +2956,7 @@ func closureTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var128 string
 			templ_7745c5c3_Var128, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 558, Col: 71}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 555, Col: 71}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var128)
 			if templ_7745c5c3_Err != nil {
@@ -3004,7 +3001,7 @@ func closureTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var129 templ.SafeURL
 			templ_7745c5c3_Var129, templ_7745c5c3_Err = templ.JoinURLErrs("/avvik/" + d.Avvik.ID.String() + "/close")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 568, Col: 74}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 565, Col: 74}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var129))
 			if templ_7745c5c3_Err != nil {
@@ -3017,7 +3014,7 @@ func closureTab(d DetailData) templ.Component {
 			var templ_7745c5c3_Var130 string
 			templ_7745c5c3_Var130, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 569, Col: 71}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 566, Col: 71}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var130)
 			if templ_7745c5c3_Err != nil {
@@ -3096,7 +3093,7 @@ func closureCheckbox(name, label string, checked bool) templ.Component {
 		var templ_7745c5c3_Var134 string
 		templ_7745c5c3_Var134, templ_7745c5c3_Err = templ.ResolveAttributeValue(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 583, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 580, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var134)
 		if templ_7745c5c3_Err != nil {
@@ -3119,7 +3116,7 @@ func closureCheckbox(name, label string, checked bool) templ.Component {
 		var templ_7745c5c3_Var135 string
 		templ_7745c5c3_Var135, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 584, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 581, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var135))
 		if templ_7745c5c3_Err != nil {
@@ -3166,7 +3163,7 @@ func tabLink(id, tab, current string) templ.Component {
 		var templ_7745c5c3_Var138 templ.SafeURL
 		templ_7745c5c3_Var138, templ_7745c5c3_Err = templ.JoinURLErrs("/avvik/" + id + "?tab=" + tab)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 590, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 587, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var138))
 		if templ_7745c5c3_Err != nil {
@@ -3179,7 +3176,7 @@ func tabLink(id, tab, current string) templ.Component {
 		var templ_7745c5c3_Var139 string
 		templ_7745c5c3_Var139, templ_7745c5c3_Err = templ.ResolveAttributeValue("/avvik/" + id + "?tab=" + tab)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 591, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 588, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var139)
 		if templ_7745c5c3_Err != nil {
@@ -3205,7 +3202,7 @@ func tabLink(id, tab, current string) templ.Component {
 		var templ_7745c5c3_Var141 string
 		templ_7745c5c3_Var141, templ_7745c5c3_Err = templ.JoinStringErrs(tab)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 595, Col: 7}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/avvik/templates/avvik.templ`, Line: 592, Col: 7}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var141))
 		if templ_7745c5c3_Err != nil {

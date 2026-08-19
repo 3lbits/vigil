@@ -55,10 +55,7 @@ templ AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status st
 			<a href="/assets/new" class="text-blue-600 text-[13px] hover:underline">{ locale.T(ctx, "assets_add_first") }</a>
 		}
 	} else {
-		@ui.Card(ui.CardProps{
-			Class:   "border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden",
-			Padding: "p-0",
-		}) {
+		@ui.Card(ui.CardProps{}) {
 			<div role="region" aria-label={ locale.T(ctx, "assets_table_aria") } tabindex="0" class="overflow-x-auto">
 				@ui.Table(ui.TableProps{
 					Attrs: templ.Attributes{

@@ -65,10 +65,7 @@ templ MeasuresTable(measures []MeasureVM, hasMore bool, pageSize int32, filter, 
 			<a href="/measures/new" class="text-blue-600 text-[13px] hover:underline">Add your first measure →</a>
 		}
 	} else {
-		@ui.Card(ui.CardProps{
-			Class:   "border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden",
-			Padding: "p-0",
-		}) {
+		@ui.Card(ui.CardProps{}) {
 			<div role="region" aria-label="Measures table" tabindex="0" class="overflow-x-auto">
 				@ui.Table(ui.TableProps{
 					Attrs: templ.Attributes{
