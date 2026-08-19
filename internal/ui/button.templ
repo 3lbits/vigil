@@ -1,5 +1,9 @@
 package ui
 
+import "github.com/3lbits/vigil/internal/csrf"
+
+// old buttons
+
 type ButtonProps struct {
 	Variant string
 	Size    string
@@ -27,4 +31,109 @@ templ Button(p ButtonProps) {
 	>
 		{ children... }
 	</button>
+}
+
+// new buttons
+
+type BtnVariant string
+
+const (
+	BtnPrimary   BtnVariant = ""
+	BtnSecondary BtnVariant = "secondary"
+	BtnTertiary  BtnVariant = "tertiary"
+)
+
+type BtnColor string
+
+const (
+	BtnAccent  BtnColor = ""
+	BtnDanger  BtnColor = "danger"
+	BtnSuccess BtnColor = "success"
+)
+
+const btnBase = "inline-flex items-center gap-1.5 rounded-md font-medium transition-colors " +
+	"text-[13px] px-3 py-2 focus:ring-2 focus:ring-offset-2 outline-none " +
+	"disabled:opacity-60 disabled:cursor-not-allowed"
+
+type btnKey struct {
+	V BtnVariant
+	C BtnColor
+}
+
+var btnStyles = map[btnKey]string{
+	{BtnPrimary, BtnAccent}:  "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
+	{BtnPrimary, BtnDanger}:  "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+	{BtnPrimary, BtnSuccess}: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500",
+
+	{BtnSecondary, BtnAccent}:  "border border-sand-400 bg-white text-sand-800 hover:bg-sand-100 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800",
+	{BtnSecondary, BtnDanger}:  "border border-red-200 bg-white text-red-700 hover:bg-red-50 focus:ring-red-500 dark:border-red-800 dark:bg-zinc-900 dark:text-red-300 dark:hover:bg-red-950",
+	{BtnSecondary, BtnSuccess}: "border border-green-200 bg-white text-green-700 hover:bg-green-50 focus:ring-green-500 dark:border-green-800 dark:bg-zinc-900 dark:text-green-300 dark:hover:bg-green-950",
+
+	{BtnTertiary, BtnAccent}:  "text-sand-700 hover:bg-sand-100 focus:ring-blue-500 dark:text-zinc-200 dark:hover:bg-zinc-800",
+	{BtnTertiary, BtnDanger}:  "text-red-700 hover:bg-red-50 focus:ring-red-500 dark:text-red-300 dark:hover:bg-red-950",
+	{BtnTertiary, BtnSuccess}: "text-green-700 hover:bg-green-50 focus:ring-green-500 dark:text-green-300 dark:hover:bg-green-950",
+}
+
+func btnClass(v BtnVariant, c BtnColor) string {
+	return cx(btnBase, btnStyles[btnKey{v, c}])
+}
+
+type BtnProps struct {
+	Variant  BtnVariant
+	Color    BtnColor
+	Icon     string
+	Label    string
+	Disabled bool
+}
+
+templ Btn(p BtnProps, text string) {
+	if p.Label != "" {
+		<button type="submit" class={ btnClass(p.Variant, p.Color) } disabled?={ p.Disabled } aria-label={ p.Label }>
+			@btnContent(p, text)
+		</button>
+	} else {
+		<button type="submit" class={ btnClass(p.Variant, p.Color) } disabled?={ p.Disabled }>
+			@btnContent(p, text)
+		</button>
+	}
+}
+
+templ btnContent(p BtnProps, text string) {
+	if p.Icon != "" {
+		@IconSVG(p.Icon, 13)
+	}
+	{ text }
+}
+
+
+templ BtnLink(href templ.SafeURL, p BtnProps, text string) {
+	<a href={ href } class={ btnClass(p.Variant, p.Color) } aria-label={ p.Label }>
+		if p.Icon != "" {
+			@IconSVG(p.Icon, 13)
+		}
+		{ text }
+	</a>
+}
+
+type ActionProps struct {
+	Action  templ.SafeURL
+	Confirm string
+	Btn     BtnProps
+}
+
+templ BtnAction(p ActionProps, text string) {
+	if p.Confirm != "" {
+		<form method="POST" action={ p.Action } data-confirm={ p.Confirm }>
+			@btnActionBody(p, text)
+		</form>
+	} else {
+		<form method="POST" action={ p.Action }>
+			@btnActionBody(p, text)
+		</form>
+	}
+}
+
+templ btnActionBody(p ActionProps, text string) {
+	<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+	@Btn(p.Btn, text)
 }

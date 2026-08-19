@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"context"
 	"github.com/google/uuid"
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/db"
@@ -15,6 +16,13 @@ import (
 func activityRef(n sql.NullInt32) string {
 	if !n.Valid { return "" }
 	return fmt.Sprintf("A-%03d", n.Int32)
+}
+
+func activitySubmitLabel(ctx context.Context, a *db.GetActivityRow) string {
+	if a == nil {
+		return locale.T(ctx, "action_create_activity")
+	}
+	return locale.T(ctx, "action_save_changes")
 }
 
 // ── Status / type helpers ─────────────────────────────────────────────────────
@@ -64,13 +72,7 @@ templ ActivityList(rows []db.FilterActivitiesRow, filter, kind, q, sort, dir str
 
 	<div class="flex flex-wrap justify-between items-center gap-3 mb-4">
 		<p class="text-[13px] text-sand-700">{ locale.T(ctx, "nav_activities") }</p>
-		<a
-			href="/activities/new"
-			class="text-xs font-medium py-1.5 px-3.5 rounded-md border border-sand-400 hover:bg-sand-100 transition-colors flex items-center gap-1.5"
-		>
-			@ui.IconSVG("plus", 13)
-			{ locale.T(ctx, "action_add_activity") }
-		</a>
+		@ui.BtnLink("/activities/new", ui.BtnProps{Variant: ui.BtnSecondary, Icon: "plus"}, locale.T(ctx, "action_add_activity"))
 	</div>
 
 	@ui.FilterBar(ui.FilterBarProps{ID: "activity-filters", Action: "/activities", Target: "#activities-table"}) {
@@ -351,21 +353,8 @@ templ ActivityForm(measures []db.Measure, users []db.User, a *db.GetActivityRow,
 			}
 
 			<div class="flex gap-2 pt-1">
-				@ui.Button(ui.ButtonProps{
-					Attrs: templ.Attributes{
-						"type": "submit",
-					},
-				}) {
-					if a == nil {
-						{ locale.T(ctx, "action_create_activity") }
-					} else {
-						{ locale.T(ctx, "action_save_changes") }
-					}
-				}
-				<a
-					href="/activities"
-					class="text-[13px] py-2 px-4 rounded-md border border-sand-400 text-sand-700 hover:bg-sand-100 transition-colors"
-				>{ locale.T(ctx, "action_cancel") }</a>
+				@ui.Btn(ui.BtnProps{}, activitySubmitLabel(ctx, a))
+				@ui.BtnLink("/activities", ui.BtnProps{Variant: ui.BtnSecondary}, locale.T(ctx, "action_cancel"))
 			</div>
 		</form>
 		if a != nil {
