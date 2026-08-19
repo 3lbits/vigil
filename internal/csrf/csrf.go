@@ -58,6 +58,13 @@ func Middleware(key []byte, secure bool, sessionToken SessionTokenGetter) func(h
 	}
 }
 
+// WithToken stores tok in ctx so TokenFromContext can read it.
+// Middleware does this per-request; exported for tests and for callers
+// rendering templates outside an HTTP request.
+func WithToken(ctx context.Context, tok string) context.Context {
+	return context.WithValue(ctx, ctxKey{}, tok)
+}
+
 func isMutating(method string) bool {
 	return method == http.MethodPost || method == http.MethodPut ||
 		method == http.MethodPatch || method == http.MethodDelete

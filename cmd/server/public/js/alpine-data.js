@@ -1,3 +1,12 @@
+// Confirm before submitting forms marked with data-confirm.
+// Progressive enhancement only — the server must still authorise the action.
+document.addEventListener('submit', (e) => {
+    const msg = e.target?.dataset?.confirm;
+    if (msg && !window.confirm(msg)) {
+        e.preventDefault();
+    }
+}, true);
+
 document.addEventListener('alpine:init', () => {
     let mermaidLoadPromise = null;
     let mermaidInitialized = false;
