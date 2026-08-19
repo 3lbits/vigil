@@ -102,4 +102,4 @@ linters:
       - text: "should pass the context parameter"
         linters:
           - contextcheck
-        path: "handler\\.go"
+        path: "(handler\\.go|_test\\.go)$"

@@ -116,145 +116,108 @@ func StatusBadge(status string) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		switch status {
 		case "implemented":
-			templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-				if !templ_7745c5c3_IsBuffer {
-					defer func() {
-						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-						if templ_7745c5c3_Err == nil {
-							templ_7745c5c3_Err = templ_7745c5c3_BufErr
-						}
-					}()
-				}
-				ctx = templ.InitializeContext(ctx)
-				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "status_implemented"))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/badge.templ`, Line: 35, Col: 41}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				return nil
-			})
-			templ_7745c5c3_Err = Badge(BadgeProps{Variant: "implemented"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = BadgeTag(TagSuccess, locale.T(ctx, "status_implemented")).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		case "in_progress":
-			templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-				if !templ_7745c5c3_IsBuffer {
-					defer func() {
-						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-						if templ_7745c5c3_Err == nil {
-							templ_7745c5c3_Err = templ_7745c5c3_BufErr
-						}
-					}()
-				}
-				ctx = templ.InitializeContext(ctx)
-				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "status_in_progress"))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/badge.templ`, Line: 39, Col: 41}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				return nil
-			})
-			templ_7745c5c3_Err = Badge(BadgeProps{Variant: "in_progress"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = BadgeTag(TagWarning, locale.T(ctx, "status_in_progress")).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		case "planned":
-			templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-				if !templ_7745c5c3_IsBuffer {
-					defer func() {
-						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-						if templ_7745c5c3_Err == nil {
-							templ_7745c5c3_Err = templ_7745c5c3_BufErr
-						}
-					}()
-				}
-				ctx = templ.InitializeContext(ctx)
-				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "status_planned"))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/badge.templ`, Line: 43, Col: 37}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				return nil
-			})
-			templ_7745c5c3_Err = Badge(BadgeProps{Variant: "planned"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = BadgeTag(TagNeutral, locale.T(ctx, "status_planned")).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		case "deprecated":
-			templ_7745c5c3_Var11 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-				if !templ_7745c5c3_IsBuffer {
-					defer func() {
-						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-						if templ_7745c5c3_Err == nil {
-							templ_7745c5c3_Err = templ_7745c5c3_BufErr
-						}
-					}()
-				}
-				ctx = templ.InitializeContext(ctx)
-				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "status_deprecated"))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/badge.templ`, Line: 47, Col: 40}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				return nil
-			})
-			templ_7745c5c3_Err = Badge(BadgeProps{Variant: "deprecated"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = BadgeTag(TagDanger, locale.T(ctx, "status_deprecated")).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		default:
-			templ_7745c5c3_Var13 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-				if !templ_7745c5c3_IsBuffer {
-					defer func() {
-						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-						if templ_7745c5c3_Err == nil {
-							templ_7745c5c3_Err = templ_7745c5c3_BufErr
-						}
-					}()
-				}
-				ctx = templ.InitializeContext(ctx)
-				var templ_7745c5c3_Var14 string
-				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(status)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/badge.templ`, Line: 51, Col: 12}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				return nil
-			})
-			templ_7745c5c3_Err = Badge(BadgeProps{Variant: "default"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = BadgeTag(TagNeutral, status).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+		}
+		return nil
+	})
+}
+
+type TagColor string
+
+const (
+	TagNeutral TagColor = ""
+	TagSuccess TagColor = "success"
+	TagWarning TagColor = "warning"
+	TagDanger  TagColor = "danger"
+)
+
+const badgeTagBase = "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
+
+var badgeTagColors = map[TagColor]string{
+	TagNeutral: "bg-sand-100 dark:bg-zinc-800 text-sand-700 dark:text-zinc-300 border border-sand-300 dark:border-zinc-600",
+	TagSuccess: "bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800",
+	TagWarning: "bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800",
+	TagDanger:  "bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800",
+}
+
+func BadgeTag(color TagColor, text string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		var templ_7745c5c3_Var6 = []any{badgeTagBase, badgeTagColors[color]}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var6...)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<span class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var7 string
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var6).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/badge.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(text)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/badge.templ`, Line: 65, Col: 59}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
 		}
 		return nil
 	})
