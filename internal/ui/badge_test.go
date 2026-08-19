@@ -49,6 +49,21 @@ func TestNeutralCollapsesStoneToSand(t *testing.T) {
 	}
 }
 
+func TestBadgeTagColorsComplete(t *testing.T) {
+	declared := []TagColor{
+		TagNeutral, TagSuccess, TagWarning, TagDanger, TagInfo,
+		TagMetaPurple, TagMetaTeal, TagMetaOrange,
+	}
+	if len(badgeTagColors) != len(declared) {
+		t.Errorf("map has %d entries, %d constants declared", len(badgeTagColors), len(declared))
+	}
+	for _, c := range declared {
+		if badgeTagColors[c] == "" {
+			t.Errorf("no classes for %q", c)
+		}
+	}
+}
+
 func TestStatusBadge(t *testing.T) {
 	ctx := enCtx(t)
 
