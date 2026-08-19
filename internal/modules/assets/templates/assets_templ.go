@@ -335,7 +335,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(locale.T(ctx, "assets_table_aria"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 62, Col: 69}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 59, Col: 69}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 				if templ_7745c5c3_Err != nil {
@@ -364,7 +364,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "assets_table_caption"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 68, Col: 69}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 65, Col: 69}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
@@ -413,7 +413,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 								var templ_7745c5c3_Var21 string
 								templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_name"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 75, Col: 127}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 72, Col: 127}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 								if templ_7745c5c3_Err != nil {
@@ -444,7 +444,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 								var templ_7745c5c3_Var23 string
 								templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_asset_type"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 76, Col: 128}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 73, Col: 128}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 								if templ_7745c5c3_Err != nil {
@@ -475,7 +475,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 								var templ_7745c5c3_Var25 string
 								templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_asset_owner"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 77, Col: 129}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 74, Col: 129}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 								if templ_7745c5c3_Err != nil {
@@ -506,7 +506,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 								var templ_7745c5c3_Var27 string
 								templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_status"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 78, Col: 124}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 75, Col: 124}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 								if templ_7745c5c3_Err != nil {
@@ -537,7 +537,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 								var templ_7745c5c3_Var29 string
 								templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "assets_criticality"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 79, Col: 130}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 76, Col: 130}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 								if templ_7745c5c3_Err != nil {
@@ -572,7 +572,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 								var templ_7745c5c3_Var31 string
 								templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_actions"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 80, Col: 151}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 77, Col: 151}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 								if templ_7745c5c3_Err != nil {
@@ -640,7 +640,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 								var templ_7745c5c3_Var34 templ.SafeURL
 								templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/assets/" + a.ID.String()))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 91, Col: 60}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 88, Col: 60}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 								if templ_7745c5c3_Err != nil {
@@ -653,7 +653,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 								var templ_7745c5c3_Var35 string
 								templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 91, Col: 127}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 88, Col: 127}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 								if templ_7745c5c3_Err != nil {
@@ -762,7 +762,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 								var templ_7745c5c3_Var41 string
 								templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(localizeAssetStatus(ctx, a.Status))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 96, Col: 88}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 93, Col: 88}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 								if templ_7745c5c3_Err != nil {
@@ -819,7 +819,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 								var templ_7745c5c3_Var45 string
 								templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.JoinStringErrs(localizeCriticality(ctx, a.Criticality))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 99, Col: 98}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 96, Col: 98}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var45))
 								if templ_7745c5c3_Err != nil {
@@ -858,7 +858,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 								var templ_7745c5c3_Var47 templ.SafeURL
 								templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/assets/" + a.ID.String() + "/edit"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 102, Col: 70}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 99, Col: 70}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var47))
 								if templ_7745c5c3_Err != nil {
@@ -871,7 +871,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 								var templ_7745c5c3_Var48 string
 								templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_edit_lower"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 102, Col: 173}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 99, Col: 173}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var48))
 								if templ_7745c5c3_Err != nil {
@@ -930,7 +930,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 								var templ_7745c5c3_Var51 templ.SafeURL
 								templ_7745c5c3_Var51, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/assets?offset=" + fmt.Sprint(nextOffset) + "&q=" + q + "&status=" + status))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 118, Col: 110}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 115, Col: 110}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var51))
 								if templ_7745c5c3_Err != nil {
@@ -943,7 +943,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 								var templ_7745c5c3_Var52 string
 								templ_7745c5c3_Var52, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_load_more"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 118, Col: 280}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 115, Col: 280}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var52))
 								if templ_7745c5c3_Err != nil {
@@ -995,10 +995,7 @@ func AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status str
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = ui.Card(ui.CardProps{
-				Class:   "border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden",
-				Padding: "p-0",
-			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = ui.Card(ui.CardProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -1039,7 +1036,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var54 templ.SafeURL
 		templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.JoinURLErrs(assetFormAction(a))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 132, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 129, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var54))
 		if templ_7745c5c3_Err != nil {
@@ -1052,7 +1049,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var55 string
 		templ_7745c5c3_Var55, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 133, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 130, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var55)
 		if templ_7745c5c3_Err != nil {
@@ -1065,7 +1062,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var56 string
 		templ_7745c5c3_Var56, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_name"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 135, Col: 114}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 132, Col: 114}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var56))
 		if templ_7745c5c3_Err != nil {
@@ -1078,7 +1075,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var57 string
 		templ_7745c5c3_Var57, templ_7745c5c3_Err = templ.ResolveAttributeValue(assetValue(a, "name"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 136, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 133, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var57)
 		if templ_7745c5c3_Err != nil {
@@ -1091,7 +1088,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var58 string
 		templ_7745c5c3_Var58, templ_7745c5c3_Err = templ.ResolveAttributeValue(locale.T(ctx, "assets_placeholder_name"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 136, Col: 146}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 133, Col: 146}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var58)
 		if templ_7745c5c3_Err != nil {
@@ -1104,7 +1101,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var59 string
 		templ_7745c5c3_Var59, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_description"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 139, Col: 128}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 136, Col: 128}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var59))
 		if templ_7745c5c3_Err != nil {
@@ -1117,7 +1114,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var60 string
 		templ_7745c5c3_Var60, templ_7745c5c3_Err = templ.JoinStringErrs(assetValue(a, "description"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 140, Col: 267}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 137, Col: 267}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var60))
 		if templ_7745c5c3_Err != nil {
@@ -1130,7 +1127,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var61 string
 		templ_7745c5c3_Var61, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_asset_type"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 144, Col: 121}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 141, Col: 121}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var61))
 		if templ_7745c5c3_Err != nil {
@@ -1143,7 +1140,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var62 string
 		templ_7745c5c3_Var62, templ_7745c5c3_Err = templ.ResolveAttributeValue(assetValue(a, "asset_type"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 145, Col: 93}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 142, Col: 93}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var62)
 		if templ_7745c5c3_Err != nil {
@@ -1156,7 +1153,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var63 string
 		templ_7745c5c3_Var63, templ_7745c5c3_Err = templ.ResolveAttributeValue(locale.T(ctx, "assets_placeholder_type"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 145, Col: 150}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 142, Col: 150}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var63)
 		if templ_7745c5c3_Err != nil {
@@ -1169,7 +1166,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var64 string
 		templ_7745c5c3_Var64, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_asset_owner"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 148, Col: 123}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 145, Col: 123}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var64))
 		if templ_7745c5c3_Err != nil {
@@ -1182,7 +1179,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var65 string
 		templ_7745c5c3_Var65, templ_7745c5c3_Err = templ.ResolveAttributeValue(assetValue(a, "owner"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 149, Col: 84}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 146, Col: 84}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var65)
 		if templ_7745c5c3_Err != nil {
@@ -1195,7 +1192,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var66 string
 		templ_7745c5c3_Var66, templ_7745c5c3_Err = templ.ResolveAttributeValue(locale.T(ctx, "assets_placeholder_owner"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 149, Col: 142}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 146, Col: 142}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var66)
 		if templ_7745c5c3_Err != nil {
@@ -1208,7 +1205,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var67 string
 		templ_7745c5c3_Var67, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_status"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 154, Col: 119}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 151, Col: 119}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var67))
 		if templ_7745c5c3_Err != nil {
@@ -1231,7 +1228,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var68 string
 		templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "status_active"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 156, Col: 144}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 153, Col: 144}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var68))
 		if templ_7745c5c3_Err != nil {
@@ -1254,7 +1251,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var69 string
 		templ_7745c5c3_Var69, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "status_planned"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 157, Col: 114}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 154, Col: 114}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var69))
 		if templ_7745c5c3_Err != nil {
@@ -1277,7 +1274,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var70 string
 		templ_7745c5c3_Var70, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "status_retired"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 158, Col: 114}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 155, Col: 114}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var70))
 		if templ_7745c5c3_Err != nil {
@@ -1290,7 +1287,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var71 string
 		templ_7745c5c3_Var71, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "assets_criticality"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 162, Col: 130}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 159, Col: 130}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var71))
 		if templ_7745c5c3_Err != nil {
@@ -1313,7 +1310,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var72 string
 		templ_7745c5c3_Var72, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "risk_level_low"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 164, Col: 111}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 161, Col: 111}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var72))
 		if templ_7745c5c3_Err != nil {
@@ -1336,7 +1333,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var73 string
 		templ_7745c5c3_Var73, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "risk_level_medium"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 165, Col: 158}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 162, Col: 158}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var73))
 		if templ_7745c5c3_Err != nil {
@@ -1359,7 +1356,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 		var templ_7745c5c3_Var74 string
 		templ_7745c5c3_Var74, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "risk_level_high"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 166, Col: 114}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 163, Col: 114}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var74))
 		if templ_7745c5c3_Err != nil {
@@ -1385,7 +1382,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 				var templ_7745c5c3_Var76 string
 				templ_7745c5c3_Var76, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_create_asset"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 177, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 174, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var76))
 				if templ_7745c5c3_Err != nil {
@@ -1395,7 +1392,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 				var templ_7745c5c3_Var77 string
 				templ_7745c5c3_Var77, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_save_changes"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 179, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 176, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var77))
 				if templ_7745c5c3_Err != nil {
@@ -1420,7 +1417,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 			var templ_7745c5c3_Var78 templ.SafeURL
 			templ_7745c5c3_Var78, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/assets/" + a.ID.String()))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 183, Col: 56}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 180, Col: 56}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var78))
 			if templ_7745c5c3_Err != nil {
@@ -1433,7 +1430,7 @@ func AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogF
 			var templ_7745c5c3_Var79 string
 			templ_7745c5c3_Var79, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_cancel"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 183, Col: 202}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 180, Col: 202}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var79))
 			if templ_7745c5c3_Err != nil {
@@ -1494,7 +1491,7 @@ func AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []d
 		var templ_7745c5c3_Var81 string
 		templ_7745c5c3_Var81, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 199, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 196, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var81))
 		if templ_7745c5c3_Err != nil {
@@ -1529,7 +1526,7 @@ func AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []d
 		var templ_7745c5c3_Var84 string
 		templ_7745c5c3_Var84, templ_7745c5c3_Err = templ.JoinStringErrs(localizeAssetStatus(ctx, a.Status))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 201, Col: 85}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 198, Col: 85}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var84))
 		if templ_7745c5c3_Err != nil {
@@ -1564,7 +1561,7 @@ func AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []d
 		var templ_7745c5c3_Var87 string
 		templ_7745c5c3_Var87, templ_7745c5c3_Err = templ.JoinStringErrs(localizeCriticality(ctx, a.Criticality))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 202, Col: 95}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 199, Col: 95}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var87))
 		if templ_7745c5c3_Err != nil {
@@ -1577,7 +1574,7 @@ func AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []d
 		var templ_7745c5c3_Var88 string
 		templ_7745c5c3_Var88, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "assets_criticality"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 202, Col: 135}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 199, Col: 135}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var88))
 		if templ_7745c5c3_Err != nil {
@@ -1595,7 +1592,7 @@ func AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []d
 			var templ_7745c5c3_Var89 templ.SafeURL
 			templ_7745c5c3_Var89, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/assets/" + a.ID.String() + "/edit"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 206, Col: 66}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 203, Col: 66}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var89))
 			if templ_7745c5c3_Err != nil {
@@ -1608,7 +1605,7 @@ func AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []d
 			var templ_7745c5c3_Var90 string
 			templ_7745c5c3_Var90, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_edit"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 206, Col: 197}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 203, Col: 197}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var90))
 			if templ_7745c5c3_Err != nil {
@@ -1626,7 +1623,7 @@ func AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []d
 		var templ_7745c5c3_Var91 string
 		templ_7745c5c3_Var91, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_asset_type"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 211, Col: 103}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 208, Col: 103}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var91))
 		if templ_7745c5c3_Err != nil {
@@ -1639,7 +1636,7 @@ func AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []d
 		var templ_7745c5c3_Var92 string
 		templ_7745c5c3_Var92, templ_7745c5c3_Err = templ.JoinStringErrs(zeroDash(a.AssetType))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 212, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 209, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var92))
 		if templ_7745c5c3_Err != nil {
@@ -1652,7 +1649,7 @@ func AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []d
 		var templ_7745c5c3_Var93 string
 		templ_7745c5c3_Var93, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_asset_owner"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 215, Col: 104}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 212, Col: 104}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var93))
 		if templ_7745c5c3_Err != nil {
@@ -1665,7 +1662,7 @@ func AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []d
 		var templ_7745c5c3_Var94 string
 		templ_7745c5c3_Var94, templ_7745c5c3_Err = templ.JoinStringErrs(zeroDash(a.Owner))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 216, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 213, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var94))
 		if templ_7745c5c3_Err != nil {
@@ -1678,7 +1675,7 @@ func AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []d
 		var templ_7745c5c3_Var95 string
 		templ_7745c5c3_Var95, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_description"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 220, Col: 108}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 217, Col: 108}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var95))
 		if templ_7745c5c3_Err != nil {
@@ -1701,7 +1698,7 @@ func AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []d
 			var templ_7745c5c3_Var96 string
 			templ_7745c5c3_Var96, templ_7745c5c3_Err = templ.JoinStringErrs(a.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 224, Col: 63}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 221, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var96))
 			if templ_7745c5c3_Err != nil {
@@ -1724,7 +1721,7 @@ func AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []d
 			var templ_7745c5c3_Var97 templ.SafeURL
 			templ_7745c5c3_Var97, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/assets/" + a.ID.String() + "/delete"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 229, Col: 85}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 226, Col: 85}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var97))
 			if templ_7745c5c3_Err != nil {
@@ -1737,7 +1734,7 @@ func AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []d
 			var templ_7745c5c3_Var98 string
 			templ_7745c5c3_Var98, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 230, Col: 72}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 227, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var98)
 			if templ_7745c5c3_Err != nil {
@@ -1750,7 +1747,7 @@ func AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []d
 			var templ_7745c5c3_Var99 string
 			templ_7745c5c3_Var99, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_delete_asset"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 231, Col: 173}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 228, Col: 173}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var99))
 			if templ_7745c5c3_Err != nil {
@@ -1819,7 +1816,7 @@ func assetRecentChanges(auditLog []db.ListAuditLogForAssetRow, wrapperClass stri
 		var templ_7745c5c3_Var103 string
 		templ_7745c5c3_Var103, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_recent_changes_toggle"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 240, Col: 150}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 237, Col: 150}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var103))
 		if templ_7745c5c3_Err != nil {
@@ -1848,7 +1845,7 @@ func assetRecentChanges(auditLog []db.ListAuditLogForAssetRow, wrapperClass stri
 			var templ_7745c5c3_Var105 string
 			templ_7745c5c3_Var105, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_recent_changes"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 243, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 240, Col: 68}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var105))
 			if templ_7745c5c3_Err != nil {
@@ -1897,7 +1894,7 @@ func assetRecentChanges(auditLog []db.ListAuditLogForAssetRow, wrapperClass stri
 						var templ_7745c5c3_Var109 string
 						templ_7745c5c3_Var109, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_event"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 250, Col: 152}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 247, Col: 152}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var109))
 						if templ_7745c5c3_Err != nil {
@@ -1928,7 +1925,7 @@ func assetRecentChanges(auditLog []db.ListAuditLogForAssetRow, wrapperClass stri
 						var templ_7745c5c3_Var111 string
 						templ_7745c5c3_Var111, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_by"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 251, Col: 144}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 248, Col: 144}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var111))
 						if templ_7745c5c3_Err != nil {
@@ -1959,7 +1956,7 @@ func assetRecentChanges(auditLog []db.ListAuditLogForAssetRow, wrapperClass stri
 						var templ_7745c5c3_Var113 string
 						templ_7745c5c3_Var113, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_when"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 252, Col: 146}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 249, Col: 146}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var113))
 						if templ_7745c5c3_Err != nil {
@@ -2019,7 +2016,7 @@ func assetRecentChanges(auditLog []db.ListAuditLogForAssetRow, wrapperClass stri
 						var templ_7745c5c3_Var116 string
 						templ_7745c5c3_Var116, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_no_changes_yet"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 267, Col: 51}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 264, Col: 51}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var116))
 						if templ_7745c5c3_Err != nil {
@@ -2076,7 +2073,7 @@ func assetRecentChanges(auditLog []db.ListAuditLogForAssetRow, wrapperClass stri
 								var templ_7745c5c3_Var119 string
 								templ_7745c5c3_Var119, templ_7745c5c3_Err = templ.JoinStringErrs(assetAuditEventLabel(entry.Event))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 277, Col: 119}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 274, Col: 119}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var119))
 								if templ_7745c5c3_Err != nil {
@@ -2108,7 +2105,7 @@ func assetRecentChanges(auditLog []db.ListAuditLogForAssetRow, wrapperClass stri
 									var templ_7745c5c3_Var121 string
 									templ_7745c5c3_Var121, templ_7745c5c3_Err = templ.JoinStringErrs(entry.UserName)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 280, Col: 27}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 277, Col: 27}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var121))
 									if templ_7745c5c3_Err != nil {
@@ -2145,7 +2142,7 @@ func assetRecentChanges(auditLog []db.ListAuditLogForAssetRow, wrapperClass stri
 								var templ_7745c5c3_Var123 string
 								templ_7745c5c3_Var123, templ_7745c5c3_Err = templ.JoinStringErrs(entry.EventTime.Format("2 Jan 2006 15:04"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 285, Col: 147}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/assets/templates/assets.templ`, Line: 282, Col: 147}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var123))
 								if templ_7745c5c3_Err != nil {

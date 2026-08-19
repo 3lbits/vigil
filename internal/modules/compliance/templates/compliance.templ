@@ -43,8 +43,6 @@ templ FrameworkList(frameworks []FrameworkVM, expandID, flash, flashType string)
 
 templ frameworkAccordion(fw FrameworkVM, expandID string) {
 	@ui.Card(ui.CardProps{
-		Class:   "border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden",
-		Padding: "p-0",
 		Attrs: templ.Attributes{
 			"id":     "fw-" + fw.Framework.ID.String(),
 			"x-data": "{ expanded: " + fmt.Sprint(fw.Framework.ID.String() == expandID) + " }",

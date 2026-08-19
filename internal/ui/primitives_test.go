@@ -54,11 +54,9 @@ func TestButton_RenderSmoke(t *testing.T) {
 
 func TestCard_RenderSmoke(t *testing.T) {
 	html := renderHTML(t, Card(CardProps{
-		Padding: "p-6",
-		Accent:  "border-t-red-500",
+		Accent: "border-t-red-500",
 	}), templ.Raw("Content"))
 	assertRenderedWithClass(t, html, "dark:bg-zinc-900")
-	assertRenderedWithClass(t, html, "p-6")
 	assertRenderedWithClass(t, html, "border-t-4")
 	assertRenderedWithClass(t, html, "border-t-red-500")
 }

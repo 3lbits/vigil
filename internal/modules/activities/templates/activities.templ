@@ -118,10 +118,7 @@ templ ActivityTable(rows []db.FilterActivitiesRow, hasMore bool, pageSize int32,
 			<a href="/activities/new" class="text-blue-600 text-[13px] hover:underline">Add your first activity →</a>
 		}
 	} else {
-		@ui.Card(ui.CardProps{
-			Class:   "border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden",
-			Padding: "p-0",
-		}) {
+		@ui.Card(ui.CardProps{}) {
 			<div role="region" aria-label="Activities table" tabindex="0" class="overflow-x-auto">
 				@ui.Table(ui.TableProps{
 					Attrs: templ.Attributes{

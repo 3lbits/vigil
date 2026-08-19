@@ -63,10 +63,7 @@ templ AssessmentItems(vm AssessmentListPageVM) {
 			<a href="/risks/new" class="text-[13px] font-medium text-blue-600 hover:underline">{ locale.T(ctx, "assessment_start_first") }</a>
 		}
 	} else {
-		@ui.Card(ui.CardProps{
-			Class:   "overflow-hidden",
-			Padding: "p-0",
-		}) {
+		@ui.Card(ui.CardProps{}) {
 			<div class="grid grid-cols-[1fr_55px_55px_90px_110px_100px] gap-2 px-4 py-2.5 bg-sand-50 text-[10px] font-semibold text-sand-700 uppercase tracking-wide">
 				<span>{ locale.T(ctx, "label_name") }</span>
 				<span>{ locale.T(ctx, "label_risks") }</span>
@@ -497,10 +494,7 @@ templ RiskRegister(risks []db.ListAllRisksRow, q string, lowMax, highMin int) {
 			<a href="/risks" class="text-[13px] font-medium text-blue-600 hover:underline">Start a risk assessment →</a>
 		}
 	} else {
-		@ui.Card(ui.CardProps{
-			Class:   "overflow-hidden",
-			Padding: "p-0",
-		}) {
+		@ui.Card(ui.CardProps{}) {
 			<div class="grid grid-cols-[80px_1fr_160px_80px_100px] gap-2 px-4 py-2.5 bg-sand-50 text-[10px] font-semibold text-sand-700 uppercase tracking-wide">
 				<span>Ref</span>
 				<span>Risk</span>
