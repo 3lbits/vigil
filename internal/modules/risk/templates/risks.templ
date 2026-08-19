@@ -495,35 +495,56 @@ templ RiskRegister(risks []db.ListAllRisksRow, q string, lowMax, highMin int) {
 		}
 	} else {
 		@ui.Card(ui.CardProps{}) {
-			<div class="grid grid-cols-[80px_1fr_160px_80px_100px] gap-2 px-4 py-2.5 bg-sand-50 text-[10px] font-semibold text-sand-700 uppercase tracking-wide">
-				<span>Ref</span>
-				<span>Risk</span>
-				<span>Assessment</span>
-				<span class="text-center">Score</span>
-				<span>Decision</span>
-			</div>
-			for i, risk := range risks {
-				<a
-					href={ templ.SafeURL("/risks/" + risk.AssessmentID.String() + "/risks/" + risk.ID.String()) }
-					class={ "grid grid-cols-[80px_1fr_160px_80px_100px] gap-2 px-4 py-3 items-center border-t border-sand-200 hover:bg-sand-50 transition-colors", templ.KV("bg-sand-50/50", i%2 != 0) }
-				>
-					<span class="font-mono text-[11px] text-sand-700 dark:text-zinc-400">{ riskRef(risk.RefNum) }</span>
-					<div class="min-w-0">
-						<div class="text-[13px] font-medium text-sand-900">{ risk.Name }</div>
-						if risk.Description != "" {
-							<div class="text-[11px] text-sand-700 dark:text-zinc-400 truncate">{ risk.Description }</div>
-						}
-					</div>
-					<div class="min-w-0 text-[11px] text-sand-700 dark:text-zinc-400 truncate">
-						if risk.AssessmentRefNum.Valid {
-							<span class="font-mono text-[10px] text-sand-700 dark:text-zinc-400 mr-1">{ assessmentRef(risk.AssessmentRefNum) }</span>
-						}
-						{ risk.AssessmentName }
-					</div>
-					@scoreCellInline(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, risk.LikelihoodCurrent.Valid, lowMax, highMin)
-					@decisionBadge(risk.RiskDecision)
+			<table class="w-full table-fixed border-collapse text-left">
+				<colgroup>
+					<col class="w-20"/>
+					<col/>
+					<col class="w-40"/>
+					<col class="w-20"/>
+					<col class="w-24"/>
+				</colgroup>
+			<thead>
+				<tr class="bg-sand-50 dark:bg-zinc-800 text-[10px] font-semibold uppercase tracking-wide text-sand-700 dark:text-zinc-400">
+					<th scope="col" class="px-4 py-2.5">Ref</th>
+					<th scope="col" class="px-4 py-2.5">Risk</th>
+					<th scope="col" class="px-4 py-2.5">Assessment</th>
+					<th scope="col" class="px-4 py-2.5 text-center">Score</th>
+					<th scope="col" class="px-4 py-2.5">Decision</th>
+				</tr>
+			</thead>
+			<tbody>
+			for _, risk := range risks {
+				<tr class="relative border-t border-sand-200 dark:border-zinc-700 even:bg-sand-50/50 dark:even:bg-zinc-800/30 hover:bg-sand-50 dark:hover:bg-zinc-800/60 transition-colors">
+				<td class="px-4 py-3 align-middle font-mono text-[11px] text-sand-700 dark:text-zinc-400">
+					{ riskRef(risk.RefNum) }
+				</td>
+				<td class="px-4 py-3 align-middle">
+					<a
+						href={ templ.SafeURL("/risks/" + risk.AssessmentID.String() + "/risks/" + risk.ID.String()) }
+						class="text-[13px] font-medium text-sand-900 dark:text-zinc-100 after:absolute after:inset-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-sand-500"
+					>
+						{ risk.Name }
 					</a>
-				}
+					if risk.Description != "" {
+						<div class="truncate text-[11px] text-sand-700 dark:text-zinc-400">{ risk.Description }</div>
+					}
+				</td>
+				<td class="truncate px-4 py-3 align-middle text-[11px] text-sand-700 dark:text-zinc-400">
+					if risk.AssessmentRefNum.Valid {
+						<span class="mr-1 font-mono text-[10px]">{ assessmentRef(risk.AssessmentRefNum) }</span>
+					}
+					{ risk.AssessmentName }
+				</td>
+				<td class="px-4 py-3 text-center align-middle">
+					@scoreCellInline(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, risk.LikelihoodCurrent.Valid, lowMax, highMin)
+				</td>
+				<td class="px-4 py-3 align-middle">
+					@decisionBadge(risk.RiskDecision)
+				</td>
+				</tr>
+			}
+			</tbody>
+			</table>
 		}
 	}
 }
