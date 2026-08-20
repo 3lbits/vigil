@@ -495,7 +495,7 @@ templ RiskRegister(risks []db.ListAllRisksRow, q string, lowMax, highMin int) {
 		}
 	} else {
 		@ui.Card(ui.CardProps{}) {
-			<table class="w-full table-fixed border-collapse text-left">
+			@ui.TableNew(locale.T(ctx, "risks_table_label")) {
 				<colgroup>
 					<col class="w-20"/>
 					<col/>
@@ -503,48 +503,67 @@ templ RiskRegister(risks []db.ListAllRisksRow, q string, lowMax, highMin int) {
 					<col class="w-20"/>
 					<col class="w-24"/>
 				</colgroup>
-			<thead>
-				<tr class="bg-sand-50 dark:bg-zinc-800 text-[10px] font-semibold uppercase tracking-wide text-sand-700 dark:text-zinc-400">
-					<th scope="col" class="px-4 py-2.5">Ref</th>
-					<th scope="col" class="px-4 py-2.5">Risk</th>
-					<th scope="col" class="px-4 py-2.5">Assessment</th>
-					<th scope="col" class="px-4 py-2.5 text-center">Score</th>
-					<th scope="col" class="px-4 py-2.5">Decision</th>
-				</tr>
-			</thead>
-			<tbody>
-			for _, risk := range risks {
-				<tr class="relative border-t border-sand-200 dark:border-zinc-700 even:bg-sand-50/50 dark:even:bg-zinc-800/30 hover:bg-sand-50 dark:hover:bg-zinc-800/60 transition-colors">
-				<td class="px-4 py-3 align-middle font-mono text-[11px] text-sand-700 dark:text-zinc-400">
-					{ riskRef(risk.RefNum) }
-				</td>
-				<td class="px-4 py-3 align-middle">
-					<a
-						href={ templ.SafeURL("/risks/" + risk.AssessmentID.String() + "/risks/" + risk.ID.String()) }
-						class="text-[13px] font-medium text-sand-900 dark:text-zinc-100 after:absolute after:inset-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-sand-500"
-					>
-						{ risk.Name }
-					</a>
-					if risk.Description != "" {
-						<div class="truncate text-[11px] text-sand-700 dark:text-zinc-400">{ risk.Description }</div>
+				@ui.TableHeader() {
+					@ui.TableHeaderCell() { Ref } 
+					@ui.TableHeaderCell() { Risk } 
+					@ui.TableHeaderCell() { Assessment } 
+					@ui.TableHeaderCell() { Score } 
+					@ui.TableHeaderCell() { Decision } 
+				}
+				@ui.TableBody() {
+					for _, risk := range risks {
+						@ui.TableRow() {
+							@ui.TableDataCell() { { riskRef(risk.RefNum) } }
+							@ui.TableDataCell() {
+								<a
+									href={ templ.SafeURL("/risks/" + risk.AssessmentID.String() + "/risks/" + risk.ID.String()) }
+									class="text-[13px] font-medium text-sand-900 dark:text-zinc-100 after:absolute after:inset-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-sand-500"
+								>
+									{ risk.Name }
+								</a>
+								if risk.Description != "" {
+									<div class="truncate text-[11px] text-sand-700 dark:text-zinc-400">{ risk.Description }</div>
+								}
+							}
+							@ui.TableDataCell() {
+								if risk.AssessmentRefNum.Valid {
+									<span class="mr-1 font-mono text-[10px]">{ assessmentRef(risk.AssessmentRefNum) }</span>
+								}
+								{ risk.AssessmentName }
+							}
+							@ui.TableDataCell() { @scoreCellInline(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, risk.LikelihoodCurrent.Valid, lowMax, highMin) }
+							@ui.TableDataCell() { @decisionBadge(risk.RiskDecision) }
+
+							// <td class="px-4 py-3 align-middle font-mono text-[11px] text-sand-700 dark:text-zinc-400">
+							// 	{ riskRef(risk.RefNum) }
+							// </td>
+							// <td class="px-4 py-3 align-middle">
+							// 	<a
+							// 		href={ templ.SafeURL("/risks/" + risk.AssessmentID.String() + "/risks/" + risk.ID.String()) }
+							// 		class="text-[13px] font-medium text-sand-900 dark:text-zinc-100 after:absolute after:inset-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-sand-500"
+							// 	>
+							// 		{ risk.Name }
+							// 	</a>
+							// 	if risk.Description != "" {
+							// 		<div class="truncate text-[11px] text-sand-700 dark:text-zinc-400">{ risk.Description }</div>
+							// 	}
+							// </td>
+							// <td class="truncate px-4 py-3 align-middle text-[11px] text-sand-700 dark:text-zinc-400">
+							// 	if risk.AssessmentRefNum.Valid {
+							// 		<span class="mr-1 font-mono text-[10px]">{ assessmentRef(risk.AssessmentRefNum) }</span>
+							// 	}
+							// 	{ risk.AssessmentName }
+							// </td>
+							// <td class="px-4 py-3 text-center align-middle">
+							// 	@scoreCellInline(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, risk.LikelihoodCurrent.Valid, lowMax, highMin)
+							// </td>
+							// <td class="px-4 py-3 align-middle">
+							// 	@decisionBadge(risk.RiskDecision)
+							// </td>
+						}
 					}
-				</td>
-				<td class="truncate px-4 py-3 align-middle text-[11px] text-sand-700 dark:text-zinc-400">
-					if risk.AssessmentRefNum.Valid {
-						<span class="mr-1 font-mono text-[10px]">{ assessmentRef(risk.AssessmentRefNum) }</span>
-					}
-					{ risk.AssessmentName }
-				</td>
-				<td class="px-4 py-3 text-center align-middle">
-					@scoreCellInline(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, risk.LikelihoodCurrent.Valid, lowMax, highMin)
-				</td>
-				<td class="px-4 py-3 align-middle">
-					@decisionBadge(risk.RiskDecision)
-				</td>
-				</tr>
+				}
 			}
-			</tbody>
-			</table>
 		}
 	}
 }
