@@ -54,6 +54,8 @@ templ statusBadge(status string) {
 templ recurrenceBadge(recurrence string) {
 	if recurrence != "none" {
 		@ui.BadgeTag(ui.TagMetaPurple, locale.T(ctx, "recurrence_"+recurrence))
+	} else 	{
+		@ui.BadgeTag(ui.TagMetaPurple, locale.T(ctx, "label_one_off"))
 	}
 }
 
@@ -119,6 +121,33 @@ templ ActivityTable(rows []db.FilterActivitiesRow, hasMore bool, pageSize int32,
 		}
 	} else {
 		@ui.Card(ui.CardProps{}) {
+			@ui.TableNew(locale.T(ctx, "activites_table_label")) {
+				<colgroup>
+					<col/>
+					<col/>
+					<col class="w-30"/>
+					<col class="w-30"/>
+					<col class="w-30"/>
+					<col class="w-40"/>
+					<col class="w-30"/>
+					<col class="w-30"/>
+				</colgroup>
+				@ui.TableHeader() {
+					@ui.TableHeaderCell() { { locale.T(ctx, "label_activity") } }
+					@ui.TableHeaderCell() { { locale.T(ctx, "label_measure") } }
+					@ui.TableHeaderCell() { { locale.T(ctx, "label_kind") } }
+					@ui.TableHeaderCell() { { locale.T(ctx, "label_priority") } }
+					@ui.TableHeaderCell() { { locale.T(ctx, "label_recurrence") } }
+					@ui.TableHeaderCell() { { locale.T(ctx, "label_owner") } }
+					@ui.TableHeaderCell() { { locale.T(ctx, "label_due") } }
+					@ui.TableHeaderCell() { { locale.T(ctx, "label_status") } }
+				}
+				@ui.TableBody() {
+					@ActivityRowsNew(rows, hasMore, pageSize, filter, kind, q, sort, dir, mine)
+				}
+			}
+		}
+		@ui.Card(ui.CardProps{}) {
 			<div role="region" aria-label="Activities table" tabindex="0" class="overflow-x-auto">
 				@ui.Table(ui.TableProps{
 					Attrs: templ.Attributes{
@@ -148,6 +177,54 @@ templ ActivityTable(rows []db.FilterActivitiesRow, hasMore bool, pageSize int32,
 					</tbody>
 				}
 			</div>
+		}
+	}
+}
+
+templ ActivityRowsNew(rows []db.FilterActivitiesRow, hasMore bool, nextOffset int32, filter, kind, q, sort, dir string, mine bool) {
+	for _, a := range rows {
+		@ui.TableRow() {
+			@ui.TableDataCell() {
+				<div class="flex items-center gap-2">
+					if a.RefNum.Valid {
+						<span class="font-mono text-[11px] text-sand-700 dark:text-zinc-400 shrink-0">{ activityRef(a.RefNum) }</span>
+					}
+					<a href={ templ.SafeURL("/activities/" + a.ID.String()) } class="hover:text-blue-700 hover:underline truncate">{ a.Title }</a>
+				</div>
+			}
+			@ui.TableDataCell() {
+				if a.MeasureName == "" {
+					<span>—</span>
+				} else {
+					{ a.MeasureName }
+				}
+			}
+			@ui.TableDataCell() {
+				@kindBadge(a.Kind)
+			}
+			@ui.TableDataCell() {
+				@priorityBadge(a.Priority)
+			}
+			@ui.TableDataCell() {
+				@recurrenceBadge(a.Recurrence)
+			}
+			@ui.TableDataCell() {
+				if a.Owner == "" {
+					<span>—</span>
+				} else {
+					{ a.Owner }
+				}
+			}
+			@ui.TableDataCell() {
+				if IsOverdue(a.Status, a.DueDate) && a.Status != "completed" {
+					<span class="text-red-600 font-medium"><span aria-hidden="true">⚠ </span>{ FormatDate(a.DueDate) }</span>
+				} else {
+					<span>{ FormatDate(a.DueDate) }</span>
+				}
+			}
+			@ui.TableDataCell() {
+				@statusBadge(a.Status)
+			}
 		}
 	}
 }
