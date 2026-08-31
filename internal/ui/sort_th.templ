@@ -52,6 +52,14 @@ func sortAttrs(state SortState, col, action, target, formID string) templ.Attrib
 	}
 }
 
+// @ui.SortTh(locale.T(
+// label ctx, "label_activity"), 
+// col "title", 
+// state ui.SortState{Col: sort, Dir: dir}, 
+// action "/activities", 
+// target "#activities-table", 
+// formID "activity-filters", 
+// class "px-4 py-2.5 text-[11px]")
 templ SortTh(label, col string, state SortState, action, target, formID string, class string) {
 	@Th(ThProps{
 		Attrs: templ.Attributes{

@@ -52,8 +52,8 @@ templ Td(p TdProps) {
 
 templ TableNew(label string) {
 	<div class="w-full overflow-x-auto" tabindex="0" role="region" aria-label={ label }>
-		<table class="w-full min-w-[640px] table-fixed border-collapse text-left">
-		//<caption class="caption-top">{ label }</caption>
+		<table class="w-full min-w-[640px] border-collapse text-left">
+		<caption class="sr-only caption-top">{ label }</caption>
 		{ children... }
 		</table>
 	</div>
@@ -61,7 +61,7 @@ templ TableNew(label string) {
 
 templ TableHeader() {
 	<thead>
-		<tr class="bg-sand-50 dark:bg-zinc-800 text-[10px] font-semibold uppercase tracking-wide text-sand-700 dark:text-zinc-400">
+		<tr class="bg-sand-50 dark:bg-zinc-800 text-[10px] font-semibold uppercase tracking-wide text-sand-800 dark:text-zinc-200">
 		{ children... }
 		</tr>
 	</thead>
@@ -86,7 +86,7 @@ templ TableRow() {
 }
 
 templ TableDataCell() {
-	<td class="px-4 py-3 align-middle font-mono text-[11px] text-sand-700 dark:text-zinc-400 whitespace-nowrap">
+	<td class="px-4 py-3 align-middle text-[13px] text-sand-800 dark:text-zinc-200 whitespace-nowrap">
 	 { children... }
 	</td>
 }
