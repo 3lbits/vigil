@@ -1,0 +1,357 @@
+/* Operational pages: measures, activities, assets, avvik, and compliance. */
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) {
+  --ops-border: var(--ui2-border);
+  --ops-muted: var(--ui2-muted);
+  --ops-surface: var(--ui2-card);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-toolbar, .ops-between) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-bottom: 1rem;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-stack,
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-list {
+  display: grid;
+  gap: .75rem;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-list {
+  list-style: none;
+  padding: 0;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-list-box {
+  list-style: none;
+  padding: 0;
+  border: 1px solid var(--ops-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-list-item + .ops-list-item,
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-risk-next {
+  border-top: 1px solid var(--ops-border);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-fields-three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-end {
+  display: flex;
+  justify-content: flex-end;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-form { display: grid; gap: 1rem; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-form-inline { display: grid; gap: .5rem; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-form :is(label, input:not([type="checkbox"]), select),
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-input,
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) textarea {
+  max-width: 100%;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-input {
+  width: 100%;
+  font-size: .8125rem;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) input[type="checkbox"].ops-input {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-input:disabled {
+  background: var(--ui2-neutral-bg);
+  color: var(--ops-muted);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-label, .ops-check-label) {
+  display: block;
+  margin-bottom: .25rem;
+  font-size: .8125rem;
+  font-weight: 600;
+  color: var(--ui2-fg);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-check-label {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-weight: 500;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) input[type="checkbox"] {
+  accent-color: var(--ui2-link);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-file::file-selector-button {
+  margin-right: .75rem;
+  padding: .25rem .5rem;
+  border: 1px solid var(--ops-border);
+  border-radius: 6px;
+  background: var(--ui2-accent);
+  color: var(--ui2-fg);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-progress { width: 100%; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-narrow { max-width: 32rem; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-medium { max-width: 36rem; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-wide { max-width: 48rem; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-fill { width: 100%; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-spaced { margin-top: 2rem; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-separated,
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-history-separated {
+  border-top: 1px solid var(--ops-border);
+  padding-top: 1.25rem;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-history-separated { margin-top: .5rem; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-card {
+  padding: 1rem;
+  border: 1px solid var(--ops-border);
+  border-radius: 10px;
+  background: var(--ops-surface);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ui2-panel.ops-card { padding: 0; overflow: hidden; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-summary {
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-heading {
+  font-size: .9375rem;
+  font-weight: 600;
+  margin-bottom: .75rem;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-overline {
+  font-size: .6875rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--ops-muted);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-muted {
+  color: var(--ops-muted);
+  font-size: .8125rem;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-reference {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: .75rem;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-error { color: var(--ui2-danger-fg); }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-success-text { color: var(--ui2-success-fg); }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-align-end { text-align: right; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-align-center { text-align: center; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-break { overflow-wrap: anywhere; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-pre-wrap { white-space: pre-wrap; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-button, .ops-tab) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  padding: .375rem .75rem;
+  border: 1px solid var(--ops-border);
+  border-radius: 6px;
+  background: var(--ops-surface);
+  color: var(--ui2-fg);
+  font-size: .8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+  text-decoration: none;
+  cursor: pointer;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-button, .ops-tab, .ops-link-action):hover {
+  background: var(--ui2-accent);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-button, .ops-tab, .ops-link):focus-visible {
+  outline: 3px solid var(--ui2-link);
+  outline-offset: 2px;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-button, .ops-tab):disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-danger-link { color: var(--ui2-danger-fg); }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-confirm {
+  padding: .5rem 1rem;
+  border: 1px solid var(--ui2-success-fg);
+  border-radius: 6px;
+  background: #15803d;
+  color: #fff;
+  cursor: pointer;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-confirm:hover { background: #166534; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-tag, .ops-kind, .ops-asset-badge) {
+  display: inline-flex;
+  align-items: center;
+  padding: .125rem .375rem;
+  border: 1px solid var(--ops-border);
+  border-radius: 5px;
+  background: var(--ui2-neutral-bg);
+  color: var(--ui2-neutral-fg);
+  font-size: .6875rem;
+  font-weight: 500;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-risk-tag, .ops-kind-assessment, .ops-kind-exercise),
+.ui2-measures .ops-kind {
+  background: light-dark(#f5f3ff, #2e1065);
+  color: light-dark(#6d28d9, #c4b5fd);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-kind-training, .ops-asset-planned, .ops-kind-audit, .ops-asset-high) {
+  background: var(--ui2-warning-bg);
+  color: var(--ui2-warning-fg);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-kind-remediation, .ops-asset-high) {
+  background: var(--ui2-danger-bg);
+  color: var(--ui2-danger-fg);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-kind-review, .ops-asset-active) {
+  background: var(--ui2-success-bg);
+  color: var(--ui2-success-fg);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-asset-neutral {
+  background: var(--ui2-neutral-bg);
+  color: var(--ui2-neutral-fg);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-table {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--ops-border);
+  border-radius: 10px;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-data-table { min-width: 38rem; }
+.ui2-activities .ops-data-table { min-width: 56rem; }
+.ui2-assets .ops-data-table { min-width: 47rem; }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-table-head {
+  background: var(--ui2-accent);
+  color: var(--ops-muted);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-sort-heading, thead th) {
+  font-size: .6875rem;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-success-panel {
+  padding: 1rem;
+  border: 1px solid var(--ui2-success-fg);
+  border-radius: 10px;
+  background: var(--ui2-success-bg);
+  color: var(--ui2-success-fg);
+}
+.ui2-activities .ops-success-panel .ops-success-panel {
+  padding: 0;
+  border: 0;
+}
+.ui2-activities .ops-success-panel .ops-muted { color: inherit; }
+.ui2-avvik #avvik-tab-panel > .ops-stack > :is(.ops-card, .ops-form-inline) {
+  padding: 1rem;
+  border: 1px solid var(--ops-border);
+  border-radius: 10px;
+  background: var(--ops-surface);
+}
+.ui2-avvik #avvik-tab-panel > .ops-stack > .ops-card { padding: 1rem; }
+.ui2-avvik nav[aria-label="Avvik sections"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--ops-border);
+}
+.ui2-avvik .ops-card :is(pre, p) { overflow-wrap: anywhere; }
+.ui2-avvik .ops-info-panel,
+.ui2-avvik .ops-warning-panel {
+  padding: .75rem 1rem;
+  border: 1px solid var(--ui2-info-fg);
+  border-radius: 10px;
+  background: var(--ui2-info-bg);
+  color: var(--ui2-info-fg);
+  font-size: .8125rem;
+}
+.ui2-avvik .ops-warning-panel {
+  border-color: var(--ui2-warning-fg);
+  background: var(--ui2-warning-bg);
+  color: var(--ui2-warning-fg);
+}
+.ui2-avvik .ops-info-panel .ops-muted { color: inherit; }
+.ui2-avvik .ops-error[role="alert"] {
+  position: sticky;
+  top: .5rem;
+  z-index: 10;
+  padding: .5rem 1rem;
+  border-radius: 6px;
+  background: var(--ui2-danger-bg);
+}
+.ui2-avvik .ops-tab-active,
+.ui2-avvik .ops-close-ready { background: #1a1a1a; color: #fff; }
+.ui2-avvik .ops-tab-inactive { background: var(--ops-surface); }
+.ui2-avvik .ops-close-disabled { background: var(--ui2-neutral-bg); color: var(--ops-muted); }
+.ui2-avvik button.ops-close[data-tone="danger"].ops-close-ready {
+  background: #1a1a1a;
+  color: #fff;
+}
+.ui2-avvik button.ops-close[data-tone="danger"].ops-close-disabled {
+  background: var(--ui2-neutral-bg);
+  color: var(--ops-muted);
+}
+.ui2-avvik .ops-check-label .ops-input { margin: 0; }
+.ui2-compliance [id^="fw-reqs-"] { border-top: 1px solid var(--ops-border); padding-top: 0; }
+.ui2-compliance [id^="fw-reqs-"] > header {
+  display: flex;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .75rem 1rem;
+  background: var(--ui2-accent);
+}
+.ui2-compliance .ui2-panel.ops-card > .ops-inline { padding: .875rem 1rem; }
+.ui2-compliance .ui2-panel.ops-card > .ops-inline > button {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: .875rem;
+  min-width: 0;
+  text-align: left;
+  background: none;
+  border: 0;
+  color: var(--ui2-fg);
+  cursor: pointer;
+}
+.ui2-compliance .ui2-panel.ops-card > .ops-inline > button > span:last-child { flex: 1; min-width: 0; }
+.ui2-compliance .ui2-panel.ops-card > .ops-inline > button > span:last-child > span {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: .25rem;
+}
+.ui2-compliance .ui2-panel.ops-card progress { width: 100%; }
+.ui2-compliance .ops-expanded { transform: rotate(90deg); }
+.ui2-compliance .ui2-panel.ops-card > .ops-inline > button > .ops-muted { transition: transform .15s; }
+.ui2-measures .ops-risk-link, .ui2-activities .ops-risk-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .75rem 1rem;
+  text-decoration: none;
+  color: var(--ui2-fg);
+  font-size: .8125rem;
+}
+.ui2-measures .ops-risk-link:hover, .ui2-activities .ops-risk-link:hover { background: var(--ui2-accent); }
+.ui2-measures .ops-risk-score, .ui2-activities .ops-risk-score {
+  display: grid;
+  justify-items: center;
+  min-width: 2rem;
+  padding: .15rem .4rem;
+  border-radius: 5px;
+  color: #fff;
+  font-size: .6875rem;
+  font-weight: 700;
+}
+.ui2-measures .ops-risk-high, .ui2-activities .ops-risk-high { background: #ef4444; }
+.ui2-measures .ops-risk-medium, .ui2-activities .ops-risk-medium { background: #d97706; }
+.ui2-measures .ops-risk-low, .ui2-activities .ops-risk-low { background: #15803d; }
+.ui2-activities .ops-due-overdue { color: var(--ui2-danger-fg); font-weight: 600; }
+@media (max-width: 40rem) {
+  :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-fields, .ops-fields-three) {
+    grid-template-columns: 1fr;
+  }
+  .ui2-compliance .ui2-panel.ops-card > .ops-inline { align-items: flex-start; }
+}

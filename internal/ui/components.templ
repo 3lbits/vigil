@@ -4,59 +4,6 @@ import (
 	"fmt"
 )
 
-templ ProgressBar(pct int, colorClass string) {
-	<div role="progressbar" aria-valuenow={ fmt.Sprint(pct) } aria-valuemin="0" aria-valuemax="100" class="h-2.5 bg-sand-200 dark:bg-zinc-700 rounded-full overflow-hidden w-full">
-		<div class={ cx("h-2.5 rounded-full transition-all duration-300", colorClass) } :style={ fmt.Sprintf(`{"width":"%d%%"}`, pct) }></div>
-	</div>
-}
-
-templ CoverageProgressBar(pct int) {
-	@ProgressBar(pct, coverageColor(pct))
-}
-
-func coverageColor(pct int) string {
-	level := "low"
-	if pct >= 70 {
-		level = "high"
-	} else if pct >= 30 {
-		level = "mid"
-	}
-	return pick(map[string]string{
-		"high": "bg-green-500",
-		"mid":  "bg-amber-500",
-		"low":  "bg-red-500",
-	}, level, "low")
-}
-
-templ ProgressBarThin(pct int, colorClass string) {
-	<div role="progressbar" aria-valuenow={ fmt.Sprint(pct) } aria-valuemin="0" aria-valuemax="100" class="h-1.5 bg-sand-200 dark:bg-zinc-700 rounded-full overflow-hidden w-full">
-		<div class={ cx("h-1.5 rounded-full transition-all duration-300", colorClass) } :style={ fmt.Sprintf(`{"width":"%d%%"}`, pct) }></div>
-	</div>
-}
-
-templ MetricCard(label, value, sub, subColor, valueColor string) {
-	<div class="bg-sand-100 dark:bg-zinc-800 rounded-lg p-3.5">
-		<div class="text-xs text-sand-700 dark:text-zinc-400 mb-0.5">{ label }</div>
-		<div class={ "text-[22px] font-medium", valueColor }>{ value }</div>
-		if sub != "" {
-			<div class={ "text-[11px] mt-0.5", subColor }>{ sub }</div>
-		}
-	</div>
-}
-
-templ Flash(flash, flashType string) {
-	if flash != "" {
-		switch flashType {
-			case "success":
-				<div role="status" class="mb-4 px-4 py-2.5 rounded-lg bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 text-[13px]">{ flash }</div>
-			case "error":
-				<div role="alert" class="mb-4 px-4 py-2.5 rounded-lg bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 text-[13px]">{ flash }</div>
-			default:
-				<div role="status" class="mb-4 px-4 py-2.5 rounded-lg bg-sand-100 dark:bg-zinc-800 border border-sand-300 dark:border-zinc-600 text-sand-800 dark:text-zinc-200 text-[13px]">{ flash }</div>
-		}
-	}
-}
-
 templ IconSVG(name string, size int) {
 	switch name {
 		case "dashboard":

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/google/uuid"
@@ -103,6 +104,11 @@ func TestShow_OK(t *testing.T) {
 
 	if w.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d", w.Code)
+	}
+	if !strings.Contains(w.Body.String(), `class="ui2 ui2-me"`) ||
+		!strings.Contains(w.Body.String(), `<dl>`) ||
+		!strings.Contains(w.Body.String(), `class="ui2-grid"`) {
+		t.Error("my page should use UI2 and semantic profile/list markup")
 	}
 }
 

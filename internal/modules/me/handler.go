@@ -10,7 +10,7 @@ import (
 	"github.com/3lbits/vigil/internal/httputil"
 	"github.com/3lbits/vigil/internal/middleware"
 	metemplates "github.com/3lbits/vigil/internal/modules/me/templates"
-	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 type Handler struct {
@@ -41,7 +41,7 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	userID, err := uuid.Parse(sessionUser.ID)
 	if err != nil {
 		slog.Warn("parse user id for my page", "user_id", sessionUser.ID, "error", err)
-		httputil.Render(w, r, layout.Layout("page_my_title", "page_my_subtitle", "me", sessionUser, metemplates.Page(vm)))
+		httputil.Render(w, r, ui2.Layout("page_my_title", "page_my_subtitle", "me", sessionUser, metemplates.Page(vm)))
 		return
 	}
 
@@ -84,5 +84,5 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	}
 	vm.Risks = risks
 
-	httputil.Render(w, r, layout.Layout("page_my_title", "page_my_subtitle", "me", sessionUser, metemplates.Page(vm)))
+	httputil.Render(w, r, ui2.Layout("page_my_title", "page_my_subtitle", "me", sessionUser, metemplates.Page(vm)))
 }

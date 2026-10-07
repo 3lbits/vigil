@@ -28,7 +28,6 @@ cd vigil
 make setup
 cp .env.example .env
 
-make tailwind-install
 make generate
 make db-up
 
@@ -98,13 +97,15 @@ applies equally to everyone, so reach for it when this summary isn't enough.
   enforced through `authz.RequirePolicy(engine, resource, action)`.
 - **Don't edit generated code.** `**/*_templ.go`, the sqlc-generated Go, and
   `cmd/server/public/css/output.css` are produced by `make generate`. Change
-  the source and regenerate; the next generation overwrites hand edits.
+  the `.templ`, SQL, or authored CSS source and regenerate; the next generation
+  overwrites hand edits.
 - **Keep it simple.** No speculative abstractions or unrequested configuration
   knobs. If 200 lines could be 50, write 50. Match the existing style.
-- **Compose UI2 pilot pages from `internal/ui2`.** Keep shared page structure
+- **Compose app pages from `internal/ui2`.** Keep shared page structure
   there and feature-specific content in module templates. UI2 reuses the
-  existing document/navigation shell; don't duplicate it or migrate other
-  pages implicitly.
+  existing document/navigation shell; don't duplicate it.
+- **Use plain CSS.** Shared styles live in `ui2.css` and feature styles beside
+  it; `make css-build` combines them without a CSS framework.
 
 ## Using AI coding agents
 

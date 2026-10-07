@@ -19,7 +19,7 @@ import (
 	"github.com/3lbits/vigil/internal/httputil"
 	"github.com/3lbits/vigil/internal/middleware"
 	measurestemplates "github.com/3lbits/vigil/internal/modules/measures/templates"
-	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 type Handler struct {
@@ -162,7 +162,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httputil.Render(w, r, layout.Layout("Measures", "Security controls and measures", "measures", user,
+	httputil.Render(w, r, ui2.Layout("Measures", "Security controls and measures", "measures", user,
 		measurestemplates.MeasureList(vms, filter, search, sort, dir, mine, flash, flashType, hasMore, measuresPageSize),
 	))
 }
@@ -173,7 +173,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 		slog.Warn("list users for new measure", "error", err)
 	}
 	user, _ := middleware.FromContext(r.Context())
-	httputil.Render(w, r, layout.Layout("Add measure", "New security measure", "measures", user,
+	httputil.Render(w, r, ui2.Layout("Add measure", "New security measure", "measures", user,
 		measurestemplates.MeasureForm(nil, users, "", ""),
 	))
 }
@@ -204,7 +204,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			slog.Warn("list users for create measure error", "error", userErr)
 		}
 		user, _ := middleware.FromContext(r.Context())
-		httputil.Render(w, r, layout.Layout("Add measure", "New security measure", "measures", user,
+		httputil.Render(w, r, ui2.Layout("Add measure", "New security measure", "measures", user,
 			measurestemplates.MeasureForm(nil, users, "Failed to create measure.", "error"),
 		))
 		return
@@ -296,7 +296,7 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	if m.RefNum.Valid {
 		measureTitle = fmt.Sprintf("M-%03d · %s", m.RefNum.Int32, m.Name)
 	}
-	httputil.Render(w, r, layout.Layout(measureTitle, m.Category, "measures", user,
+	httputil.Render(w, r, ui2.Layout(measureTitle, m.Category, "measures", user,
 		measurestemplates.MeasureDetail(vm),
 	))
 }
@@ -345,7 +345,7 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, _ := middleware.FromContext(r.Context())
-	httputil.Render(w, r, layout.Layout("Edit measure", m.Name, "measures", user,
+	httputil.Render(w, r, ui2.Layout("Edit measure", m.Name, "measures", user,
 		measurestemplates.MeasureEditPage(vm, flash, flashType),
 	))
 }
@@ -619,7 +619,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 			slog.Warn("list users for update measure error", "error", userErr)
 		}
 		user, _ := middleware.FromContext(r.Context())
-		httputil.Render(w, r, layout.Layout("Edit measure", existingForError.Name, "measures", user,
+		httputil.Render(w, r, ui2.Layout("Edit measure", existingForError.Name, "measures", user,
 			measurestemplates.MeasureForm(&existingForError, users, "Failed to save changes.", "error"),
 		))
 		return

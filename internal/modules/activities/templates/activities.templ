@@ -9,7 +9,8 @@ import (
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
 	"github.com/3lbits/vigil/internal/ui"
-	formstemplates "github.com/3lbits/vigil/internal/ui/forms"
+	"github.com/3lbits/vigil/internal/ui2"
+	formstemplates "github.com/3lbits/vigil/internal/ui2/forms"
 )
 
 func activityRef(n sql.NullInt32) string {
@@ -22,33 +23,19 @@ func activityRef(n sql.NullInt32) string {
 templ statusBadge(status string) {
 	switch status {
 		case "completed":
-			@ui.Badge(ui.BadgeProps{
-				Variant: "success",
-			}) { { locale.T(ctx, "status_completed") } }
+			@ui2.Badge("success") { { locale.T(ctx, "status_completed") } }
 		case "in_progress":
-			@ui.Badge(ui.BadgeProps{
-				Variant: "default",
-				Class:   "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
-			}) { { locale.T(ctx, "status_in_progress") } }
+			@ui2.Badge("info") { { locale.T(ctx, "status_in_progress") } }
 		case "overdue":
-			@ui.Badge(ui.BadgeProps{
-				Variant: "danger",
-			}) { { locale.T(ctx, "status_overdue") } }
+			@ui2.Badge("danger") { { locale.T(ctx, "status_overdue") } }
 		default:
-			@ui.Badge(ui.BadgeProps{
-				Variant: "default",
-			}) { { locale.T(ctx, "status_planned") } }
+			@ui2.Badge("neutral") { { locale.T(ctx, "status_planned") } }
 	}
 }
 
 templ recurrenceBadge(recurrence string) {
 	if recurrence != "none" {
-		@ui.Badge(ui.BadgeProps{
-			Variant: "default",
-			Class:   "text-[10px] px-1.5 rounded bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950 dark:text-violet-300 dark:border-violet-800",
-		}) {
-			{ locale.T(ctx, "recurrence_" + recurrence) }
-		}
+		<span class="ops-kind">{ locale.T(ctx, "recurrence_" + recurrence) }</span>
 	}
 }
 
@@ -70,46 +57,50 @@ func recurrenceLabel(r string) string {
 templ priorityBadge(priority string) {
 	switch priority {
 		case "high":
-			@ui.Badge(ui.BadgeProps{
-				Variant: "danger",
-				Class:   "text-[10px] px-1.5 rounded",
-			}) { { locale.T(ctx, "priority_high") } }
+			@ui2.Badge("danger") { { locale.T(ctx, "priority_high") } }
 		case "low":
-			@ui.Badge(ui.BadgeProps{
-				Variant: "default",
-				Class:   "text-[10px] px-1.5 rounded",
-			}) { { locale.T(ctx, "priority_low") } }
+			@ui2.Badge("neutral") { { locale.T(ctx, "priority_low") } }
 		default:
-			@ui.Badge(ui.BadgeProps{
-				Variant: "warning",
-				Class:   "text-[10px] px-1.5 rounded",
-			}) { { locale.T(ctx, "priority_medium") } }
+			@ui2.Badge("warning") { { locale.T(ctx, "priority_medium") } }
 	}
 }
 
 templ kindBadge(kind string) {
-	@ui.Badge(ui.BadgeProps{
-		Variant: "default",
-		Class:   kindBadgeClass(kind),
-	}) {
-		{ locale.T(ctx, "kind_" + kind) }
+	<span class={ "ops-kind", kindBadgeClass(kind) }>{ locale.T(ctx, "kind_" + kind) }</span>
+}
+
+func flashRole(tone string) string {
+	if tone == "error" {
+		return "alert"
+	}
+	return "status"
+}
+
+func flashTone(tone string) string {
+	switch tone {
+	case "error":
+		return "danger"
+	case "success":
+		return "success"
+	default:
+		return "neutral"
 	}
 }
 
 func kindBadgeClass(kind string) string {
 	switch kind {
 	case "training":
-		return "text-[10px] px-1.5 rounded bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800"
+		return "ops-kind-training"
 	case "exercise":
-		return "text-[10px] px-1.5 rounded bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800"
+		return "ops-kind-exercise"
 	case "assessment":
-		return "text-[10px] px-1.5 rounded bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-800"
+		return "ops-kind-assessment"
 	case "audit":
-		return "text-[10px] px-1.5 rounded bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800"
+		return "ops-kind-audit"
 	case "remediation":
-		return "text-[10px] px-1.5 rounded bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800"
+		return "ops-kind-remediation"
 	default:
-		return "text-[10px] px-1.5 rounded bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950 dark:text-teal-300 dark:border-teal-800"
+		return "ops-kind-review"
 	}
 }
 
@@ -133,37 +124,39 @@ func kindLabel(k string) string {
 // ── Activity list ─────────────────────────────────────────────────────────────
 
 templ ActivityList(rows []db.FilterActivitiesRow, filter, kind, q, sort, dir string, mine bool, flash, flashType string, hasMore bool, pageSize int32) {
-	@ui.Flash(flash, flashType)
+	@ui2.Page("ui2-activities") {
+	if flash != "" {
+		<p role={ flashRole(flashType) } data-tone={ flashTone(flashType) }>{ flash }</p>
+	}
 
-	<div class="flex flex-wrap justify-between items-center gap-3 mb-4">
-		<p class="text-[13px] text-sand-700">{ locale.T(ctx, "nav_activities") }</p>
+	<div class="ops-toolbar">
+		<p class="ops-muted">{ locale.T(ctx, "nav_activities") }</p>
 		<a
 			href="/activities/new"
-			class="text-xs font-medium py-1.5 px-3.5 rounded-md border border-sand-400 hover:bg-sand-100 transition-colors flex items-center gap-1.5"
+			class="ops-button"
 		>
 			@ui.IconSVG("plus", 13)
 			{ locale.T(ctx, "action_add_activity") }
 		</a>
 	</div>
 
-	@ui.FilterBar(ui.FilterBarProps{ID: "activity-filters", Action: "/activities", Target: "#activities-table"}) {
+	@ui2.FilterBar(ui2.FilterBarProps{ID: "activity-filters", Action: "/activities", Target: "#activities-table"}) {
 		<input type="hidden" name="sort" value={ sort }/>
 		<input type="hidden" name="dir" value={ dir }/>
-		@ui.FilterSearch(ui.FilterSearchProps{
-			Name:    "q",
+		@ui2.FilterSearch(ui2.FilterSearchProps{
 			Value:   q,
 			Columns: []string{"label_activity", "label_owner"},
 			Action:  "/activities",
 			Target:  "#activities-table",
 		})
-		@ui.FilterSelect("filter", locale.T(ctx, "filter_all_statuses")) {
+		@ui2.FilterSelect("filter", locale.T(ctx, "filter_all_statuses")) {
 			<option value="" selected?={ filter == "" || filter == "all" }>{ locale.T(ctx, "filter_all_statuses") }</option>
 			<option value="planned" selected?={ filter == "planned" }>{ locale.T(ctx, "status_planned") }</option>
 			<option value="in_progress" selected?={ filter == "in_progress" }>{ locale.T(ctx, "status_in_progress") }</option>
 			<option value="overdue" selected?={ filter == "overdue" }>{ locale.T(ctx, "status_overdue") }</option>
 			<option value="completed" selected?={ filter == "completed" }>{ locale.T(ctx, "status_completed") }</option>
 		}
-		@ui.FilterSelect("kind", locale.T(ctx, "filter_all_kinds")) {
+		@ui2.FilterSelect("kind", locale.T(ctx, "filter_all_kinds")) {
 			<option value="" selected?={ kind == "" || kind == "all" }>{ locale.T(ctx, "filter_all_kinds") }</option>
 			<option value="training" selected?={ kind == "training" }>{ locale.T(ctx, "kind_training") }</option>
 			<option value="exercise" selected?={ kind == "exercise" }>{ locale.T(ctx, "kind_exercise") }</option>
@@ -172,133 +165,102 @@ templ ActivityList(rows []db.FilterActivitiesRow, filter, kind, q, sort, dir str
 			<option value="remediation" selected?={ kind == "remediation" }>{ locale.T(ctx, "kind_remediation") }</option>
 			<option value="review" selected?={ kind == "review" }>{ locale.T(ctx, "kind_review") }</option>
 		}
-		@ui.FilterMine(mine, "label_mine_only")
+		@ui2.FilterMine(mine, "label_mine_only")
 	}
 
 	<div id="activities-table" aria-live="polite" aria-atomic="false">
 		@ActivityTable(rows, hasMore, pageSize, filter, kind, q, sort, dir, mine)
 	</div>
+	}
 }
 
 templ ActivityTable(rows []db.FilterActivitiesRow, hasMore bool, pageSize int32, filter, kind, q, sort, dir string, mine bool) {
 	if len(rows) == 0 {
-		@ui.EmptyState(ui.EmptyStateProps{
-			Class: "border-solid border-sand-300/60 rounded-[10px] p-8 bg-white dark:bg-zinc-900",
-		}) {
-			<div class="text-sand-700 text-[13px]">{ locale.T(ctx, "activities_none_found") }</div>
-			<a href="/activities/new" class="text-blue-600 text-[13px] hover:underline">Add your first activity →</a>
-		}
+		<p>{ locale.T(ctx, "activities_none_found") } <a href="/activities/new">Add your first activity →</a></p>
 	} else {
-		@ui.Card(ui.CardProps{
-			Class:   "border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden",
-			Padding: "p-0",
-		}) {
-			<div role="region" aria-label="Activities table" tabindex="0" class="overflow-x-auto">
-				@ui.Table(ui.TableProps{
-					Attrs: templ.Attributes{
-						"class": "min-w-[900px]",
-					},
-				}) {
+		<section role="region" aria-label="Activities table" tabindex="0" class="ops-table">
+			<table class="ops-data-table">
 					<caption class="sr-only">Activities</caption>
-					@ui.THead(ui.THeadProps{
-						Attrs: templ.Attributes{
-							"class": "bg-sand-50 border-b border-sand-300/60 dark:bg-zinc-900 dark:border-zinc-700",
-						},
-					}) {
-						@ui.Tr(ui.TrProps{}) {
-							@ui.SortTh(locale.T(ctx, "label_activity"), "title", ui.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "px-4 py-2.5 text-[11px]")
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { { locale.T(ctx, "label_measure") } }
-							@ui.SortTh(locale.T(ctx, "label_kind"), "kind", ui.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "py-2.5 text-[11px]")
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { { locale.T(ctx, "label_priority") } }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "py-2.5 text-[11px]"}}) { { locale.T(ctx, "label_recurrence") } }
-							@ui.SortTh(locale.T(ctx, "label_owner"), "owner", ui.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "py-2.5 text-[11px]")
-							@ui.SortTh(locale.T(ctx, "label_due"), "due_date", ui.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "py-2.5 text-[11px]")
-							@ui.SortTh(locale.T(ctx, "label_status"), "status", ui.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "py-2.5 text-[11px]")
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 py-2.5"}}) { <span class="sr-only">{ locale.T(ctx, "label_actions") }</span> }
-						}
-					}
+					<thead class="ops-table-head">
+						<tr>
+							@ui2.SortTh(locale.T(ctx, "label_activity"), "title", ui2.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "ops-sort-heading")
+							<th scope="col" >{ locale.T(ctx, "label_measure") }</th>
+							@ui2.SortTh(locale.T(ctx, "label_kind"), "kind", ui2.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "ops-sort-heading")
+							<th scope="col" >{ locale.T(ctx, "label_priority") }</th>
+							<th scope="col" >{ locale.T(ctx, "label_recurrence") }</th>
+							@ui2.SortTh(locale.T(ctx, "label_owner"), "owner", ui2.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "ops-sort-heading")
+							@ui2.SortTh(locale.T(ctx, "label_due"), "due_date", ui2.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "ops-sort-heading")
+							@ui2.SortTh(locale.T(ctx, "label_status"), "status", ui2.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "ops-sort-heading")
+							<th scope="col" ><span class="sr-only">{ locale.T(ctx, "label_actions") }</span></th>
+						</tr>
+					</thead>
 					<tbody>
 						@ActivityRows(rows, hasMore, pageSize, filter, kind, q, sort, dir, mine)
 					</tbody>
-				}
-			</div>
-		}
+			</table>
+		</section>
 	}
 }
 
 templ ActivityRows(rows []db.FilterActivitiesRow, hasMore bool, nextOffset int32, filter, kind, q, sort, dir string, mine bool) {
 	for _, a := range rows {
-		@ui.Tr(ui.TrProps{
-			Attrs: templ.Attributes{
-				"class": "border-sand-300/60 dark:border-zinc-700/60",
-			},
-		}) {
-			@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-medium"}}) {
-				<div class="flex items-center gap-2">
+		<tr>
+			<td >
+				<div class="ops-inline">
 					if a.RefNum.Valid {
-						<span class="font-mono text-[11px] text-sand-700 dark:text-zinc-400 shrink-0">{ activityRef(a.RefNum) }</span>
+						<span class="ops-reference">{ activityRef(a.RefNum) }</span>
 					}
-					<a href={ templ.SafeURL("/activities/" + a.ID.String()) } class="hover:text-blue-700 hover:underline truncate">{ a.Title }</a>
+					<a href={ templ.SafeURL("/activities/" + a.ID.String()) } class="ops-link ops-truncate">{ a.Title }</a>
 				</div>
-			}
-			@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700 truncate"}}) {
+			</td>
+			<td class="ops-truncate">
 				if a.MeasureName == "" {
-					<span class="text-sand-700">—</span>
+					<span class="ops-muted">—</span>
 				} else {
 					{ a.MeasureName }
 				}
-			}
-			@ui.Td(ui.TdProps{}) {
+			</td>
+			<td>
 				@kindBadge(a.Kind)
-			}
-			@ui.Td(ui.TdProps{}) {
+			</td>
+			<td>
 				@priorityBadge(a.Priority)
-			}
-			@ui.Td(ui.TdProps{}) {
+			</td>
+			<td>
 				@recurrenceBadge(a.Recurrence)
 				if a.Recurrence == "none" {
-					<span class="text-[11px] text-sand-700 dark:text-zinc-400">{ locale.T(ctx, "label_one_off") }</span>
+					<span class="ops-muted">{ locale.T(ctx, "label_one_off") }</span>
 				}
-			}
-			@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) {
+			</td>
+			<td>
 				if a.Owner == "" {
-					<span class="text-sand-700">—</span>
+					<span class="ops-muted">—</span>
 				} else {
 					{ a.Owner }
 				}
-			}
-			@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "whitespace-nowrap"}}) {
+			</td>
+			<td >
 				if IsOverdue(a.Status, a.DueDate) && a.Status != "completed" {
-					<span class="text-red-600 font-medium"><span aria-hidden="true">⚠ </span>{ FormatDate(a.DueDate) }</span>
+					<span class="ops-error"><span aria-hidden="true">⚠ </span>{ FormatDate(a.DueDate) }</span>
 				} else {
-					<span class="text-sand-700">{ FormatDate(a.DueDate) }</span>
+					<span class="ops-muted">{ FormatDate(a.DueDate) }</span>
 				}
-			}
-			@ui.Td(ui.TdProps{}) {
+			</td>
+			<td>
 				@statusBadge(a.Status)
-			}
-			@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 text-right"}}) {
+			</td>
+			<td class="ops-align-end">
 				<a
 					href={ templ.SafeURL("/activities/" + a.ID.String()) }
 					aria-label={ "View activity: " + a.Title }
-					class="text-[11px] text-sand-700 dark:text-zinc-400 hover:text-sand-900 dark:hover:text-zinc-100 py-1 px-2"
+					class="ops-link"
 				>view</a>
-			}
-		}
+			</td>
+		</tr>
 	}
 	if hasMore {
-		@ui.Tr(ui.TrProps{
-			Attrs: templ.Attributes{
-				"id":    "load-more-row",
-				"class": "border-sand-300/60 dark:border-zinc-700/60",
-			},
-		}) {
-			@ui.Td(ui.TdProps{
-				Attrs: templ.Attributes{
-					"colspan": "9",
-					"class":   "text-center",
-				},
-			}) {
+		<tr id="load-more-row">
+			<td colspan="9" class="ops-align-center">
 				<a
 					href={ templ.SafeURL("/activities?offset=" + fmt.Sprint(nextOffset) + "&filter=" + filter + "&kind=" + kind + "&q=" + q + "&sort=" + sort + "&dir=" + dir + "&mine=" + listMineQueryValue(mine)) }
 					hx-get="/activities"
@@ -306,10 +268,10 @@ templ ActivityRows(rows []db.FilterActivitiesRow, hasMore bool, nextOffset int32
 					hx-vals={ fmt.Sprintf(`{"offset":"%d"}`, nextOffset) }
 					hx-target="#load-more-row"
 					hx-swap="outerHTML"
-					class="text-[12px] text-sand-700 hover:text-sand-900 border border-sand-300 rounded px-3 py-1.5 hover:bg-sand-50 transition-colors"
+					class="ops-button"
 				>Load more</a>
-			}
-		}
+			</td>
+		</tr>
 	}
 }
 
@@ -323,21 +285,24 @@ func listMineQueryValue(mine bool) string {
 // ── Activity form (new / edit) ────────────────────────────────────────────────
 
 templ ActivityForm(measures []db.Measure, users []db.User, a *db.GetActivityRow, preselectedMeasureID string, flash, flashType string, auditLog []db.ListAuditLogForActivityRow) {
-	@ui.Flash(flash, flashType)
+	@ui2.Page("ui2-activities") {
+	if flash != "" {
+		<p role={ flashRole(flashType) } data-tone={ flashTone(flashType) }>{ flash }</p>
+	}
 
-	<div class="max-w-lg">
-		<form method="POST" action={ activityFormAction(a) } class="flex flex-col gap-4">
+	<div class="ops-stack ops-narrow">
+		<form method="POST" action={ activityFormAction(a) } class="ops-form-inline">
 			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 			if a == nil {
 				@formstemplates.ActivityCreateFields(measures, users, "activity-create", "")
 			} else {
 				<!-- Measure selector (optional) -->
-				<div class="flex flex-col gap-1">
-					<label for="measure_id" class="text-xs font-medium text-sand-700">Measure</label>
+				<div class="ops-stack">
+					<label for="measure_id" class="ops-label">Measure</label>
 					<select
 						id="measure_id"
 						name="measure_id"
-						class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 bg-white"
+						class="ops-input"
 					>
 						<option value="">— none —</option>
 						for _, m := range measures {
@@ -352,14 +317,14 @@ templ ActivityForm(measures []db.Measure, users []db.User, a *db.GetActivityRow,
 				@activityInputField("Title", "title", "e.g. Annual penetration test", activityFieldVal(a, "title"), true)
 				@activityTextareaField("Description", "description", "Optional context or scope", activityFieldVal(a, "description"))
 
-				<div class="grid grid-cols-2 gap-3">
+				<div class="ops-fields">
 				<!-- Type -->
-					<div class="flex flex-col gap-1">
-					<label for="activity_type" class="text-xs font-medium text-sand-700">{ locale.T(ctx, "label_type") }</label>
+					<div class="ops-stack">
+					<label for="activity_type" class="ops-label">{ locale.T(ctx, "label_type") }</label>
 					<select
 						id="activity_type"
 						name="activity_type"
-						class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 bg-white"
+						class="ops-input"
 					>
 						<option value="one_off" selected?={ activityFieldVal(a, "activity_type") != "recurring" }>{ locale.T(ctx, "label_one_off") }</option>
 						<option value="recurring" selected?={ activityFieldVal(a, "activity_type") == "recurring" }>{ locale.T(ctx, "type_recurring") }</option>
@@ -367,12 +332,12 @@ templ ActivityForm(measures []db.Measure, users []db.User, a *db.GetActivityRow,
 					</div>
 
 					<!-- Recurrence -->
-					<div class="flex flex-col gap-1">
-					<label for="recurrence" class="text-xs font-medium text-sand-700">{ locale.T(ctx, "label_recurrence") }</label>
+					<div class="ops-stack">
+					<label for="recurrence" class="ops-label">{ locale.T(ctx, "label_recurrence") }</label>
 					<select
 						id="recurrence"
 						name="recurrence"
-						class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 bg-white"
+						class="ops-input"
 					>
 						<option value="none" selected?={ activityFieldVal(a, "recurrence") == "none" || activityFieldVal(a, "recurrence") == "" }>{ locale.T(ctx, "recurrence_none") }</option>
 						<option value="monthly" selected?={ activityFieldVal(a, "recurrence") == "monthly" }>{ locale.T(ctx, "recurrence_monthly") }</option>
@@ -383,14 +348,14 @@ templ ActivityForm(measures []db.Measure, users []db.User, a *db.GetActivityRow,
 					</div>
 				</div>
 
-				<div class="grid grid-cols-2 gap-3">
+				<div class="ops-fields">
 				<!-- Kind -->
-					<div class="flex flex-col gap-1">
-					<label for="kind" class="text-xs font-medium text-sand-700">{ locale.T(ctx, "label_kind") }</label>
+					<div class="ops-stack">
+					<label for="kind" class="ops-label">{ locale.T(ctx, "label_kind") }</label>
 					<select
 						id="kind"
 						name="kind"
-						class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 bg-white"
+						class="ops-input"
 					>
 						<option value="training" selected?={ activityFieldVal(a, "kind") == "training" }>{ locale.T(ctx, "kind_training") }</option>
 						<option value="exercise" selected?={ activityFieldVal(a, "kind") == "exercise" }>{ locale.T(ctx, "kind_exercise") }</option>
@@ -402,12 +367,12 @@ templ ActivityForm(measures []db.Measure, users []db.User, a *db.GetActivityRow,
 					</div>
 
 					<!-- Priority -->
-					<div class="flex flex-col gap-1">
-					<label for="priority" class="text-xs font-medium text-sand-700">{ locale.T(ctx, "label_priority") }</label>
+					<div class="ops-stack">
+					<label for="priority" class="ops-label">{ locale.T(ctx, "label_priority") }</label>
 					<select
 						id="priority"
 						name="priority"
-						class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 bg-white"
+						class="ops-input"
 					>
 						<option value="low" selected?={ activityFieldVal(a, "priority") == "low" }>{ locale.T(ctx, "priority_low") }</option>
 						<option value="medium" selected?={ activityFieldVal(a, "priority") == "medium" || activityFieldVal(a, "priority") == "" }>{ locale.T(ctx, "priority_medium") }</option>
@@ -418,33 +383,30 @@ templ ActivityForm(measures []db.Measure, users []db.User, a *db.GetActivityRow,
 
 				@activityAssigneePicker(a, users)
 
-				<div class="flex flex-col gap-1">
+				<div class="ops-stack">
 					@activityInputField("Due date", "due_date", "", activityFieldVal(a, "due_date"), false)
 				</div>
 			}
 
-			<div class="flex gap-2 pt-1">
-				@ui.Button(ui.ButtonProps{
-					Attrs: templ.Attributes{
-						"type": "submit",
-					},
-				}) {
+			<div class="ops-inline">
+				<button type="submit">
 					if a == nil {
 						{ locale.T(ctx, "action_create_activity") }
 					} else {
 						{ locale.T(ctx, "action_save_changes") }
 					}
-				}
+				</button>
 				<a
 					href="/activities"
-					class="text-[13px] py-2 px-4 rounded-md border border-sand-400 text-sand-700 hover:bg-sand-100 transition-colors"
+					class="ops-button"
 				>{ locale.T(ctx, "action_cancel") }</a>
 			</div>
 		</form>
 		if a != nil {
-			@activityRecentChanges(auditLog, "mt-8")
+			@activityRecentChanges(auditLog, "ops-spaced")
 		}
 	</div>
+	}
 }
 
 func activityFormAction(a *db.GetActivityRow) templ.SafeURL {
@@ -495,11 +457,11 @@ func selectedMeasure(a *db.GetActivityRow, measureID, preselected string) bool {
 }
 
 templ activityInputField(label, name, placeholder, value string, required bool) {
-	<div class="flex flex-col gap-1">
-		<label for={ name } class="text-xs font-medium text-sand-700">
+	<div class="ops-stack">
+		<label for={ name } class="ops-label">
 			{ label }
 			if required {
-				<span class="text-red-500">*</span>
+				<span class="ops-error">*</span>
 			}
 		</label>
 		<input
@@ -509,7 +471,7 @@ templ activityInputField(label, name, placeholder, value string, required bool) 
 			placeholder={ placeholder }
 			value={ value }
 			required?={ required }
-			class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400"
+			class="ops-input"
 		/>
 	</div>
 }
@@ -524,16 +486,16 @@ func inputType(name string) string {
 templ activityAssigneePicker(a *db.GetActivityRow, users []db.User) {
 	<div
 		x-data={ activityAssigneePickerData(a) }
-		class="flex flex-col gap-2"
+		class="ops-stack"
 	>
-		<div class="flex flex-col gap-1">
-			<label for="assignee_id" class="text-xs font-medium text-sand-700">Assignee (registered user)</label>
+		<div class="ops-stack">
+			<label for="assignee_id" class="ops-label">Assignee (registered user)</label>
 			<select
 				id="assignee_id"
 				name="assignee_id"
 				x-model="assigneeID"
 				@change="if (assigneeID !== '') { owner = $el.options[$el.selectedIndex].dataset.name } else { owner = '' }"
-				class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 bg-white"
+				class="ops-input"
 			>
 				<option value="">— or enter name below —</option>
 				for _, u := range users {
@@ -541,8 +503,8 @@ templ activityAssigneePicker(a *db.GetActivityRow, users []db.User) {
 				}
 			</select>
 		</div>
-		<div class="flex flex-col gap-1">
-			<label for="owner" class="text-xs font-medium text-sand-700">Owner / free-text name</label>
+		<div class="ops-stack">
+			<label for="owner" class="ops-label">Owner / free-text name</label>
 			<input
 				id="owner"
 				name="owner"
@@ -551,7 +513,7 @@ templ activityAssigneePicker(a *db.GetActivityRow, users []db.User) {
 				:disabled="assigneeID !== ''"
 				value={ activityFieldVal(a, "owner") }
 				placeholder="e.g. security team"
-				class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 disabled:bg-sand-100 disabled:text-sand-400"
+				class="ops-input"
 			/>
 		</div>
 	</div>
@@ -572,14 +534,14 @@ func activityAssigneePickerData(a *db.GetActivityRow) string {
 }
 
 templ activityTextareaField(label, name, placeholder, value string) {
-	<div class="flex flex-col gap-1">
-		<label for={ name } class="text-xs font-medium text-sand-700">{ label }</label>
+	<div class="ops-stack">
+		<label for={ name } class="ops-label">{ label }</label>
 		<textarea
 			id={ name }
 			name={ name }
 			placeholder={ placeholder }
 			rows="3"
-			class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 resize-y"
+			class="ops-input"
 		>{ value }</textarea>
 	</div>
 }
@@ -587,16 +549,16 @@ templ activityTextareaField(label, name, placeholder, value string) {
 templ completedByField(users []db.User) {
 	<div
 		x-data="{ selectedUser: '', completedBy: '' }"
-		class="flex flex-col gap-2"
+		class="ops-stack"
 	>
 		<input type="hidden" name="completed_by" :value="completedBy"/>
-		<div class="flex flex-col gap-1">
-			<label for="completed_by_user" class="text-xs font-medium text-sand-700">Completed by (registered user)</label>
+		<div class="ops-stack">
+			<label for="completed_by_user" class="ops-label">Completed by (registered user)</label>
 			<select
 				id="completed_by_user"
 				x-model="selectedUser"
 				@change="if (selectedUser !== '') { completedBy = $el.options[$el.selectedIndex].dataset.name } else { completedBy = '' }"
-				class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 bg-white"
+				class="ops-input"
 			>
 				<option value="">— or enter name below —</option>
 				for _, u := range users {
@@ -604,15 +566,15 @@ templ completedByField(users []db.User) {
 				}
 			</select>
 		</div>
-		<div class="flex flex-col gap-1">
-			<label for="completed_by" class="text-xs font-medium text-sand-700">Name / free-text</label>
+		<div class="ops-stack">
+			<label for="completed_by" class="ops-label">Name / free-text</label>
 			<input
 				id="completed_by"
 				type="text"
 				x-model="completedBy"
 				:disabled="selectedUser !== ''"
 				placeholder="Your name or team"
-				class="border border-sand-300 rounded-md px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 disabled:bg-sand-100 disabled:text-sand-400"
+				class="ops-input"
 			/>
 		</div>
 	</div>
@@ -621,125 +583,128 @@ templ completedByField(users []db.User) {
 // ── Activity detail ───────────────────────────────────────────────────────────
 
 templ ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string, users []db.User, auditLog []db.ListAuditLogForActivityRow, linkedRisks []db.Risk) {
-	@ui.Flash(flash, flashType)
+	@ui2.Page("ui2-activities") {
+	if flash != "" {
+		<p role={ flashRole(flashType) } data-tone={ flashTone(flashType) }>{ flash }</p>
+	}
 
-	<div class="flex justify-between items-center mb-4">
-		<a href="/activities" class="text-[13px] text-sand-700 dark:text-zinc-400 hover:text-sand-800 dark:hover:text-zinc-100 flex items-center gap-1.5">
+	<div class="ops-toolbar">
+		<a href="/activities" class="ops-link">
 			@ui.IconSVG("chevron", 13)
 			Activities
 		</a>
 		if canEdit {
 			<a href={ templ.SafeURL("/activities/" + a.ID.String() + "/edit") }
-				class="text-xs font-medium py-1.5 px-3.5 rounded-md border border-sand-400 dark:border-zinc-600 hover:bg-sand-100 dark:hover:bg-zinc-800 transition-colors">
+				class="ops-button">
 				Edit activity
 			</a>
 		} else {
-			<span class="text-xs font-medium py-1.5 px-3.5 rounded-md border border-sand-300 dark:border-zinc-700 text-sand-700 dark:text-zinc-400 cursor-not-allowed select-none" title="You don't have permission to edit">
+			<span class="ops-muted" title="You don't have permission to edit">
 				Edit activity
 			</span>
 		}
 	</div>
 
-	<div class="max-w-2xl flex flex-col gap-4">
+	<div class="ops-stack ops-wide">
 		<!-- Header card -->
-		<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] p-4">
-			<div class="flex items-start justify-between gap-3 mb-3">
+		<section class="ops-card">
+			<header >
 				<div>
-					<div class="flex items-center gap-2 flex-wrap mb-1">
+					<div class="ops-inline">
 						@statusBadge(a.Status)
 						@kindBadge(a.Kind)
 						@priorityBadge(a.Priority)
 						@recurrenceBadge(a.Recurrence)
 						if a.Recurrence == "none" {
-							<span class="text-[11px] text-sand-700 dark:text-zinc-400">{ locale.T(ctx, "label_one_off") }</span>
+							<span class="ops-muted">{ locale.T(ctx, "label_one_off") }</span>
 						}
 					</div>
-					<h2 class="text-[15px] font-medium mt-1">{ a.Title }</h2>
+					<h2 class="ops-heading">{ a.Title }</h2>
 					if a.MeasureName != "" {
-						<p class="text-[12px] text-sand-700 mt-0.5">Measure: { a.MeasureName }</p>
+						<p class="ops-muted">Measure: { a.MeasureName }</p>
 					}
 				</div>
-			</div>
+			</header>
 
-			<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-[12px]">
-				<div>
-					<div class="text-sand-700 mb-0.5">Due date</div>
-					<div class={ dueDateClass(a.Status) }>{ FormatDate(a.DueDate) }</div>
-				</div>
-				<div>
-					<div class="text-sand-700 mb-0.5">Owner</div>
-					<div>
+			<div class="ops-fields ops-fields-three">
+				<dl >
+					<dt class="ops-muted">Due date</dt>
+					<dd class={ dueDateClass(a.Status) }>{ FormatDate(a.DueDate) }</dd>
+				</dl>
+				<dl >
+					<dt class="ops-muted">Owner</dt>
+					<dd>
 						if a.Owner == "" {
-							<span class="text-sand-700">—</span>
+							<span class="ops-muted">—</span>
 						} else {
 							{ a.Owner }
 						}
-					</div>
-				</div>
-				<div>
-					<div class="text-sand-700 mb-0.5">Created</div>
-					<div>{ a.CreatedAt.Format("2 Jan 2006") }</div>
-				</div>
+					</dd>
+				</dl>
+				<dl >
+					<dt class="ops-muted">Created</dt>
+					<dd>{ a.CreatedAt.Format("2 Jan 2006") }</dd>
+				</dl>
 			</div>
 
 			if a.Description != "" {
-				<p class="text-[13px] text-sand-700 mt-3 pt-3 border-t border-sand-300/60 dark:border-zinc-700/60">{ a.Description }</p>
+				<p class="ops-muted ops-separated">{ a.Description }</p>
 			}
-		</div>
+		</section>
 
 		<!-- Completion info (if completed) -->
 		if a.Status == "completed" {
-			<div class="border border-green-200 bg-green-50 rounded-[10px] p-4">
-				<div class="text-[13px] font-medium text-green-800 mb-2">{ locale.T(ctx, "status_completed") }</div>
-				<div class="grid grid-cols-2 gap-3 text-[12px] text-green-900">
-					<div>
-						<div class="text-green-700 mb-0.5">{ locale.T(ctx, "label_completed_at") }</div>
-						<div>{ FormatDateTime(a.CompletedAt) }</div>
-					</div>
-					<div>
-						<div class="text-green-700 mb-0.5">{ locale.T(ctx, "label_completed_by") }</div>
-						<div>
+			<section class="ops-card ops-success-panel">
+				<h2 class="ops-heading">{ locale.T(ctx, "status_completed") }</h2>
+				<div class="ops-fields ops-success-panel">
+					<dl >
+						<dt class="ops-success-text">{ locale.T(ctx, "label_completed_at") }</dt>
+						<dd>{ FormatDateTime(a.CompletedAt) }</dd>
+					</dl>
+					<dl >
+						<dt class="ops-success-text">{ locale.T(ctx, "label_completed_by") }</dt>
+						<dd>
 							if a.CompletedBy == "" {
 								<span>—</span>
 							} else {
 								{ a.CompletedBy }
 							}
-						</div>
-					</div>
+						</dd>
+					</dl>
 				</div>
 				if a.Notes != "" {
-					<div class="mt-2 pt-2 border-t border-green-200">
-						<div class="text-[11px] text-green-700 mb-0.5">Notes</div>
-						<div class="text-[13px] text-green-900">{ a.Notes }</div>
+					<div class="ops-success-panel ops-separated">
+						<h3 class="ops-heading">Notes</h3>
+						<p class="ops-success-text">{ a.Notes }</p>
 					</div>
 				}
 				if a.EvidenceUrl != "" {
-					<div class="mt-2 pt-2 border-t border-green-200">
-						<div class="text-[11px] text-green-700 mb-0.5">Evidence</div>
-						<a href={ templ.SafeURL(a.EvidenceUrl) } class="text-[13px] text-blue-700 hover:underline break-all" target="_blank" rel="noopener noreferrer">{ a.EvidenceUrl }</a>
+					<div class="ops-success-panel ops-separated">
+						<h3 class="ops-heading">Evidence</h3>
+						<a href={ templ.SafeURL(a.EvidenceUrl) } class="ops-link ops-break" target="_blank" rel="noopener noreferrer">{ a.EvidenceUrl }</a>
 					</div>
 				}
 				if canEdit {
-					<div class="mt-3 pt-3 border-t border-green-200">
+					<div class="ops-success-panel ops-separated">
 						<form method="POST" action={ templ.SafeURL("/activities/" + a.ID.String() + "/reopen") } onsubmit="return confirm('Reopen this activity?')">
 							<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-							<button type="submit" class="text-[12px] text-sand-700 hover:text-sand-900 border border-sand-300 rounded px-2.5 py-1 hover:bg-sand-50 transition-colors">{ locale.T(ctx, "action_reopen") }</button>
+							<button type="submit" class="ops-button">{ locale.T(ctx, "action_reopen") }</button>
 						</form>
 					</div>
 				}
-			</div>
+			</section>
 		}
 
 		<!-- Actions -->
 		if canEdit && a.Status != "completed" {
-			<div x-data="activityComplete" @keydown.escape.window="showComplete = false" class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] p-4">
-				<div class="flex gap-2 flex-wrap">
+			<div x-data="activityComplete" @keydown.escape.window="showComplete = false" class="ops-card">
+				<div class="ops-inline">
 					if a.Status == "planned" {
 						<form method="POST" action={ templ.SafeURL("/activities/" + a.ID.String() + "/start") }>
 							<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 							<button
 								type="submit"
-								class="text-[13px] py-1.5 px-3.5 rounded-md border border-sand-400 text-sand-700 hover:bg-sand-100 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none"
+								class="ops-button"
 							>{ locale.T(ctx, "action_mark_in_progress") }</button>
 						</form>
 					}
@@ -748,18 +713,19 @@ templ ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string,
 						aria-controls="complete-form-panel"
 						:aria-expanded="showComplete ? 'true' : 'false'"
 						@click="toggle()"
-						class="text-[13px] font-medium py-1.5 px-3.5 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors focus:ring-2 focus:ring-green-500 focus:ring-offset-2 outline-none"
+						class="ops-confirm"
 					>{ locale.T(ctx, "action_mark_complete") }</button>
 					<form
 						method="POST"
 						action={ templ.SafeURL("/activities/" + a.ID.String() + "/delete") }
 						onsubmit="return confirm('Delete this activity?')"
-						class="ml-auto"
+						class="ops-form-inline"
 					>
 						<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 						<button
 							type="submit"
-							class="text-[13px] py-1.5 px-3 rounded-md text-red-600 hover:text-red-800 hover:bg-red-50 border border-red-200 transition-colors focus:ring-2 focus:ring-red-500 focus:ring-offset-2 outline-none"
+							data-tone="danger"
+							class="ops-button"
 						>{ locale.T(ctx, "action_delete") }</button>
 					</form>
 				</div>
@@ -770,23 +736,23 @@ templ ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string,
 					x-show="showComplete"
 					:aria-hidden="showComplete ? 'false' : 'true'"
 					x-cloak
-					class="mt-4 pt-4 border-t border-sand-300/60 dark:border-zinc-700/60"
+					class="ops-separated ops-spaced"
 				>
-					<div class="text-[13px] font-medium mb-3">{ locale.T(ctx, "section_complete_activity") }</div>
-					<form method="POST" action={ templ.SafeURL("/activities/" + a.ID.String() + "/complete") } class="flex flex-col gap-3">
+					<h2 class="ops-heading">{ locale.T(ctx, "section_complete_activity") }</h2>
+					<form method="POST" action={ templ.SafeURL("/activities/" + a.ID.String() + "/complete") } class="ops-form-inline">
 						<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 						@completedByField(users)
 						@activityTextareaField("Notes", "notes", "What was done, any findings…", "")
 						@activityInputField("Evidence URL", "evidence_url", "https://… or file path", "", false)
-						<div class="flex gap-2 pt-1">
+						<div class="ops-inline">
 							<button
 								type="submit"
-								class="text-[13px] font-medium py-2 px-4 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors focus:ring-2 focus:ring-green-500 focus:ring-offset-2 outline-none"
+								class="ops-confirm"
 							>{ locale.T(ctx, "action_confirm_completion") }</button>
 							<button
 								type="button"
 								@click="showComplete = false"
-								class="text-[13px] py-2 px-4 rounded-md border border-sand-400 text-sand-700 hover:bg-sand-100 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none"
+								class="ops-button"
 							>{ locale.T(ctx, "action_cancel") }</button>
 						</div>
 					</form>
@@ -797,37 +763,42 @@ templ ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string,
 		@activityRecentChanges(auditLog, "")
 
 		if len(linkedRisks) > 0 {
-			<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
-				<div class="px-4 py-2.5 bg-sand-50 border-b border-sand-200 text-[11px] font-semibold text-sand-700 uppercase tracking-wide">
+			<section class="ops-card">
+				<h2 class="ops-overline">
 					{ locale.T(ctx, "section_linked_risks") } ({ fmt.Sprint(len(linkedRisks)) })
-				</div>
+				</h2>
+				<ul>
 				for i, risk := range linkedRisks {
+					<li>
 					<a
 						href={ templ.SafeURL("/risks/" + risk.AssessmentID.String() + "/risks/" + risk.ID.String()) }
-						class={ "flex items-center justify-between px-4 py-3 hover:bg-sand-50 transition-colors text-[13px]", templ.KV("border-t border-sand-200", i > 0) }
+						class={ "ops-risk-link", templ.KV("ops-risk-next", i > 0) }
 					>
-						<span class="font-medium text-sand-900 flex-1 min-w-0 truncate">{ risk.Name }</span>
-						<div class="flex items-center gap-2 shrink-0 ml-3">
+						<span class="ops-muted ops-truncate">{ risk.Name }</span>
+						<div class="ops-inline">
 							if risk.LikelihoodCurrent.Valid && risk.ConsequenceCurrent.Valid {
-								<div class={ "flex flex-col items-center px-2 py-0.5 rounded text-[10px] font-bold text-white leading-tight", activityRiskScoreBgClass(int(risk.LikelihoodCurrent.Int32)*int(risk.ConsequenceCurrent.Int32)) }>
+								<div class={ "ops-risk-score", activityRiskScoreBgClass(int(risk.LikelihoodCurrent.Int32)*int(risk.ConsequenceCurrent.Int32)) }>
 									<span>{ fmt.Sprint(int(risk.LikelihoodCurrent.Int32)*int(risk.ConsequenceCurrent.Int32)) }</span>
-									<span class="font-normal opacity-80">now</span>
+									<span >now</span>
 								</div>
 							}
 							if risk.LikelihoodTarget.Valid && risk.ConsequenceTarget.Valid {
-								<span class="text-sand-300 text-[10px]">→</span>
-								<div class={ "flex flex-col items-center px-2 py-0.5 rounded text-[10px] font-bold text-white leading-tight", activityRiskScoreBgClass(int(risk.LikelihoodTarget.Int32)*int(risk.ConsequenceTarget.Int32)) }>
+								<span class="ops-muted">→</span>
+								<div class={ "ops-risk-score", activityRiskScoreBgClass(int(risk.LikelihoodTarget.Int32)*int(risk.ConsequenceTarget.Int32)) }>
 									<span>{ fmt.Sprint(int(risk.LikelihoodTarget.Int32)*int(risk.ConsequenceTarget.Int32)) }</span>
-									<span class="font-normal opacity-80">target</span>
+									<span >target</span>
 								</div>
 							}
 						</div>
 					</a>
+					</li>
 				}
-			</div>
+				</ul>
+			</section>
 		}
 
 	</div>
+	}
 }
 
 func auditEventLabel(event string) string {
@@ -841,76 +812,54 @@ func auditEventLabel(event string) string {
 
 templ activityRecentChanges(auditLog []db.ListAuditLogForActivityRow, wrapperClass string) {
 	<details class={ wrapperClass }>
-		<summary class="cursor-pointer text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3 list-none">{ locale.T(ctx, "label_recent_changes_toggle") }</summary>
-		<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
-			@ui.Table(ui.TableProps{}) {
-				<caption class="sr-only">{ locale.T(ctx, "label_recent_changes") }</caption>
-				@ui.THead(ui.THeadProps{
-					Attrs: templ.Attributes{
-						"class": "bg-sand-100 dark:bg-zinc-800",
-					},
-				}) {
-					@ui.Tr(ui.TrProps{}) {
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_event") } }
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_by") } }
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_when") } }
-					}
-				}
+		<summary class="ops-summary">{ locale.T(ctx, "label_recent_changes_toggle") }</summary>
+		@ui2.Table(locale.T(ctx, "label_recent_changes")) {
+				<thead>
+					<tr>
+						<th scope="col">{ locale.T(ctx, "label_event") }</th>
+						<th scope="col">{ locale.T(ctx, "label_by") }</th>
+						<th scope="col">{ locale.T(ctx, "label_when") }</th>
+					</tr>
+				</thead>
 				<tbody>
 					if len(auditLog) == 0 {
-						@ui.Tr(ui.TrProps{
-							Attrs: templ.Attributes{
-								"class": "border-sand-300/60 dark:border-zinc-700/60",
-							},
-						}) {
-							@ui.Td(ui.TdProps{
-								Attrs: templ.Attributes{
-									"colspan": "3",
-									"class":   "px-4 text-sand-700",
-								},
-							}) { { locale.T(ctx, "label_no_changes_yet") } }
-						}
+						<tr><td colspan="3">{ locale.T(ctx, "label_no_changes_yet") }</td></tr>
 					} else {
 						for i, entry := range auditLog {
 							if i < 5 {
-								@ui.Tr(ui.TrProps{
-									Attrs: templ.Attributes{
-										"class": "border-sand-300/60 dark:border-zinc-700/60",
-									},
-								}) {
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-medium"}}) { { auditEventLabel(entry.Event) } }
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) {
+								<tr>
+									<td>{ auditEventLabel(entry.Event) }</td>
+									<td>
 										if entry.UserName != "" {
 											{ entry.UserName }
 										} else {
-											<span class="text-sand-700">—</span>
+											<span class="ops-muted">—</span>
 										}
-									}
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700 font-mono text-[11px]"}}) { { entry.EventTime.Format("2 Jan 2006 15:04") } }
-								}
+									</td>
+									<td>{ entry.EventTime.Format("2 Jan 2006 15:04") }</td>
+								</tr>
 							}
 						}
 					}
 				</tbody>
-			}
-		</div>
+		}
 	</details>
 }
 
 func dueDateClass(status string) string {
 	if status == "overdue" {
-		return "font-medium text-red-600"
+		return "ops-due-overdue"
 	}
-	return "font-medium"
+	return "ops-due"
 }
 
 func activityRiskScoreBgClass(score int) string {
 	switch {
 	case score >= 12:
-		return "bg-red-500"
+		return "ops-risk-high"
 	case score >= 6:
-		return "bg-amber-400"
+		return "ops-risk-medium"
 	default:
-		return "bg-green-500"
+		return "ops-risk-low"
 	}
 }

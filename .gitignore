@@ -33,7 +33,7 @@ bin/
 # air live-reload temporary files
 tmp/
 
-# Tailwind CLI output (regenerate with: make tailwind-install && make css-build)
+# Combined stylesheet (regenerate with: make css-build)
 cmd/server/public/css/output.css
 
 # Editor/IDE

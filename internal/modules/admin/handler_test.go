@@ -71,6 +71,9 @@ func TestAdminPage_OK(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Errorf("expected 200, got %d", w.Code)
 	}
+	if body := w.Body.String(); !strings.Contains(body, "ui2-shell") || !strings.Contains(body, "ui2-admin") {
+		t.Error("admin page should render with the UI2 shell and page")
+	}
 }
 
 func TestAdminPage_DBError(t *testing.T) {

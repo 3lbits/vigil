@@ -28,14 +28,14 @@ templ Matrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) {
 						<span aria-hidden="true">L / C</span>
 					</th>
 					for consequence := 1; consequence <= 5; consequence++ {
-						<th scope="col">{ fmt.Sprint(consequence) }</th>
+						<th scope="col"><span class="sr-only">{ locale.T(ctx, "scale_consequence") } </span>{ fmt.Sprint(consequence) }</th>
 					}
 				</tr>
 			</thead>
 			<tbody>
 				for likelihood := 5; likelihood >= 1; likelihood-- {
 					<tr>
-						<th scope="row">{ fmt.Sprint(likelihood) }</th>
+						<th scope="row"><span class="sr-only">{ locale.T(ctx, "label_likelihood") } </span>{ fmt.Sprint(likelihood) }</th>
 						for consequence := 1; consequence <= 5; consequence++ {
 							<td>
 								<span class="ui2-matrix-cell" data-tone={ Tone(likelihood*consequence, lowMax, highMin) }>

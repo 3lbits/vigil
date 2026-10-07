@@ -26,6 +26,9 @@ func TestError_FullPage(t *testing.T) {
 	if !strings.Contains(body, "req-123") {
 		t.Fatalf("expected request id in body, body=%q", body)
 	}
+	if !strings.Contains(body, "<article") || !strings.Contains(body, "<h1") {
+		t.Fatalf("expected standalone error article with a page heading")
+	}
 }
 
 func TestError_HTMXInline(t *testing.T) {
@@ -86,5 +89,8 @@ func TestError_FullPage_WithUserContext_UsesAppLayout(t *testing.T) {
 	}
 	if strings.Contains(body, "Error navigation") {
 		t.Fatalf("expected app layout instead of fallback error nav")
+	}
+	if !strings.Contains(body, "<article") || !strings.Contains(body, "<h2") {
+		t.Fatalf("expected error article below the app page heading")
 	}
 }

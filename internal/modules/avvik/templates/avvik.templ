@@ -8,7 +8,8 @@ import (
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
 	"github.com/3lbits/vigil/internal/ui"
-	formstemplates "github.com/3lbits/vigil/internal/ui/forms"
+	"github.com/3lbits/vigil/internal/ui2"
+	formstemplates "github.com/3lbits/vigil/internal/ui2/forms"
 )
 
 type DetailData struct {
@@ -28,22 +29,22 @@ type DetailData struct {
 }
 
 templ AvvikList(items []db.Avvik, orgs []db.Organization, q, status, risk, orgUnit string, mine bool) {
-	<div class="flex items-center justify-between mb-4">
-		<p class="text-[13px] text-sand-700">{ fmt.Sprintf("%d avvik", len(items)) }</p>
-		<a href="/avvik/new" class="text-xs font-medium py-1.5 px-3.5 rounded-md border border-sand-400 hover:bg-sand-100 transition-colors flex items-center gap-1.5">
+	@ui2.Page("ui2-avvik") {
+	<div class="ops-between">
+		<p class="ops-muted">{ fmt.Sprintf("%d avvik", len(items)) }</p>
+		<a href="/avvik/new" class="ops-button">
 			@ui.IconSVG("plus", 13)
 			New Avvik
 		</a>
 	</div>
-	@ui.FilterBar(ui.FilterBarProps{Action: "/avvik", Target: "#avvik-table"}) {
-		@ui.FilterSearch(ui.FilterSearchProps{
-			Name:    "q",
+	@ui2.FilterBar(ui2.FilterBarProps{Action: "/avvik", Target: "#avvik-table"}) {
+		@ui2.FilterSearch(ui2.FilterSearchProps{
 			Value:   q,
 			Columns: []string{"label_title", "label_description"},
 			Action:  "/avvik",
 			Target:  "#avvik-table",
 		})
-		@ui.FilterSelect("status", "Filter by status") {
+		@ui2.FilterSelect("status", "Filter by status") {
 			<option value="" selected?={ status == "" }>All status</option>
 			<option value="new" selected?={ status == "new" }>new</option>
 			<option value="triaging" selected?={ status == "triaging" }>triaging</option>
@@ -51,152 +52,110 @@ templ AvvikList(items []db.Avvik, orgs []db.Organization, q, status, risk, orgUn
 			<option value="mitigating" selected?={ status == "mitigating" }>mitigating</option>
 			<option value="closed" selected?={ status == "closed" }>closed</option>
 		}
-		@ui.FilterSelect("risk", "Filter by risk") {
+		@ui2.FilterSelect("risk", "Filter by risk") {
 			<option value="" selected?={ risk == "" }>All risk</option>
 			<option value="low" selected?={ risk == "low" }>low</option>
 			<option value="medium" selected?={ risk == "medium" }>medium</option>
 			<option value="high" selected?={ risk == "high" }>high</option>
 		}
-		@ui.FilterSelect("org_unit", "Filter by org unit") {
+		@ui2.FilterSelect("org_unit", "Filter by org unit") {
 			<option value="" selected?={ orgUnit == "" }>All org units</option>
 			for _, org := range orgs {
 				<option value={ org.ID.String() } selected?={ orgUnit == org.ID.String() }>{ org.Name }</option>
 			}
 		}
-		@ui.FilterMine(mine, "label_mine_only")
+		@ui2.FilterMine(mine, "label_mine_only")
 	}
 	<div id="avvik-table">
 		@AvvikTable(items)
 	</div>
+	}
 }
 
 templ AvvikTable(items []db.Avvik) {
 	if len(items) == 0 {
-		@ui.EmptyState(ui.EmptyStateProps{
-			Class: "border-solid border-sand-300/60 rounded-[10px] p-8 bg-white dark:bg-zinc-900",
-		}) {
-			No avvik yet.
-		}
+		<p>No avvik yet.</p>
 	} else {
-		@ui.Card(ui.CardProps{
-			Class:   "border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden",
-			Padding: "p-0",
-		}) {
-			@ui.Table(ui.TableProps{}) {
-				@ui.THead(ui.THeadProps{}) {
-					@ui.Tr(ui.TrProps{
-						Attrs: templ.Attributes{
-							"class": "bg-sand-100",
-						},
-					}) {
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"class": "text-[11px] px-4"}}) {Avvik}
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"class": "text-[11px]"}}) {Status}
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"class": "text-[11px]"}}) {Risk}
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"class": "text-[11px]"}}) {Flags}
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"class": "text-[11px]"}}) {Age}
-					}
-				}
+		@ui2.Table("Avvik") {
+				<thead>
+					<tr>
+						<th scope="col">Avvik</th>
+						<th scope="col">Status</th>
+						<th scope="col">Risk</th>
+						<th scope="col">Flags</th>
+						<th scope="col">Age</th>
+					</tr>
+				</thead>
 				<tbody>
 					for _, a := range items {
-						@ui.Tr(ui.TrProps{
-							Attrs: templ.Attributes{
-								"class": "border-sand-300/60",
-							},
-						}) {
-							@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4"}}) {
-								<a href={ "/avvik/" + a.ID.String() } class="font-medium hover:text-blue-700 hover:underline">{ a.Title }</a>
+						<tr>
+							<td>
+								<a href={ "/avvik/" + a.ID.String() } class="ops-link">{ a.Title }</a>
 								if a.GdprDeadlineAt.Valid && a.Status != "closed" && time.Now().UTC().After(a.GdprDeadlineAt.Time.Add(-24*time.Hour)) {
-									<div class="text-[11px] text-red-700">GDPR clock</div>
+									<p class="ops-error">GDPR clock</p>
 								}
-							}
-							@ui.Td(ui.TdProps{}) {
-								@ui.Badge(ui.BadgeProps{Variant: statusBadgeVariant(a.Status)}) {
+							</td>
+							<td>
+								@ui2.Badge(statusBadgeVariant(a.Status)) {
 									{ a.Status }
 								}
-							}
-							@ui.Td(ui.TdProps{}) {
-								@ui.Badge(ui.BadgeProps{Variant: riskBadgeVariant(a.RiskLevel)}) {
+							</td>
+							<td>
+								@ui2.Badge(riskBadgeVariant(a.RiskLevel)) {
 									{ a.RiskLevel }
 								}
-							}
-							@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-[11px]"}}) {
+							</td>
+							<td>
 								if a.PersonalData {
-									@ui.Badge(ui.BadgeProps{Variant: "danger", Attrs: templ.Attributes{"class": "mr-1"}}) {PD}
+									@ui2.Badge("danger") {PD}
 								}
 								if a.Ksi {
-									@ui.Badge(ui.BadgeProps{Variant: "warning", Attrs: templ.Attributes{"class": "mr-1"}}) {KSI}
+									@ui2.Badge("warning") {KSI}
 								}
 								if a.MarketSensitive {
-									@ui.Badge(ui.BadgeProps{Variant: "neutral"}) {MS}
+									@ui2.Badge("neutral") {MS}
 								}
-							}
-							@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-[11px] text-sand-700"}}) {
+							</td>
+							<td>
 								{ ageText(a.DiscoveredAt) }
-							}
-						}
+							</td>
+						</tr>
 					}
 				</tbody>
-			}
 		}
 	}
 }
 
 templ NewAvvikForm(orgs []db.Organization, users []db.User) {
-	<form method="POST" action="/avvik" class="max-w-3xl space-y-4">
+	@ui2.Page("ui2-avvik") {
+	<form method="POST" action="/avvik" class="ops-form ops-wide">
 		<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-		@ui.Field("avvik-title", "label_title", true) {
-			@ui.Input(ui.InputProps{
-				ID:       "avvik-title",
-				Name:     "title",
-				Type:     "text",
-				Required: true,
-				Class:    "py-2 text-[13px]",
-			})
-		}
-		@ui.Field("avvik-description", "label_description", false) {
-			@ui.Textarea(ui.TextareaProps{
-				ID:    "avvik-description",
-				Name:  "description",
-				Class: "py-2 text-[13px] min-h-0",
-				Attrs: templ.Attributes{
-					"rows": "4",
-				},
-			})
-		}
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-			@ui.Field("avvik-discovered-at", "label_when", false) {
-				@ui.Input(ui.InputProps{
-					ID:    "avvik-discovered-at",
-					Name:  "discovered_at",
-					Type:  "date",
-					Class: "py-2 text-[13px]",
-				})
-			}
-			@ui.Field("avvik-risk-level", "label_risk", false) {
-				@ui.Select(ui.SelectProps{
-					ID:    "avvik-risk-level",
-					Name:  "risk_level",
-					Class: "py-2 text-[13px]",
-				}) {
+		<div>
+			<label for="avvik-title" class="ops-label">{ locale.T(ctx, "label_title") } <span aria-hidden="true">*</span></label>
+			<input id="avvik-title" name="title" type="text" required class="ops-input"/>
+		</div>
+		<div>
+			<label for="avvik-description" class="ops-label">{ locale.T(ctx, "label_description") }</label>
+			<textarea id="avvik-description" name="description" rows="4"></textarea>
+		</div>
+		<div class="ops-fields">
+			<div>
+				<label for="avvik-discovered-at" class="ops-label">{ locale.T(ctx, "label_when") }</label>
+				<input id="avvik-discovered-at" name="discovered_at" type="date" class="ops-input"/>
+			</div>
+			<div>
+				<label for="avvik-risk-level" class="ops-label">{ locale.T(ctx, "label_risk") }</label>
+				<select id="avvik-risk-level" name="risk_level" class="ops-input">
 					<option value="low">low</option>
 					<option value="medium" selected>medium</option>
 					<option value="high">high</option>
-				}
-			}
+				</select>
+			</div>
 		</div>
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-			<div class="flex flex-col gap-1">
-				<label for="avvik-reporter-name" class="block text-[13px] font-medium text-sand-800 mb-1">Reporter name</label>
-				@ui.Input(ui.InputProps{
-					ID:   "avvik-reporter-name",
-					Name: "reporter_name",
-					Type: "search",
-					Class: "py-2 text-[13px]",
-					Attrs: templ.Attributes{
-						"list":        "reporter_name_list",
-						"placeholder": "Search user by name/email or enter custom",
-					},
-				})
+		<div class="ops-fields">
+			<div class="ops-stack">
+				<label for="avvik-reporter-name" class="ops-label">Reporter name</label>
+				<input id="avvik-reporter-name" name="reporter_name" type="search" list="reporter_name_list" placeholder="Search user by name/email or enter custom" class="ops-input"/>
 				<datalist id="reporter_name_list">
 					for _, u := range users {
 						<option value={ u.Name } label={ u.Email }></option>
@@ -204,80 +163,65 @@ templ NewAvvikForm(orgs []db.Organization, users []db.User) {
 					}
 				</datalist>
 			</div>
-			@ui.Field("avvik-reporter-email", "label_email", false) {
-				@ui.Input(ui.InputProps{
-					ID:    "avvik-reporter-email",
-					Name:  "reporter_email",
-					Type:  "email",
-					Class: "py-2 text-[13px]",
-				})
-			}
+			<div>
+				<label for="avvik-reporter-email" class="ops-label">{ locale.T(ctx, "label_email") }</label>
+				<input id="avvik-reporter-email" name="reporter_email" type="email" class="ops-input"/>
+			</div>
 		</div>
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-			<div class="flex flex-col gap-1">
-				<label for="avvik-assigned-to" class="block text-[13px] font-medium text-sand-800 mb-1">Assigned to</label>
-				@ui.Select(ui.SelectProps{
-					ID:    "avvik-assigned-to",
-					Name:  "assigned_to",
-					Class: "py-2 text-[13px]",
-				}) {
+		<div class="ops-fields">
+			<div class="ops-stack">
+				<label for="avvik-assigned-to" class="ops-label">Assigned to</label>
+				<select id="avvik-assigned-to" name="assigned_to" class="ops-input">
 					<option value="">Unassigned</option>
 					for _, u := range users {
 						<option value={ u.ID.String() }>{ u.Name }</option>
 					}
-				}
+				</select>
 			</div>
-			@ui.Field("avvik-org-unit", "label_org_unit", false) {
-				@ui.Select(ui.SelectProps{
-					ID:    "avvik-org-unit",
-					Name:  "org_unit_id",
-					Class: "py-2 text-[13px]",
-				}) {
+			<div>
+				<label for="avvik-org-unit" class="ops-label">{ locale.T(ctx, "label_org_unit") }</label>
+				<select id="avvik-org-unit" name="org_unit_id" class="ops-input">
 					<option value="">Not set</option>
 					for _, org := range orgs {
 						<option value={ org.ID.String() }>{ org.Name }</option>
 					}
-				}
-			}
+				</select>
+			</div>
 		</div>
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-			<label class="flex items-center gap-2 text-[13px]"><input type="checkbox" name="personal_data" class="rounded"/> Personal data</label>
-			<label class="flex items-center gap-2 text-[13px]"><input type="checkbox" name="ksi" class="rounded"/> KSI</label>
-			<label class="flex items-center gap-2 text-[13px]"><input type="checkbox" name="market_sensitive" class="rounded"/> Market sensitive</label>
+		<div class="ops-fields ops-fields-three">
+			<label class="ops-check-label"><input type="checkbox" name="personal_data" class="ops-input"/> Personal data</label>
+			<label class="ops-check-label"><input type="checkbox" name="ksi" class="ops-input"/> KSI</label>
+			<label class="ops-check-label"><input type="checkbox" name="market_sensitive" class="ops-input"/> Market sensitive</label>
 		</div>
-		<div class="flex justify-end">
-			@ui.Button(ui.ButtonProps{
-				Attrs: templ.Attributes{
-					"type": "submit",
-				},
-			}) {
-				Create Avvik
-			}
+		<div class="ops-end">
+			<button type="submit">Create Avvik</button>
 		</div>
 	</form>
+	}
 }
 
 templ AvvikDetail(d DetailData) {
-	<div class="space-y-4">
+	@ui2.Page("ui2-avvik") {
+	<div class="ops-stack">
 		if d.Avvik.PersonalData && d.Avvik.Status != "closed" && d.Avvik.GdprDeadlineAt.Valid {
-			<div class="sticky top-2 z-10 bg-red-700 text-white px-4 py-2 rounded-md text-[13px]">
+			<p role="alert" class="ops-error">
 				GDPR deadline: { deadlineText(d.Avvik.GdprDeadlineAt.Time) } until Datatilsynet notification.
-			</div>
+			</p>
 		}
 		if d.Avvik.Status == "new" {
-			<div class="rounded-lg border border-blue-200 bg-blue-50 p-4 text-[13px] text-blue-900">
-				<div class="font-medium mb-1">Recommended next steps</div>
+			<aside class="ops-info-panel">
+				<h2 class="ops-heading">Recommended next steps</h2>
 				if d.CanManage {
-					<div>1) Triage details tab. 2) Link follow-up in measures or activities. 3) Keep timeline updated, then close in closure tab.</div>
+					<p class="ops-muted">1) Triage details tab. 2) Link follow-up in measures or activities. 3) Keep timeline updated, then close in closure tab.</p>
 				} else if d.CanContribute {
-					<div>You can track status and send updates in timeline/evidence tabs. Admins handle triage and closure.</div>
+					<p class="ops-muted">You can track status and send updates in timeline/evidence tabs. Admins handle triage and closure.</p>
 				} else {
-					<div>Avvik registered. An admin will triage and follow up. You can track status in the timeline.</div>
+					<p class="ops-muted">Avvik registered. An admin will triage and follow up. You can track status in the timeline.</p>
 				}
-			</div>
+			</aside>
 		}
 		@avvikRecentChanges(d.Events)
-		<div class="flex flex-wrap gap-2 border-b border-sand-200 pb-2">
+		<nav aria-label="Avvik sections" >
 			@tabLink(d.Avvik.ID.String(), "details", d.Tab)
 			@tabLink(d.Avvik.ID.String(), "timeline", d.Tab)
 			@tabLink(d.Avvik.ID.String(), "measures", d.Tab)
@@ -285,57 +229,41 @@ templ AvvikDetail(d DetailData) {
 			@tabLink(d.Avvik.ID.String(), "evidence", d.Tab)
 			@tabLink(d.Avvik.ID.String(), "notifications", d.Tab)
 			@tabLink(d.Avvik.ID.String(), "closure", d.Tab)
-		</div>
+		</nav>
 		<div id="avvik-tab-panel">
 			@AvvikTabPanel(d)
 		</div>
 	</div>
+	}
 }
 
 templ avvikRecentChanges(events []db.AvvikEvent) {
 	<details>
-		<summary class="cursor-pointer text-sm font-semibold text-sand-800 mb-3 list-none">{ locale.T(ctx, "label_recent_changes_toggle") }</summary>
-		<div class="border border-sand-300/60 rounded-[10px] overflow-hidden bg-white">
-			@ui.Table(ui.TableProps{}) {
-				<caption class="sr-only">{ locale.T(ctx, "label_recent_changes") }</caption>
-				@ui.THead(ui.THeadProps{}) {
-					@ui.Tr(ui.TrProps{
-						Attrs: templ.Attributes{
-							"class": "bg-sand-100",
-						},
-					}) {
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_event") } }
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_by") } }
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_when") } }
-					}
-				}
+		<summary class="ops-summary">{ locale.T(ctx, "label_recent_changes_toggle") }</summary>
+		@ui2.Table(locale.T(ctx, "label_recent_changes")) {
+				<thead>
+					<tr>
+						<th scope="col">{ locale.T(ctx, "label_event") }</th>
+						<th scope="col">{ locale.T(ctx, "label_by") }</th>
+						<th scope="col">{ locale.T(ctx, "label_when") }</th>
+					</tr>
+				</thead>
 				<tbody>
 					if len(events) == 0 {
-						@ui.Tr(ui.TrProps{
-							Attrs: templ.Attributes{
-								"class": "border-sand-300/60",
-							},
-						}) {
-							@ui.Td(ui.TdProps{Attrs: templ.Attributes{"colspan": "3", "class": "px-4 text-sand-700"}}) { { locale.T(ctx, "label_no_changes_yet") } }
-						}
+						<tr><td colspan="3">{ locale.T(ctx, "label_no_changes_yet") }</td></tr>
 					} else {
 						for i, e := range events {
 							if i < 5 {
-								@ui.Tr(ui.TrProps{
-									Attrs: templ.Attributes{
-										"class": "border-sand-300/60",
-									},
-								}) {
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-medium"}}) { { e.EventType } }
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) { { e.ActorLabel } }
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700 font-mono text-[11px]"}}) { { e.OccurredAt.Format("2 Jan 2006 15:04") } }
-								}
+								<tr>
+									<td>{ e.EventType }</td>
+									<td>{ e.ActorLabel }</td>
+									<td>{ e.OccurredAt.Format("2 Jan 2006 15:04") }</td>
+								</tr>
 							}
 						}
 					}
 				</tbody>
-			}
-		</div>
+		}
 	</details>
 }
 
@@ -359,171 +287,173 @@ templ AvvikTabPanel(d DetailData) {
 }
 
 templ detailsTab(d DetailData) {
-	<div class="space-y-4">
-		<div class="rounded-lg border border-sand-200 p-4 bg-white">
-			<div class="text-[13px] font-medium mb-2">{ d.Avvik.Title }</div>
-			<p class="text-[13px] text-sand-700 whitespace-pre-wrap">{ d.Avvik.Description }</p>
-			<div class="mt-3 text-[12px] text-sand-700">Status: { d.Avvik.Status } · Risk: { d.Avvik.RiskLevel }</div>
-		</div>
+	<div class="ops-stack">
+		<section class="ops-card">
+			<h2 class="ops-heading">{ d.Avvik.Title }</h2>
+			<p class="ops-muted ops-pre-wrap">{ d.Avvik.Description }</p>
+			<p class="ops-muted">Status: { d.Avvik.Status } · Risk: { d.Avvik.RiskLevel }</p>
+		</section>
 		if !d.CanManage {
-			<div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-[12px] text-amber-900">Only admins can triage or update status.</div>
+			<p class="ops-warning-panel">Only admins can triage or update status.</p>
 		} else {
-			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/triage" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-3">
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/triage" } class="ops-form-inline">
 			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-				<select name="risk_level" class="text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-white">
+			<div class="ops-fields">
+				<select name="risk_level" class="ops-input">
 					<option value="low" selected?={ d.Avvik.RiskLevel == "low" }>low</option>
 					<option value="medium" selected?={ d.Avvik.RiskLevel == "medium" }>medium</option>
 					<option value="high" selected?={ d.Avvik.RiskLevel == "high" }>high</option>
 				</select>
-				<input type="text" name="ksi_information_owner" value={ d.Avvik.KsiInformationOwner } placeholder="KSI information owner" class="text-[13px] border border-sand-400 rounded-md py-2 px-3"/>
+				<input type="text" name="ksi_information_owner" value={ d.Avvik.KsiInformationOwner } placeholder="KSI information owner" class="ops-input"/>
 			</div>
-			<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-				<label class="flex items-center gap-2 text-[13px]"><input type="checkbox" name="personal_data" checked?={ d.Avvik.PersonalData } class="rounded"/> Personal data</label>
-				<label class="flex items-center gap-2 text-[13px]"><input type="checkbox" name="ksi" checked?={ d.Avvik.Ksi } class="rounded"/> KSI</label>
-				<label class="flex items-center gap-2 text-[13px]"><input type="checkbox" name="market_sensitive" checked?={ d.Avvik.MarketSensitive } class="rounded"/> Market sensitive</label>
+			<div class="ops-fields ops-fields-three">
+				<label class="ops-check-label"><input type="checkbox" name="personal_data" checked?={ d.Avvik.PersonalData } class="ops-input"/> Personal data</label>
+				<label class="ops-check-label"><input type="checkbox" name="ksi" checked?={ d.Avvik.Ksi } class="ops-input"/> KSI</label>
+				<label class="ops-check-label"><input type="checkbox" name="market_sensitive" checked?={ d.Avvik.MarketSensitive } class="ops-input"/> Market sensitive</label>
 			</div>
-			<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Save triage</button></div>
+			<div class="ops-end"><button type="submit" class="ops-button">Save triage</button></div>
 			</form>
-			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/status" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-3">
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/status" } class="ops-form-inline">
 			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-				<select name="status" class="text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-white">
+			<div class="ops-fields">
+				<select name="status" class="ops-input">
 					<option value="new" selected?={ d.Avvik.Status == "new" }>new</option>
 					<option value="triaging" selected?={ d.Avvik.Status == "triaging" }>triaging</option>
 					<option value="investigating" selected?={ d.Avvik.Status == "investigating" }>investigating</option>
 					<option value="mitigating" selected?={ d.Avvik.Status == "mitigating" }>mitigating</option>
 				</select>
-				<div class="text-[12px] text-sand-700 py-2">Use closure tab for final close.</div>
+				<p class="ops-muted">Use closure tab for final close.</p>
 			</div>
-			<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Update status</button></div>
+			<div class="ops-end"><button type="submit" class="ops-button">Update status</button></div>
 			</form>
 		}
 	</div>
 }
 
 templ timelineTab(d DetailData) {
-	<div class="space-y-3">
+	<div class="ops-stack">
 		if d.CanContribute {
-			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/notes" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-3">
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/notes" } class="ops-form-inline">
 				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-				<textarea name="note" rows="3" placeholder="Append timeline note..." class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3"></textarea>
-				<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Add note</button></div>
+				<textarea name="note" rows="3" placeholder="Append timeline note..." class="ops-input"></textarea>
+				<div class="ops-end"><button type="submit" class="ops-button">Add note</button></div>
 			</form>
 		}
 		for _, e := range d.Events {
-			<div class="rounded-lg border border-sand-200 p-3 bg-white">
-				<div class="text-[12px] text-sand-700">{ e.OccurredAt.Format(time.RFC3339) } · { e.EventType } · { e.ActorLabel }</div>
-				<pre class="mt-1 text-[11px] text-sand-700 whitespace-pre-wrap">{ string(e.Payload) }</pre>
-			</div>
+			<article aria-label={ e.EventType } class="ops-card">
+				<p class="ops-muted">{ e.OccurredAt.Format(time.RFC3339) } · { e.EventType } · { e.ActorLabel }</p>
+				<pre class="ops-pre-wrap">{ string(e.Payload) }</pre>
+			</article>
 		}
 	</div>
 }
 
 templ measuresTab(d DetailData) {
-	<div class="space-y-3">
+	<div class="ops-stack">
 		if d.CanManage {
-			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/measures" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-4">
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/measures" } class="ops-form-inline">
 				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-				<div class="text-[12px] text-sand-700 font-medium">Link existing measure</div>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-					<select name="measure_id" class="text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-white">
+				<p class="ops-muted">Link existing measure</p>
+				<div class="ops-fields">
+					<select name="measure_id" class="ops-input">
 						<option value="">Create new measure below</option>
 						for _, m := range d.AllMeasures {
 							<option value={ m.ID.String() }>{ m.Name }</option>
 						}
 					</select>
-					<select name="relationship" class="text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-white">
+					<select name="relationship" class="ops-input">
 						<option value="corrective">corrective</option>
 						<option value="preventive">preventive</option>
 						<option value="compensating">compensating</option>
 					</select>
 				</div>
-				<div class="text-[12px] text-sand-700 font-medium">Or create new measure</div>
+				<p class="ops-muted">Or create new measure</p>
 				@formstemplates.MeasureCreateFields(d.AllUsers, "avvik-measure-create")
-				<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Link measure</button></div>
+				<div class="ops-end"><button type="submit" class="ops-button">Link measure</button></div>
 			</form>
 		}
 		for _, m := range d.Measures {
-			<div class="rounded-lg border border-sand-200 p-3 bg-white">
-				<div class="flex items-center justify-between">
-					<a href={ "/measures/" + m.ID.String() } class="font-medium text-[13px] hover:underline">{ m.Name }</a>
+			<article class="ops-card">
+				<div class="ops-between">
+					<h2 class="ops-heading"><a href={ "/measures/" + m.ID.String() } class="ops-link">{ m.Name }</a></h2>
 					if d.CanManage {
 						<button
 							hx-delete={ "/avvik/" + d.Avvik.ID.String() + "/measures/" + m.ID.String() }
+							data-tone="danger"
 							hx-target="#avvik-tab-panel"
 							hx-swap="outerHTML"
 							hx-headers='{"X-CSRF-Token": "{{ csrf.TokenFromContext(ctx) }}"}'
-							class="text-[11px] text-red-700 hover:underline"
+							class="ops-danger-link"
 						>unlink</button>
 					}
 				</div>
-			</div>
+			</article>
 		}
 	</div>
 }
 
 templ activitiesTab(d DetailData) {
-	<div class="space-y-3">
+	<div class="ops-stack">
 		if d.CanManage {
-			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/activities" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-4">
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/activities" } class="ops-form-inline">
 				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-				<div class="text-[12px] text-sand-700 font-medium">Link existing activity</div>
-				<select name="activity_id" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-white">
+				<p class="ops-muted">Link existing activity</p>
+				<select name="activity_id" class="ops-input">
 					<option value="">Create new activity below</option>
 					for _, a := range d.AllActivities {
 						<option value={ a.ID.String() }>{ a.Title }</option>
 					}
 				</select>
-				<div class="text-[12px] text-sand-700 font-medium">Or create new activity</div>
+				<p class="ops-muted">Or create new activity</p>
 				@formstemplates.ActivityCreateFields(d.AllMeasures, d.AllUsers, "avvik-activity-create", "Oppfølging avvik #"+d.Avvik.ID.String()[:8])
-				<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Link activity</button></div>
+				<div class="ops-end"><button type="submit" class="ops-button">Link activity</button></div>
 			</form>
 		}
 		for _, a := range d.Activities {
-			<div class="rounded-lg border border-sand-200 p-3 bg-white">
-				<div class="flex items-center justify-between">
-					<a href={ "/activities/" + a.ID.String() } class="font-medium text-[13px] hover:underline">{ a.Title }</a>
+			<article class="ops-card">
+				<div class="ops-between">
+					<h2 class="ops-heading"><a href={ "/activities/" + a.ID.String() } class="ops-link">{ a.Title }</a></h2>
 					if d.CanManage {
 						<button
 							hx-delete={ "/avvik/" + d.Avvik.ID.String() + "/activities/" + a.ID.String() }
+							data-tone="danger"
 							hx-target="#avvik-tab-panel"
 							hx-swap="outerHTML"
 							hx-headers='{"X-CSRF-Token": "{{ csrf.TokenFromContext(ctx) }}"}'
-							class="text-[11px] text-red-700 hover:underline"
+							class="ops-danger-link"
 						>unlink</button>
 					}
 				</div>
-			</div>
+			</article>
 		}
 	</div>
 }
 
 templ evidenceTab(d DetailData) {
-	<div class="space-y-3">
+	<div class="ops-stack">
 		if d.CanContribute {
-			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/attachments" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-3">
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/attachments" } class="ops-form-inline">
 				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-				<input type="text" name="filename" placeholder="Label / filename" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3"/>
-				<input type="url" name="storage_key" placeholder="External URL (Confluence etc.)" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3"/>
-				<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Add evidence link</button></div>
+				<input type="text" name="filename" placeholder="Label / filename" class="ops-input"/>
+				<input type="url" name="storage_key" placeholder="External URL (Confluence etc.)" class="ops-input"/>
+				<div class="ops-end"><button type="submit" class="ops-button">Add evidence link</button></div>
 			</form>
 		}
 		for _, a := range d.Attachments {
-			<div class="rounded-lg border border-sand-200 p-3 bg-white text-[13px]">
-				<a href={ a.StorageKey } class="font-medium text-blue-700 hover:underline">{ a.Filename }</a>
-				<div class="text-[11px] text-sand-700">{ a.UploadedAt.Format(time.RFC3339) }</div>
-			</div>
+			<article class="ops-card">
+				<h2 class="ops-heading"><a href={ a.StorageKey } class="ops-link">{ a.Filename }</a></h2>
+				<p class="ops-muted">{ a.UploadedAt.Format(time.RFC3339) }</p>
+			</article>
 		}
 	</div>
 }
 
 templ notificationsTab(d DetailData) {
-	<div class="space-y-3">
+	<div class="ops-stack">
 		if d.CanManage {
-			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/notifications" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-3">
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/notifications" } class="ops-form-inline">
 				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-				<select name="audience" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-white">
+				<select name="audience" class="ops-input">
 					<option value="reporter">reporter</option>
 					<option value="management">management</option>
 					<option value="organisation">organisation</option>
@@ -533,28 +463,28 @@ templ notificationsTab(d DetailData) {
 					<option value="finanstilsynet">finanstilsynet</option>
 					<option value="bors">bors</option>
 				</select>
-				<textarea name="notes" rows="2" placeholder="Notes" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3"></textarea>
-				<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Record notification</button></div>
+				<textarea name="notes" rows="2" placeholder="Notes" class="ops-input"></textarea>
+				<div class="ops-end"><button type="submit" class="ops-button">Record notification</button></div>
 			</form>
 		}
 		for _, n := range d.Notifications {
-			<div class="rounded-lg border border-sand-200 p-3 bg-white text-[13px]">
-				<div class="font-medium">{ n.Audience }</div>
-				<div class="text-[11px] text-sand-700">{ n.SentAt.Format(time.RFC3339) }</div>
+			<article class="ops-card">
+				<h2 class="ops-heading">{ n.Audience }</h2>
+				<p class="ops-muted">{ n.SentAt.Format(time.RFC3339) }</p>
 				if n.Notes != "" {
-					<div class="text-[12px] text-sand-700 mt-1">{ n.Notes }</div>
+					<p class="ops-muted">{ n.Notes }</p>
 				}
-			</div>
+			</article>
 		}
 	</div>
 }
 
 templ closureTab(d DetailData) {
-	<div class="space-y-3">
+	<div class="ops-stack">
 		if !d.CanManage {
-			<div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-[12px] text-amber-900">Only admins can close avvik.</div>
+			<p class="ops-warning-panel">Only admins can close avvik.</p>
 		} else {
-			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/closure-flags" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-3">
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/closure-flags" } class="ops-form-inline">
 			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 			@closureCheckbox("log_qa_done", "Log QA done", d.Avvik.LogQaDone)
 			@closureCheckbox("followups_delegated", "Followups delegated", d.Avvik.FollowupsDelegated)
@@ -563,15 +493,15 @@ templ closureTab(d DetailData) {
 			@closureCheckbox("mgmt_informed", "Management informed", d.Avvik.MgmtInformed)
 			@closureCheckbox("decisions_anchored", "Decisions anchored", d.Avvik.DecisionsAnchored)
 			@closureCheckbox("implementation_deadline_set", "Implementation deadline set", d.Avvik.ImplementationDeadlineSet)
-			<div class="flex justify-end"><button type="submit" class="px-3 py-1.5 border border-sand-300 rounded-md text-[12px] hover:bg-sand-100">Save checklist</button></div>
+			<div class="ops-end"><button type="submit" class="ops-button">Save checklist</button></div>
 			</form>
-			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/close" } class="rounded-lg border border-sand-200 p-4 bg-white space-y-3">
+			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/close" } class="ops-form-inline">
 			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-			<textarea name="closure_summary" rows="2" placeholder="Closure summary" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3"></textarea>
-			<textarea name="root_cause" rows="2" placeholder="Root cause" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3"></textarea>
-			<textarea name="lessons_learned" rows="2" placeholder="Lessons learned" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3"></textarea>
-			<div class="flex justify-end">
-				<button type="submit" disabled?={ !d.CanClose } class={ "px-3 py-1.5 rounded-md text-[12px] border", buttonCloseClass(d.CanClose) }>Close Avvik</button>
+			<textarea name="closure_summary" rows="2" placeholder="Closure summary" class="ops-input"></textarea>
+			<textarea name="root_cause" rows="2" placeholder="Root cause" class="ops-input"></textarea>
+			<textarea name="lessons_learned" rows="2" placeholder="Lessons learned" class="ops-input"></textarea>
+			<div class="ops-end">
+				<button type="submit" data-tone="danger" disabled?={ !d.CanClose } class={ "ops-button ops-close", buttonCloseClass(d.CanClose) }>Close Avvik</button>
 			</div>
 			</form>
 		}
@@ -579,8 +509,8 @@ templ closureTab(d DetailData) {
 }
 
 templ closureCheckbox(name, label string, checked bool) {
-	<label class="flex items-center gap-2 text-[13px]">
-		<input type="checkbox" name={ name } checked?={ checked } class="rounded"/>
+	<label class="ops-check-label">
+		<input type="checkbox" name={ name } checked?={ checked } class="ops-input"/>
 		{ label }
 	</label>
 }
@@ -591,15 +521,15 @@ templ tabLink(id, tab, current string) {
 		hx-get={ "/avvik/" + id + "?tab=" + tab }
 		hx-target="#avvik-tab-panel"
 		hx-swap="innerHTML"
-		class={ "text-[12px] px-2.5 py-1 rounded border", tabClass(tab == current) }
+		class={ "ops-tab", tabClass(tab == current) }
 	>{ tab }</a>
 }
 
 func tabClass(active bool) string {
 	if active {
-		return "bg-sand-900 text-white border-sand-900"
+		return "ops-tab-active"
 	}
-	return "bg-white text-sand-700 border-sand-300 hover:bg-sand-100"
+	return "ops-tab-inactive"
 }
 
 func statusBadgeVariant(status string) string {
@@ -647,7 +577,7 @@ func deadlineText(deadline time.Time) string {
 
 func buttonCloseClass(enabled bool) string {
 	if enabled {
-		return "bg-sand-900 text-white border-sand-900 hover:bg-sand-800"
+		return "ops-close-ready"
 	}
-	return "bg-sand-100 text-sand-400 border-sand-200 cursor-not-allowed"
+	return "ops-close-disabled"
 }

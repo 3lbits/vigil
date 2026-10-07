@@ -22,25 +22,6 @@ ARG VERSION=dev
 # Now runs natively on the build host for every target -> built once, reused.
 RUN go install github.com/a-h/templ/cmd/templ@v0.3.1001
 
-# Install Tailwind v4 standalone CLI (no Node.js required)
-# This binary EXECUTES on the builder, so it must match the build HOST arch
-# (BUILDARCH), not the target (TARGETARCH). Keying off TARGETARCH here would
-# download an arm64 binary onto an amd64 host and either fail to exec or
-# silently re-summon QEMU — defeating the cross-compile setup.
-# SHA256 values from sha256sums.txt in the release — update all three ARGs together when bumping.
-ARG BUILDARCH
-ARG TAILWIND_VERSION=v4.1.5
-ARG TAILWIND_SHA256_amd64=9d258a7786c22f8572aea20ed35848f8cbef1d06277e4e6b97ad8561ffc21e07
-ARG TAILWIND_SHA256_arm64=9555c6414617c15cc820679ec65404af92507e7b7718fd035d26df055561dec9
-RUN case "${BUILDARCH}" in \
-      arm64) ARCH=arm64; SHA256="${TAILWIND_SHA256_arm64}" ;; \
-      *)     ARCH=x64;   SHA256="${TAILWIND_SHA256_amd64}" ;; \
-    esac \
-    && curl -sLo /usr/local/bin/tailwindcss \
-      "https://github.com/tailwindlabs/tailwindcss/releases/download/${TAILWIND_VERSION}/tailwindcss-linux-${ARCH}" \
-    && echo "${SHA256}  /usr/local/bin/tailwindcss" | sha256sum -c - \
-    && chmod +x /usr/local/bin/tailwindcss
-
 # Fetch dependencies first for better layer caching
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
@@ -51,8 +32,8 @@ COPY . .
 # Generate templ components (*_templ.go are gitignored, must be generated here)
 RUN templ generate ./...
 
-# Generate tree-shaken, minified CSS (output.css is gitignored, must be generated here)
-RUN tailwindcss -i cmd/server/public/css/input.css -o cmd/server/public/css/output.css --minify
+# Combine the authored stylesheets (output.css is gitignored, must be generated here)
+RUN make css-build
 
 # Build a fully static binary (cross-compile via GOARCH — avoids QEMU for this step)
 # -trimpath:       remove local filesystem paths from the binary

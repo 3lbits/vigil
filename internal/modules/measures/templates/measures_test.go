@@ -118,9 +118,7 @@ func TestMeasuresTable_LoadMoreRow(t *testing.T) {
 //   - hx-get must be present and non-empty. Passing the URL as templ.SafeURL inside
 //     an Attrs map silently drops it (templ.RenderAttributes type-switches on the
 //     exact dynamic type and has no SafeURL case), so htmx never fired a request.
-//   - the live-search "text-[13px]" class must survive. It used to be passed via
-//     Attrs["class"], producing a duplicate class attribute the HTML parser discards;
-//     it now goes through InputProps.Class so it merges into the single class attr.
+//   - the live-search ops-input class must survive in a single class attribute.
 func TestMeasureLinksSection_RequirementSearchHasHxGet(t *testing.T) {
 	id := uuid.New()
 	doc := renderToDoc(t, measureLinksSection(MeasureEditVM{Measure: db.Measure{ID: id}}))
@@ -136,7 +134,30 @@ func TestMeasureLinksSection_RequirementSearchHasHxGet(t *testing.T) {
 	if !strings.Contains(hxGet, "/measures/"+id.String()+"/requirements/search") {
 		t.Errorf("unexpected hx-get target: %q", hxGet)
 	}
-	if class, _ := input.Attr("class"); !strings.Contains(class, "text-[13px]") {
-		t.Errorf("text-[13px] class dropped (duplicate-class regression): %q", class)
+	if !input.HasClass("ops-input") {
+		t.Errorf("ops-input class dropped: %q", input.AttrOr("class", ""))
+	}
+	classAttrs := 0
+	for _, attr := range input.Get(0).Attr {
+		if attr.Key == "class" {
+			classAttrs++
+		}
+	}
+	if classAttrs != 1 {
+		t.Errorf("expected one class attribute (duplicate-class regression), got %d", classAttrs)
+	}
+}
+
+func TestMeasureForm_KeepsFieldsAndErrorAlert(t *testing.T) {
+	id := uuid.New()
+	doc := renderToDoc(t, MeasureForm(&db.Measure{ID: id, Name: "MFA", Status: "planned"}, nil, "Save failed", "error"))
+	if doc.Find(`form[action="/measures/`+id.String()+`"] input[name="_csrf"]`).Length() != 1 {
+		t.Error("measure form must retain its action and CSRF field")
+	}
+	if doc.Find(`input[name="name"][value="MFA"]`).Length() != 1 || doc.Find(`select[name="status"] option[value="planned"][selected]`).Length() != 1 {
+		t.Error("measure edit fields lost their values")
+	}
+	if doc.Find(`[role="alert"][data-tone="danger"]`).Text() != "Save failed" {
+		t.Error("error flash must remain an alert")
 	}
 }

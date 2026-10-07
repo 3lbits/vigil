@@ -334,6 +334,29 @@ func TestList_MarkOverdueError_StillReturns200(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Errorf("MarkOverdueActivities error should be silently discarded; expected 200, got %d", w.Code)
 	}
+	if body := w.Body.String(); !strings.Contains(body, `ui2-shell`) || !strings.Contains(body, `ui2-activities`) {
+		t.Error("full activity list should render inside the UI2 layout and page")
+	}
+}
+
+func TestList_HTMXHasNoPageWrapper(t *testing.T) {
+	h := newHandlerT(t, &activitiesQ{})
+	r := adminCtx(httptest.NewRequest(http.MethodGet, "/activities", nil))
+	r.Header.Set("HX-Request", "true")
+	w := httptest.NewRecorder()
+	h.List(w, r)
+	if w.Code != http.StatusOK || strings.Contains(w.Body.String(), "ui2-activities") || strings.Contains(w.Body.String(), "<html") {
+		t.Fatalf("expected a bare activity table partial, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
+func TestList_FlashKeepsAlertRole(t *testing.T) {
+	h := newHandlerT(t, &activitiesQ{})
+	w := httptest.NewRecorder()
+	h.List(w, adminCtx(httptest.NewRequest(http.MethodGet, "/activities?flash=Failed&type=error", nil)))
+	if w.Code != http.StatusOK || !strings.Contains(w.Body.String(), `role="alert"`) || !strings.Contains(w.Body.String(), "Failed") {
+		t.Fatalf("error flash must remain an alert, got %d", w.Code)
+	}
 }
 
 func TestList_DBError_Returns500(t *testing.T) {

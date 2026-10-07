@@ -45,7 +45,7 @@ Rego (`cmd/server/policies/authz.rego`), not hardcoded role checks in handlers.
 |---|---|
 | Backend | Go 1.26+ (`net/http`) |
 | HTML | [templ](https://templ.guide/) |
-| CSS / JS | Tailwind CSS v4 CLI, htmx, Alpine.js (CSP build) |
+| CSS / JS | Plain CSS, htmx, Alpine.js (CSP build) |
 | Data | PostgreSQL + pgx/v5 + sqlc |
 | Migrations | goose |
 | AuthZ | OPA / Rego |
@@ -56,7 +56,7 @@ Rego (`cmd/server/policies/authz.rego`), not hardcoded role checks in handlers.
 ## Quick start
 
 Requirements: [mise](https://mise.jdx.dev) and Docker or Podman. mise installs
-and version-pins the rest of the toolchain (Go, the Tailwind CLI, templ, sqlc,
+and version-pins the rest of the toolchain (Go, templ, sqlc,
 air, golangci-lint, …) from [`mise.toml`](mise.toml). Make sure mise is
 [activated in your shell](https://mise.jdx.dev/getting-started.html) before you
 start, so the pinned tools land on `PATH`.
@@ -213,7 +213,7 @@ For public deployments, do not expose GitHub login without a strict domain allow
 | `make setup` | Install the pinned toolchain (mise) and configure git hooks |
 | `make generate` | Run sqlc + templ + CSS generation |
 | `make run` | Start the dev server with live reload (air) |
-| `make dev` | Tailwind watch + air in one terminal |
+| `make dev` | Start air; CSS is rebuilt on source changes |
 | `make build` | Build `bin/server` |
 | `make test` | Run race-enabled tests |
 | `make lint` | Run golangci-lint |
@@ -288,7 +288,7 @@ internal/
   config/            env config loader/validation
   obs/               tracing, metrics, security event logging
   locale/            i18n bundle + language middleware
-  ui2/               reusable templ page components for UI2 pilots
+  ui2/               reusable templ page components
 modules/
   about/
   dashboard/
@@ -315,16 +315,19 @@ directly via sqlc. There is no service layer, no DTOs, and no per-module
 interfaces — these solve problems this stack does not have. Split a handler
 only when concerns are genuinely mixed or logic is duplicated.
 
-**UI2 pilot pages.** The dashboard and risk-assessment preview compose shared
-layout, page, panel and display components from `internal/ui2`; their module
-templates keep only feature-specific content. UI2 reuses the existing secure
-document/navigation shell in `internal/ui/layout`, rather than copying it.
-Other pages still use the original UI.
+**UI2 pages.** Full app pages compose shared layout, page, panel and display
+components from `internal/ui2`; module templates keep feature-specific content.
+UI2 reuses the secure document/navigation shell in `internal/ui/layout` rather
+than copying it. The login page uses a separate shell without session navigation.
+Shared styling lives in `cmd/server/public/css/ui2.css` and feature styling
+in the plain CSS files beside it. `make css-build` concatenates them without a
+CSS framework.
 
 **Generated code is not edited by hand.** `**/*_templ.go` (templ), the
-sqlc-generated Go, and `cmd/server/public/css/output.css` (Tailwind) are all
-produced by `make generate`. Change the source (`.templ`, `db/queries/*.sql`,
-or the Tailwind input) and regenerate — never edit the output.
+sqlc-generated Go, and `cmd/server/public/css/output.css` (plain CSS bundle)
+are all produced by `make generate`. Change the source (`.templ`,
+`db/queries/*.sql`, or the authored CSS files) and regenerate — never edit the
+output.
 
 The full set of conventions lives in [AGENTS.md](AGENTS.md); contributor-facing
 highlights are summarised in [CONTRIBUTING.md](CONTRIBUTING.md).

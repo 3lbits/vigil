@@ -60,8 +60,8 @@ jobs:
             golangci-lint
       - name: Generate templ # generated code must exist for the linter to typecheck
         run: templ generate ./...
-      - name: Stub Tailwind output # CSS isn't needed to compile Go
-        run: touch cmd/server/public/css/output.css
+      - name: Build CSS
+        run: make css-build
       - name: Vendor JS assets
         run: make js-vendor
       - name: go vet
@@ -88,8 +88,8 @@ jobs:
             go:github.com/a-h/templ/cmd/templ
       - name: Generate templ
         run: templ generate ./...
-      - name: Stub Tailwind output
-        run: touch cmd/server/public/css/output.css
+      - name: Build CSS
+        run: make css-build
       - name: Vendor JS assets
         run: make js-vendor
       - name: Tests (race)
@@ -120,8 +120,8 @@ jobs:
             go:golang.org/x/vuln/cmd/govulncheck
       - name: Generate templ
         run: templ generate ./...
-      - name: Stub Tailwind output
-        run: touch cmd/server/public/css/output.css
+      - name: Build CSS
+        run: make css-build
       - name: Vendor JS assets
         run: make js-vendor
 

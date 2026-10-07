@@ -30,7 +30,7 @@ func Error(w http.ResponseWriter, r *http.Request, status int) {
 		PrimaryLabel: httpresp.HomeActionLabel(r.Context()),
 	}
 	if user, ok := middleware.FromContext(r.Context()); ok {
-		Render(w, r, layout.Layout("error_page_title", "error_page_subtitle", "", user, ErrorPageCard(data)))
+		Render(w, r, layout.Layout("error_page_title", "error_page_subtitle", "", user, ErrorPageCard(data, true)))
 		return
 	}
 	Render(w, r, ErrorPage(data))

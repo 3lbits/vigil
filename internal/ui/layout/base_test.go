@@ -6,27 +6,24 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/a-h/templ"
+
 	"github.com/3lbits/vigil/internal/middleware"
-	"github.com/3lbits/vigil/internal/ui"
 )
 
-func TestLayoutPreviewKeepsNavigationAndIsScoped(t *testing.T) {
+func TestLayoutKeepsNavigationAndIsScoped(t *testing.T) {
 	user := middleware.SessionUser{Name: "Reviewer", Role: "admin"}
 	var out bytes.Buffer
-	if err := LayoutPreview("Assessment", "Risk assessment", "risk", user, ui.Flash("Ready", "success")).Render(context.Background(), &out); err != nil {
+	if err := Layout("Assessment", "Risk assessment", "risk", user, templ.Raw("<p>Ready</p>")).Render(context.Background(), &out); err != nil {
 		t.Fatal(err)
 	}
 	html := out.String()
-	for _, want := range []string{`ui2-shell`, `aria-label="Main navigation"`, `id="main-content"`, `href="/risks"`, `action="/logout"`, `name="lang"`} {
+	for _, want := range []string{`ui2-shell`, `<aside aria-label="Sidebar"`, `<nav aria-label="Main navigation"`, `<main id="main-content"`, `<header class="app-page-header"`, `href="/risks"`, `action="/logout"`, `name="lang"`} {
 		if !strings.Contains(html, want) {
-			t.Errorf("preview layout missing %q", want)
+			t.Errorf("layout missing %q", want)
 		}
 	}
-	out.Reset()
-	if err := Layout("Assessment", "Risk assessment", "risk", user, ui.Flash("Ready", "success")).Render(context.Background(), &out); err != nil {
-		t.Fatal(err)
-	}
-	if strings.Contains(out.String(), "ui2-shell") || !strings.Contains(out.String(), `aria-label="Main navigation"`) {
-		t.Fatal("existing layout changed or lost navigation")
+	if strings.Index(html, `action="/logout"`) < strings.Index(html, "</nav>") {
+		t.Error("account controls must be outside the main navigation")
 	}
 }

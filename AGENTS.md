@@ -15,7 +15,7 @@ a rule here changes.
 Vigil — Go-based GRC (governance, risk, compliance) toolbox.
 
 Stack: Go 1.26+, templ (server-side rendering), sqlc, goose, pgx/v5, htmx,
-Alpine.js (CSP build), Tailwind CSS v4 CLI, air.
+Alpine.js (CSP build), plain CSS, air.
 
 Authorization is policy-based using embedded OPA Rego.
 
@@ -56,7 +56,7 @@ internal/
   config/            env config loader/validation
   obs/               tracing, metrics, security event logging
   locale/            i18n bundle + language middleware
-  ui2/               shared templ layout API and page components for UI2 pilots
+  ui2/               shared templ layout API and page components
 modules/             feature modules (about, dashboard, compliance,
                      measures, activities, risk, admin, auth)
 cmd/server/policies/authz.rego  source-of-truth authorization policy
@@ -72,10 +72,10 @@ edit them directly — the next generation overwrites the changes.
 
 - `**/*_templ.go` — produced by `templ generate`
 - sqlc-generated Go files — produced by `sqlc generate`
-- `cmd/server/public/css/output.css` — produced by Tailwind CLI
+- `cmd/server/public/css/output.css` — concatenated from the authored CSS files by `make css-build`
 
 If you need to change generated output, change the source (`.templ` file,
-`db/queries/*.sql`, or Tailwind input) and re-run `make pre-commit-fast`.
+`db/queries/*.sql`, or `cmd/server/public/css/*.css`) and re-run `make pre-commit-fast`.
 
 ---
 
@@ -99,14 +99,17 @@ If you need to change generated output, change the source (`.templ` file,
 - Split a handler only when: unrelated concerns are genuinely mixed, or
   logic is duplicated across handlers.
 
-### UI2 pilot pages
+### UI2 pages
 
 - Compose shared page markup from `internal/ui2` (layout entry point, page,
   panels, grids, notices, metrics, badges and tables). Module templates own
   their feature-specific forms, data rows, links and conditional content.
 - UI2's layout reuses the existing document/navigation shell in
   `internal/ui/layout` for its auth, locale and CSP wiring; don't copy it.
-  Non-UI2 pages remain unchanged until migrated explicitly.
+  The login page has its own document shell because it has no session navigation.
+- Style shared components in `cmd/server/public/css/ui2.css` and feature pages
+  in the plain CSS files beside it. Use semantic classes and native CSS rather
+  than utility frameworks; `make css-build` combines the stylesheets.
 
 ### Simplicity
 

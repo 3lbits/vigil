@@ -113,6 +113,9 @@ func TestList_FullPage(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Errorf("expected 200, got %d", w.Code)
 	}
+	if body := w.Body.String(); !strings.Contains(body, `ui2-shell`) || !strings.Contains(body, `ui2-measures`) {
+		t.Error("full measure list should render inside the UI2 layout and page")
+	}
 }
 
 func TestList_HTMXPartial(t *testing.T) {
@@ -131,8 +134,8 @@ func TestList_HTMXPartial(t *testing.T) {
 	// HTMX partial should not contain the full layout navigation.
 	// The response should be shorter than a full page.
 	body := w.Body.String()
-	if strings.Contains(body, "<html") {
-		t.Error("HTMX partial should not render full HTML document")
+	if strings.Contains(body, "<html") || strings.Contains(body, "ui2-measures") {
+		t.Error("HTMX partial should not render the full UI2 page")
 	}
 }
 

@@ -3,11 +3,11 @@
 
 [build]
   entrypoint     = "tmp/main"
-  cmd            = "go build -o tmp/main ./cmd/server/"
+  cmd            = "make css-build && go build -o tmp/main ./cmd/server/"
   bin            = "tmp/main"
   include_ext    = ["go", "templ", "sql", "env", "css", "js"]
   exclude_dir    = ["tmp", "bin", "example", "db/queries", "db/migrations", "node_modules"]
-  exclude_regex  = ["_templ\\.go$"]
+  exclude_regex  = ["_templ\\.go$", "output\\.css$"]
   delay          = 500
   kill_delay     = "1s"
   rerun          = false

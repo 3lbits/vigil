@@ -111,6 +111,20 @@ func TestList_OK(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d", w.Code)
 	}
+	if body := w.Body.String(); !strings.Contains(body, `ui2-shell`) || !strings.Contains(body, `ui2-assets`) || !strings.Contains(body, "S3") {
+		t.Error("asset list should render data inside the UI2 layout and page")
+	}
+}
+
+func TestList_HTMXHasNoPageWrapper(t *testing.T) {
+	h := NewHandler(&assetsQ{}, testEngine(t))
+	r := assetsCtx(httptest.NewRequest(http.MethodGet, "/assets", nil))
+	r.Header.Set("HX-Request", "true")
+	w := httptest.NewRecorder()
+	h.List(w, r)
+	if w.Code != http.StatusOK || strings.Contains(w.Body.String(), "ui2-assets") || strings.Contains(w.Body.String(), "<html") {
+		t.Fatalf("expected a bare asset table partial, got %d: %s", w.Code, w.Body.String())
+	}
 }
 
 func TestCreate_OK(t *testing.T) {
@@ -145,6 +159,9 @@ func TestCreate_DBErrorRendersForm(t *testing.T) {
 	h.Create(w, r)
 	if w.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d", w.Code)
+	}
+	if body := w.Body.String(); !strings.Contains(body, `role="alert"`) || !strings.Contains(body, `name="_csrf"`) || !strings.Contains(body, `name="name"`) {
+		t.Error("failed asset creation should retain accessible error and form fields")
 	}
 }
 

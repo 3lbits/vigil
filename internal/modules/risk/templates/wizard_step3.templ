@@ -5,49 +5,48 @@ import (
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
-	"github.com/3lbits/vigil/internal/ui"
 )
 
 // scaleReference renders a collapsible reference panel for likelihood and consequence scales.
 templ scaleReference(labels []db.RiskScaleLabel) {
-	<details class="mb-4 border border-sand-200 rounded-lg">
-		<summary class="px-4 py-2.5 text-[12px] font-semibold text-sand-700 cursor-pointer select-none hover:bg-sand-50 rounded-lg transition-colors list-none flex items-center justify-between">
+	<details class="ui2-panel">
+		<summary class="risk-split">
 			<span>{ locale.T(ctx, "scale_reference") }</span>
-			<span class="text-sand-700 text-[10px]">click to expand</span>
+			<span class="risk-caption">click to expand</span>
 		</summary>
-		<div class="px-4 pb-4 pt-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-			<div>
-				<div class="text-[10px] font-semibold text-sand-700 uppercase tracking-wide mb-2">{ locale.T(ctx, "scale_probability") }</div>
-				<div class="flex flex-col gap-1">
+		<div class="risk-two-columns">
+			<section>
+				<h2 class="risk-section-heading" style="font-size: 10px">{ locale.T(ctx, "scale_probability") }</h2>
+				<div class="risk-tight-list">
 					for _, i := range []int32{1, 2, 3, 4, 5} {
-						<div class="flex gap-2 text-[12px]">
-							<span class="font-mono font-bold text-sand-700 shrink-0 w-4">{ fmt.Sprint(i) }</span>
+						<div>
+							<span class="risk-monospace">{ fmt.Sprint(i) }</span>
 							<div>
-								<span class="font-medium text-sand-800">{ findLabel(labels, "probability", i) }</span>
+								<span class="risk-emphasis">{ findLabel(labels, "probability", i) }</span>
 								if d := findDesc(labels, "probability", i); d != "" {
-									<span class="text-sand-700 dark:text-zinc-400"> — { d }</span>
+									<span class="risk-description">— { d }</span>
 								}
 							</div>
 						</div>
 					}
 				</div>
-			</div>
-			<div>
-				<div class="text-[10px] font-semibold text-sand-700 uppercase tracking-wide mb-2">{ locale.T(ctx, "scale_consequence") }</div>
-				<div class="flex flex-col gap-1">
+			</section>
+			<section>
+				<h2 class="risk-section-heading" style="font-size: 10px">{ locale.T(ctx, "scale_consequence") }</h2>
+				<div class="risk-tight-list">
 					for _, i := range []int32{1, 2, 3, 4, 5} {
-						<div class="flex gap-2 text-[12px]">
-							<span class="font-mono font-bold text-sand-700 shrink-0 w-4">{ fmt.Sprint(i) }</span>
+						<div>
+							<span class="risk-monospace">{ fmt.Sprint(i) }</span>
 							<div>
-								<span class="font-medium text-sand-800">{ findLabel(labels, "consequence", i) }</span>
+								<span class="risk-emphasis">{ findLabel(labels, "consequence", i) }</span>
 								if d := findDesc(labels, "consequence", i); d != "" {
-									<span class="text-sand-700 dark:text-zinc-400"> — { d }</span>
+									<span class="risk-description">— { d }</span>
 								}
 							</div>
 						</div>
 					}
 				</div>
-			</div>
+			</section>
 		</div>
 	</details>
 }
@@ -76,147 +75,109 @@ templ WizardStep3(vm WizardStep3VM) {
 		@reviewBanner(vm.Assessment)
 	}
 	if len(vm.Risks) == 0 {
-		<div class="rounded-xl border border-dashed border-sand-300 p-8 text-center max-w-2xl">
-			<p class="text-[13px] text-sand-700 mb-3">{ locale.T(ctx, "risk_none_identified") }</p>
-			<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") } class="text-[13px] text-blue-600 hover:underline">← { locale.T(ctx, "action_go_back_add_risks_first") }</a>
+		<div class="ui2-panel">
+			<p class="risk-description">{ locale.T(ctx, "risk_none_identified") }</p>
+			<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") } class="risk-link-toggle">← { locale.T(ctx, "action_go_back_add_risks_first") }</a>
 		</div>
 	} else {
-		<p class="text-[12px] text-sand-700 mb-4 max-w-2xl">{ locale.T(ctx, "text_risk_scoring_guidance") }</p>
+		<p class="risk-description">{ locale.T(ctx, "text_risk_scoring_guidance") }</p>
 		if len(vm.ScaleLabels) > 0 {
 			@scaleReference(vm.ScaleLabels)
 		}
 		<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/3") }>
 			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-			<div class="flex flex-col gap-4 mb-6">
+			<div class="risk-fields">
 				for _, risk := range vm.Risks {
 					@riskScoreRow(risk, vm.LowMax, vm.HighMin)
 				}
 			</div>
-			<div class="flex items-center justify-between max-w-3xl">
-				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") } class="text-[13px] text-sand-700 hover:text-sand-800">← { locale.T(ctx, "action_back_to_identify") }</a>
-				@ui.Button(ui.ButtonProps{
-					Attrs: templ.Attributes{
-						"type": "submit",
-					},
-				}) {
-					{ locale.T(ctx, "action_save_evaluate") } →
-				}
+			<div class="risk-split">
+				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") } class="risk-back-link">← { locale.T(ctx, "action_back_to_identify") }</a>
+				<button type="submit">{ locale.T(ctx, "action_save_evaluate") } →</button>
 			</div>
 		</form>
 	}
 }
 
 templ riskScoreRow(risk db.Risk, lowMax, highMin int) {
-	<div
-		class="border border-sand-200 rounded-[10px] p-4"
+	<section
+		class="ui2-panel"
 		x-data="{ expanded: true }"
 	>
-		<button
-			type="button"
-			@click="expanded = !expanded"
-			:aria-expanded="expanded.toString()"
-			aria-controls={ "risk-body-" + risk.ID.String() }
-			class="w-full flex items-center justify-between gap-3 text-left"
-		>
-			<span class="text-[13px] font-semibold text-sand-900">{ risk.Name }</span>
-			<span class="text-[11px] text-sand-700" x-text="expanded ? 'Hide details' : 'Show details'"></span>
-		</button>
+		<h2 style="font-size: 13px">
+			<button
+				type="button"
+				@click="expanded = !expanded"
+				:aria-expanded="expanded.toString()"
+				aria-controls={ "risk-body-" + risk.ID.String() }
+				class="risk-split"
+			>
+				<span class="risk-result-name">{ risk.Name }</span>
+				<span class="risk-caption" x-text="expanded ? 'Hide details' : 'Show details'"></span>
+			</button>
+		</h2>
 		<div
 			id={ "risk-body-" + risk.ID.String() }
 			x-show="expanded"
-			class="mt-3"
+			class="risk-following-wide"
 			x-data={ fmt.Sprintf("riskScorer(%d,%d,%d,%d)", risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, highMin, lowMax) }
 		>
 			if risk.Description != "" {
-				<div class="text-[11px] text-sand-700 dark:text-zinc-400 mb-3">{ risk.Description }</div>
+				<p class="risk-caption">{ risk.Description }</p>
 			}
-			<div class="mb-3 max-w-sm">
+			<div class="risk-spaced">
 				@scorePanel(risk.ID.String(), "current", "label_current_risk", "label_with_existing_controls", int(risk.LikelihoodCurrent.Int32), int(risk.ConsequenceCurrent.Int32), risk.LikelihoodCurrent.Valid)
 			</div>
-			<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+			<div class="risk-two-columns">
 				<div>
-					@ui.Field("lr-" + risk.ID.String(), "label_likelihood_reasoning", false) {
-						@ui.Textarea(ui.TextareaProps{
-							ID:          "lr-" + risk.ID.String(),
-							Name:        "likelihood_reasoning_" + risk.ID.String(),
-							Value:       risk.LikelihoodReasoning,
-							Placeholder: locale.T(ctx, "placeholder_likelihood_reasoning"),
-							Class:       "border-sand-200 px-2 py-1.5 text-[12px] resize-y min-h-0 focus:ring-1",
-							Attrs: templ.Attributes{
-								"rows": "2",
-							},
-						})
-					}
+					<label for={ "lr-" + risk.ID.String() }>{ locale.T(ctx, "label_likelihood_reasoning") }</label>
+					<textarea id={ "lr-" + risk.ID.String() } name={ "likelihood_reasoning_" + risk.ID.String() } rows="2" placeholder={ locale.T(ctx, "placeholder_likelihood_reasoning") }>{ risk.LikelihoodReasoning }</textarea>
 				</div>
 				<div>
-					@ui.Field("cr-" + risk.ID.String(), "label_consequence_reasoning", false) {
-						@ui.Textarea(ui.TextareaProps{
-							ID:          "cr-" + risk.ID.String(),
-							Name:        "consequence_reasoning_" + risk.ID.String(),
-							Value:       risk.ConsequenceReasoning,
-							Placeholder: locale.T(ctx, "placeholder_consequence_reasoning"),
-							Class:       "border-sand-200 px-2 py-1.5 text-[12px] resize-y min-h-0 focus:ring-1",
-							Attrs: templ.Attributes{
-								"rows": "2",
-							},
-						})
-					}
+					<label for={ "cr-" + risk.ID.String() }>{ locale.T(ctx, "label_consequence_reasoning") }</label>
+					<textarea id={ "cr-" + risk.ID.String() } name={ "consequence_reasoning_" + risk.ID.String() } rows="2" placeholder={ locale.T(ctx, "placeholder_consequence_reasoning") }>{ risk.ConsequenceReasoning }</textarea>
 				</div>
 			</div>
 		</div>
-	</div>
+	</section>
 }
 
 // scorePanel renders a current risk scoring panel with Alpine.js live color.
 // Expects a parent x-data="riskScorer(...)" with properties l (likelihood) and c (consequence).
 templ scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) {
-	<div class="border border-sand-100 rounded-lg p-3 bg-sand-50/50">
-		<div class="text-[11px] font-semibold text-sand-700 mb-0.5">{ locale.T(ctx, labelKey) }</div>
-		<div class="text-[10px] text-sand-700 dark:text-zinc-400 mb-2">{ locale.T(ctx, subKey) }</div>
-		<div class="grid grid-cols-2 gap-2 mb-2">
+	<fieldset class="risk-score-fieldset">
+		<legend class="risk-caption">{ locale.T(ctx, labelKey) }</legend>
+		<p class="risk-caption">{ locale.T(ctx, subKey) }</p>
+		<div class="risk-score-fields">
 			<div>
-				<label for={ kind + "-likelihood-" + riskID } class="block text-[10px] text-sand-700 mb-1">{ locale.T(ctx, "label_likelihood_1_5") }</label>
-				@ui.Select(ui.SelectProps{
-					ID:    kind + "-likelihood-" + riskID,
-					Name:  kind + "_likelihood_" + riskID,
-					Class: "px-2 py-1 text-[12px] focus:ring-1",
-					Attrs: templ.Attributes{
-						"x-model": "l",
-					},
-				}) {
+				<label for={ kind + "-likelihood-" + riskID } class="risk-caption">{ locale.T(ctx, "label_likelihood_1_5") }</label>
+				<select id={ kind + "-likelihood-" + riskID } name={ kind + "_likelihood_" + riskID } x-model="l">
 					<option value="0">—</option>
 					for i := 1; i <= 5; i++ {
 						<option value={ fmt.Sprint(i) } selected?={ valid && l == i }>{ fmt.Sprint(i) } { likelihoodLabel(i) }</option>
 					}
-				}
+				</select>
 			</div>
 			<div>
-				<label for={ kind + "-consequence-" + riskID } class="block text-[10px] text-sand-700 mb-1">{ locale.T(ctx, "label_consequence_1_5") }</label>
-				@ui.Select(ui.SelectProps{
-					ID:    kind + "-consequence-" + riskID,
-					Name:  kind + "_consequence_" + riskID,
-					Class: "px-2 py-1 text-[12px] focus:ring-1",
-					Attrs: templ.Attributes{
-						"x-model": "c",
-					},
-				}) {
+				<label for={ kind + "-consequence-" + riskID } class="risk-caption">{ locale.T(ctx, "label_consequence_1_5") }</label>
+				<select id={ kind + "-consequence-" + riskID } name={ kind + "_consequence_" + riskID } x-model="c">
 					<option value="0">—</option>
 					for i := 1; i <= 5; i++ {
 						<option value={ fmt.Sprint(i) } selected?={ valid && c == i }>{ fmt.Sprint(i) } { consequenceLabel(i) }</option>
 					}
-				}
+				</select>
 			</div>
 		</div>
 		<template x-if="l > 0 && c > 0">
 			<div
-				class="flex items-center justify-between px-2 py-1.5 rounded text-[11px] font-semibold text-white transition-colors"
-				:class="bgClass(score())"
+				class="risk-live-score"
+				:class="'risk-score-' + level(score())"
 			>
 				<span x-text="'Score: ' + score()"></span>
-				<span class="bg-white/25 px-1.5 rounded text-[10px]" x-text="label(score())"></span>
+				<span class="risk-score-label" x-text="label(score())"></span>
 			</div>
 		</template>
-	</div>
+	</fieldset>
 }
 
 func likelihoodLabel(i int) string {

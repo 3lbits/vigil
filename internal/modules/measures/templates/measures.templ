@@ -9,7 +9,8 @@ import (
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
 	"github.com/3lbits/vigil/internal/ui"
-	formstemplates "github.com/3lbits/vigil/internal/ui/forms"
+	"github.com/3lbits/vigil/internal/ui2"
+	formstemplates "github.com/3lbits/vigil/internal/ui2/forms"
 )
 
 func measureRef(n sql.NullInt32) string {
@@ -17,145 +18,148 @@ func measureRef(n sql.NullInt32) string {
 	return fmt.Sprintf("M-%03d", n.Int32)
 }
 
+func flashRole(tone string) string {
+	if tone == "error" {
+		return "alert"
+	}
+	return "status"
+}
+
+func flashTone(tone string) string {
+	switch tone {
+	case "error":
+		return "danger"
+	case "success":
+		return "success"
+	default:
+		return "neutral"
+	}
+}
+
+templ measureStatusBadge(status string) {
+	switch status {
+		case "implemented":
+			@ui2.Badge("success") { { locale.T(ctx, "status_implemented") } }
+		case "in_progress":
+			@ui2.Badge("warning") { { locale.T(ctx, "status_in_progress") } }
+		case "planned":
+			@ui2.Badge("neutral") { { locale.T(ctx, "status_planned") } }
+		case "deprecated":
+			@ui2.Badge("danger") { { locale.T(ctx, "status_deprecated") } }
+		default:
+			@ui2.Badge("neutral") { { status } }
+	}
+}
+
 // ── Measure list ──
 
 templ MeasureList(measures []MeasureVM, filter, q, sort, dir string, mine bool, flash, flashType string, hasMore bool, pageSize int32) {
-	@ui.Flash(flash, flashType)
+	@ui2.Page("ui2-measures") {
+	if flash != "" {
+		<p role={ flashRole(flashType) } data-tone={ flashTone(flashType) }>{ flash }</p>
+	}
 
-	<div class="flex flex-wrap justify-between items-center gap-3 mb-4">
-		<p data-testid="measure-count" class="text-[13px] text-sand-700">{ locale.TN(ctx, "measures_count", len(measures), map[string]any{"Count": len(measures)}) }</p>
-		<a href="/measures/new" class="text-xs font-medium py-1.5 px-3.5 rounded-md border border-sand-400 hover:bg-sand-100 transition-colors flex items-center gap-1.5">
+	<div class="ops-toolbar">
+		<p data-testid="measure-count" class="ops-muted">{ locale.TN(ctx, "measures_count", len(measures), map[string]any{"Count": len(measures)}) }</p>
+		<a href="/measures/new" class="ops-button">
 			@ui.IconSVG("plus", 13)
 			{ locale.T(ctx, "action_add_measure") }
 		</a>
 	</div>
 
-	@ui.FilterBar(ui.FilterBarProps{ID: "measures-filters", Action: "/measures", Target: "#measures-table"}) {
+	@ui2.FilterBar(ui2.FilterBarProps{ID: "measures-filters", Action: "/measures", Target: "#measures-table"}) {
 		<input type="hidden" name="sort" value={ sort }/>
 		<input type="hidden" name="dir" value={ dir }/>
-		@ui.FilterSearch(ui.FilterSearchProps{
-			Name:    "q",
+		@ui2.FilterSearch(ui2.FilterSearchProps{
 			Value:   q,
 			Columns: []string{"label_name", "label_owner"},
 			Action:  "/measures",
 			Target:  "#measures-table",
 		})
-		@ui.FilterSelect("filter", locale.T(ctx, "filter_all_statuses")) {
+		@ui2.FilterSelect("filter", locale.T(ctx, "filter_all_statuses")) {
 			<option value="" selected?={ filter == "" || filter == "all" }>{ locale.T(ctx, "filter_all_statuses") }</option>
 			<option value="implemented" selected?={ filter == "implemented" }>{ locale.T(ctx, "status_implemented") }</option>
 			<option value="in_progress" selected?={ filter == "in_progress" }>{ locale.T(ctx, "status_in_progress") }</option>
 			<option value="planned" selected?={ filter == "planned" }>{ locale.T(ctx, "status_planned") }</option>
 			<option value="deprecated" selected?={ filter == "deprecated" }>{ locale.T(ctx, "status_deprecated") }</option>
 		}
-		@ui.FilterMine(mine, "label_mine_only")
+		@ui2.FilterMine(mine, "label_mine_only")
 	}
 
 	<div id="measures-table" aria-live="polite" aria-atomic="false">
 		@MeasuresTable(measures, hasMore, pageSize, filter, q, sort, dir, mine)
 	</div>
+	}
 }
 
 templ MeasuresTable(measures []MeasureVM, hasMore bool, pageSize int32, filter, q, sort, dir string, mine bool) {
 	if len(measures) == 0 {
-		@ui.EmptyState(ui.EmptyStateProps{
-			TestID: "no-measures-empty",
-			Class:  "border-solid border-sand-300/60 rounded-[10px] p-8 bg-white dark:bg-zinc-900",
-		}) {
-			<div class="text-sand-700 text-[13px]">{ locale.T(ctx, "measures_none_yet") }</div>
-			<a href="/measures/new" class="text-blue-600 text-[13px] hover:underline">Add your first measure →</a>
-		}
+		<p data-testid="no-measures-empty">{ locale.T(ctx, "measures_none_yet") } <a href="/measures/new">Add your first measure →</a></p>
 	} else {
-		@ui.Card(ui.CardProps{
-			Class:   "border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden",
-			Padding: "p-0",
-		}) {
-			<div role="region" aria-label="Measures table" tabindex="0" class="overflow-x-auto">
-				@ui.Table(ui.TableProps{
-					Attrs: templ.Attributes{
-						"class": "min-w-[600px]",
-					},
-				}) {
+		<section role="region" aria-label="Measures table" tabindex="0" class="ops-table">
+			<table class="ops-data-table">
 					<caption class="sr-only">Measures</caption>
-					@ui.THead(ui.THeadProps{
-						Attrs: templ.Attributes{
-							"class": "bg-sand-100 dark:bg-zinc-800",
-						},
-					}) {
-						@ui.Tr(ui.TrProps{}) {
-							@ui.SortTh(locale.T(ctx, "label_measure"), "name", ui.SortState{Col: sort, Dir: dir}, "/measures", "#measures-table", "measures-filters", "px-4 text-[11px]")
-							@ui.SortTh(locale.T(ctx, "label_status"), "status", ui.SortState{Col: sort, Dir: dir}, "/measures", "#measures-table", "measures-filters", "text-[11px]")
-							@ui.SortTh(locale.T(ctx, "label_owner"), "owner", ui.SortState{Col: sort, Dir: dir}, "/measures", "#measures-table", "measures-filters", "text-[11px]")
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { { locale.T(ctx, "label_frameworks") } }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-right px-4 text-[11px]"}}) { <span class="sr-only">{ locale.T(ctx, "label_actions") }</span> }
-						}
-					}
+					<thead class="ops-table-head">
+						<tr>
+							@ui2.SortTh(locale.T(ctx, "label_measure"), "name", ui2.SortState{Col: sort, Dir: dir}, "/measures", "#measures-table", "measures-filters", "ops-sort-heading")
+							@ui2.SortTh(locale.T(ctx, "label_status"), "status", ui2.SortState{Col: sort, Dir: dir}, "/measures", "#measures-table", "measures-filters", "ops-sort-heading")
+							@ui2.SortTh(locale.T(ctx, "label_owner"), "owner", ui2.SortState{Col: sort, Dir: dir}, "/measures", "#measures-table", "measures-filters", "ops-sort-heading")
+							<th scope="col" >{ locale.T(ctx, "label_frameworks") }</th>
+							<th scope="col" class="ops-align-end"><span class="sr-only">{ locale.T(ctx, "label_actions") }</span></th>
+						</tr>
+					</thead>
 					<tbody>
 						@MeasureRows(measures, hasMore, pageSize, filter, q, sort, dir, mine)
 					</tbody>
-				}
-			</div>
-		}
+			</table>
+		</section>
 	}
 }
 
 templ MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, q, sort, dir string, mine bool) {
 	for _, mvm := range measures {
-		@ui.Tr(ui.TrProps{
-			Attrs: templ.Attributes{
-				"class": "border-sand-300/60 dark:border-zinc-700/60",
-			},
-		}) {
-			@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4"}}) {
-				<div class="flex items-center gap-2">
+		<tr>
+			<td>
+				<div class="ops-inline">
 					if mvm.Measure.RefNum.Valid {
-						<span class="font-mono text-[11px] text-sand-700 dark:text-zinc-400 shrink-0">{ measureRef(mvm.Measure.RefNum) }</span>
+						<span class="ops-reference">{ measureRef(mvm.Measure.RefNum) }</span>
 					}
-					<a href={ templ.SafeURL("/measures/" + mvm.Measure.ID.String()) } class="font-medium hover:text-blue-700 hover:underline truncate">{ mvm.Measure.Name }</a>
+					<a href={ templ.SafeURL("/measures/" + mvm.Measure.ID.String()) } class="ops-link ops-truncate">{ mvm.Measure.Name }</a>
 				</div>
 				if mvm.Measure.Category != "" {
-					<div class="text-[11px] text-sand-700">{ mvm.Measure.Category }</div>
+					<p class="ops-muted">{ mvm.Measure.Category }</p>
 				}
-			}
-			@ui.Td(ui.TdProps{}) {
-				@ui.StatusBadge(mvm.Measure.Status)
-			}
-			@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) {
+			</td>
+			<td>
+				@measureStatusBadge(mvm.Measure.Status)
+			</td>
+			<td>
 				if mvm.OwnerDisplay == "" {
-					<span class="text-sand-700">—</span>
+					<span class="ops-muted">—</span>
 				} else {
 					{ mvm.OwnerDisplay }
 				}
-			}
-			@ui.Td(ui.TdProps{}) {
-				<div class="flex gap-1 flex-wrap">
+			</td>
+			<td>
+				<div class="ops-inline">
 					if mvm.HasRiskLinks {
-						<span class="text-[11px] font-mono px-1.5 py-0.5 bg-violet-50 text-violet-700 rounded border border-violet-200">Risk</span>
+						<span class="ops-kind ops-reference">Risk</span>
 					}
 					for _, fw := range mvm.Frameworks {
-						<span class="text-[11px] font-mono px-1.5 py-0.5 bg-sand-100 dark:bg-zinc-800 text-sand-700 dark:text-zinc-300 rounded border border-sand-300 dark:border-zinc-600">{ fw }</span>
+						<span class="ops-tag ops-reference">{ fw }</span>
 					}
 				</div>
-			}
-			@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 text-right"}}) {
+			</td>
+			<td class="ops-align-end">
 				<a href={ templ.SafeURL("/measures/" + mvm.Measure.ID.String() + "/edit") }
 					aria-label={ "Edit measure " + mvm.Measure.Name }
-					class="text-[11px] text-sand-700 hover:text-sand-900 py-1 px-2">edit</a>
-			}
-		}
+					class="ops-link">edit</a>
+			</td>
+		</tr>
 	}
 	if hasMore {
-		@ui.Tr(ui.TrProps{
-			Attrs: templ.Attributes{
-				"id":    "load-more-row",
-				"class": "border-sand-300/60",
-			},
-		}) {
-			@ui.Td(ui.TdProps{
-				Attrs: templ.Attributes{
-					"colspan": "5",
-					"class":   "text-center",
-				},
-			}) {
+		<tr id="load-more-row">
+			<td colspan="5" class="ops-align-center">
 				<a
 					href={ templ.SafeURL("/measures?offset=" + fmt.Sprint(nextOffset) + "&filter=" + filter + "&q=" + q + "&sort=" + sort + "&dir=" + dir + "&mine=" + listMineQueryValue(mine)) }
 					hx-get="/measures"
@@ -163,10 +167,10 @@ templ MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, 
 					hx-vals={ fmt.Sprintf(`{"offset":"%d"}`, nextOffset) }
 					hx-target="#load-more-row"
 					hx-swap="outerHTML"
-					class="text-[12px] text-sand-700 hover:text-sand-900 border border-sand-300 rounded px-3 py-1.5 hover:bg-sand-50 transition-colors"
+					class="ops-button"
 				>Load more</a>
-			}
-		}
+			</td>
+		</tr>
 	}
 }
 
@@ -181,49 +185,41 @@ func listMineQueryValue(mine bool) string {
 
 // MeasureCoreFields renders name, category, owner, and due-date inputs.
 templ MeasureCoreFields() {
-	@ui.Field("measure-name", "label_name", true) {
-		@ui.Input(ui.InputProps{
-			ID:          "measure-name",
-			Type:        "text",
-			Name:        "name",
-			Required:    true,
-			Placeholder: "e.g. Patch management process",
-		})
-	}
-	@ui.Field("measure-category", "label_category", false) {
-		@ui.Input(ui.InputProps{
-			ID:          "measure-category",
-			Type:        "text",
-			Name:        "category",
-			Placeholder: "e.g. Technical, Organisational",
-		})
-	}
-	@ui.Field("measure-owner", "label_owner_free_text_name", false) {
-		@ui.Input(ui.InputProps{
-			ID:          "measure-owner",
-			Type:        "text",
-			Name:        "owner",
-			Placeholder: "Name or team responsible",
-		})
-	}
-	@ui.Field("measure-due-date", "label_due_date", false) {
-		@ui.Input(ui.InputProps{
-			ID:   "measure-due-date",
-			Type: "date",
-			Name: "due_date",
-		})
-		<div class="mt-1 text-[11px] text-sand-700">{ locale.T(ctx, "label_due_date_measure_hint") }</div>
-	}
+	<div>
+		<label for="measure-name" class="ops-label">{ locale.T(ctx, "label_name") } <span aria-hidden="true">*</span></label>
+		<input id="measure-name" type="text" name="name" required placeholder="e.g. Patch management process" class="ops-input"/>
+	</div>
+	<div>
+		<label for="measure-category" class="ops-label">{ locale.T(ctx, "label_category") }</label>
+		<input id="measure-category" type="text" name="category" placeholder="e.g. Technical, Organisational" class="ops-input"/>
+	</div>
+	<div>
+		<label for="measure-owner" class="ops-label">{ locale.T(ctx, "label_owner_free_text_name") }</label>
+		<input id="measure-owner" type="text" name="owner" placeholder="Name or team responsible" class="ops-input"/>
+	</div>
+	<div>
+		<label for="measure-due-date" class="ops-label">{ locale.T(ctx, "label_due_date") }</label>
+		<input id="measure-due-date" type="date" name="due_date" class="ops-input"/>
+		<p class="ops-muted">{ locale.T(ctx, "label_due_date_measure_hint") }</p>
+	</div>
 	@measureTextarea("label_description", "description", "Optional detailed description", "")
 }
 
 // ── Measure form ──
 
 templ MeasureForm(m *db.Measure, users []db.User, flash, flashType string) {
-	@ui.Flash(flash, flashType)
+	@ui2.Page("ui2-measures") {
+		@measureFormContent(m, users, flash, flashType)
+	}
+}
 
-	<div class="max-w-lg">
-		<form method="POST" action={ measureFormAction(m) } class="flex flex-col gap-4">
+templ measureFormContent(m *db.Measure, users []db.User, flash, flashType string) {
+	if flash != "" {
+		<p role={ flashRole(flashType) } data-tone={ flashTone(flashType) }>{ flash }</p>
+	}
+
+	<div class="ops-stack ops-narrow">
+		<form method="POST" action={ measureFormAction(m) } class="ops-form-inline">
 			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 			if m == nil {
 				@formstemplates.MeasureCreateFields(users, "measure-create")
@@ -234,11 +230,9 @@ templ MeasureForm(m *db.Measure, users []db.User, flash, flashType string) {
 				@measureTextarea("label_description", "description", "Optional detailed description", measureFieldVal(m, "description"))
 			}
 
-			@ui.Field("status", "label_status", false) {
-				@ui.Select(ui.SelectProps{
-					ID:   "status",
-					Name: "status",
-				}) {
+			<div>
+				<label for="status" class="ops-label">{ locale.T(ctx, "label_status") }</label>
+				<select id="status" name="status" class="ops-input">
 					for _, opt := range []struct{ Val, Key string }{
 						{"planned", "status_planned"},
 						{"in_progress", "status_in_progress"},
@@ -247,22 +241,18 @@ templ MeasureForm(m *db.Measure, users []db.User, flash, flashType string) {
 					} {
 						<option value={ opt.Val } selected?={ measureFieldVal(m, "status") == opt.Val }>{ locale.T(ctx, opt.Key) }</option>
 					}
-				}
-			}
+				</select>
+			</div>
 
-			<div class="flex gap-2 pt-1">
-				@ui.Button(ui.ButtonProps{
-					Attrs: templ.Attributes{
-						"type": "submit",
-					},
-				}) {
+			<div class="ops-inline">
+				<button type="submit">
 					if m == nil {
 						{ locale.T(ctx, "action_create_measure") }
 					} else {
 						{ locale.T(ctx, "action_save_changes") }
 					}
-				}
-				<a href="/measures" class="text-[13px] py-2 px-4 rounded-md border border-sand-400 text-sand-700 hover:bg-sand-100 transition-colors">
+				</button>
+				<a href="/measures" class="ops-button">
 					{ locale.T(ctx, "action_cancel") }
 				</a>
 				if m != nil {
@@ -271,7 +261,8 @@ templ MeasureForm(m *db.Measure, users []db.User, flash, flashType string) {
 						formaction={ templ.SafeURL("/measures/" + m.ID.String() + "/delete") }
 						formmethod="POST"
 						onclick="return confirm('Delete this measure?')"
-						class="ml-auto text-[13px] text-red-600 hover:text-red-800 border border-red-200 rounded-md px-3 py-2 hover:bg-red-50 transition-colors"
+						data-tone="danger"
+						class="ops-link"
 					>
 						{ locale.T(ctx, "action_delete") }
 					</button>
@@ -313,48 +304,49 @@ func measureFieldVal(m *db.Measure, field string) string {
 // ── Measure detail ──
 
 templ MeasureDetail(vm MeasureDetailVM) {
-	<div class="flex justify-between items-center mb-6">
-		<a href="/measures" class="text-[13px] text-sand-700 dark:text-zinc-400 hover:text-sand-800 dark:hover:text-zinc-100 flex items-center gap-1.5">
+	@ui2.Page("ui2-measures") {
+	<div class="ops-toolbar ops-spaced">
+		<a href="/measures" class="ops-link">
 			@ui.IconSVG("chevron", 13)
 			Measures
 		</a>
 		if vm.CanEdit {
 			<a href={ templ.SafeURL("/measures/" + vm.Measure.ID.String() + "/edit") }
-				class="text-xs font-medium py-1.5 px-3.5 rounded-md border border-sand-400 hover:bg-sand-100 transition-colors">
+				class="ops-button">
 				Edit measure
 			</a>
 		} else {
-			<span class="text-xs font-medium py-1.5 px-3.5 rounded-md border border-sand-300 text-sand-700 cursor-not-allowed select-none" title="You don't have permission to edit">
+			<span class="ops-muted" title="You don't have permission to edit">
 				Edit measure
 			</span>
 		}
 	</div>
 
-	<div class="grid grid-cols-[120px_1fr] gap-x-6 gap-y-3 mb-6 text-[13px] max-w-xl">
-		<span class="text-[11px] uppercase tracking-wider text-sand-700 font-medium pt-0.5">Status</span>
-		<span>@ui.StatusBadge(vm.Measure.Status)</span>
+	<dl class="ops-medium ops-spaced">
+		<dt class="ops-muted">Status</dt>
+		<dd>@measureStatusBadge(vm.Measure.Status)</dd>
 		if vm.Measure.Category != "" {
-			<span class="text-[11px] uppercase tracking-wider text-sand-700 font-medium pt-0.5">Category</span>
-			<span class="text-sand-800">{ vm.Measure.Category }</span>
+			<dt class="ops-muted">Category</dt>
+			<dd class="ops-muted">{ vm.Measure.Category }</dd>
 		}
 		if vm.Measure.Owner != "" {
-			<span class="text-[11px] uppercase tracking-wider text-sand-700 font-medium pt-0.5">Owner</span>
-			<span class="text-sand-800">{ vm.Measure.Owner }</span>
+			<dt class="ops-muted">Owner</dt>
+			<dd class="ops-muted">{ vm.Measure.Owner }</dd>
 		}
 		if vm.Measure.Description != "" {
-			<span class="text-[11px] uppercase tracking-wider text-sand-700 font-medium pt-0.5">Description</span>
-			<span class="text-sand-700">{ vm.Measure.Description }</span>
+			<dt class="ops-muted">Description</dt>
+			<dd class="ops-muted">{ vm.Measure.Description }</dd>
 		}
-	</div>
+	</dl>
 
 	if len(vm.Links) > 0 {
-		<div class="border-t border-sand-300/60 dark:border-zinc-700/60 pt-6 mb-6">
-			<h2 class="text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3">{ locale.T(ctx, "section_documentation") }</h2>
-			<ul class="flex flex-col gap-1.5">
+		<section class="ops-separated ops-spaced">
+			<h2 class="ops-heading">{ locale.T(ctx, "section_documentation") }</h2>
+			<ul class="ops-list">
 				for _, lnk := range vm.Links {
-					<li class="text-[13px]">
+					<li class="ops-list-item">
 						<a href={ templ.SafeURL(lnk.Url) } target="_blank" rel="noopener noreferrer"
-							class="text-blue-600 hover:underline break-all">
+							class="ops-link ops-break">
 							if lnk.Label != "" {
 								{ lnk.Label }
 							} else {
@@ -364,137 +356,106 @@ templ MeasureDetail(vm MeasureDetailVM) {
 					</li>
 				}
 			</ul>
-		</div>
+		</section>
 	}
 
-	<div class="border-t border-sand-300/60 dark:border-zinc-700/60 pt-6">
-		<h2 class="text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3">
+	<section class="ops-separated">
+		<h2 class="ops-heading">
 			{ locale.T(ctx, "section_requirements") }
-			<span class="ml-1 text-[11px] font-normal text-sand-700">({ fmt.Sprint(len(vm.LinkedReqs)) })</span>
+			<span class="ops-muted">({ fmt.Sprint(len(vm.LinkedReqs)) })</span>
 		</h2>
 		if len(vm.LinkedReqs) == 0 {
-			<p class="text-[13px] text-sand-700 dark:text-zinc-400">{ locale.T(ctx, "req_none_linked_yet") }</p>
+			<p class="ops-muted">{ locale.T(ctx, "req_none_linked_yet") }</p>
 		} else {
-			<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
-				@ui.Table(ui.TableProps{}) {
-					<caption class="sr-only">Linked requirements</caption>
-					@ui.THead(ui.THeadProps{
-						Attrs: templ.Attributes{
-							"class": "bg-sand-100 dark:bg-zinc-800",
-						},
-					}) {
-						@ui.Tr(ui.TrProps{}) {
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px]"}}) { Framework }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { Ref }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { Title }
-						}
-					}
+			@ui2.Table("Linked requirements") {
+					<thead><tr><th scope="col">Framework</th><th scope="col">Ref</th><th scope="col">Title</th></tr></thead>
 					<tbody>
 						for _, req := range vm.LinkedReqs {
-							@ui.Tr(ui.TrProps{
-								Attrs: templ.Attributes{
-									"class": "border-sand-300/60 dark:border-zinc-700/60",
-								},
-							}) {
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4"}}) {
-									<span class="text-[11px] font-mono px-1.5 py-0.5 bg-sand-100 dark:bg-zinc-800 text-sand-700 dark:text-zinc-300 rounded border border-sand-300 dark:border-zinc-600">{ req.FrameworkShortName }</span>
-								}
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "font-mono text-xs text-sand-700"}}) { req.Ref }
-								@ui.Td(ui.TdProps{}) {
-									<a href={ templ.SafeURL("/compliance/requirements/" + req.ID.String()) } class="hover:text-blue-700 hover:underline">{ req.Title }</a>
-								}
-							}
+							<tr>
+								<td>
+									<span class="ops-tag ops-reference">{ req.FrameworkShortName }</span>
+								</td>
+								<td class="ops-reference">{ req.Ref }</td>
+								<td>
+									<a href={ templ.SafeURL("/compliance/requirements/" + req.ID.String()) } class="ops-link">{ req.Title }</a>
+								</td>
+							</tr>
 						}
 					</tbody>
-				}
-			</div>
+			}
 		}
-	</div>
+	</section>
 
-	<div class="border-t border-sand-300/60 dark:border-zinc-700/60 pt-6">
-		<h2 class="text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3">
+	<section class="ops-separated">
+		<h2 class="ops-heading">
 			{ locale.T(ctx, "section_activities") }
-			<span class="ml-1 text-[11px] font-normal text-sand-700">({ fmt.Sprint(len(vm.Activities)) })</span>
+			<span class="ops-muted">({ fmt.Sprint(len(vm.Activities)) })</span>
 		</h2>
 		if len(vm.Activities) == 0 {
-			<p class="text-[13px] text-sand-700">{ locale.T(ctx, "activities_none_linked") }</p>
+			<p class="ops-muted">{ locale.T(ctx, "activities_none_linked") }</p>
 		} else {
-			<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
-				@ui.Table(ui.TableProps{}) {
-					<caption class="sr-only">Activities</caption>
-					@ui.THead(ui.THeadProps{
-						Attrs: templ.Attributes{
-							"class": "bg-sand-100 dark:bg-zinc-800",
-						},
-					}) {
-						@ui.Tr(ui.TrProps{}) {
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px]"}}) { Activity }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { Status }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { Due }
-						}
-					}
+			@ui2.Table("Activities") {
+					<thead><tr><th scope="col">Activity</th><th scope="col">Status</th><th scope="col">Due</th></tr></thead>
 					<tbody>
 						for _, a := range vm.Activities {
-							@ui.Tr(ui.TrProps{
-								Attrs: templ.Attributes{
-									"class": "border-sand-300/60 dark:border-zinc-700/60",
-								},
-							}) {
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4"}}) {
-									<a href={ templ.SafeURL("/activities/" + a.ID.String()) } class="hover:text-blue-700 hover:underline">{ a.Title }</a>
-								}
-								@ui.Td(ui.TdProps{}) {@ui.StatusBadge(a.Status)}
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) {
+							<tr>
+								<td>
+									<a href={ templ.SafeURL("/activities/" + a.ID.String()) } class="ops-link">{ a.Title }</a>
+								</td>
+								<td>@measureStatusBadge(a.Status)</td>
+								<td>
 									if a.DueDate.Valid {
 										{ a.DueDate.Time.Format("2006-01-02") }
 									} else {
-										<span class="text-sand-700">—</span>
+										<span class="ops-muted">—</span>
 									}
-								}
-							}
+								</td>
+							</tr>
 						}
 					</tbody>
-				}
-			</div>
+			}
 		}
-	</div>
+	</section>
 
 	if len(vm.LinkedRisks) > 0 {
-		<div class="border-t border-sand-300/60 dark:border-zinc-700/60 pt-6">
-			<h2 class="text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3">
+		<section class="ops-separated">
+			<h2 class="ops-heading">
 				{ locale.T(ctx, "section_linked_risks") }
-				<span class="ml-1 text-[11px] font-normal text-sand-700">({ fmt.Sprint(len(vm.LinkedRisks)) })</span>
+				<span class="ops-muted">({ fmt.Sprint(len(vm.LinkedRisks)) })</span>
 			</h2>
-			<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
+			<ul class="ops-list-box">
 				for i, risk := range vm.LinkedRisks {
+					<li>
 					<a
 						href={ templ.SafeURL("/risks/" + risk.AssessmentID.String() + "/risks/" + risk.ID.String()) }
-						class={ "flex items-center justify-between px-4 py-3 hover:bg-sand-50 transition-colors text-[13px]", templ.KV("border-t border-sand-300/60", i > 0) }
+						class={ "ops-risk-link", templ.KV("ops-risk-next", i > 0) }
 					>
-						<span class="font-medium text-sand-900 flex-1 min-w-0 truncate">{ risk.Name }</span>
-						<div class="flex items-center gap-2 shrink-0 ml-3">
+						<span class="ops-muted ops-truncate">{ risk.Name }</span>
+						<div class="ops-inline">
 							if risk.LikelihoodCurrent.Valid && risk.ConsequenceCurrent.Valid {
-								<div class={ "flex flex-col items-center px-2 py-0.5 rounded text-[10px] font-bold text-white leading-tight", riskScoreBgClass(int(risk.LikelihoodCurrent.Int32)*int(risk.ConsequenceCurrent.Int32)) }>
+								<div class={ "ops-risk-score", riskScoreBgClass(int(risk.LikelihoodCurrent.Int32)*int(risk.ConsequenceCurrent.Int32)) }>
 									<span>{ fmt.Sprint(int(risk.LikelihoodCurrent.Int32)*int(risk.ConsequenceCurrent.Int32)) }</span>
-									<span class="font-normal opacity-80">{ locale.T(ctx, "label_now") }</span>
+									<span >{ locale.T(ctx, "label_now") }</span>
 								</div>
 							}
 							if risk.LikelihoodTarget.Valid && risk.ConsequenceTarget.Valid {
-								<span class="text-sand-300 text-[10px]">→</span>
-								<div class={ "flex flex-col items-center px-2 py-0.5 rounded text-[10px] font-bold text-white leading-tight", riskScoreBgClass(int(risk.LikelihoodTarget.Int32)*int(risk.ConsequenceTarget.Int32)) }>
+								<span class="ops-muted">→</span>
+								<div class={ "ops-risk-score", riskScoreBgClass(int(risk.LikelihoodTarget.Int32)*int(risk.ConsequenceTarget.Int32)) }>
 									<span>{ fmt.Sprint(int(risk.LikelihoodTarget.Int32)*int(risk.ConsequenceTarget.Int32)) }</span>
-									<span class="font-normal opacity-80">{ locale.T(ctx, "label_target_score") }</span>
+									<span >{ locale.T(ctx, "label_target_score") }</span>
 								</div>
 							}
 						</div>
 					</a>
+					</li>
 				}
-			</div>
-		</div>
+			</ul>
+		</section>
 	}
 
-	@measureRecentChanges(vm.AuditLog, "border-t border-sand-300/60 dark:border-zinc-700/60 pt-6 mt-2")
+	@measureRecentChanges(vm.AuditLog, "ops-history-separated")
 
+	}
 }
 
 func measureAuditEventLabel(event string) string {
@@ -509,183 +470,128 @@ func measureAuditEventLabel(event string) string {
 // ── Measure edit page (form + links) ──
 
 templ MeasureEditPage(vm MeasureEditVM, flash, flashType string) {
-	@MeasureForm(&vm.Measure, vm.Users, flash, flashType)
+	@ui2.Page("ui2-measures") {
+	@measureFormContent(&vm.Measure, vm.Users, flash, flashType)
 	@measureLinksSection(vm)
 	@measureDocSection(vm)
-	@measureRecentChanges(vm.AuditLog, "mt-8")
+	@measureRecentChanges(vm.AuditLog, "ops-spaced")
+	}
 }
 
 templ measureRecentChanges(auditLog []db.ListAuditLogForMeasureRow, wrapperClass string) {
 	<details class={ wrapperClass }>
-		<summary class="cursor-pointer text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3 list-none">{ locale.T(ctx, "label_recent_changes_toggle") }</summary>
-		<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
-			@ui.Table(ui.TableProps{}) {
-				<caption class="sr-only">{ locale.T(ctx, "label_recent_changes") }</caption>
-				@ui.THead(ui.THeadProps{
-					Attrs: templ.Attributes{
-						"class": "bg-sand-100 dark:bg-zinc-800",
-					},
-				}) {
-					@ui.Tr(ui.TrProps{}) {
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_event") } }
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_by") } }
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_when") } }
-					}
-				}
+		<summary class="ops-summary">{ locale.T(ctx, "label_recent_changes_toggle") }</summary>
+		@ui2.Table(locale.T(ctx, "label_recent_changes")) {
+				<thead><tr>
+					<th scope="col">{ locale.T(ctx, "label_event") }</th>
+					<th scope="col">{ locale.T(ctx, "label_by") }</th>
+					<th scope="col">{ locale.T(ctx, "label_when") }</th>
+				</tr></thead>
 				<tbody>
 					if len(auditLog) == 0 {
-						@ui.Tr(ui.TrProps{
-							Attrs: templ.Attributes{
-								"class": "border-sand-300/60 dark:border-zinc-700/60",
-							},
-						}) {
-							@ui.Td(ui.TdProps{
-								Attrs: templ.Attributes{
-									"colspan": "3",
-									"class":   "px-4 text-sand-700",
-								},
-							}) { { locale.T(ctx, "label_no_changes_yet") } }
-						}
+						<tr><td colspan="3">{ locale.T(ctx, "label_no_changes_yet") }</td></tr>
 					} else {
 						for i, entry := range auditLog {
 							if i < 5 {
-								@ui.Tr(ui.TrProps{
-									Attrs: templ.Attributes{
-										"class": "border-sand-300/60 dark:border-zinc-700/60",
-									},
-								}) {
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-medium"}}) { { measureAuditEventLabel(entry.Event) } }
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) {
+								<tr>
+									<td>{ measureAuditEventLabel(entry.Event) }</td>
+									<td>
 										if entry.UserName != "" {
 											{ entry.UserName }
 										} else {
-											<span class="text-sand-700">—</span>
+											<span class="ops-muted">—</span>
 										}
-									}
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700 font-mono text-[11px]"}}) { { entry.EventTime.Format("2 Jan 2006 15:04") } }
-								}
+									</td>
+									<td>{ entry.EventTime.Format("2 Jan 2006 15:04") }</td>
+								</tr>
 							}
 						}
 					}
 				</tbody>
-			}
-		</div>
+		}
 	</details>
 }
 
 templ measureLinksSection(vm MeasureEditVM) {
-	<div class="mt-8 max-w-lg">
-		<h2 class="text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3">{ locale.T(ctx, "section_requirements") }</h2>
+	<section class="ops-stack ops-narrow ops-spaced">
+		<h2 class="ops-heading">{ locale.T(ctx, "section_requirements") }</h2>
 		if len(vm.LinkedReqs) == 0 {
-			<p class="text-[13px] text-sand-700 mb-4">{ locale.T(ctx, "req_none_linked_yet") }</p>
+			<p class="ops-muted">{ locale.T(ctx, "req_none_linked_yet") }</p>
 		} else {
-			<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden mb-4">
-				@ui.Table(ui.TableProps{}) {
-					<caption class="sr-only">Linked requirements</caption>
-					@ui.THead(ui.THeadProps{
-						Attrs: templ.Attributes{
-							"class": "bg-sand-100 dark:bg-zinc-800",
-						},
-					}) {
-						@ui.Tr(ui.TrProps{}) {
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px]"}}) { Framework }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { Ref }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { Title }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-right text-[11px]"}}) { <span class="sr-only">Actions</span> }
-						}
-					}
+			@ui2.Table("Linked requirements") {
+					<thead><tr><th scope="col">Framework</th><th scope="col">Ref</th><th scope="col">Title</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
 					<tbody>
 						for _, req := range vm.LinkedReqs {
-							@ui.Tr(ui.TrProps{
-								Attrs: templ.Attributes{
-									"class": "border-sand-300/60 dark:border-zinc-700/60",
-								},
-							}) {
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4"}}) {
-									<span class="text-[11px] font-mono px-1.5 py-0.5 bg-sand-100 dark:bg-zinc-800 text-sand-700 dark:text-zinc-300 rounded border border-sand-300 dark:border-zinc-600">{ req.FrameworkShortName }</span>
-								}
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "font-mono text-xs text-sand-700"}}) { req.Ref }
-								@ui.Td(ui.TdProps{}) { req.Title }
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 text-right"}}) {
+							<tr>
+								<td>
+									<span class="ops-tag ops-reference">{ req.FrameworkShortName }</span>
+								</td>
+								<td class="ops-reference">{ req.Ref }</td>
+								<td>{ req.Title }</td>
+								<td class="ops-align-end">
 									<form method="POST" action={ templ.SafeURL("/measures/" + vm.Measure.ID.String() + "/requirements/" + req.ID.String() + "/delete") }>
 										<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-										<button type="submit" aria-label={ "Remove requirement " + req.Ref + ": " + req.Title } class="text-[11px] text-red-600 hover:text-red-800">remove</button>
+										<button type="submit" data-tone="danger" aria-label={ "Remove requirement " + req.Ref + ": " + req.Title } class="ops-danger-link">remove</button>
 									</form>
-								}
-							}
+								</td>
+							</tr>
 						}
 					</tbody>
-				}
-			</div>
+			}
 		}
-		<div class="space-y-2">
-			<label for="requirement-link-search" class="block text-[12px] font-medium text-sand-700 dark:text-zinc-300">Search and link requirement</label>
-			@ui.Input(ui.InputProps{
-				ID:          "requirement-link-search",
-				Type:        "text",
-				Name:        "q",
-				Placeholder: "Type ref or title...",
-				Class:       "text-[13px]",
-				Attrs: templ.Attributes{
-					"hx-get":     "/measures/" + vm.Measure.ID.String() + "/requirements/search",
-					"hx-trigger": "input delay:250ms, search",
-					"hx-target":  "#measure-requirement-search-results-" + vm.Measure.ID.String(),
-					"hx-swap":    "innerHTML",
-				},
-			})
+		<div class="ops-stack">
+			<label for="requirement-link-search" class="ops-label">Search and link requirement</label>
+			<input id="requirement-link-search" type="text" name="q" placeholder="Type ref or title..." class="ops-input"
+				hx-get={ "/measures/" + vm.Measure.ID.String() + "/requirements/search" }
+				hx-trigger="input delay:250ms, search"
+				hx-target={ "#measure-requirement-search-results-" + vm.Measure.ID.String() }
+				hx-swap="innerHTML"/>
 			@MeasureRequirementSearchResults(vm.Measure.ID.String(), nil, "")
 		</div>
-	</div>
+	</section>
 }
 
 templ MeasureRequirementSearchResults(measureID string, requirements []db.ListRequirementsForMeasureRow, query string) {
-	<div id={ "measure-requirement-search-results-" + measureID } class="space-y-2">
+	<div id={ "measure-requirement-search-results-" + measureID } class="ops-stack">
 		if strings.TrimSpace(query) == "" {
-			<p class="text-[12px] text-sand-700 dark:text-zinc-400">Start typing to find requirements.</p>
+			<p class="ops-muted">Start typing to find requirements.</p>
 		} else if len(requirements) == 0 {
-			<p class="text-[12px] text-sand-700 dark:text-zinc-400">No matching unlinked requirements.</p>
+			<p class="ops-muted">No matching unlinked requirements.</p>
 		} else {
-			<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
-				@ui.Table(ui.TableProps{}) {
-					<caption class="sr-only">Requirement search results</caption>
+			@ui2.Table("Requirement search results") {
 					<tbody>
 						for _, req := range requirements {
-							@ui.Tr(ui.TrProps{
-								Attrs: templ.Attributes{
-									"class": "first:border-t-0 border-sand-300/60 dark:border-zinc-700/60",
-								},
-							}) {
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4"}}) {
-									<span class="text-[11px] font-mono px-1.5 py-0.5 bg-sand-100 dark:bg-zinc-800 text-sand-700 dark:text-zinc-300 rounded border border-sand-300 dark:border-zinc-600">{ req.FrameworkShortName }</span>
-								}
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "font-mono text-xs text-sand-700"}}) { req.Ref }
-								@ui.Td(ui.TdProps{}) { req.Title }
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 text-right"}}) {
+							<tr>
+								<td>
+									<span class="ops-tag ops-reference">{ req.FrameworkShortName }</span>
+								</td>
+								<td class="ops-reference">{ req.Ref }</td>
+								<td>{ req.Title }</td>
+								<td class="ops-align-end">
 									<form method="POST" action={ templ.SafeURL("/measures/" + measureID + "/requirements") }>
 										<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 										<input type="hidden" name="requirement_id" value={ req.ID.String() }/>
-										<button type="submit" class="text-[11px] text-blue-700 hover:text-blue-900">{ locale.T(ctx, "action_link_requirement") }</button>
+										<button type="submit" class="ops-link">{ locale.T(ctx, "action_link_requirement") }</button>
 									</form>
-								}
-							}
+								</td>
+							</tr>
 						}
 					</tbody>
-				}
-			</div>
+			}
 		}
 	</div>
 }
 
 templ measureDocSection(vm MeasureEditVM) {
-	<div class="mt-8 max-w-lg">
-		<h2 class="text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3">{ locale.T(ctx, "section_documentation") }</h2>
+	<section class="ops-stack ops-narrow ops-spaced">
+		<h2 class="ops-heading">{ locale.T(ctx, "section_documentation") }</h2>
 		if len(vm.Links) > 0 {
-			<div class="flex flex-col gap-1.5 mb-4">
+			<ul class="ops-list">
 				for _, lnk := range vm.Links {
-					<div class="flex items-center gap-2 text-[13px]">
-						<span class="flex-1 min-w-0">
+					<li class="ops-list-item">
+						<span >
 							<a href={ templ.SafeURL(lnk.Url) } target="_blank" rel="noopener noreferrer"
-								class="text-blue-600 hover:underline break-all">
+								class="ops-link ops-break">
 								if lnk.Label != "" {
 									{ lnk.Label }
 								} else {
@@ -693,110 +599,73 @@ templ measureDocSection(vm MeasureEditVM) {
 								}
 							</a>
 							if lnk.Label != "" {
-								<span class="ml-1 text-[11px] text-sand-700 dark:text-zinc-400 break-all">{ lnk.Url }</span>
+								<span class="ops-muted ops-break">{ lnk.Url }</span>
 							}
 						</span>
-						<form method="POST" action={ templ.SafeURL("/measures/" + vm.Measure.ID.String() + "/links/" + lnk.ID.String() + "/delete") } class="shrink-0">
+						<form method="POST" action={ templ.SafeURL("/measures/" + vm.Measure.ID.String() + "/links/" + lnk.ID.String() + "/delete") } class="ops-form-inline">
 							<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-							<button type="submit" aria-label={ "Remove link " + lnk.Url } class="text-[11px] text-red-600 hover:text-red-800">remove</button>
+							<button type="submit" data-tone="danger" aria-label={ "Remove link " + lnk.Url } class="ops-danger-link">remove</button>
 						</form>
-					</div>
+					</li>
 				}
-			</div>
+			</ul>
 		} else {
-			<p class="text-[13px] text-sand-700 mb-4">No documentation links yet.</p>
+			<p class="ops-muted">No documentation links yet.</p>
 		}
-		<form method="POST" action={ templ.SafeURL("/measures/" + vm.Measure.ID.String() + "/links") } class="flex flex-col gap-2">
+		<form method="POST" action={ templ.SafeURL("/measures/" + vm.Measure.ID.String() + "/links") } class="ops-form-inline">
 			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-			@ui.Input(ui.InputProps{
-				ID:          "doc-url",
-				Type:        "url",
-				Name:        "url",
-				Placeholder: "https://...",
-				Required:    true,
-				Attrs: templ.Attributes{
-					"aria-label": "URL",
-				},
-			})
-			<div class="flex gap-2">
-				@ui.Input(ui.InputProps{
-					ID:          "doc-label",
-					Type:        "text",
-					Name:        "label",
-					Placeholder: "Label (optional)",
-					Class:       "flex-1",
-					Attrs: templ.Attributes{
-						"aria-label": "Label (optional)",
-					},
-				})
-				<button type="submit" class="text-[13px] font-medium py-2 px-4 rounded-md border border-sand-400 hover:bg-sand-100 transition-colors whitespace-nowrap">
+			<input id="doc-url" type="url" name="url" placeholder="https://..." required aria-label="URL" class="ops-input"/>
+			<div class="ops-inline">
+				<input id="doc-label" type="text" name="label" placeholder="Label (optional)" aria-label="Label (optional)" class="ops-input"/>
+				<button type="submit" class="ops-button">
 					{ locale.T(ctx, "action_add_link") }
 				</button>
 			</div>
 		</form>
-	</div>
+	</section>
 }
 
 // ── Shared form helpers (local to this package) ──
 
 templ measureInputField(labelKey, name, placeholder, value string, required bool) {
-	@ui.Field(name, labelKey, required) {
-		@ui.Input(ui.InputProps{
-			ID:          name,
-			Name:        name,
-			Type:        "text",
-			Value:       value,
-			Placeholder: placeholder,
-			Required:    required,
-		})
-	}
+	<div>
+		<label for={ name } class="ops-label">
+			{ locale.T(ctx, labelKey) }
+			if required {
+				<span aria-hidden="true">*</span>
+			}
+		</label>
+		<input id={ name } name={ name } type="text" value={ value } placeholder={ placeholder } required?={ required } class="ops-input"/>
+	</div>
 }
 
 templ measureTextarea(labelKey, name, placeholder, value string) {
-	@ui.Field(name, labelKey, false) {
-		@ui.Textarea(ui.TextareaProps{
-			ID:          name,
-			Name:        name,
-			Placeholder: placeholder,
-			Value:       value,
-			Class:       "resize-y min-h-0",
-			Attrs: templ.Attributes{
-				"rows": "3",
-			},
-		})
-	}
+	<div>
+		<label for={ name } class="ops-label">{ locale.T(ctx, labelKey) }</label>
+		<textarea id={ name } name={ name } placeholder={ placeholder } rows="3" class="ops-input">{ value }</textarea>
+	</div>
 }
 
 templ measureAssigneePicker(m *db.Measure, users []db.User) {
-	<div class="flex flex-col gap-2">
-		@ui.Field("assignee_id", "label_assignee_registered", false) {
-			@ui.Select(ui.SelectProps{
-				ID:   "assignee_id",
-				Name: "assignee_id",
-			}) {
+	<div class="ops-stack">
+		<div>
+			<label for="assignee_id" class="ops-label">{ locale.T(ctx, "label_assignee_registered") }</label>
+			<select id="assignee_id" name="assignee_id" class="ops-input">
 				<option value="">— none —</option>
 				for _, u := range users {
 					<option value={ u.ID.String() } selected?={ measureAssigneeSelected(m, u.ID) }>{ u.Name } ({ u.Email })</option>
 				}
-			}
-		}
-		@ui.Field("owner", "label_owner_text_team", false) {
-			@ui.Input(ui.InputProps{
-				ID:          "owner",
-				Name:        "owner",
-				Type:        "search",
-				Value:       measureFieldVal(m, "owner"),
-				Placeholder: "Search user or enter custom owner",
-				Attrs: templ.Attributes{
-					"list": "measure-owner-list",
-				},
-			})
+			</select>
+		</div>
+		<div>
+			<label for="owner" class="ops-label">{ locale.T(ctx, "label_owner_text_team") }</label>
+			<input id="owner" name="owner" type="search" value={ measureFieldVal(m, "owner") } placeholder="Search user or enter custom owner" list="measure-owner-list" class="ops-input"/>
 			<datalist id="measure-owner-list">
 				for _, u := range users {
 					<option value={ u.Name } label={ u.Email }></option>
 				}
 			</datalist>
-		}
+		</div>
 	</div>
 }
 
@@ -817,10 +686,10 @@ func measureAssigneePickerData(m *db.Measure) string {
 func riskScoreBgClass(score int) string {
 	switch {
 	case score >= 12:
-		return "bg-red-500"
+		return "ops-risk-high"
 	case score >= 6:
-		return "bg-amber-400"
+		return "ops-risk-medium"
 	default:
-		return "bg-green-500"
+		return "ops-risk-low"
 	}
 }

@@ -31,8 +31,8 @@ func TestAssessmentDetailPreview(t *testing.T) {
 			Status:      "pending_acceptance",
 			RiskOwnerID: uuid.NullUUID{UUID: ownerID, Valid: true},
 		},
-		CurrentMatrix:   layout.BuildRiskMatrixCellsT(map[[2]int]int{{3, 4}: 1}, layout.RiskThresholds{LowMax: 5, HighMin: 12}),
-		TargetMatrix:    layout.BuildRiskMatrixCellsT(nil, layout.RiskThresholds{LowMax: 5, HighMin: 12}),
+		CurrentMatrix:   layout.BuildRiskMatrixCells(map[[2]int]int{{3, 4}: 1}),
+		TargetMatrix:    layout.BuildRiskMatrixCells(nil),
 		LowMax:          5,
 		HighMin:         12,
 		CurrentUserID:   ownerID.String(),
@@ -53,18 +53,22 @@ func TestAssessmentDetailPreview(t *testing.T) {
 		!strings.Contains(empty, locale.T(ctx, "label_after_planned_treatment")) {
 		t.Fatal("matrix subtitles must describe controls and treatment without NS 5814")
 	}
-	for _, want := range []string{
+	requireContains(t, empty,
 		"Preview &lt;assessment&gt;", "role=\"region\"", "scope=\"row\"", `class="ui2-panel"`,
-		`action="/risks/` + assessmentID.String() + `/accept"`,
-		`action="/risks/` + assessmentID.String() + `/decline"`,
-		`action="/risks/` + assessmentID.String() + `/delete"`,
-		`href="/risks/` + assessmentID.String() + `"`,
+		`action="/risks/`+assessmentID.String()+`/accept"`,
+		`action="/risks/`+assessmentID.String()+`/decline"`,
+		`action="/risks/`+assessmentID.String()+`/delete"`,
+		`<button type="submit" data-tone="danger">`,
+		`href="/risks"`,
+		`href="/risks/`+assessmentID.String()+`/review"`,
+		`href="/risks/`+assessmentID.String()+`/step/2"`,
 		"ui2-table", locale.T(ctx, "risk_none_identified"),
-	} {
-		if !strings.Contains(empty, want) {
-			t.Errorf("empty preview missing %q", want)
-		}
-	}
+	)
+	requireAbsent(t, empty,
+		"Original view",
+		`href="/risks/`+assessmentID.String()+`"`,
+		`href="/risks/`+assessmentID.String()+`/ui2"`,
+	)
 
 	vm.Risks = []db.Risk{{
 		ID:                 riskID,
@@ -77,24 +81,20 @@ func TestAssessmentDetailPreview(t *testing.T) {
 	if got := strings.Count(populated, `class="ui2-matrix-cell"`); got != 50 {
 		t.Errorf("matrix cells: got %d, want 50", got)
 	}
-	for _, want := range []string{
+	requireContains(t, populated,
 		"Risk &lt;one&gt;",
-		`href="/risks/` + assessmentID.String() + `/risks/` + riskID.String() + `"`,
+		`href="/risks/`+assessmentID.String()+`/risks/`+riskID.String()+`"`,
 		`<data value="12" data-tone="danger">`,
 		"<span>—</span>",
-	} {
-		if !strings.Contains(populated, want) {
-			t.Errorf("populated preview missing %q", want)
-		}
-	}
+	)
 
 	vm.CurrentUserID = uuid.NewString()
 	vm.CanTogglePublic = false
 	other := render(ctx)
-	if strings.Contains(other, `action="/risks/`+assessmentID.String()+`/accept"`) ||
-		strings.Contains(other, `action="/risks/`+assessmentID.String()+`/toggle-public"`) {
-		t.Fatal("non-owner preview includes owner-only actions")
-	}
+	requireAbsent(t, other,
+		`action="/risks/`+assessmentID.String()+`/accept"`,
+		`action="/risks/`+assessmentID.String()+`/toggle-public"`,
+	)
 }
 
 func TestPreviewToneThresholds(t *testing.T) {

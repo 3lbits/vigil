@@ -1119,7 +1119,7 @@ other = "htmx + Alpine.js gives interactive behaviour without a heavy SPA."
 other = "PostgreSQL + sqlc + goose keeps data access SQL-first, type-safe, and migration-driven."
 
 [about_approach_4]
-other = "Tailwind CSS CLI compiles styles at build time, with no Node toolchain needed at runtime."
+other = "Plain CSS keeps styling simple, with no CSS framework or runtime tooling."
 
 [about_approach_5]
 other = "OPA/Rego keeps authorisation policy-based and centrally enforced."

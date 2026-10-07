@@ -114,6 +114,9 @@ func TestList_OK(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Errorf("expected 200, got %d", w.Code)
 	}
+	if body := w.Body.String(); !strings.Contains(body, "ui2-shell") || !strings.Contains(body, "ui2-compliance") {
+		t.Error("compliance list should render with the UI2 shell and page")
+	}
 }
 
 func TestList_DBError(t *testing.T) {

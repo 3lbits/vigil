@@ -2,8 +2,8 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
 .PHONY: help setup run dev build test lint pre-commit pre-commit-fast \
-        generate db-up db-reset tailwind-install js-vendor clean \
-        run-op dev-op generate-sqlc generate-templ css-build css-watch \
+        generate db-up db-reset js-vendor clean \
+        run-op dev-op generate-sqlc generate-templ css-build \
         semgrep deadcode db-start db-down db-down-clean db-logs db-psql \
         db-reset-pgadmin db-migrate-create loadtest-browse loadtest-rate-burst \
         db-wait \
@@ -30,10 +30,7 @@ run: ## Start dev server with live reload (uses 1Password CLI if available)
 	  air; \
 	fi
 
-dev: ## Tailwind watch + dev server in parallel
-	bin/tailwindcss -i cmd/server/public/css/input.css -o cmd/server/public/css/output.css --watch & \
-	$(MAKE) run; \
-	kill %1 2>/dev/null || true
+dev: run ## Start the dev server with live reload
 
 test: ## Run race-enabled tests
 	go test -race -count=1 -timeout 120s ./...
@@ -130,9 +127,7 @@ run-op:
 	op run --env-file=.env -- air
 
 dev-op:
-	bin/tailwindcss -i cmd/server/public/css/input.css -o cmd/server/public/css/output.css --watch & \
-	op run --env-file=.env -- air; \
-	kill %1 2>/dev/null || true
+	$(MAKE) run-op
 
 generate-sqlc:
 	sqlc generate
@@ -141,10 +136,7 @@ generate-templ:
 	templ generate
 
 css-build:
-	bin/tailwindcss -i cmd/server/public/css/input.css -o cmd/server/public/css/output.css --minify
-
-css-watch:
-	bin/tailwindcss -i cmd/server/public/css/input.css -o cmd/server/public/css/output.css --watch
+	cat cmd/server/public/css/ui2.css cmd/server/public/css/risk.css cmd/server/public/css/operations.css cmd/server/public/css/pages.css > cmd/server/public/css/output.css
 
 semgrep:
 	semgrep scan --error \

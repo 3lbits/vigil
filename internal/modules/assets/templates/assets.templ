@@ -9,31 +9,52 @@ import (
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
 	"github.com/3lbits/vigil/internal/ui"
+	"github.com/3lbits/vigil/internal/ui2"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
 
-templ AssetList(assets []db.Asset, q, status, flash, flashType string, hasMore bool, nextOffset int32) {
-	@ui.Flash(flash, flashType)
+func flashRole(tone string) string {
+	if tone == "error" {
+		return "alert"
+	}
+	return "status"
+}
 
-	<div class="flex flex-wrap justify-between items-center gap-3 mb-4">
-		<p class="text-[13px] text-sand-700">{ locale.T(ctx, "assets_inventory") }</p>
-		<a href="/assets/new" class="text-xs font-medium py-1.5 px-3.5 rounded-md border border-sand-400 hover:bg-sand-100 transition-colors flex items-center gap-1.5">
+func flashTone(tone string) string {
+	switch tone {
+	case "error":
+		return "danger"
+	case "success":
+		return "success"
+	default:
+		return "neutral"
+	}
+}
+
+templ AssetList(assets []db.Asset, q, status, flash, flashType string, hasMore bool, nextOffset int32) {
+	@ui2.Page("ui2-assets") {
+	if flash != "" {
+		<p role={ flashRole(flashType) } data-tone={ flashTone(flashType) }>{ flash }</p>
+	}
+
+	<div class="ops-toolbar">
+		<p class="ops-muted">{ locale.T(ctx, "assets_inventory") }</p>
+		<a href="/assets/new" class="ops-button">
 			@ui.IconSVG("plus", 13)
 			{ locale.T(ctx, "action_add_asset") }
 		</a>
 	</div>
 
-	@ui.FilterBar(ui.FilterBarProps{Action: "/assets", Target: "#assets-table"}) {
-		@ui.FilterSearch(ui.FilterSearchProps{
-			Name:    "q",
+	@ui2.FilterBar(ui2.FilterBarProps{Action: "/assets", Target: "#assets-table"}) {
+		@ui2.FilterSearch(ui2.FilterSearchProps{
 			Value:   q,
 			Columns: []string{"label_name", "label_asset_owner"},
 			Class:   "w-60",
 			Action:  "/assets",
 			Target:  "#assets-table",
 		})
-		@ui.FilterSelect("status", locale.T(ctx, "assets_filter_status")) {
+		@ui2.FilterSelect("status", locale.T(ctx, "assets_filter_status")) {
 			<option value="" selected?={ status == "" }>{ locale.T(ctx, "filter_all_statuses") }</option>
 			<option value="active" selected?={ status == "active" }>{ locale.T(ctx, "status_active") }</option>
 			<option value="planned" selected?={ status == "planned" }>{ locale.T(ctx, "status_planned") }</option>
@@ -44,252 +65,204 @@ templ AssetList(assets []db.Asset, q, status, flash, flashType string, hasMore b
 	<div id="assets-table" aria-live="polite" aria-atomic="false">
 		@AssetTable(assets, hasMore, nextOffset, q, status)
 	</div>
+	}
 }
 
 templ AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status string) {
 	if len(assets) == 0 {
-		@ui.EmptyState(ui.EmptyStateProps{
-			Class: "border-solid border-sand-300/60 rounded-[10px] p-8 bg-white dark:bg-zinc-900",
-		}) {
-			<div class="text-sand-700 text-[13px]">{ locale.T(ctx, "assets_none_found") }</div>
-			<a href="/assets/new" class="text-blue-600 text-[13px] hover:underline">{ locale.T(ctx, "assets_add_first") }</a>
-		}
+		<p>{ locale.T(ctx, "assets_none_found") } <a href="/assets/new">{ locale.T(ctx, "assets_add_first") }</a></p>
 	} else {
-		@ui.Card(ui.CardProps{
-			Class:   "border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden",
-			Padding: "p-0",
-		}) {
-			<div role="region" aria-label={ locale.T(ctx, "assets_table_aria") } tabindex="0" class="overflow-x-auto">
-				@ui.Table(ui.TableProps{
-					Attrs: templ.Attributes{
-						"class": "min-w-[760px]",
-					},
-				}) {
+		<section role="region" aria-label={ locale.T(ctx, "assets_table_aria") } tabindex="0" class="ops-table">
+			<table class="ops-data-table">
 					<caption class="sr-only">{ locale.T(ctx, "assets_table_caption") }</caption>
-					@ui.THead(ui.THeadProps{
-						Attrs: templ.Attributes{
-							"class": "bg-sand-100 dark:bg-zinc-800",
-						},
-					}) {
-						@ui.Tr(ui.TrProps{}) {
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px]"}}) { { locale.T(ctx, "label_name") } }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { { locale.T(ctx, "label_asset_type") } }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { { locale.T(ctx, "label_asset_owner") } }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { { locale.T(ctx, "label_status") } }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px]"}}) { { locale.T(ctx, "assets_criticality") } }
-							@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-right px-4"}}) { <span class="sr-only">{ locale.T(ctx, "label_actions") }</span> }
-						}
-					}
+					<thead>
+						<tr>
+							<th scope="col">{ locale.T(ctx, "label_name") }</th>
+							<th scope="col">{ locale.T(ctx, "label_asset_type") }</th>
+							<th scope="col">{ locale.T(ctx, "label_asset_owner") }</th>
+							<th scope="col">{ locale.T(ctx, "label_status") }</th>
+							<th scope="col">{ locale.T(ctx, "assets_criticality") }</th>
+							<th scope="col"><span class="sr-only">{ locale.T(ctx, "label_actions") }</span></th>
+						</tr>
+					</thead>
 					<tbody>
 						for _, a := range assets {
-							@ui.Tr(ui.TrProps{
-								Attrs: templ.Attributes{
-									"class": "border-sand-300/60 dark:border-zinc-700/60",
-								},
-							}) {
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4"}}) {
-									<a href={ templ.SafeURL("/assets/" + a.ID.String()) } class="font-medium hover:text-blue-700 hover:underline">{ a.Name }</a>
-								}
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) { zeroDash(a.AssetType) }
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) { zeroDash(a.Owner) }
-								@ui.Td(ui.TdProps{}) {
+							<tr>
+								<td>
+									<a href={ templ.SafeURL("/assets/" + a.ID.String()) } class="ops-link">{ a.Name }</a>
+								</td>
+								<td>{ zeroDash(a.AssetType) }</td>
+								<td>{ zeroDash(a.Owner) }</td>
+								<td>
 									<span class={ assetStatusClass(a.Status) }>{ localizeAssetStatus(ctx, a.Status) }</span>
-								}
-								@ui.Td(ui.TdProps{}) {
+								</td>
+								<td>
 									<span class={ criticalityClass(a.Criticality) }>{ localizeCriticality(ctx, a.Criticality) }</span>
-								}
-								@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 text-right"}}) {
-									<a href={ templ.SafeURL("/assets/" + a.ID.String() + "/edit") } class="text-[11px] text-sand-700 hover:text-sand-900 py-1 px-2">{ locale.T(ctx, "action_edit_lower") }</a>
-								}
-							}
+								</td>
+								<td>
+									<a href={ templ.SafeURL("/assets/" + a.ID.String() + "/edit") } class="ops-link">{ locale.T(ctx, "action_edit_lower") }</a>
+								</td>
+							</tr>
 						}
 						if hasMore {
-							@ui.Tr(ui.TrProps{
-								Attrs: templ.Attributes{
-									"class": "border-sand-300/60 dark:border-zinc-700/60",
-								},
-							}) {
-								@ui.Td(ui.TdProps{
-									Attrs: templ.Attributes{
-										"colspan": "6",
-										"class":   "text-center",
-									},
-								}) {
-									<a href={ templ.SafeURL("/assets?offset=" + fmt.Sprint(nextOffset) + "&q=" + q + "&status=" + status) } class="text-[12px] text-sand-700 hover:text-sand-900 border border-sand-300 rounded px-3 py-1.5 hover:bg-sand-50 transition-colors">{ locale.T(ctx, "action_load_more") }</a>
-								}
-							}
+							<tr>
+								<td colspan="6" class="ops-align-center">
+									<a href={ templ.SafeURL("/assets?offset=" + fmt.Sprint(nextOffset) + "&q=" + q + "&status=" + status) } class="ops-button">{ locale.T(ctx, "action_load_more") }</a>
+								</td>
+							</tr>
 						}
 					</tbody>
-				}
-			</div>
-		}
+			</table>
+		</section>
 	}
 }
 
 templ AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLogForAssetRow) {
-	@ui.Flash(flash, flashType)
-	<div class="max-w-xl">
-		<form method="POST" action={ assetFormAction(a) } class="flex flex-col gap-4">
+	@ui2.Page("ui2-assets") {
+	if flash != "" {
+		<p role={ flashRole(flashType) } data-tone={ flashTone(flashType) }>{ flash }</p>
+	}
+	<div class="ops-stack ops-medium">
+		<form method="POST" action={ assetFormAction(a) } class="ops-form-inline">
 			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 			<div>
-				<label for="asset-name" class="block text-[13px] font-medium text-sand-800 mb-1">{ locale.T(ctx, "label_name") } <span class="text-red-500">*</span></label>
-				<input id="asset-name" type="text" name="name" required value={ assetValue(a, "name") } placeholder={ locale.T(ctx, "assets_placeholder_name") } class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-transparent outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"/>
+				<label for="asset-name" class="ops-label">{ locale.T(ctx, "label_name") } <span class="ops-error">*</span></label>
+				<input id="asset-name" type="text" name="name" required value={ assetValue(a, "name") } placeholder={ locale.T(ctx, "assets_placeholder_name") } class="ops-input"/>
 			</div>
 			<div>
-				<label for="asset-description" class="block text-[13px] font-medium text-sand-800 mb-1">{ locale.T(ctx, "label_description") }</label>
-				<textarea id="asset-description" name="description" rows="4" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-transparent outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">{ assetValue(a, "description") }</textarea>
+				<label for="asset-description" class="ops-label">{ locale.T(ctx, "label_description") }</label>
+				<textarea id="asset-description" name="description" rows="4" class="ops-input">{ assetValue(a, "description") }</textarea>
 			</div>
-			<div class="grid grid-cols-2 gap-3">
+			<div class="ops-fields">
 				<div>
-					<label for="asset-type" class="block text-[13px] font-medium text-sand-800 mb-1">{ locale.T(ctx, "label_asset_type") }</label>
-					<input id="asset-type" type="text" name="asset_type" value={ assetValue(a, "asset_type") } placeholder={ locale.T(ctx, "assets_placeholder_type") } class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-transparent outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"/>
+					<label for="asset-type" class="ops-label">{ locale.T(ctx, "label_asset_type") }</label>
+					<input id="asset-type" type="text" name="asset_type" value={ assetValue(a, "asset_type") } placeholder={ locale.T(ctx, "assets_placeholder_type") } class="ops-input"/>
 				</div>
 				<div>
-					<label for="asset-owner" class="block text-[13px] font-medium text-sand-800 mb-1">{ locale.T(ctx, "label_asset_owner") }</label>
-					<input id="asset-owner" type="text" name="owner" value={ assetValue(a, "owner") } placeholder={ locale.T(ctx, "assets_placeholder_owner") } class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-transparent outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"/>
+					<label for="asset-owner" class="ops-label">{ locale.T(ctx, "label_asset_owner") }</label>
+					<input id="asset-owner" type="text" name="owner" value={ assetValue(a, "owner") } placeholder={ locale.T(ctx, "assets_placeholder_owner") } class="ops-input"/>
 				</div>
 			</div>
-			<div class="grid grid-cols-2 gap-3">
+			<div class="ops-fields">
 				<div>
-					<label for="asset-status" class="block text-[13px] font-medium text-sand-800 mb-1">{ locale.T(ctx, "label_status") }</label>
-					<select id="asset-status" name="status" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-transparent outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+					<label for="asset-status" class="ops-label">{ locale.T(ctx, "label_status") }</label>
+					<select id="asset-status" name="status" class="ops-input">
 						<option value="active" selected?={ assetValue(a, "status") == "active" || assetValue(a, "status") == "" }>{ locale.T(ctx, "status_active") }</option>
 						<option value="planned" selected?={ assetValue(a, "status") == "planned" }>{ locale.T(ctx, "status_planned") }</option>
 						<option value="retired" selected?={ assetValue(a, "status") == "retired" }>{ locale.T(ctx, "status_retired") }</option>
 					</select>
 				</div>
 				<div>
-					<label for="asset-criticality" class="block text-[13px] font-medium text-sand-800 mb-1">{ locale.T(ctx, "assets_criticality") }</label>
-					<select id="asset-criticality" name="criticality" class="w-full text-[13px] border border-sand-400 rounded-md py-2 px-3 bg-transparent outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+					<label for="asset-criticality" class="ops-label">{ locale.T(ctx, "assets_criticality") }</label>
+					<select id="asset-criticality" name="criticality" class="ops-input">
 						<option value="low" selected?={ assetValue(a, "criticality") == "low" }>{ locale.T(ctx, "risk_level_low") }</option>
 						<option value="medium" selected?={ assetValue(a, "criticality") == "medium" || assetValue(a, "criticality") == "" }>{ locale.T(ctx, "risk_level_medium") }</option>
 						<option value="high" selected?={ assetValue(a, "criticality") == "high" }>{ locale.T(ctx, "risk_level_high") }</option>
 					</select>
 				</div>
 			</div>
-			<div class="flex gap-2 pt-1">
-				@ui.Button(ui.ButtonProps{
-					Attrs: templ.Attributes{
-						"type": "submit",
-					},
-				}) {
+			<div class="ops-inline">
+				<button type="submit">
 					if a == nil {
 						{ locale.T(ctx, "action_create_asset") }
 					} else {
 						{ locale.T(ctx, "action_save_changes") }
 					}
-				}
+				</button>
 				if a != nil {
-					<a href={ templ.SafeURL("/assets/" + a.ID.String()) } class="text-[13px] font-medium py-2 px-4 rounded-md border border-sand-300 hover:bg-sand-50 transition-colors">{ locale.T(ctx, "action_cancel") }</a>
+					<a href={ templ.SafeURL("/assets/" + a.ID.String()) } class="ops-button">{ locale.T(ctx, "action_cancel") }</a>
 				}
 			</div>
 		</form>
 		if a != nil {
-			@assetRecentChanges(auditLog, "mt-8")
+			@assetRecentChanges(auditLog, "ops-spaced")
 		}
 	</div>
+	}
 }
 
 templ AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []db.ListAuditLogForAssetRow) {
-	@ui.Flash(flash, flashType)
-	<div class="max-w-3xl space-y-4">
-		<div class="border border-sand-300/60 rounded-[10px] p-4">
-			<div class="flex items-start justify-between gap-3">
+	@ui2.Page("ui2-assets") {
+	if flash != "" {
+		<p role={ flashRole(flashType) } data-tone={ flashTone(flashType) }>{ flash }</p>
+	}
+	<div class="ops-stack ops-wide">
+		@ui2.Panel() {
+			<header >
 				<div>
-					<h2 class="text-[16px] font-medium">{ a.Name }</h2>
-					<div class="mt-1 flex items-center gap-2">
+					<h2 class="ops-heading">{ a.Name }</h2>
+					<div class="ops-inline">
 						<span class={ assetStatusClass(a.Status) }>{ localizeAssetStatus(ctx, a.Status) }</span>
 						<span class={ criticalityClass(a.Criticality) }>{ localizeCriticality(ctx, a.Criticality) } { locale.T(ctx, "assets_criticality") }</span>
 					</div>
 				</div>
 				if canEdit {
-					<a href={ templ.SafeURL("/assets/" + a.ID.String() + "/edit") } class="text-[12px] px-3 py-1.5 rounded border border-sand-300 hover:bg-sand-50 transition-colors">{ locale.T(ctx, "action_edit") }</a>
+					<a href={ templ.SafeURL("/assets/" + a.ID.String() + "/edit") } class="ops-button">{ locale.T(ctx, "action_edit") }</a>
 				}
+			</header>
+			<div class="ops-fields ops-spaced">
+				<dl >
+					<dt class="ops-muted">{ locale.T(ctx, "label_asset_type") }</dt>
+					<dd>{ zeroDash(a.AssetType) }</dd>
+				</dl>
+				<dl >
+					<dt class="ops-muted">{ locale.T(ctx, "label_asset_owner") }</dt>
+					<dd>{ zeroDash(a.Owner) }</dd>
+				</dl>
 			</div>
-			<div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-[13px]">
-				<div>
-					<div class="text-sand-700 text-[11px] uppercase tracking-wide">{ locale.T(ctx, "label_asset_type") }</div>
-					<div>{ zeroDash(a.AssetType) }</div>
-				</div>
-				<div>
-					<div class="text-sand-700 text-[11px] uppercase tracking-wide">{ locale.T(ctx, "label_asset_owner") }</div>
-					<div>{ zeroDash(a.Owner) }</div>
-				</div>
-			</div>
-			<div class="mt-4">
-				<div class="text-sand-700 text-[11px] uppercase tracking-wide mb-1">{ locale.T(ctx, "label_description") }</div>
+			<section class="ops-spaced">
+				<h3 class="ops-overline">{ locale.T(ctx, "label_description") }</h3>
 				if a.Description == "" {
-					<div class="text-[13px] text-sand-700">—</div>
+					<p class="ops-muted">—</p>
 				} else {
-					<p class="text-[13px] whitespace-pre-wrap">{ a.Description }</p>
+					<p class="ops-muted ops-pre-wrap">{ a.Description }</p>
 				}
-			</div>
-		</div>
+			</section>
+		}
 		if canEdit {
 			<form method="POST" action={ templ.SafeURL("/assets/" + a.ID.String() + "/delete") } onsubmit="return confirm('Delete this asset?')">
 				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-				<button type="submit" class="text-[12px] px-3 py-1.5 rounded border border-red-200 text-red-700 hover:bg-red-50 transition-colors">{ locale.T(ctx, "action_delete_asset") }</button>
+				<button type="submit" data-tone="danger" class="ops-link">{ locale.T(ctx, "action_delete_asset") }</button>
 			</form>
 		}
 		@assetRecentChanges(auditLog, "")
 	</div>
+	}
 }
 
 templ assetRecentChanges(auditLog []db.ListAuditLogForAssetRow, wrapperClass string) {
 	<details class={ wrapperClass }>
-		<summary class="cursor-pointer text-sm font-semibold text-sand-800 dark:text-zinc-200 mb-3 list-none">{ locale.T(ctx, "label_recent_changes_toggle") }</summary>
-		<div class="border border-sand-300/60 dark:border-zinc-700/60 rounded-[10px] overflow-hidden">
-			@ui.Table(ui.TableProps{}) {
-				<caption class="sr-only">{ locale.T(ctx, "label_recent_changes") }</caption>
-				@ui.THead(ui.THeadProps{
-					Attrs: templ.Attributes{
-						"class": "bg-sand-100 dark:bg-zinc-800",
-					},
-				}) {
-					@ui.Tr(ui.TrProps{}) {
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "px-4 text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_event") } }
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_by") } }
-						@ui.Th(ui.ThProps{Attrs: templ.Attributes{"scope": "col", "class": "text-[11px] uppercase tracking-wider"}}) { { locale.T(ctx, "label_when") } }
-					}
-				}
+		<summary class="ops-summary">{ locale.T(ctx, "label_recent_changes_toggle") }</summary>
+		@ui2.Table(locale.T(ctx, "label_recent_changes")) {
+				<thead>
+					<tr>
+						<th scope="col">{ locale.T(ctx, "label_event") }</th>
+						<th scope="col">{ locale.T(ctx, "label_by") }</th>
+						<th scope="col">{ locale.T(ctx, "label_when") }</th>
+					</tr>
+				</thead>
 				<tbody>
 					if len(auditLog) == 0 {
-						@ui.Tr(ui.TrProps{
-							Attrs: templ.Attributes{
-								"class": "border-sand-300/60 dark:border-zinc-700/60",
-							},
-						}) {
-							@ui.Td(ui.TdProps{
-								Attrs: templ.Attributes{
-									"colspan": "3",
-									"class":   "px-4 text-sand-700",
-								},
-							}) { { locale.T(ctx, "label_no_changes_yet") } }
-						}
+						<tr><td colspan="3">{ locale.T(ctx, "label_no_changes_yet") }</td></tr>
 					} else {
 						for i, entry := range auditLog {
 							if i < 5 {
-								@ui.Tr(ui.TrProps{
-									Attrs: templ.Attributes{
-										"class": "border-sand-300/60 dark:border-zinc-700/60",
-									},
-								}) {
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "px-4 font-medium"}}) { { assetAuditEventLabel(entry.Event) } }
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700"}}) {
+								<tr>
+									<td>{ assetAuditEventLabel(entry.Event) }</td>
+									<td>
 										if entry.UserName != "" {
 											{ entry.UserName }
 										} else {
-											<span class="text-sand-700">—</span>
+											<span class="ops-muted">—</span>
 										}
-									}
-									@ui.Td(ui.TdProps{Attrs: templ.Attributes{"class": "text-sand-700 font-mono text-[11px]"}}) { { entry.EventTime.Format("2 Jan 2006 15:04") } }
-								}
+									</td>
+									<td>{ entry.EventTime.Format("2 Jan 2006 15:04") }</td>
+								</tr>
 							}
 						}
 					}
 				</tbody>
-			}
-		</div>
+		}
 	</details>
 }
 
@@ -332,22 +305,22 @@ func zeroDash(v string) string {
 func assetStatusClass(status string) string {
 	switch status {
 	case "planned":
-		return "inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200"
+		return "ops-asset-badge ops-asset-planned"
 	case "retired":
-		return "inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded bg-sand-100 text-sand-700 border border-sand-300"
+		return "ops-asset-badge ops-asset-neutral"
 	default:
-		return "inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded bg-green-50 text-green-700 border border-green-200"
+		return "ops-asset-badge ops-asset-active"
 	}
 }
 
 func criticalityClass(criticality string) string {
 	switch criticality {
 	case "low":
-		return "inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded bg-sand-100 text-sand-700 border border-sand-300"
+		return "ops-asset-badge ops-asset-neutral"
 	case "high":
-		return "inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded bg-red-50 text-red-700 border border-red-200"
+		return "ops-asset-badge ops-asset-high"
 	default:
-		return "inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200"
+		return "ops-asset-badge ops-asset-planned"
 	}
 }
 

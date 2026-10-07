@@ -89,8 +89,8 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httputil.Render(w, r, layout.Layout("Risk assessments", "NS 5814 risk assessments", "risk", user,
-		risktemplates.AssessmentList(vm),
+	httputil.Render(w, r, ui2.Layout("Risk assessments", "NS 5814 risk assessments", "risk", user,
+		risktemplates.RiskPage(risktemplates.AssessmentList(vm)),
 	))
 }
 
@@ -131,8 +131,8 @@ func (h *Handler) RiskRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httputil.Render(w, r, layout.Layout("Risk register", "All risks across assessments", "risk-register", user,
-		risktemplates.RiskRegisterPage(risks, q, lowMax, highMin),
+	httputil.Render(w, r, ui2.Layout("Risk register", "All risks across assessments", "risk-register", user,
+		risktemplates.RiskPage(risktemplates.RiskRegisterPage(risks, q, lowMax, highMin)),
 	))
 }
 
@@ -143,15 +143,15 @@ func (h *Handler) NewAssessment(w http.ResponseWriter, r *http.Request) {
 	users, _ := h.q.ListUsers(r.Context())
 	orgs, _ := h.q.ListOrganizations(r.Context())
 	gs, _ := h.q.GetRiskGlobalSettings(r.Context())
-	httputil.Render(w, r, layout.Layout("New risk assessment", "Step 1 — Framework", "risk", user,
-		risktemplates.WizardStep1(risktemplates.WizardStep1VM{
+	httputil.Render(w, r, ui2.Layout("New risk assessment", "Step 1 — Framework", "risk", user,
+		risktemplates.RiskPage(risktemplates.WizardStep1(risktemplates.WizardStep1VM{
 			Assessment:         db.RiskAssessment{Type: "security"},
 			ThreatEnabled:      false,
 			Users:              users,
 			Orgs:               orgs,
 			IsNew:              true,
 			AcceptanceCriteria: gs.AcceptanceCriteria,
-		}),
+		})),
 	))
 }
 
@@ -223,8 +223,8 @@ func (h *Handler) renderStep1Error(w http.ResponseWriter, r *http.Request, user 
 	users, _ := h.q.ListUsers(r.Context())
 	orgs, _ := h.q.ListOrganizations(r.Context())
 	gs, _ := h.q.GetRiskGlobalSettings(r.Context())
-	httputil.Render(w, r, layout.Layout("New risk assessment", "Step 1 — Framework", "risk", user,
-		risktemplates.WizardStep1(risktemplates.WizardStep1VM{
+	httputil.Render(w, r, ui2.Layout("New risk assessment", "Step 1 — Framework", "risk", user,
+		risktemplates.RiskPage(risktemplates.WizardStep1(risktemplates.WizardStep1VM{
 			Assessment:         a,
 			ThreatEnabled:      a.ThreatAssessmentEnabled,
 			Users:              users,
@@ -232,7 +232,7 @@ func (h *Handler) renderStep1Error(w http.ResponseWriter, r *http.Request, user 
 			IsNew:              isNew,
 			Flash:              msg,
 			AcceptanceCriteria: gs.AcceptanceCriteria,
-		}),
+		})),
 	))
 }
 
@@ -298,13 +298,13 @@ func (h *Handler) renderStepThreat(w http.ResponseWriter, r *http.Request, asses
 		title = "Review: Threat context"
 		subtitle = "Review step 2"
 	}
-	httputil.Render(w, r, layout.Layout(title, subtitle, "risk", user,
-		risktemplates.WizardStepThreat(risktemplates.WizardStepThreatVM{
+	httputil.Render(w, r, ui2.Layout(title, subtitle, "risk", user,
+		risktemplates.RiskPage(risktemplates.WizardStepThreat(risktemplates.WizardStepThreatVM{
 			Assessment: assessment,
 			Assets:     assets,
 			IsReview:   isReview,
 			Flash:      r.URL.Query().Get("flash"),
-		}),
+		})),
 	))
 }
 
@@ -477,8 +477,8 @@ func (h *Handler) Step3(w http.ResponseWriter, r *http.Request) {
 	lowMax, highMin := thresholdDefaults(int(gs.LowMax), int(gs.HighMin))
 	scaleLabels, _ := h.q.ListRiskScaleLabels(r.Context())
 	user, _ := middleware.FromContext(r.Context())
-	httputil.Render(w, r, layout.Layout("Risk analysis", "Step 3 — Analyse", "risk", user,
-		risktemplates.WizardStep3(risktemplates.WizardStep3VM{Assessment: a, Risks: risks, LowMax: lowMax, HighMin: highMin, ScaleLabels: scaleLabels}),
+	httputil.Render(w, r, ui2.Layout("Risk analysis", "Step 3 — Analyse", "risk", user,
+		risktemplates.RiskPage(risktemplates.WizardStep3(risktemplates.WizardStep3VM{Assessment: a, Risks: risks, LowMax: lowMax, HighMin: highMin, ScaleLabels: scaleLabels})),
 	))
 }
 
@@ -931,14 +931,14 @@ func (h *Handler) buildDetailData(r *http.Request, risks []db.Risk) detailData {
 }
 
 func (h *Handler) Detail(w http.ResponseWriter, r *http.Request) {
-	h.renderDetail(w, r, false)
+	h.renderDetail(w, r)
 }
 
 func (h *Handler) DetailPreview(w http.ResponseWriter, r *http.Request) {
-	h.renderDetail(w, r, true)
+	h.renderDetail(w, r)
 }
 
-func (h *Handler) renderDetail(w http.ResponseWriter, r *http.Request, preview bool) {
+func (h *Handler) renderDetail(w http.ResponseWriter, r *http.Request) {
 	assessment, ok := h.loadAssessment(w, r)
 	if !ok {
 		return
@@ -963,7 +963,6 @@ func (h *Handler) renderDetail(w http.ResponseWriter, r *http.Request, preview b
 	}
 	gs, _ := h.q.GetRiskGlobalSettings(r.Context())
 	lowMax, highMin := thresholdDefaults(int(gs.LowMax), int(gs.HighMin))
-	thresholds := layout.RiskThresholds{LowMax: lowMax, HighMin: highMin}
 	participants, _ := h.q.ListParticipantsForAssessment(r.Context(), assessment.ID)
 	auditLog, _ := h.q.ListAuditLogForAssessment(r.Context(), assessment.ID.String())
 	flash := r.URL.Query().Get("flash")
@@ -973,8 +972,8 @@ func (h *Handler) renderDetail(w http.ResponseWriter, r *http.Request, preview b
 	vm := risktemplates.AssessmentDetailVM{
 		Assessment:      assessment,
 		Risks:           risks,
-		CurrentMatrix:   layout.BuildRiskMatrixCellsT(d.currentCounts, thresholds),
-		TargetMatrix:    layout.BuildRiskMatrixCellsT(d.targetCounts, thresholds),
+		CurrentMatrix:   layout.BuildRiskMatrixCells(d.currentCounts),
+		TargetMatrix:    layout.BuildRiskMatrixCells(d.targetCounts),
 		RiskMeasures:    d.riskMeasures,
 		RiskActivities:  d.riskActivities,
 		OwnerName:       ownerName,
@@ -988,15 +987,8 @@ func (h *Handler) renderDetail(w http.ResponseWriter, r *http.Request, preview b
 		CanTogglePublic: canToggle,
 		AuditLog:        auditLog,
 	}
-	content := risktemplates.AssessmentDetail(vm)
-	if preview {
-		content = risktemplates.AssessmentDetailPreview(vm)
-	}
-	page := layout.Layout(assessmentPageTitle(assessment), "Risk assessment", "risk", user, content)
-	if preview {
-		page = ui2.Layout(assessmentPageTitle(assessment), "Risk assessment", "risk", user, content)
-	}
-	httputil.Render(w, r, page)
+	httputil.Render(w, r, ui2.Layout(assessmentPageTitle(assessment), "Risk assessment", "risk", user,
+		risktemplates.AssessmentDetailPreview(vm)))
 }
 
 func (h *Handler) RiskDetail(w http.ResponseWriter, r *http.Request) {
@@ -1043,8 +1035,8 @@ func (h *Handler) RiskDetail(w http.ResponseWriter, r *http.Request) {
 	reviewRationale := risk.AssessmentRationale
 	reassessMessage := r.URL.Query().Get("reassess_flash")
 	reassessError := r.URL.Query().Get("reassess_type") == "error"
-	httputil.Render(w, r, layout.Layout(risk.Name, "Risk", "risk", user,
-		risktemplates.RiskDetail(risktemplates.RiskDetailVM{
+	httputil.Render(w, r, ui2.Layout(risk.Name, "Risk", "risk", user,
+		risktemplates.RiskPage(risktemplates.RiskDetail(risktemplates.RiskDetailVM{
 			Assessment:          assessment,
 			Risk:                risk,
 			Measures:            measures,
@@ -1060,7 +1052,7 @@ func (h *Handler) RiskDetail(w http.ResponseWriter, r *http.Request) {
 			ReviewRationale:     reviewRationale,
 			ReassessmentMessage: reassessMessage,
 			ReassessmentError:   reassessError,
-		}),
+		})),
 	))
 }
 
@@ -1267,8 +1259,8 @@ func (h *Handler) ReviewStep1(w http.ResponseWriter, r *http.Request) {
 		assetResults = nil
 	}
 	user, _ := middleware.FromContext(r.Context())
-	httputil.Render(w, r, layout.Layout("Review: Framework", "Review step 1", "risk", user,
-		risktemplates.WizardStep1(risktemplates.WizardStep1VM{
+	httputil.Render(w, r, ui2.Layout("Review: Framework", "Review step 1", "risk", user,
+		risktemplates.RiskPage(risktemplates.WizardStep1(risktemplates.WizardStep1VM{
 			Assessment:         assessment,
 			ThreatEnabled:      assessment.ThreatAssessmentEnabled,
 			Users:              users,
@@ -1282,7 +1274,7 @@ func (h *Handler) ReviewStep1(w http.ResponseWriter, r *http.Request) {
 			IsNew:              false,
 			Flash:              r.URL.Query().Get("flash"),
 			AcceptanceCriteria: gs.AcceptanceCriteria,
-		}),
+		})),
 	))
 }
 
@@ -1571,8 +1563,8 @@ func (h *Handler) renderStep2(w http.ResponseWriter, r *http.Request, assessment
 		title = "Review: Identify"
 		subtitle = "Review step 2"
 	}
-	httputil.Render(w, r, layout.Layout(title, subtitle, "risk", user,
-		risktemplates.WizardStep2(risktemplates.WizardStep2VM{
+	httputil.Render(w, r, ui2.Layout(title, subtitle, "risk", user,
+		risktemplates.RiskPage(risktemplates.WizardStep2(risktemplates.WizardStep2VM{
 			Assessment:   assessment,
 			Risks:        risks,
 			Users:        users,
@@ -1580,7 +1572,7 @@ func (h *Handler) renderStep2(w http.ResponseWriter, r *http.Request, assessment
 			AssetQueries: assetQueries,
 			AssetResults: assetResults,
 			IsReview:     isReview,
-		}),
+		})),
 	))
 }
 
@@ -1593,8 +1585,8 @@ func (h *Handler) ReviewStep3(w http.ResponseWriter, r *http.Request) {
 	lowMax, highMin := thresholdDefaults(int(gs.LowMax), int(gs.HighMin))
 	scaleLabels, _ := h.q.ListRiskScaleLabels(r.Context())
 	user, _ := middleware.FromContext(r.Context())
-	httputil.Render(w, r, layout.Layout("Review: Analyse", "Review step 3", "risk", user,
-		risktemplates.WizardStep3(risktemplates.WizardStep3VM{Assessment: a, Risks: risks, IsReview: true, LowMax: lowMax, HighMin: highMin, ScaleLabels: scaleLabels}),
+	httputil.Render(w, r, ui2.Layout("Review: Analyse", "Review step 3", "risk", user,
+		risktemplates.RiskPage(risktemplates.WizardStep3(risktemplates.WizardStep3VM{Assessment: a, Risks: risks, IsReview: true, LowMax: lowMax, HighMin: highMin, ScaleLabels: scaleLabels})),
 	))
 }
 
@@ -1702,8 +1694,8 @@ func (h *Handler) renderDecisionRisk(w http.ResponseWriter, r *http.Request, rev
 			ownerName = u.Name
 		}
 	}
-	httputil.Render(w, r, layout.Layout(title, subtitle, "risk", user,
-		risktemplates.WizardDecision(risktemplates.DecisionVM{
+	httputil.Render(w, r, ui2.Layout(title, subtitle, "risk", user,
+		risktemplates.RiskPage(risktemplates.WizardDecision(risktemplates.DecisionVM{
 			Assessment:         assessment,
 			Risk:               risk,
 			Risks:              allRisks,
@@ -1722,7 +1714,7 @@ func (h *Handler) renderDecisionRisk(w http.ResponseWriter, r *http.Request, rev
 			IsReview:           review,
 			CanAccept:          riskCanBeAccepted(risk, lowMax),
 			OwnerName:          ownerName,
-		}),
+		})),
 	))
 }
 

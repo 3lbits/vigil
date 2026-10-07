@@ -36,7 +36,7 @@ func Layout(title, subtitle, activePage string, user middleware.SessionUser, con
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = layout.LayoutPreview(title, subtitle, activePage, user, content).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layout.Layout(title, subtitle, activePage, user, content).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

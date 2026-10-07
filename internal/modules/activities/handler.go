@@ -19,7 +19,7 @@ import (
 	"github.com/3lbits/vigil/internal/httputil"
 	"github.com/3lbits/vigil/internal/middleware"
 	activitiestemplates "github.com/3lbits/vigil/internal/modules/activities/templates"
-	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 type Handler struct {
@@ -114,7 +114,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httputil.Render(w, r, layout.Layout("Activities", "Compliance activity register", "activities", user,
+	httputil.Render(w, r, ui2.Layout("Activities", "Compliance activity register", "activities", user,
 		activitiestemplates.ActivityList(rows, filter, kind, search, sort, dir, mine, flash, flashType, hasMore, activitiesPageSize),
 	))
 }
@@ -134,7 +134,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	}
 	user, _ := middleware.FromContext(r.Context())
 	preselected := r.URL.Query().Get("measure_id")
-	httputil.Render(w, r, layout.Layout("Add activity", "Create a new compliance activity", "activities", user,
+	httputil.Render(w, r, ui2.Layout("Add activity", "Create a new compliance activity", "activities", user,
 		activitiestemplates.ActivityForm(measures, users, nil, preselected, "", "", nil),
 	))
 }
@@ -241,7 +241,7 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	if a.RefNum.Valid {
 		activityTitle = fmt.Sprintf("A-%03d · %s", a.RefNum.Int32, a.Title)
 	}
-	httputil.Render(w, r, layout.Layout(activityTitle, a.MeasureName, "activities", user,
+	httputil.Render(w, r, ui2.Layout(activityTitle, a.MeasureName, "activities", user,
 		activitiestemplates.ActivityDetail(a, canEdit, flash, flashType, users, auditLog, linkedRisks),
 	))
 }
@@ -270,7 +270,7 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 		slog.Warn("list audit log for activity edit", "activity_id", a.ID.String(), "error", err) // #nosec G706
 	}
 	user, _ := middleware.FromContext(r.Context())
-	httputil.Render(w, r, layout.Layout("Edit activity", a.Title, "activities", user,
+	httputil.Render(w, r, ui2.Layout("Edit activity", a.Title, "activities", user,
 		activitiestemplates.ActivityForm(measures, users, &a, "", "", "", auditLog),
 	))
 }
@@ -498,7 +498,7 @@ func (h *Handler) renderFormError(w http.ResponseWriter, r *http.Request, a *db.
 		slog.Warn("list users for form error", "error", err)
 	}
 	user, _ := middleware.FromContext(r.Context())
-	httputil.Render(w, r, layout.Layout("Add activity", "Create a new compliance activity", "activities", user,
+	httputil.Render(w, r, ui2.Layout("Add activity", "Create a new compliance activity", "activities", user,
 		activitiestemplates.ActivityForm(measures, users, a, preselected, msg, "error", nil),
 	))
 }

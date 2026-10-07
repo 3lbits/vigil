@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -56,6 +57,9 @@ func TestList_ReturnsOK(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d", w.Code)
 	}
+	if body := w.Body.String(); !strings.Contains(body, `ui2-shell`) || !strings.Contains(body, `ui2-avvik`) {
+		t.Error("full avvik list should render inside the UI2 layout and page")
+	}
 }
 
 func TestList_HTMX_ReturnsOK(t *testing.T) {
@@ -69,6 +73,9 @@ func TestList_HTMX_ReturnsOK(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d", w.Code)
 	}
+	if strings.Contains(w.Body.String(), "ui2-avvik") || strings.Contains(w.Body.String(), "<html") {
+		t.Error("HTMX avvik table should not contain a page wrapper")
+	}
 }
 
 func TestNew_ReturnsOK(t *testing.T) {
@@ -80,6 +87,11 @@ func TestNew_ReturnsOK(t *testing.T) {
 
 	if w.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d", w.Code)
+	}
+	for _, field := range []string{`name="_csrf"`, `name="title"`, `name="risk_level"`, `name="reporter_name"`, `name="org_unit_id"`} {
+		if !strings.Contains(w.Body.String(), field) {
+			t.Errorf("avvik create form lost %s", field)
+		}
 	}
 }
 

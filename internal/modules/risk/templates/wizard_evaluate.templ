@@ -5,7 +5,6 @@ import (
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
-	"github.com/3lbits/vigil/internal/ui"
 )
 
 templ WizardEvaluate(vm EvaluationVM) {
@@ -13,106 +12,90 @@ templ WizardEvaluate(vm EvaluationVM) {
 	if vm.IsReview {
 		@reviewBanner(vm.Assessment)
 	}
-	<div class="max-w-3xl">
-		<div class="mb-5 border border-blue-200 bg-blue-50 rounded-lg px-4 py-3">
-			<div class="text-[13px] font-semibold text-blue-800 mb-0.5">{ locale.T(ctx, "risk_eval_gate_title") }</div>
-			<p class="text-[12px] text-blue-700">{ locale.T(ctx, "text_compare_risks_against_acceptance") }</p>
+	<div class="risk-narrow">
+		<section class="ui2-panel">
+			<h2 class="risk-info-title" style="font-size: 13px">{ locale.T(ctx, "risk_eval_gate_title") }</h2>
+			<p class="risk-info-description">{ locale.T(ctx, "text_compare_risks_against_acceptance") }</p>
 			if vm.AcceptanceCriteria != "" {
-				<div class="mt-2 text-[12px] text-blue-800 border-t border-blue-200 pt-2">
-					<span class="font-medium">{ locale.T(ctx, "label_acceptance_criteria") }:</span> { vm.AcceptanceCriteria }
+				<div class="risk-info-criteria">
+					<span class="risk-emphasis">{ locale.T(ctx, "label_acceptance_criteria") }:</span> { vm.AcceptanceCriteria }
 				</div>
 			}
-		</div>
+		</section>
 		<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/3/evaluate") }>
 			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-			<div class="border border-sand-200 rounded-[10px] overflow-hidden mb-5">
-				<div class="grid grid-cols-[1fr_90px_150px] gap-3 px-4 py-2.5 bg-sand-50 text-[10px] font-semibold text-sand-700 uppercase tracking-wide">
+			<div class="ui2-panel">
+				<div class="risk-eval-header">
 					<span>{ locale.T(ctx, "label_risk") }</span>
-					<span class="text-center">{ locale.T(ctx, "label_current") }</span>
+					<span class="risk-centered">{ locale.T(ctx, "label_current") }</span>
 					<span>{ locale.T(ctx, "label_decision") }</span>
 				</div>
 				for _, risk := range vm.Risks {
 					@evalRow(risk, vm.LowMax, vm.HighMin)
 				}
 			</div>
-			<div class="flex items-center justify-between">
-				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/3") } class="text-[13px] text-sand-700 hover:text-sand-800">← { locale.T(ctx, "action_back_to_scoring") }</a>
-				@ui.Button(ui.ButtonProps{
-					Attrs: templ.Attributes{
-						"type": "submit",
-					},
-				}) {
-					{ locale.T(ctx, "action_confirm_plan_treatment") } →
-				}
+			<div class="risk-split">
+				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/3") } class="risk-back-link">← { locale.T(ctx, "action_back_to_scoring") }</a>
+				<button type="submit">{ locale.T(ctx, "action_confirm_plan_treatment") } →</button>
 			</div>
 		</form>
 	</div>
 }
 
 templ evalRow(risk db.Risk, lowMax, highMin int) {
-	<div class="border-t border-sand-200">
-		<div class="grid grid-cols-[1fr_90px_150px] gap-3 px-4 py-3 items-start">
-			<div class="min-w-0">
-				<div class="text-[12px] font-medium text-sand-900 truncate">{ risk.Name }</div>
+	<section class="risk-eval-item">
+		<div class="risk-eval-row">
+			<div class="risk-truncation-container">
+				<h2 class="risk-result-name" style="font-size: 12px; font-weight: 500">{ risk.Name }</h2>
 				if risk.Description != "" {
-					<div class="text-[10px] text-sand-700 dark:text-zinc-400 truncate">{ risk.Description }</div>
+					<p class="risk-result-detail">{ risk.Description }</p>
 				}
 			</div>
 			@evalScore(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, risk.LikelihoodCurrent.Valid, lowMax, highMin)
 			<fieldset>
-				<legend class="sr-only">{ locale.T(ctx, "label_decision_for") } { risk.Name }</legend>
-				<div class="flex flex-col gap-1">
+				<legend class="risk-visually-hidden">{ locale.T(ctx, "label_decision_for") } { risk.Name }</legend>
+				<div class="risk-tight-list">
 					for _, opt := range []struct{ v, key string }{{"accept", "decision_accept"}, {"treat", "decision_treat"}, {"document", "decision_document"}} {
-						<label class="flex items-center gap-1.5 cursor-pointer">
+						<label class="risk-radio-option">
 							<input
 								type="radio"
 								name={ "decision_" + risk.ID.String() }
 								value={ opt.v }
-								class="accent-blue-600"
+								class="risk-radio"
 								checked?={ risk.RiskDecision == opt.v }
 							/>
-							<span class={ "text-[12px]", decisionOptionColor(opt.v) }>{ locale.T(ctx, opt.key) }</span>
+							<span class={ "risk-decision-option", decisionOptionColor(opt.v) }>{ locale.T(ctx, opt.key) }</span>
 						</label>
 					}
 				</div>
 			</fieldset>
 		</div>
-		<div class="px-4 pb-3">
-			@ui.Field("notes-"+risk.ID.String(), "label_documentation_notes", false) {
-				@ui.Textarea(ui.TextareaProps{
-					ID:          "notes-" + risk.ID.String(),
-					Name:        "notes_" + risk.ID.String(),
-					Value:       risk.DecisionNotes,
-					Placeholder: locale.T(ctx, "placeholder_decision_notes"),
-					Class:       "py-2 text-[12px] resize-y min-h-0 focus:ring-1",
-					Attrs: templ.Attributes{
-						"rows": "3",
-					},
-				})
-			}
-			<p class="mt-1 text-[11px] text-sand-700">{ locale.T(ctx, "text_used_when_decision_document") }</p>
+		<div class="risk-eval-notes">
+			<label for={ "notes-" + risk.ID.String() }>{ locale.T(ctx, "label_documentation_notes") }</label>
+			<textarea id={ "notes-" + risk.ID.String() } name={ "notes_" + risk.ID.String() } rows="3" placeholder={ locale.T(ctx, "placeholder_decision_notes") }>{ risk.DecisionNotes }</textarea>
+			<p class="risk-caption">{ locale.T(ctx, "text_used_when_decision_document") }</p>
 		</div>
-	</div>
+	</section>
 }
 
 templ evalScore(l, c int32, valid bool, lowMax, highMin int) {
 	if valid && l > 0 && c > 0 {
-		<div class={ "mx-auto flex flex-col items-center gap-0.5 w-16 py-1 rounded text-white text-center", bgClassT(l, c, lowMax, highMin) }>
-			<span class="text-[13px] font-bold">{ fmt.Sprint(int(l) * int(c)) }</span>
-			<span class="text-[9px] opacity-80">L{ fmt.Sprint(l) }×C{ fmt.Sprint(c) }</span>
+		<div class={ "risk-eval-score", bgClassT(l, c, lowMax, highMin) }>
+			<span>{ fmt.Sprint(int(l) * int(c)) }</span>
+			<span>L{ fmt.Sprint(l) }×C{ fmt.Sprint(c) }</span>
 		</div>
 	} else {
-		<div class="text-center text-[12px] text-sand-300">—</div>
+		<div class="risk-centered">—</div>
 	}
 }
 
 func decisionOptionColor(v string) string {
 	switch v {
 	case "accept":
-		return "text-green-700"
+		return "risk-decision-accept"
 	case "document":
-		return "text-sand-700"
+		return "risk-decision-document"
 	default:
-		return "text-blue-700"
+		return "risk-decision-treat"
 	}
 }

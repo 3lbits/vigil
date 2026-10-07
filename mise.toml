@@ -6,7 +6,6 @@ semgrep = "latest"
 # codegen + assets (pin these — output can shift between versions)
 sqlc        = "1.30"
 "go:github.com/a-h/templ/cmd/templ" = "0.3.1020"
-"github:tailwindlabs/tailwindcss" = { version = "4.1.5", rename_exe = "tailwindcss" }
 
 # dev loop
 air = "latest"

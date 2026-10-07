@@ -17,7 +17,7 @@ import (
 	"github.com/3lbits/vigil/internal/httputil"
 	"github.com/3lbits/vigil/internal/middleware"
 	avviktemplates "github.com/3lbits/vigil/internal/modules/avvik/templates"
-	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 type Handler struct {
@@ -80,7 +80,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 		httputil.Render(w, r, avviktemplates.AvvikTable(items))
 		return
 	}
-	httputil.Render(w, r, layout.Layout("Avvik", "Avvik — nonconformities and security events", "avvik", user,
+	httputil.Render(w, r, ui2.Layout("Avvik", "Avvik — nonconformities and security events", "avvik", user,
 		avviktemplates.AvvikList(items, orgs, search, r.URL.Query().Get("status"), r.URL.Query().Get("risk"), r.URL.Query().Get("org_unit"), args.Mine),
 	))
 }
@@ -89,7 +89,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	user, _ := middleware.FromContext(r.Context())
 	orgs, _ := h.q.ListOrganizations(r.Context())
 	users, _ := h.q.ListUsers(r.Context())
-	httputil.Render(w, r, layout.Layout("New Avvik", "Create avvik", "avvik", user, avviktemplates.NewAvvikForm(orgs, users)))
+	httputil.Render(w, r, ui2.Layout("New Avvik", "Create avvik", "avvik", user, avviktemplates.NewAvvikForm(orgs, users)))
 }
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
@@ -199,7 +199,7 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 		httputil.Render(w, r, avviktemplates.AvvikTabPanel(data))
 		return
 	}
-	httputil.Render(w, r, layout.Layout("Avvik", a.Title, "avvik", user, avviktemplates.AvvikDetail(data)))
+	httputil.Render(w, r, ui2.Layout("Avvik", a.Title, "avvik", user, avviktemplates.AvvikDetail(data)))
 }
 
 func (h *Handler) Triage(w http.ResponseWriter, r *http.Request) {

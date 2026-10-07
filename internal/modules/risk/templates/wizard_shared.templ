@@ -5,44 +5,35 @@ import (
 	"fmt"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
-	"github.com/3lbits/vigil/internal/ui"
+	"github.com/3lbits/vigil/internal/ui2"
 )
+
+templ RiskPage(content templ.Component) {
+	@ui2.Page("ui2-risk") {
+		@content
+	}
+}
 
 // wizardShell renders the wizard progress header.
 templ wizardShell(assessmentID, assessmentName string, step int, isNew, threatEnabled bool) {
-	<div class="mb-6">
+	<header>
 		if assessmentName != "" && !isNew {
-			<div class="text-[11px] text-sand-700 mb-1">{ assessmentName }</div>
+			<p>{ assessmentName }</p>
 		}
-		<div class="flex items-center gap-1 flex-wrap">
+		<nav aria-label={ locale.T(ctx, "nav_risk_assessments") }>
 			for i, item := range wizardSteps(ctx, threatEnabled) {
-				<div class="flex items-center gap-1">
-					if i > 0 {
-						<span class="text-sand-300 text-[12px] mx-1">›</span>
-					}
+				<span>
 					if i+1 < step && !isNew && assessmentID != "" {
-						<a
-							href={ templ.SafeURL(wizardStepHref(assessmentID, item.Key)) }
-							class="flex items-center gap-1.5 text-[12px] text-blue-600 hover:underline"
-						>
-							<span class="w-5 h-5 rounded-full text-white bg-blue-600 text-[10px] font-bold flex items-center justify-center shrink-0">{ fmt.Sprint(i + 1) }</span>
-							{ item.Label }
-						</a>
+						<a href={ templ.SafeURL(wizardStepHref(assessmentID, item.Key)) }>{ fmt.Sprint(i + 1) }. { item.Label }</a>
 					} else if i+1 == step {
-						<div class="flex items-center gap-1.5 text-[12px] font-semibold text-sand-900">
-							<span class="w-5 h-5 rounded-full bg-sand-900 text-white text-[10px] font-bold flex items-center justify-center shrink-0">{ fmt.Sprint(i + 1) }</span>
-							{ item.Label }
-						</div>
+						<strong aria-current="step">{ fmt.Sprint(i + 1) }. { item.Label }</strong>
 					} else {
-						<div class="flex items-center gap-1.5 text-[12px] text-sand-700">
-							<span class="w-5 h-5 rounded-full border border-sand-300 text-sand-700 text-[10px] font-bold flex items-center justify-center shrink-0">{ fmt.Sprint(i + 1) }</span>
-							{ item.Label }
-						</div>
+						<span>{ fmt.Sprint(i + 1) }. { item.Label }</span>
 					}
-				</div>
+				</span>
 			}
-		</div>
-	</div>
+		</nav>
+	</header>
 }
 
 type wizardStepItem struct {
@@ -89,40 +80,39 @@ func wizardDisplayStep(baseStep int, threatEnabled bool) int {
 
 templ wizardFlash(flash string) {
 	if flash != "" {
-		<div role="alert" class="mb-4 px-4 py-2.5 rounded-lg bg-red-50 border border-red-200 text-red-800 text-[13px]">{ flash }</div>
+		@ui2.Notice("danger") {
+			{ flash }
+		}
 	}
 }
 
 // reviewBanner renders a banner for review mode.
 templ reviewBanner(a db.RiskAssessment) {
-	<div class="mb-4 flex items-start gap-2.5 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-[12px] text-amber-800">
-		<span class="font-semibold shrink-0">{ locale.T(ctx, "label_review_mode") }</span>
-		<span>
+	@ui2.Panel() {
+		<h3>{ locale.T(ctx, "label_review_mode") }</h3>
+		<p>
 			Reviewing existing assessment. Confirm or update each step.
 			if a.LastReviewedAt.Valid {
 				Last reviewed: { a.LastReviewedAt.Time.Format("2 Jan 2006") }.
 			}
-		</span>
-	</div>
+		</p>
+	}
 }
 
 // riskLevelBadge renders a level badge.
 templ riskLevelBadge(level string) {
 	switch level {
 		case "red":
-			@ui.Badge(ui.BadgeProps{
-				Variant: "danger",
-				Class:   "text-[10px] font-bold px-1.5 rounded",
-			}) { { locale.T(ctx, "risk_level_high") } }
+			@ui2.Badge("danger") {
+				{ locale.T(ctx, "risk_level_high") }
+			}
 		case "yellow":
-			@ui.Badge(ui.BadgeProps{
-				Variant: "warning",
-				Class:   "text-[10px] font-bold px-1.5 rounded",
-			}) { { locale.T(ctx, "risk_level_medium") } }
+			@ui2.Badge("warning") {
+				{ locale.T(ctx, "risk_level_medium") }
+			}
 		default:
-			@ui.Badge(ui.BadgeProps{
-				Variant: "success",
-				Class:   "text-[10px] font-bold px-1.5 rounded",
-			}) { { locale.T(ctx, "risk_level_low") } }
+			@ui2.Badge("success") {
+				{ locale.T(ctx, "risk_level_low") }
+			}
 	}
 }

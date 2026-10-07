@@ -62,6 +62,9 @@ func TestFrameworkList_ShowsCount(t *testing.T) {
 func TestFrameworkList_EmptyState(t *testing.T) {
 	doc := renderToDoc(t, FrameworkList(nil, "", "", ""))
 
+	if doc.Find(".ui2.ui2-compliance").Length() != 1 {
+		t.Error("framework list must have a UI2 page root")
+	}
 	if doc.Find(`[data-testid="no-frameworks-empty"]`).Length() != 1 {
 		t.Error("expected no-frameworks-empty element when list is empty")
 	}
@@ -71,6 +74,97 @@ func TestFrameworkList_EmptyState(t *testing.T) {
 	count := doc.Find(`[data-testid="framework-count"]`).Text()
 	if !strings.Contains(count, "0") {
 		t.Errorf("expected '0' in count text, got %q", count)
+	}
+}
+
+func TestCompliancePages_UI2RootsAndControls(t *testing.T) {
+	id := uuid.New()
+	pages := map[string]interface {
+		Render(context.Context, io.Writer) error
+	}{
+		"framework form":   FrameworkForm(nil, "", "", nil),
+		"requirement form": RequirementForm(id.String(), nil, "", "", nil),
+		"import form":      ImportForm(id.String(), "", "", nil),
+		"framework detail": FrameworkDetail(FrameworkDetailVM{Framework: db.Framework{ID: id}}),
+		"requirement detail": RequirementDetail(RequirementDetailVM{
+			Requirement: db.Requirement{ID: id, FrameworkID: id},
+		}),
+		"requirement edit": RequirementEditPage(RequirementEditVM{
+			Requirement: db.Requirement{ID: id, FrameworkID: id},
+		}, "", ""),
+	}
+	for name, page := range pages {
+		t.Run(name, func(t *testing.T) {
+			doc := renderToDoc(t, page)
+			if got := doc.Find(".ui2.ui2-compliance").Length(); got != 1 {
+				t.Errorf("expected one UI2 page root, got %d", got)
+			}
+		})
+	}
+
+	doc := renderToDoc(t, FrameworkList([]FrameworkVM{{
+		Framework: db.Framework{ID: id, Name: "ISO"},
+		Requirements: []RequirementVM{{
+			Requirement: db.Requirement{ID: uuid.New(), Ref: "A.1", Title: "Policy"},
+		}},
+	}}, id.String(), "", ""))
+	if doc.Find("#fw-"+id.String()+`[x-data] button[aria-controls="fw-reqs-`+id.String()+`"]`).Length() != 1 {
+		t.Error("framework accordion must retain its Alpine disclosure control")
+	}
+	if doc.Find(`.ui2-table[aria-label="Requirements"] table caption`).Length() != 1 {
+		t.Error("requirements table must retain one accessible label")
+	}
+	if doc.Find(`.ui2-table[aria-label="Requirements"] th[scope="col"]`).Length() != 4 {
+		t.Error("requirements table must retain its column scopes")
+	}
+	if doc.Find(`form[action$="/delete"] button[data-tone="danger"]`).Length() != 1 {
+		t.Error("framework deletion must retain its destructive affordance")
+	}
+}
+
+func TestComplianceForms_NativeFieldsAndFlash(t *testing.T) {
+	id := uuid.New()
+	doc := renderToDoc(t, FrameworkForm(nil, "Saved", "success", nil))
+	if doc.Find(`form[action="/compliance/frameworks"] input[name="_csrf"]`).Length() != 1 ||
+		doc.Find(`input[name="name"][required]`).Length() != 1 ||
+		doc.Find(`select[name="framework_type"] option[value="regulation"][selected]`).Length() != 1 {
+		t.Error("framework form must retain CSRF, required name, and default framework type")
+	}
+	if doc.Find(`.ui2-notice[role="status"][data-tone="success"]`).Text() != "Saved" {
+		t.Error("success flash must retain its status announcement")
+	}
+	doc = renderToDoc(t, RequirementForm(id.String(), nil, "Invalid", "error", nil))
+	if doc.Find(`form[action="/compliance/frameworks/`+id.String()+`/requirements"] input[name="_csrf"]`).Length() != 1 ||
+		doc.Find(`input[name="ref"][required]`).Length() != 1 ||
+		doc.Find(`input[name="title"][required]`).Length() != 1 {
+		t.Error("requirement form must retain action, CSRF, and required fields")
+	}
+	if doc.Find(`.ui2-notice[role="alert"][data-tone="danger"]`).Text() != "Invalid" {
+		t.Error("error flash must retain its alert announcement")
+	}
+}
+
+func TestRequirementActions_DestructiveButtons(t *testing.T) {
+	id := uuid.New()
+	doc := renderToDoc(t, RequirementDetail(RequirementDetailVM{
+		Requirement: db.Requirement{ID: id, FrameworkID: uuid.New()}, CanEdit: true,
+	}))
+	if doc.Find(`form[action$="/delete"] button[data-tone="danger"]`).Length() != 1 {
+		t.Error("requirement deletion must retain its destructive affordance")
+	}
+	doc = renderToDoc(t, RequirementEditPage(RequirementEditVM{
+		Requirement:    db.Requirement{ID: id, FrameworkID: uuid.New()},
+		LinkedMeasures: []db.ListMeasuresForRequirementRow{{ID: uuid.New(), Name: "Review"}},
+	}, "", ""))
+	if doc.Find(`form[action$="/delete"] button[data-tone="danger"]`).Length() != 1 {
+		t.Error("unlinking a measure must retain its destructive affordance")
+	}
+}
+
+func TestMeasureSearchFragment_NoPageWrapper(t *testing.T) {
+	doc := renderToDoc(t, RequirementMeasureSearchResults(uuid.NewString(), nil, "search"))
+	if doc.Find(".ui2").Length() != 0 {
+		t.Error("htmx search fragment must not include a page wrapper")
 	}
 }
 
@@ -200,9 +294,8 @@ func TestFrameworkDetail_ShowsQuickLinksToSections(t *testing.T) {
 //   - hx-get must be present and non-empty. Passing the URL as templ.SafeURL inside
 //     an Attrs map silently drops it (templ.RenderAttributes type-switches on the
 //     exact dynamic type and has no SafeURL case), so htmx never fired a request.
-//   - the live-search "text-[13px]" class must survive. It used to be passed via
-//     Attrs["class"], producing a duplicate class attribute the HTML parser discards;
-//     it now goes through InputProps.Class so it merges into the single class attr.
+//   - the live-search ops-input class must survive in a single class attribute.
+//     Passing a second class via Attrs["class"] previously lost the intended class.
 func TestRequirementLinksSection_MeasureSearchHasHxGet(t *testing.T) {
 	id := uuid.New()
 	doc := renderToDoc(t, requirementLinksSection(RequirementEditVM{Requirement: db.Requirement{ID: id}}))
@@ -218,7 +311,16 @@ func TestRequirementLinksSection_MeasureSearchHasHxGet(t *testing.T) {
 	if !strings.Contains(hxGet, "/compliance/requirements/"+id.String()+"/measures/search") {
 		t.Errorf("unexpected hx-get target: %q", hxGet)
 	}
-	if class, _ := input.Attr("class"); !strings.Contains(class, "text-[13px]") {
-		t.Errorf("text-[13px] class dropped (duplicate-class regression): %q", class)
+	if !input.HasClass("ops-input") {
+		t.Errorf("ops-input class dropped: %q", input.AttrOr("class", ""))
+	}
+	classAttrs := 0
+	for _, attr := range input.Get(0).Attr {
+		if attr.Key == "class" {
+			classAttrs++
+		}
+	}
+	if classAttrs != 1 {
+		t.Errorf("expected one class attribute (duplicate-class regression), got %d", classAttrs)
 	}
 }

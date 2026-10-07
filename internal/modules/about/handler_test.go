@@ -3,6 +3,7 @@ package about
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/3lbits/vigil/internal/middleware"
@@ -21,6 +22,9 @@ func TestShow_OK(t *testing.T) {
 
 	if w.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d", w.Code)
+	}
+	if !strings.Contains(w.Body.String(), `class="ui2 ui2-about"`) || !strings.Contains(w.Body.String(), `class="ui2-panel"`) {
+		t.Error("about page should compose the UI2 page and panels")
 	}
 }
 

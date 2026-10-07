@@ -1,0 +1,382 @@
+/* Page-specific presentation; UI2 supplies the palette, shell, panels, and controls. */
+.ui2-admin {
+  --admin-muted: var(--ui2-muted);
+  --admin-line: var(--ui2-border);
+  --admin-surface: var(--ui2-card);
+}
+.ui2-admin :is(input, select, textarea) { box-sizing: border-box; }
+.ui2-admin .admin-hidden { display: none; }
+.ui2-admin .admin-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.ui2-admin > [role="tablist"] {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--admin-line);
+  margin: -.25rem 0 .5rem;
+}
+.ui2-admin [role="tab"] {
+  display: inline-block;
+  padding: .5rem 1rem;
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  color: var(--admin-muted);
+  font-size: .875rem;
+  text-decoration: none;
+}
+.ui2-admin [role="tab"]:hover { color: var(--ui2-fg); }
+.ui2-admin [role="tab"][aria-selected="true"] {
+  border-bottom-color: var(--ui2-link);
+  color: var(--ui2-link);
+  font-weight: 600;
+}
+.ui2-admin [role="tabpanel"] { min-width: 0; }
+.ui2-admin :is(input, select, textarea, button, a):focus-visible {
+  outline: 2px solid var(--ui2-link);
+  outline-offset: 2px;
+}
+.ui2-admin [role="tabpanel"] > section,
+.ui2-admin [role="tabpanel"] > div > section,
+.ui2-admin > section {
+  padding: 1rem;
+  border: 1px solid var(--admin-line);
+  border-radius: .75rem;
+  background: var(--admin-surface);
+}
+.ui2-admin [role="tabpanel"] h2,
+.ui2-admin > section h2 {
+  margin: 0 0 .75rem;
+  color: var(--admin-muted);
+  font-size: .8rem;
+  font-weight: 600;
+}
+.ui2-admin [role="tabpanel"] :is(label, legend) { color: var(--admin-muted); }
+.ui2-admin [role="tabpanel"] form label:not(.admin-switch) {
+  display: block;
+  margin-bottom: .25rem;
+  font-size: .8rem;
+  font-weight: 500;
+}
+.ui2-admin [role="tabpanel"] :is(input:not([type="hidden"], [type="checkbox"]), select, textarea),
+.ui2-admin > section :is(input, select, textarea) {
+  max-width: 100%;
+  border-color: var(--ui2-input);
+  background: var(--admin-surface);
+  color: var(--ui2-fg);
+  font-size: .8125rem;
+}
+.ui2-admin [role="tabpanel"] form[action="/admin/users"] {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+.ui2-admin form[action="/admin/users"] > div { display: grid; gap: .25rem; }
+.ui2-admin #add-user-name { width: 10rem; }
+.ui2-admin #add-user-email { width: 14rem; }
+.ui2-admin #tab-panel-users > section > p { margin-top: .5rem; font-size: .75rem; }
+.ui2-admin #tab-panel-users > section { margin-bottom: 1rem; }
+.ui2-admin [role="tabpanel"] > p:only-child,
+.ui2-admin #tab-panel-orgs > p,
+.ui2-admin > p:not([role]) {
+  padding: 2rem;
+  border: 1px dashed var(--admin-line);
+  border-radius: .75rem;
+  text-align: center;
+  color: var(--admin-muted);
+}
+.ui2-admin .ui2-table {
+  width: 100%;
+  background: var(--admin-surface);
+}
+.ui2-admin .ui2-table table { width: 100%; min-width: 42rem; font-size: .8125rem; }
+.ui2-admin .ui2-table thead {
+  background: var(--ui2-accent);
+  color: var(--admin-muted);
+  font-size: .75rem;
+}
+.ui2-admin .ui2-table :is(th, td) {
+  padding: .625rem 1rem;
+  border-bottom: 1px solid var(--admin-line);
+  vertical-align: middle;
+}
+.ui2-admin .ui2-table tbody tr:last-child > * { border-bottom: 0; }
+.ui2-admin .ui2-table tbody th { font-weight: 500; }
+.ui2-admin .ui2-table td > form,
+.ui2-admin .ui2-table td > div,
+.ui2-admin .ui2-table td > div > form {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+.ui2-admin .ui2-table td form label { margin: 0; }
+.ui2-admin .ui2-table :is(select, button) { font-size: .75rem; }
+.ui2-admin .ui2-table td button:not([data-tone]) {
+  padding: .25rem .625rem;
+  border: 1px solid var(--admin-line);
+  border-radius: .375rem;
+  background: var(--admin-surface);
+  color: var(--ui2-fg);
+}
+.ui2-admin .ui2-table td button:not([data-tone]):hover { background: var(--ui2-accent); }
+.ui2-admin button[data-tone="danger"] {
+  padding: .25rem .625rem;
+  border: 1px solid var(--ui2-danger-fg);
+  border-radius: .375rem;
+  background: var(--ui2-danger-bg);
+  color: var(--ui2-danger-fg);
+  cursor: pointer;
+}
+.ui2-admin button[data-tone="danger"]:hover { filter: brightness(.92); }
+.ui2-admin #tab-panel-audit > nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+.ui2-admin #tab-panel-audit > nav :is(span, a) { font-size: .75rem; }
+.ui2-admin #tab-panel-audit > nav span { color: var(--admin-muted); }
+.ui2-admin #tab-panel-audit > nav a {
+  padding: .25rem .75rem;
+  border: 1px solid var(--admin-line);
+  border-radius: .375rem;
+  color: var(--ui2-fg);
+  text-decoration: none;
+}
+.ui2-admin #tab-panel-audit > nav a:hover { background: var(--ui2-accent); }
+.ui2-admin #tab-panel-audit > nav a.admin-audit-selected {
+  border-color: transparent;
+  background: var(--ui2-fg);
+  color: var(--admin-surface);
+}
+.ui2-admin #tab-panel-audit > nav a[href$="delete"].admin-audit-selected {
+  background: var(--ui2-danger-fg);
+  color: var(--ui2-danger-bg);
+}
+.ui2-admin #tab-panel-audit > nav a[href$="update"].admin-audit-selected {
+  background: var(--ui2-warning-fg);
+  color: var(--ui2-warning-bg);
+}
+.ui2-admin #tab-panel-audit tbody td:first-child,
+.ui2-admin #tab-panel-audit tbody td:last-child {
+  font-family: ui-monospace, monospace;
+  font-size: .75rem;
+  color: var(--admin-muted);
+}
+.ui2-admin #tab-panel-audit tbody td:first-child { white-space: nowrap; }
+.ui2-admin #tab-panel-audit tbody td:last-child {
+  max-width: 17.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ui2-admin #tab-panel-status > div { display: grid; gap: 1.5rem; }
+.ui2-admin #tab-panel-status > div > div {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.ui2-admin #tab-panel-status dl {
+  display: block;
+  padding: 1rem;
+  border: 1px solid var(--admin-line);
+  border-radius: .75rem;
+  background: var(--admin-surface);
+}
+.ui2-admin #tab-panel-status dl dt { font-size: .75rem; }
+.ui2-admin #tab-panel-status > div > div dd {
+  overflow-wrap: anywhere;
+  font: 500 .875rem ui-monospace, monospace;
+}
+.ui2-admin #tab-panel-status > div > section { padding: 0; overflow: hidden; }
+.ui2-admin #tab-panel-status > div > section h2 {
+  margin: 0;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid var(--admin-line);
+}
+.ui2-admin #tab-panel-status > div > section dl { padding: 0; border: 0; }
+.ui2-admin #tab-panel-status > div > section dl > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid var(--admin-line);
+}
+.ui2-admin #tab-panel-status > div > section dl > div:last-child { border: 0; }
+.ui2-admin #tab-panel-status dd .ui2-badge { display: inline-flex; align-items: center; gap: .375rem; }
+.ui2-admin #tab-panel-status dd .ui2-badge span:first-child {
+  width: .375rem;
+  height: .375rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+.ui2-admin #tab-panel-orgs > div:first-child,
+.ui2-admin > div:not([role]):first-of-type { margin-bottom: 1rem; }
+.ui2-admin #tab-panel-orgs > section,
+.ui2-admin > section:first-of-type { max-width: 32rem; margin-bottom: 1.5rem; }
+.ui2-admin #tab-panel-orgs form,
+.ui2-admin > section form,
+.ui2-admin #tab-panel-risk form { display: grid; gap: .75rem; }
+.ui2-admin #tab-panel-orgs form :is(input, select),
+.ui2-admin > section form :is(input, select, textarea),
+.ui2-admin #tab-panel-risk form :is(input, textarea) { width: 100%; }
+.ui2-admin #tab-panel-orgs form > div:last-child,
+.ui2-admin > section form > div:last-child,
+.ui2-admin #tab-panel-risk form > div:last-child,
+.ui2-admin #tab-panel-modules form > div:last-child { display: flex; justify-content: end; }
+.ui2-admin #tab-panel-orgs > ul,
+.ui2-admin > ul {
+  max-width: 32rem;
+  overflow: hidden;
+  border: 1px solid var(--admin-line);
+  border-radius: .75rem;
+}
+.ui2-admin #tab-panel-orgs ul,
+.ui2-admin > ul,
+.ui2-admin > ul ul { padding: 0; list-style: none; }
+.ui2-admin .admin-org-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .625rem 1rem;
+  border-bottom: 1px solid var(--admin-line);
+  font-size: .8125rem;
+}
+.ui2-admin .admin-org-child { padding-left: 2rem; background: var(--ui2-neutral-bg); }
+.ui2-admin .admin-org-grandchild { padding-left: 3.5rem; background: var(--ui2-accent); }
+.ui2-admin .admin-org-row > span { display: inline-flex; align-items: center; gap: .25rem; min-width: 0; overflow-wrap: anywhere; }
+.ui2-admin .admin-org-row code {
+  padding: .125rem .375rem;
+  border-radius: .25rem;
+  background: var(--ui2-accent);
+  color: var(--admin-muted);
+  font-size: .7rem;
+}
+.ui2-admin .admin-org-row button { min-width: 1.5rem; min-height: 1.5rem; }
+.ui2-admin #tab-panel-risk > div { max-width: 42rem; }
+.ui2-admin #tab-panel-risk form { gap: 1.5rem; }
+.ui2-admin #tab-panel-risk fieldset { min-width: 0; }
+.ui2-admin #tab-panel-risk legend { margin-bottom: .5rem; font-size: .8125rem; font-weight: 600; }
+.ui2-admin #tab-panel-risk fieldset > div:first-of-type:not(:last-child),
+.ui2-admin #tab-panel-risk fieldset:first-of-type > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+}
+.ui2-admin #tab-panel-risk fieldset > p,
+.ui2-admin #tab-panel-risk fieldset > div > div > p { margin: .25rem 0 .5rem; font-size: .75rem; }
+.ui2-admin #tab-panel-risk fieldset:nth-of-type(n+2) > div {
+  overflow: auto;
+  border: 1px solid var(--admin-line);
+  border-radius: .5rem;
+}
+.ui2-admin #tab-panel-risk fieldset:nth-of-type(n+2) > div > div:first-child,
+.ui2-admin .admin-scale-row {
+  display: grid;
+  grid-template-columns: 2.5rem 8.125rem minmax(12rem, 1fr);
+  gap: .75rem;
+  min-width: 25rem;
+  padding: .5rem .75rem;
+  align-items: start;
+}
+.ui2-admin #tab-panel-risk fieldset:nth-of-type(n+2) > div > div:first-child {
+  background: var(--ui2-accent);
+  color: var(--admin-muted);
+  font-size: .6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.ui2-admin .admin-scale-row { border-top: 1px solid var(--admin-line); }
+.ui2-admin .admin-scale-even { background: var(--ui2-neutral-bg); }
+.ui2-admin .admin-scale-row > span { padding-top: .375rem; font: 600 .75rem ui-monospace, monospace; }
+.ui2-admin .admin-scale-row :is(input, textarea) { width: 100%; font-size: .75rem; }
+.ui2-admin .admin-scale-row > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .5rem;
+}
+.ui2-admin .admin-scale-row > div label { font-size: .6875rem; }
+.ui2-admin #tab-panel-modules > div { max-width: 32rem; }
+.ui2-admin #tab-panel-modules form { display: grid; gap: .75rem; }
+.ui2-admin #tab-panel-modules fieldset {
+  overflow: hidden;
+  border: 1px solid var(--admin-line);
+  border-radius: .75rem;
+}
+.ui2-admin #tab-panel-modules fieldset > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid var(--admin-line);
+}
+.ui2-admin #tab-panel-modules fieldset > div:last-child { border: 0; }
+.ui2-admin #tab-panel-modules fieldset > div > div > p:first-child {
+  color: var(--ui2-fg);
+  font-size: .8125rem;
+  font-weight: 600;
+}
+.ui2-admin #tab-panel-modules fieldset > div > div > p:last-child { font-size: .75rem; }
+.ui2-admin .admin-switch { position: relative; display: inline-flex; flex: none; align-items: center; cursor: pointer; }
+.ui2-admin .admin-switch-input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.ui2-admin .admin-switch-track {
+  width: 2.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  background: var(--ui2-input);
+  pointer-events: none;
+}
+.ui2-admin .admin-switch-track::after {
+  content: "";
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  margin: .125rem;
+  border-radius: 50%;
+  background: var(--admin-surface);
+  box-shadow: 0 1px 2px #0004;
+  transition: transform .15s ease;
+}
+.ui2-admin .admin-switch-input:checked + .admin-switch-track { background: var(--ui2-link); }
+.ui2-admin .admin-switch-input:checked + .admin-switch-track::after { transform: translateX(1rem); }
+.ui2-admin .admin-switch-input:focus-visible + .admin-switch-track {
+  outline: 2px solid var(--ui2-link);
+  outline-offset: 2px;
+}
+[dir="rtl"] .ui2-admin .admin-switch-input:checked + .admin-switch-track::after { transform: translateX(-1rem); }
+.ui2-me .ui2-panel li a { font-weight: 500; }
+.ui2-me .ui2-panel li a:hover { text-decoration: underline; }
+.ui2-login > .skip-link {
+  background: var(--ui2-card);
+  color: var(--ui2-fg);
+}
+.ui2-login > .skip-link:focus-visible { outline-color: var(--ui2-link); }
+.ui2-login .ui2-login-provider:focus-visible { outline: 3px solid var(--ui2-link); outline-offset: 2px; }
+@media (max-width: 40rem) {
+  .ui2-admin #tab-panel-status > div > div { grid-template-columns: 1fr; }
+  .ui2-admin #tab-panel-risk fieldset:first-of-type > div { grid-template-columns: 1fr; }
+  .ui2-admin .admin-scale-row > div { grid-template-columns: 1fr; }
+  .ui2-admin [role="tabpanel"] > section { padding: .75rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ui2-admin .admin-switch-track::after { transition: none; }
+}

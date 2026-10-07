@@ -17,7 +17,7 @@ import (
 	"github.com/3lbits/vigil/internal/httputil"
 	"github.com/3lbits/vigil/internal/middleware"
 	admintemplates "github.com/3lbits/vigil/internal/modules/admin/templates"
-	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 type dbPinger interface {
@@ -103,7 +103,7 @@ func (h *Handler) AdminPage(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 	dbOK := h.pool.Ping(ctx) == nil
 
-	httputil.Render(w, r, layout.Layout("Admin", "System administration", "admin", user,
+	httputil.Render(w, r, ui2.Layout("Admin", "System administration", "admin", user,
 		admintemplates.AdminPage(users, sessions, auditLog, h.version, h.startTime, dbOK, flash, flashType, activeTab, auditFilter, orgs, gs, scaleLabels, appSettings),
 	))
 }

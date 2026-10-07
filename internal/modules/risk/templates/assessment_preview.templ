@@ -28,31 +28,45 @@ templ previewScore(l, c sql.NullInt32, lowMax, highMin int) {
 templ previewStatus(status string) {
 	switch status {
 		case "active":
-			@ui2.Badge("success") { { locale.T(ctx, "assessment_status_active") } }
+			@ui2.Badge("success") {
+				{ locale.T(ctx, "assessment_status_active") }
+			}
 		case "archived":
-			@ui2.Badge("") { { locale.T(ctx, "assessment_status_archived") } }
+			@ui2.Badge("") {
+				{ locale.T(ctx, "assessment_status_archived") }
+			}
 		case "pending_acceptance":
-			@ui2.Badge("warning") { { locale.T(ctx, "assessment_status_pending_acceptance") } }
+			@ui2.Badge("warning") {
+				{ locale.T(ctx, "assessment_status_pending_acceptance") }
+			}
 		default:
-			@ui2.Badge("warning") { { locale.T(ctx, "assessment_status_draft") } }
+			@ui2.Badge("warning") {
+				{ locale.T(ctx, "assessment_status_draft") }
+			}
 	}
 }
 
 templ previewDecision(decision string) {
 	switch decision {
 		case "accept":
-			@ui2.Badge("success") { { locale.T(ctx, "decision_accept") } }
+			@ui2.Badge("success") {
+				{ locale.T(ctx, "decision_accept") }
+			}
 		case "treat":
-			@ui2.Badge("info") { { locale.T(ctx, "decision_treat") } }
+			@ui2.Badge("info") {
+				{ locale.T(ctx, "decision_treat") }
+			}
 		case "document":
-			@ui2.Badge("") { { locale.T(ctx, "decision_document") } }
+			@ui2.Badge("") {
+				{ locale.T(ctx, "decision_document") }
+			}
 		default:
 			<span>—</span>
 	}
 }
 
 templ AssessmentDetailPreview(vm AssessmentDetailVM) {
-	@ui2.Page("") {
+	@ui2.Page("ui2-risk") {
 		<header>
 			<div>
 				<h2>{ vm.Assessment.Name }</h2>
@@ -62,7 +76,7 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 				}
 			</div>
 			<nav aria-label={ locale.T(ctx, "nav_risk_assessments") }>
-				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String()) }>Original view</a>
+				<a href="/risks">{ locale.T(ctx, "nav_risk_assessments") }</a>
 				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/review") }>{ locale.T(ctx, "action_review") }</a>
 				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") }>{ locale.T(ctx, "action_continue_wizard") }</a>
 			</nav>
@@ -88,7 +102,7 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 							<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 							<label for="ui2-decline-note">Reason for declining (optional)</label>
 							<textarea id="ui2-decline-note" name="note" rows="3"></textarea>
-							<button type="submit">{ locale.T(ctx, "action_return_to_draft") }</button>
+							<button type="submit" data-tone="danger">{ locale.T(ctx, "action_return_to_draft") }</button>
 						</form>
 					</details>
 				</div>
@@ -110,11 +124,13 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 		<details>
 			<summary>{ locale.T(ctx, "label_recent_changes_toggle") }</summary>
 			@ui2.Table(locale.T(ctx, "label_recent_changes")) {
-				<thead><tr>
-					<th scope="col">{ locale.T(ctx, "label_event") }</th>
-					<th scope="col">{ locale.T(ctx, "label_by") }</th>
-					<th scope="col">{ locale.T(ctx, "label_when") }</th>
-				</tr></thead>
+				<thead>
+					<tr>
+						<th scope="col">{ locale.T(ctx, "label_event") }</th>
+						<th scope="col">{ locale.T(ctx, "label_by") }</th>
+						<th scope="col">{ locale.T(ctx, "label_when") }</th>
+					</tr>
+				</thead>
 				<tbody>
 					if len(vm.AuditLog) == 0 {
 						<tr><td colspan="3">{ locale.T(ctx, "label_no_changes_yet") }</td></tr>
@@ -145,32 +161,46 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 			}
 		}
 		<p class="ui2-legend">
-			@ui2.Badge("danger") { { fmt.Sprintf("%s (≥%d)", locale.T(ctx, "risk_level_high"), vm.HighMin) } }
-			@ui2.Badge("warning") { { fmt.Sprintf("%s (%d–%d)", locale.T(ctx, "risk_level_medium"), vm.LowMax+1, vm.HighMin-1) } }
-			@ui2.Badge("success") { { fmt.Sprintf("%s (≤%d)", locale.T(ctx, "risk_level_low"), vm.LowMax) } }
+			@ui2.Badge("danger") {
+				{ fmt.Sprintf("%s (≥%d)", locale.T(ctx, "risk_level_high"), vm.HighMin) }
+			}
+			@ui2.Badge("warning") {
+				{ fmt.Sprintf("%s (%d–%d)", locale.T(ctx, "risk_level_medium"), vm.LowMax+1, vm.HighMin-1) }
+			}
+			@ui2.Badge("success") {
+				{ fmt.Sprintf("%s (≤%d)", locale.T(ctx, "risk_level_low"), vm.LowMax) }
+			}
 		</p>
 		@ui2.Panel() {
 			<h3>{ locale.T(ctx, "label_assessment") }</h3>
 			<dl>
 				if vm.OwnerName != "" {
-					<dt>{ locale.T(ctx, "label_risk_owner") }</dt><dd>{ vm.OwnerName }</dd>
+					<dt>{ locale.T(ctx, "label_risk_owner") }</dt>
+					<dd>{ vm.OwnerName }</dd>
 				}
 				if vm.OrgName != "" {
-					<dt>{ locale.T(ctx, "label_organisation") }</dt><dd>{ vm.OrgName }</dd>
+					<dt>{ locale.T(ctx, "label_organisation") }</dt>
+					<dd>{ vm.OrgName }</dd>
 				}
 				if vm.Assessment.Scope != "" {
-					<dt>{ locale.T(ctx, "label_scope") }</dt><dd>{ vm.Assessment.Scope }</dd>
+					<dt>{ locale.T(ctx, "label_scope") }</dt>
+					<dd>{ vm.Assessment.Scope }</dd>
 				}
 				if vm.Assessment.SecurityObjectives != "" {
-					<dt>{ locale.T(ctx, "label_objectives") }</dt><dd>{ vm.Assessment.SecurityObjectives }</dd>
+					<dt>{ locale.T(ctx, "label_objectives") }</dt>
+					<dd>{ vm.Assessment.SecurityObjectives }</dd>
 				}
 				if len(vm.Participants) > 0 {
-					<dt>{ locale.T(ctx, "label_participants") }</dt><dd>{ participantNames(vm.Participants) }</dd>
+					<dt>{ locale.T(ctx, "label_participants") }</dt>
+					<dd>{ participantNames(vm.Participants) }</dd>
 				}
-				<dt>{ locale.T(ctx, "label_created") }</dt><dd><time datetime={ vm.Assessment.CreatedAt.Format("2006-01-02") }>{ vm.Assessment.CreatedAt.Format("2 Jan 2006") }</time></dd>
-				<dt>{ locale.T(ctx, "label_updated") }</dt><dd><time datetime={ vm.Assessment.UpdatedAt.Format("2006-01-02") }>{ vm.Assessment.UpdatedAt.Format("2 Jan 2006") }</time></dd>
+				<dt>{ locale.T(ctx, "label_created") }</dt>
+				<dd><time datetime={ vm.Assessment.CreatedAt.Format("2006-01-02") }>{ vm.Assessment.CreatedAt.Format("2 Jan 2006") }</time></dd>
+				<dt>{ locale.T(ctx, "label_updated") }</dt>
+				<dd><time datetime={ vm.Assessment.UpdatedAt.Format("2006-01-02") }>{ vm.Assessment.UpdatedAt.Format("2 Jan 2006") }</time></dd>
 				if vm.Assessment.LastReviewedAt.Valid {
-					<dt>{ locale.T(ctx, "label_last_reviewed") }</dt><dd><time datetime={ vm.Assessment.LastReviewedAt.Time.Format("2006-01-02") }>{ vm.Assessment.LastReviewedAt.Time.Format("2 Jan 2006") }</time></dd>
+					<dt>{ locale.T(ctx, "label_last_reviewed") }</dt>
+					<dd><time datetime={ vm.Assessment.LastReviewedAt.Time.Format("2006-01-02") }>{ vm.Assessment.LastReviewedAt.Time.Format("2 Jan 2006") }</time></dd>
 				}
 			</dl>
 		}
@@ -192,12 +222,14 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 				<p>{ locale.T(ctx, "risk_none_identified") } <a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") }>{ locale.T(ctx, "action_goto_identification") }</a></p>
 			} else {
 				@ui2.Table(locale.T(ctx, "label_risks")) {
-					<thead><tr>
-						<th scope="col">{ locale.T(ctx, "label_risk") }</th>
-						<th scope="col">{ locale.T(ctx, "label_current") }</th>
-						<th scope="col">{ locale.T(ctx, "label_target") }</th>
-						<th scope="col">{ locale.T(ctx, "label_decision") }</th>
-					</tr></thead>
+					<thead>
+						<tr>
+							<th scope="col">{ locale.T(ctx, "label_risk") }</th>
+							<th scope="col">{ locale.T(ctx, "label_current") }</th>
+							<th scope="col">{ locale.T(ctx, "label_target") }</th>
+							<th scope="col">{ locale.T(ctx, "label_decision") }</th>
+						</tr>
+					</thead>
 					<tbody>
 						for _, risk := range vm.Risks {
 							<tr>

@@ -5,7 +5,7 @@ import (
 
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/locale"
-	"github.com/3lbits/vigil/internal/ui"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 templ WizardDecision(vm DecisionVM) {
@@ -13,188 +13,151 @@ templ WizardDecision(vm DecisionVM) {
 	if vm.IsReview {
 		@reviewBanner(vm.Assessment)
 	}
-
-	<div class="max-w-6xl" x-data={ fmt.Sprintf("{ decision: '%s' }", vm.Risk.RiskDecision) }>
-		<div class="mb-4 border border-blue-200 bg-blue-50 rounded-lg px-4 py-3">
-			<div class="text-[13px] font-semibold text-blue-800 mb-0.5">{ locale.T(ctx, "label_risk_decision_treatment") }</div>
-			<p class="text-[12px] text-blue-700">{ locale.T(ctx, "label_risk") } { fmt.Sprint(vm.Position) } { locale.T(ctx, "text_of") } { fmt.Sprint(vm.Total) }, { locale.T(ctx, "text_ordered_by_current_criticality") }</p>
+	<div class="risk-wide" x-data={ fmt.Sprintf("{ decision: '%s' }", vm.Risk.RiskDecision) }>
+		<section class="ui2-panel">
+			<h2 class="risk-info-title" style="font-size: 13px">{ locale.T(ctx, "label_risk_decision_treatment") }</h2>
+			<p class="risk-info-description">{ locale.T(ctx, "label_risk") } { fmt.Sprint(vm.Position) } { locale.T(ctx, "text_of") } { fmt.Sprint(vm.Total) }, { locale.T(ctx, "text_ordered_by_current_criticality") }</p>
 			if vm.AcceptanceCriteria != "" {
-				<div class="mt-2 text-[12px] text-blue-800 border-t border-blue-200 pt-2">
-					<span class="font-medium">{ locale.T(ctx, "label_acceptance_criteria") }:</span> { vm.AcceptanceCriteria }
+				<div class="risk-info-criteria">
+					<span class="risk-emphasis">{ locale.T(ctx, "label_acceptance_criteria") }:</span> { vm.AcceptanceCriteria }
 				</div>
 			}
-		</div>
-
-		<div class="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-4">
-			<div class="border border-sand-200 rounded-[10px] p-3 h-fit lg:sticky lg:top-3">
-				<div class="text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-2">{ locale.T(ctx, "label_risks_in_treatment_phase") }</div>
-				<div class="max-h-[60vh] overflow-auto divide-y divide-sand-100">
+		</section>
+		<div class="risk-decision-layout">
+			<aside class="ui2-panel risk-decision-sidebar" aria-label={ locale.T(ctx, "label_risks_in_treatment_phase") }>
+				<h2 class="risk-section-heading" style="font-size: 12px">{ locale.T(ctx, "label_risks_in_treatment_phase") }</h2>
+				<div class="risk-decision-list">
 					for _, risk := range vm.Risks {
 						<a
 							href={ templ.SafeURL(decisionGetPath(vm.Assessment.ID.String(), risk.ID.String(), vm.IsReview)) }
 							class={
-								"block p-2 transition-colors",
-								templ.KV("bg-blue-50", risk.ID == vm.Risk.ID),
-								templ.KV("hover:bg-sand-50", risk.ID != vm.Risk.ID),
+								"risk-decision-item",
+								templ.KV("risk-decision-selected", risk.ID == vm.Risk.ID),
+								templ.KV("risk-decision-available", risk.ID != vm.Risk.ID),
 							}
 						>
-							<div class="flex items-center gap-2 justify-between">
-								<div class="min-w-0">
-									<div class="text-[11px] text-sand-700">
+							<div class="risk-split">
+								<div class="risk-truncation-container">
+									<div class="risk-caption">
 										if risk.RefNum.Valid {
 											{ riskRef(risk.RefNum) }
 										} else {
 											—
 										}
 									</div>
-									<div class="text-[12px] font-medium text-sand-900 truncate">{ risk.Name }</div>
+									<span class="risk-result-name">{ risk.Name }</span>
 								</div>
 								if risk.LikelihoodCurrent.Valid && risk.ConsequenceCurrent.Valid {
-									<div class={ "w-10 h-7 rounded text-[11px] font-bold text-white flex items-center justify-center", bgClassT(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, vm.LowMax, vm.HighMin) }>
+									<div class={ "risk-score-tile", bgClassT(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, vm.LowMax, vm.HighMin) }>
 										{ fmt.Sprint(int(risk.LikelihoodCurrent.Int32) * int(risk.ConsequenceCurrent.Int32)) }
 									</div>
 								}
 							</div>
-							<div class="mt-1">
+							<div class="risk-following">
 								if risk.RiskDecision != "" {
-									@ui.Badge(ui.BadgeProps{
-										Variant: decisionListBadgeVariant(risk.RiskDecision),
-										Class:   decisionListBadgeClass(risk.RiskDecision),
-									}) { { locale.T(ctx, decisionListLabelKey(risk.RiskDecision)) } }
+									@ui2.Badge(decisionListBadgeVariant(risk.RiskDecision)) {
+										{ locale.T(ctx, decisionListLabelKey(risk.RiskDecision)) }
+									}
 								} else {
-									<span class="text-[10px] text-sand-600">{ locale.T(ctx, "label_not_decided") }</span>
+									<span class="risk-caption">{ locale.T(ctx, "label_not_decided") }</span>
 								}
 							</div>
 						</a>
 					}
 				</div>
-			</div>
-			<div class="space-y-4">
-				<div class="border border-sand-200 rounded-[10px] p-4">
-					<div class="text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-2">{ locale.T(ctx, "label_identify_details") }</div>
-					<div class="text-[14px] font-semibold text-sand-900 mb-1">{ vm.Risk.Name }</div>
+			</aside>
+			<div>
+				<section class="ui2-panel">
+					<h2 class="risk-section-heading" style="font-size: 12px">{ locale.T(ctx, "label_identify_details") }</h2>
+					<h3 class="risk-result-name" style="font-size: 14px; margin-bottom: 0.25rem">{ vm.Risk.Name }</h3>
 					if vm.OwnerName != "" {
-						<div class="text-[12px] text-sand-700 mb-1">{ locale.T(ctx, "label_risk_owner") }: { vm.OwnerName } ({ locale.T(ctx, "text_inherited_from_assessment") })</div>
+						<p class="risk-description">{ locale.T(ctx, "label_risk_owner") }: { vm.OwnerName } ({ locale.T(ctx, "text_inherited_from_assessment") })</p>
 					}
 					if vm.Risk.Description != "" {
-						<p class="text-[12px] text-sand-700 whitespace-pre-wrap">{ vm.Risk.Description }</p>
+						<p class="risk-preformatted">{ vm.Risk.Description }</p>
 					}
-					<div class="mt-3">
-						<div class="text-[11px] font-semibold text-sand-700 uppercase tracking-wide mb-1">{ locale.T(ctx, "label_linked_assets") }</div>
+					<div class="risk-following-wide">
+						<h3 class="risk-subheading" style="font-size: 11px; margin-bottom: 0.25rem">{ locale.T(ctx, "label_linked_assets") }</h3>
 						if len(vm.Assets) == 0 {
-							<div class="text-[12px] text-sand-700">{ locale.T(ctx, "empty_no_assets_linked") }</div>
+							<p class="risk-description">{ locale.T(ctx, "empty_no_assets_linked") }</p>
 						} else {
-							<div class="flex flex-wrap gap-1.5">
+							<div class="risk-chip-list">
 								for _, a := range vm.Assets {
-									@ui.Badge(ui.BadgeProps{
-										Variant: "default",
-										Class:   "gap-1 px-2.5 bg-violet-50 text-violet-800 border-violet-200 dark:bg-violet-950 dark:text-violet-300 dark:border-violet-800",
-									}) { { a.Name } }
+									@ui2.Badge("") {
+										{ a.Name }
+									}
 								}
 							</div>
 						}
 					</div>
-				</div>
-
-				<div class="border border-sand-200 rounded-[10px] p-4">
-					<div class="text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-2">{ locale.T(ctx, "label_analysis_details") }</div>
+				</section>
+				<section class="ui2-panel">
+					<h2 class="risk-section-heading" style="font-size: 12px">{ locale.T(ctx, "label_analysis_details") }</h2>
 					if vm.Risk.LikelihoodCurrent.Valid && vm.Risk.ConsequenceCurrent.Valid {
-						<div class="flex items-center gap-3 mb-2">
-							<div class={ "w-14 h-10 rounded flex items-center justify-center text-[13px] font-bold text-white", bgClassT(vm.Risk.LikelihoodCurrent.Int32, vm.Risk.ConsequenceCurrent.Int32, vm.LowMax, vm.HighMin) }>
+						<div class="risk-controls">
+							<div class={ "risk-score-tile", bgClassT(vm.Risk.LikelihoodCurrent.Int32, vm.Risk.ConsequenceCurrent.Int32, vm.LowMax, vm.HighMin) }>
 								{ fmt.Sprint(int(vm.Risk.LikelihoodCurrent.Int32) * int(vm.Risk.ConsequenceCurrent.Int32)) }
 							</div>
-							<div class="text-[12px] text-sand-700">L{ fmt.Sprint(vm.Risk.LikelihoodCurrent.Int32) }×C{ fmt.Sprint(vm.Risk.ConsequenceCurrent.Int32) }</div>
+							<div class="risk-description">L{ fmt.Sprint(vm.Risk.LikelihoodCurrent.Int32) }×C{ fmt.Sprint(vm.Risk.ConsequenceCurrent.Int32) }</div>
 						</div>
 					}
 					if vm.Risk.LikelihoodReasoning != "" || vm.Risk.ConsequenceReasoning != "" {
-						<div class="text-[12px] text-sand-700 space-y-1">
+						<div class="risk-description">
 							if vm.Risk.LikelihoodReasoning != "" {
-								<div><span class="font-medium">{ locale.T(ctx, "label_likelihood") }:</span> { vm.Risk.LikelihoodReasoning }</div>
+								<p><span class="risk-emphasis">{ locale.T(ctx, "label_likelihood") }:</span> { vm.Risk.LikelihoodReasoning }</p>
 							}
 							if vm.Risk.ConsequenceReasoning != "" {
-								<div><span class="font-medium">{ locale.T(ctx, "label_consequence") }:</span> { vm.Risk.ConsequenceReasoning }</div>
+								<p><span class="risk-emphasis">{ locale.T(ctx, "label_consequence") }:</span> { vm.Risk.ConsequenceReasoning }</p>
 							}
 						</div>
 					}
-				</div>
-
-				<form id="finalise-form" method="POST" action={ templ.SafeURL(decisionPostPath(vm.Assessment.ID.String(), vm.Risk.ID.String(), vm.IsReview)) } class="border border-sand-200 rounded-[10px] p-4 mb-4">
+				</section>
+				<form id="finalise-form" method="POST" action={ templ.SafeURL(decisionPostPath(vm.Assessment.ID.String(), vm.Risk.ID.String(), vm.IsReview)) } class="risk-spaced">
 					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-					<div class="text-[12px] font-semibold uppercase tracking-wide text-sand-700 mb-2">Decision</div>
-					<div class="flex flex-wrap gap-4 mb-3">
-						for _, opt := range []struct{ v, key string }{{"accept", "decision_accept"}, {"treat", "decision_treat"}, {"document", "decision_document"}} {
-							<label class="flex items-center gap-1.5 cursor-pointer">
-								<input
-									type="radio"
-									name="decision"
-									value={ opt.v }
-									class="accent-blue-600"
-									checked?={ vm.Risk.RiskDecision == opt.v }
-									disabled?={ (opt.v == "accept" && !vm.CanAccept) || (opt.v != "accept" && vm.CanAccept) }
-									x-model="decision"
-								/>
-								<span class={ "text-[13px]", decisionOptionColor(opt.v), decisionOptionStateClass(opt.v, vm.CanAccept) }>{ locale.T(ctx, opt.key) }</span>
-							</label>
-						}
-					</div>
-					if !vm.CanAccept {
-						<div class="mb-3 text-[11px] text-amber-700">{ locale.T(ctx, "help_accept_available_only_low_current") }</div>
-					} else {
-						<div class="mb-3 text-[11px] text-amber-700">{ locale.T(ctx, "help_low_risks_only_accepted") }</div>
-					}
-					<div class="mb-3" x-show="decision === 'document'">
-						@ui.Field("decision_notes", "label_documentation_notes", false) {
-							@ui.Textarea(ui.TextareaProps{
-								ID:          "decision_notes",
-								Name:        "decision_notes",
-								Value:       vm.Risk.DecisionNotes,
-								Placeholder: locale.T(ctx, "placeholder_why_decision_appropriate"),
-								Class:       "py-2 text-[12px] resize-y min-h-0 focus:ring-1",
-								Attrs: templ.Attributes{
-									"rows": "3",
-								},
-							})
-						}
-					</div>
-					<div class="flex items-center justify-between">
-						<div class="flex items-center gap-2">
-							if vm.PrevRiskID.Valid {
-								<a href={ templ.SafeURL(decisionGetPath(vm.Assessment.ID.String(), vm.PrevRiskID.UUID.String(), vm.IsReview)) } class="text-[12px] px-3 py-1.5 rounded border border-sand-300 hover:bg-sand-50 transition-colors">← { locale.T(ctx, "action_previous_risk") }</a>
+					<fieldset class="risk-spaced">
+						<legend class="risk-section-heading">Decision</legend>
+						<div class="risk-chip-list">
+							for _, opt := range []struct{ v, key string }{{"accept", "decision_accept"}, {"treat", "decision_treat"}, {"document", "decision_document"}} {
+								<label class="risk-radio-option">
+									<input
+										type="radio"
+										name="decision"
+										value={ opt.v }
+										class="risk-radio"
+										checked?={ vm.Risk.RiskDecision == opt.v }
+										disabled?={ (opt.v == "accept" && !vm.CanAccept) || (opt.v != "accept" && vm.CanAccept) }
+										x-model="decision"
+									/>
+									<span class={ "risk-decision-option", decisionOptionColor(opt.v), decisionOptionStateClass(opt.v, vm.CanAccept) }>{ locale.T(ctx, opt.key) }</span>
+								</label>
 							}
 						</div>
-						<div class="flex items-center gap-2">
-							@ui.Button(ui.ButtonProps{
-								Variant: "secondary",
-								Size:    "sm",
-								Attrs: templ.Attributes{
-									"type":  "submit",
-									"name":  "next",
-									"value": "0",
-								},
-							}) { { locale.T(ctx, "action_save") } }
+					</fieldset>
+					if !vm.CanAccept {
+						<div class="risk-decision-hint">{ locale.T(ctx, "help_accept_available_only_low_current") }</div>
+					} else {
+						<div class="risk-decision-hint">{ locale.T(ctx, "help_low_risks_only_accepted") }</div>
+					}
+					<div class="risk-spaced" x-show="decision === 'document'">
+						<label for="decision_notes">{ locale.T(ctx, "label_documentation_notes") }</label>
+						<textarea id="decision_notes" name="decision_notes" rows="3" placeholder={ locale.T(ctx, "placeholder_why_decision_appropriate") }>{ vm.Risk.DecisionNotes }</textarea>
+					</div>
+					<div class="risk-split">
+						<div class="risk-controls">
+							if vm.PrevRiskID.Valid {
+								<a href={ templ.SafeURL(decisionGetPath(vm.Assessment.ID.String(), vm.PrevRiskID.UUID.String(), vm.IsReview)) } class="risk-secondary-button">← { locale.T(ctx, "action_previous_risk") }</a>
+							}
+						</div>
+						<div class="risk-controls">
+							<button type="submit" name="next" value="0" class="risk-secondary-button">{ locale.T(ctx, "action_save") }</button>
 							if vm.NextRiskID.Valid {
-								@ui.Button(ui.ButtonProps{
-									Size: "sm",
-									Attrs: templ.Attributes{
-										"type":  "submit",
-										"name":  "next",
-										"value": "1",
-									},
-								}) { { locale.T(ctx, "action_save_next") } → }
+								<button type="submit" name="next" value="1">{ locale.T(ctx, "action_save_next") } →</button>
 							} else {
-								@ui.Button(ui.ButtonProps{
-									Size: "sm",
-									Attrs: templ.Attributes{
-										"type":  "submit",
-										"name":  "submit_assessment",
-										"value": "1",
-									},
-								}) { { locale.T(ctx, "action_finalise_assessment") } }
+								<button type="submit" name="submit_assessment" value="1">{ locale.T(ctx, "action_finalise_assessment") }</button>
 							}
 						</div>
 					</div>
 				</form>
-
 				<div x-show="decision === 'treat'">
 					@treatmentPanel(vm.Risk, vm.Measures, vm.Activities, vm.Users, vm.Assessment.ID, vm.Overdue, vm.LowMax, vm.HighMin)
 				</div>
@@ -219,10 +182,10 @@ func decisionPostPath(assessmentID, riskID string, review bool) string {
 
 func decisionOptionStateClass(value string, canAccept bool) string {
 	if value == "accept" && !canAccept {
-		return "line-through opacity-70"
+		return "risk-decision-disabled"
 	}
 	if value != "accept" && canAccept {
-		return "line-through opacity-70"
+		return "risk-decision-disabled"
 	}
 	return ""
 }
@@ -250,16 +213,5 @@ func decisionListBadgeVariant(decision string) string {
 		return "default"
 	default:
 		return "default"
-	}
-}
-
-func decisionListBadgeClass(decision string) string {
-	switch decision {
-	case "document":
-		return "text-[10px] font-semibold px-1.5 rounded bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800"
-	case "accept", "treat":
-		return "text-[10px] font-semibold px-1.5 rounded"
-	default:
-		return "text-[10px] font-semibold px-1.5 rounded"
 	}
 }

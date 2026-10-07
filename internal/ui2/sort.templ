@@ -1,0 +1,40 @@
+package ui2
+
+import "fmt"
+
+type SortState struct {
+	Col string
+	Dir string
+}
+
+func sortNextDir(state SortState, col string) string {
+	if state.Col == col && state.Dir == "asc" {
+		return "desc"
+	}
+	return "asc"
+}
+
+func sortAria(state SortState, col string) string {
+	if state.Col != col {
+		return "none"
+	}
+	if state.Dir == "desc" {
+		return "descending"
+	}
+	return "ascending"
+}
+
+templ SortTh(label, col string, state SortState, action, target, formID, class string) {
+	<th scope="col" aria-sort={ sortAria(state, col) } class={ class }>
+		<button type="button" class="ui2-sort" hx-get={ action } hx-target={ target } hx-swap="innerHTML" hx-push-url="true" hx-include={ "#" + formID } hx-vals={ fmt.Sprintf(`{"sort":"%s","dir":"%s","offset":"0"}`, col, sortNextDir(state, col)) }>
+			{ label }
+			if state.Col == col {
+				if state.Dir == "desc" {
+					<span aria-hidden="true">↓</span>
+				} else {
+					<span aria-hidden="true">↑</span>
+				}
+			}
+		</button>
+	</th>
+}

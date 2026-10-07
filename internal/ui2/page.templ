@@ -8,7 +8,7 @@ import (
 )
 
 templ Layout(title, subtitle, activePage string, user middleware.SessionUser, content templ.Component) {
-	@layout.LayoutPreview(title, subtitle, activePage, user, content)
+	@layout.Layout(title, subtitle, activePage, user, content)
 }
 
 templ Page(class string) {

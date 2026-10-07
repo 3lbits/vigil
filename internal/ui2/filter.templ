@@ -1,0 +1,74 @@
+package ui2
+
+import (
+	"context"
+	"fmt"
+	"strings"
+
+	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui"
+)
+
+type FilterBarProps struct {
+	ID     string
+	Action string
+	Target string
+}
+
+templ FilterBar(p FilterBarProps) {
+	<p class="sr-only" aria-live="polite">Results update automatically when filters change.</p>
+	<form id={ p.ID } method="GET" action={ templ.SafeURL(p.Action) } class="ui2-filter" { filterBarAttrs(p)... }>
+		{ children... }
+	</form>
+}
+
+func filterBarAttrs(p FilterBarProps) templ.Attributes {
+	return templ.Attributes{
+		"hx-get":      p.Action,
+		"hx-target":   p.Target,
+		"hx-swap":     "innerHTML",
+		"hx-push-url": "true",
+		"hx-trigger":  "change from:select, change from:input[type='checkbox']",
+		"hx-on::after-request": fmt.Sprintf(
+			"if(event.detail.successful){document.querySelector('%s [role=region]')?.focus()}",
+			p.Target,
+		),
+	}
+}
+
+type FilterSearchProps struct {
+	Value   string
+	Columns []string
+	Class   string
+	Action  string
+	Target  string
+}
+
+templ FilterSearch(p FilterSearchProps) {
+	<label for="q-search" class="sr-only">{ filterSearchPlaceholder(ctx, p.Columns) }</label>
+	<div class="ui2-filter-search">
+		<span aria-hidden="true">@ui.IconSVG("search", 13)</span>
+		<input id="q-search" name="q" type="text" value={ p.Value } placeholder={ filterSearchPlaceholder(ctx, p.Columns) } class={ "ui2-filter-input", p.Class } autocomplete="off" hx-get={ p.Action } hx-target={ p.Target } hx-swap="innerHTML" hx-push-url="true" hx-include="closest form" hx-trigger="input changed delay:300ms"/>
+	</div>
+}
+
+func filterSearchPlaceholder(ctx context.Context, columns []string) string {
+	parts := make([]string, len(columns))
+	for i, key := range columns {
+		parts[i] = locale.T(ctx, key)
+	}
+	return "Search " + strings.Join(parts, ", ") + "…"
+}
+
+templ FilterMine(checked bool, labelKey string) {
+	<label class="ui2-filter-mine">
+		<input type="checkbox" name="mine" checked?={ checked }/>
+		{ locale.T(ctx, labelKey) }
+	</label>
+}
+
+templ FilterSelect(name, ariaLabel string) {
+	<select name={ name } aria-label={ ariaLabel } class="ui2-filter-select">
+		{ children... }
+	</select>
+}

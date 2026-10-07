@@ -136,7 +136,7 @@ func previewStatus(status string) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "assessment_status_active"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 31, Col: 70}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 32, Col: 47}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -164,7 +164,7 @@ func previewStatus(status string) templ.Component {
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "assessment_status_archived"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 33, Col: 65}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 36, Col: 49}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -192,7 +192,7 @@ func previewStatus(status string) templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "assessment_status_pending_acceptance"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 35, Col: 82}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 40, Col: 59}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -220,7 +220,7 @@ func previewStatus(status string) templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "assessment_status_draft"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 37, Col: 69}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 44, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -275,7 +275,7 @@ func previewDecision(decision string) templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "decision_accept"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 44, Col: 61}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 53, Col: 38}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -303,7 +303,7 @@ func previewDecision(decision string) templ.Component {
 				var templ_7745c5c3_Var18 string
 				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "decision_treat"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 46, Col: 57}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 57, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
@@ -331,7 +331,7 @@ func previewDecision(decision string) templ.Component {
 				var templ_7745c5c3_Var20 string
 				templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "decision_document"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 48, Col: 56}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 61, Col: 40}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 				if templ_7745c5c3_Err != nil {
@@ -393,7 +393,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 			var templ_7745c5c3_Var23 string
 			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Assessment.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 58, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 72, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 			if templ_7745c5c3_Err != nil {
@@ -415,7 +415,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var24 string
 				templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(vm.OrgName)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 61, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 75, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 				if templ_7745c5c3_Err != nil {
@@ -433,33 +433,33 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 			var templ_7745c5c3_Var25 string
 			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.ResolveAttributeValue(locale.T(ctx, "nav_risk_assessments"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 64, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 78, Col: 58}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var25)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"><a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"><a href=\"/risks\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var26 templ.SafeURL
-			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/risks/" + vm.Assessment.ID.String()))
+			var templ_7745c5c3_Var26 string
+			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "nav_risk_assessments"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 65, Col: 66}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 79, Col: 60}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\">Original view</a> <a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</a> <a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var27 templ.SafeURL
 			templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/review"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 66, Col: 78}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 80, Col: 78}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 			if templ_7745c5c3_Err != nil {
@@ -472,7 +472,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 			var templ_7745c5c3_Var28 string
 			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_review"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 66, Col: 113}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 80, Col: 113}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 			if templ_7745c5c3_Err != nil {
@@ -485,7 +485,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 			var templ_7745c5c3_Var29 templ.SafeURL
 			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 67, Col: 78}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 81, Col: 78}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 			if templ_7745c5c3_Err != nil {
@@ -498,7 +498,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 			var templ_7745c5c3_Var30 string
 			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_continue_wizard"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 67, Col: 122}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 81, Col: 122}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {
@@ -517,7 +517,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var31 string
 					templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Flash)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 72, Col: 49}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 86, Col: 49}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 					if templ_7745c5c3_Err != nil {
@@ -535,7 +535,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var32 string
 					templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Flash)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 74, Col: 51}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 88, Col: 51}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 					if templ_7745c5c3_Err != nil {
@@ -571,7 +571,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var34 string
 					templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "assessment_pending_acceptance_msg"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 79, Col: 60}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 93, Col: 60}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 					if templ_7745c5c3_Err != nil {
@@ -584,7 +584,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var35 templ.SafeURL
 					templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/accept"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 81, Col: 98}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 95, Col: 98}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 					if templ_7745c5c3_Err != nil {
@@ -597,7 +597,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var36 string
 					templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 82, Col: 74}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 96, Col: 74}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var36)
 					if templ_7745c5c3_Err != nil {
@@ -610,7 +610,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var37 string
 					templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_accept"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 83, Col: 60}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 97, Col: 60}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 					if templ_7745c5c3_Err != nil {
@@ -623,7 +623,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var38 string
 					templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_decline"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 86, Col: 48}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 100, Col: 48}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 					if templ_7745c5c3_Err != nil {
@@ -636,7 +636,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var39 templ.SafeURL
 					templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/decline"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 87, Col: 100}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 101, Col: 100}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 					if templ_7745c5c3_Err != nil {
@@ -649,20 +649,20 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var40 string
 					templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 88, Col: 75}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 102, Col: 75}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var40)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\"> <label for=\"ui2-decline-note\">Reason for declining (optional)</label> <textarea id=\"ui2-decline-note\" name=\"note\" rows=\"3\"></textarea> <button type=\"submit\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\"> <label for=\"ui2-decline-note\">Reason for declining (optional)</label> <textarea id=\"ui2-decline-note\" name=\"note\" rows=\"3\"></textarea> <button type=\"submit\" data-tone=\"danger\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var41 string
 					templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_return_to_draft"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 91, Col: 70}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 105, Col: 89}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 					if templ_7745c5c3_Err != nil {
@@ -691,7 +691,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var42 string
 				templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "assessment_returned_by"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 98, Col: 61}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 112, Col: 61}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 				if templ_7745c5c3_Err != nil {
@@ -704,7 +704,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var43 string
 				templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Assessment.AcceptanceNote)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 98, Col: 95}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 112, Col: 95}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
 				if templ_7745c5c3_Err != nil {
@@ -727,7 +727,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var44 templ.SafeURL
 				templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/toggle-public"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 101, Col: 103}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 115, Col: 103}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 				if templ_7745c5c3_Err != nil {
@@ -740,7 +740,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var45 string
 				templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 102, Col: 72}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 116, Col: 72}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var45)
 				if templ_7745c5c3_Err != nil {
@@ -773,7 +773,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 			var templ_7745c5c3_Var46 string
 			templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_recent_changes_toggle"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 111, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 125, Col: 58}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var46))
 			if templ_7745c5c3_Err != nil {
@@ -802,7 +802,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var48 string
 				templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_event"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 114, Col: 51}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 129, Col: 52}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var48))
 				if templ_7745c5c3_Err != nil {
@@ -815,7 +815,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var49 string
 				templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_by"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 115, Col: 48}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 130, Col: 49}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var49))
 				if templ_7745c5c3_Err != nil {
@@ -828,7 +828,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var50 string
 				templ_7745c5c3_Var50, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_when"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 116, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 131, Col: 51}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var50))
 				if templ_7745c5c3_Err != nil {
@@ -846,7 +846,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var51 string
 					templ_7745c5c3_Var51, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_no_changes_yet"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 120, Col: 65}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 136, Col: 65}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var51))
 					if templ_7745c5c3_Err != nil {
@@ -866,7 +866,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 							var templ_7745c5c3_Var52 string
 							templ_7745c5c3_Var52, templ_7745c5c3_Err = templ.JoinStringErrs(riskAuditEventLabel(entry.Event))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 125, Col: 47}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 141, Col: 47}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var52))
 							if templ_7745c5c3_Err != nil {
@@ -879,7 +879,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 							var templ_7745c5c3_Var53 string
 							templ_7745c5c3_Var53, templ_7745c5c3_Err = templ.JoinStringErrs(entry.UserName)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 126, Col: 29}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 142, Col: 29}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var53))
 							if templ_7745c5c3_Err != nil {
@@ -892,7 +892,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 							var templ_7745c5c3_Var54 string
 							templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.ResolveAttributeValue(entry.EventTime.Format("2006-01-02T15:04:05Z07:00"))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 127, Col: 81}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 143, Col: 81}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var54)
 							if templ_7745c5c3_Err != nil {
@@ -905,7 +905,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 							var templ_7745c5c3_Var55 string
 							templ_7745c5c3_Var55, templ_7745c5c3_Err = templ.JoinStringErrs(entry.EventTime.Format("2 Jan 2006 15:04"))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 127, Col: 128}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 143, Col: 128}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var55))
 							if templ_7745c5c3_Err != nil {
@@ -963,7 +963,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var58 string
 					templ_7745c5c3_Var58, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "risk_current_map_title"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 137, Col: 49}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 153, Col: 49}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var58))
 					if templ_7745c5c3_Err != nil {
@@ -984,7 +984,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var59 string
 					templ_7745c5c3_Var59, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_with_existing_controls"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 139, Col: 54}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 155, Col: 54}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var59))
 					if templ_7745c5c3_Err != nil {
@@ -1023,7 +1023,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var61 string
 					templ_7745c5c3_Var61, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "risk_target_map_title"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 142, Col: 48}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 158, Col: 48}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var61))
 					if templ_7745c5c3_Err != nil {
@@ -1044,7 +1044,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var62 string
 					templ_7745c5c3_Var62, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_after_planned_treatment"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 144, Col: 55}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 160, Col: 55}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var62))
 					if templ_7745c5c3_Err != nil {
@@ -1085,7 +1085,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var64 string
 				templ_7745c5c3_Var64, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s (≥%d)", locale.T(ctx, "risk_level_high"), vm.HighMin))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 148, Col: 99}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 165, Col: 77}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var64))
 				if templ_7745c5c3_Err != nil {
@@ -1112,7 +1112,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var66 string
 				templ_7745c5c3_Var66, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s (%d–%d)", locale.T(ctx, "risk_level_medium"), vm.LowMax+1, vm.HighMin-1))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 149, Col: 119}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 168, Col: 96}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var66))
 				if templ_7745c5c3_Err != nil {
@@ -1139,7 +1139,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var68 string
 				templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s (≤%d)", locale.T(ctx, "risk_level_low"), vm.LowMax))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 150, Col: 98}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 171, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var68))
 				if templ_7745c5c3_Err != nil {
@@ -1174,7 +1174,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var70 string
 				templ_7745c5c3_Var70, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_assessment"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 153, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 175, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var70))
 				if templ_7745c5c3_Err != nil {
@@ -1192,7 +1192,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var71 string
 					templ_7745c5c3_Var71, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_risk_owner"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 156, Col: 44}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 178, Col: 44}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var71))
 					if templ_7745c5c3_Err != nil {
@@ -1205,7 +1205,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var72 string
 					templ_7745c5c3_Var72, templ_7745c5c3_Err = templ.JoinStringErrs(vm.OwnerName)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 156, Col: 69}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 179, Col: 23}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var72))
 					if templ_7745c5c3_Err != nil {
@@ -1224,7 +1224,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var73 string
 					templ_7745c5c3_Var73, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_organisation"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 159, Col: 46}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 182, Col: 46}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var73))
 					if templ_7745c5c3_Err != nil {
@@ -1237,7 +1237,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var74 string
 					templ_7745c5c3_Var74, templ_7745c5c3_Err = templ.JoinStringErrs(vm.OrgName)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 159, Col: 69}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 183, Col: 21}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var74))
 					if templ_7745c5c3_Err != nil {
@@ -1256,7 +1256,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var75 string
 					templ_7745c5c3_Var75, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_scope"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 162, Col: 39}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 186, Col: 39}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var75))
 					if templ_7745c5c3_Err != nil {
@@ -1269,7 +1269,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var76 string
 					templ_7745c5c3_Var76, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Assessment.Scope)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 162, Col: 71}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 187, Col: 30}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var76))
 					if templ_7745c5c3_Err != nil {
@@ -1288,7 +1288,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var77 string
 					templ_7745c5c3_Var77, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_objectives"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 165, Col: 44}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 190, Col: 44}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var77))
 					if templ_7745c5c3_Err != nil {
@@ -1301,7 +1301,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var78 string
 					templ_7745c5c3_Var78, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Assessment.SecurityObjectives)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 165, Col: 89}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 191, Col: 43}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var78))
 					if templ_7745c5c3_Err != nil {
@@ -1320,7 +1320,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var79 string
 					templ_7745c5c3_Var79, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_participants"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 168, Col: 46}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 194, Col: 46}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var79))
 					if templ_7745c5c3_Err != nil {
@@ -1333,7 +1333,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var80 string
 					templ_7745c5c3_Var80, templ_7745c5c3_Err = templ.JoinStringErrs(participantNames(vm.Participants))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 168, Col: 92}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 195, Col: 44}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var80))
 					if templ_7745c5c3_Err != nil {
@@ -1351,7 +1351,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var81 string
 				templ_7745c5c3_Var81, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_created"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 170, Col: 40}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 197, Col: 40}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var81))
 				if templ_7745c5c3_Err != nil {
@@ -1364,7 +1364,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var82 string
 				templ_7745c5c3_Var82, templ_7745c5c3_Err = templ.ResolveAttributeValue(vm.Assessment.CreatedAt.Format("2006-01-02"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 170, Col: 112}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 198, Col: 69}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var82)
 				if templ_7745c5c3_Err != nil {
@@ -1377,7 +1377,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var83 string
 				templ_7745c5c3_Var83, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Assessment.CreatedAt.Format("2 Jan 2006"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 170, Col: 161}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 198, Col: 118}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var83))
 				if templ_7745c5c3_Err != nil {
@@ -1390,7 +1390,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var84 string
 				templ_7745c5c3_Var84, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_updated"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 171, Col: 40}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 199, Col: 40}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var84))
 				if templ_7745c5c3_Err != nil {
@@ -1403,7 +1403,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var85 string
 				templ_7745c5c3_Var85, templ_7745c5c3_Err = templ.ResolveAttributeValue(vm.Assessment.UpdatedAt.Format("2006-01-02"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 171, Col: 112}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 200, Col: 69}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var85)
 				if templ_7745c5c3_Err != nil {
@@ -1416,7 +1416,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var86 string
 				templ_7745c5c3_Var86, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Assessment.UpdatedAt.Format("2 Jan 2006"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 171, Col: 161}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 200, Col: 118}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var86))
 				if templ_7745c5c3_Err != nil {
@@ -1434,7 +1434,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var87 string
 					templ_7745c5c3_Var87, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_last_reviewed"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 173, Col: 47}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 202, Col: 47}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var87))
 					if templ_7745c5c3_Err != nil {
@@ -1447,7 +1447,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var88 string
 					templ_7745c5c3_Var88, templ_7745c5c3_Err = templ.ResolveAttributeValue(vm.Assessment.LastReviewedAt.Time.Format("2006-01-02"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 173, Col: 129}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 203, Col: 80}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var88)
 					if templ_7745c5c3_Err != nil {
@@ -1460,7 +1460,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var89 string
 					templ_7745c5c3_Var89, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Assessment.LastReviewedAt.Time.Format("2 Jan 2006"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 173, Col: 188}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 203, Col: 139}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var89))
 					if templ_7745c5c3_Err != nil {
@@ -1493,7 +1493,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var90 string
 				templ_7745c5c3_Var90, templ_7745c5c3_Err = templ.ResolveAttributeValue("source = " + strconv.Quote(vm.Assessment.ThreatInformationFlow))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 178, Col: 111}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 208, Col: 111}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var90)
 				if templ_7745c5c3_Err != nil {
@@ -1506,7 +1506,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var91 string
 				templ_7745c5c3_Var91, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_threat_diagram_toggle"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 179, Col: 59}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 209, Col: 59}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var91))
 				if templ_7745c5c3_Err != nil {
@@ -1524,7 +1524,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var92 string
 					templ_7745c5c3_Var92, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "text_threat_diagram_empty"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 181, Col: 52}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 211, Col: 52}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var92))
 					if templ_7745c5c3_Err != nil {
@@ -1542,7 +1542,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var93 string
 					templ_7745c5c3_Var93, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_update_diagram"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 183, Col: 107}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 213, Col: 107}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var93))
 					if templ_7745c5c3_Err != nil {
@@ -1581,7 +1581,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 				var templ_7745c5c3_Var95 string
 				templ_7745c5c3_Var95, templ_7745c5c3_Err = templ.JoinStringErrs(locale.TN(ctx, "risk_register_count", len(vm.Risks), map[string]any{"Count": len(vm.Risks)}))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 190, Col: 101}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 220, Col: 101}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var95))
 				if templ_7745c5c3_Err != nil {
@@ -1599,7 +1599,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var96 string
 					templ_7745c5c3_Var96, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "risk_none_identified"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 192, Col: 46}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 222, Col: 46}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var96))
 					if templ_7745c5c3_Err != nil {
@@ -1612,7 +1612,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var97 templ.SafeURL
 					templ_7745c5c3_Var97, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 192, Col: 123}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 222, Col: 123}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var97))
 					if templ_7745c5c3_Err != nil {
@@ -1625,7 +1625,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 					var templ_7745c5c3_Var98 string
 					templ_7745c5c3_Var98, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_goto_identification"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 192, Col: 171}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 222, Col: 171}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var98))
 					if templ_7745c5c3_Err != nil {
@@ -1655,7 +1655,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 						var templ_7745c5c3_Var100 string
 						templ_7745c5c3_Var100, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_risk"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 196, Col: 51}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 227, Col: 52}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var100))
 						if templ_7745c5c3_Err != nil {
@@ -1668,7 +1668,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 						var templ_7745c5c3_Var101 string
 						templ_7745c5c3_Var101, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_current"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 197, Col: 54}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 228, Col: 55}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var101))
 						if templ_7745c5c3_Err != nil {
@@ -1681,7 +1681,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 						var templ_7745c5c3_Var102 string
 						templ_7745c5c3_Var102, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_target"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 198, Col: 53}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 229, Col: 54}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var102))
 						if templ_7745c5c3_Err != nil {
@@ -1694,7 +1694,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 						var templ_7745c5c3_Var103 string
 						templ_7745c5c3_Var103, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_decision"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 199, Col: 55}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 230, Col: 56}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var103))
 						if templ_7745c5c3_Err != nil {
@@ -1712,7 +1712,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 							var templ_7745c5c3_Var104 templ.SafeURL
 							templ_7745c5c3_Var104, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + risk.ID.String()))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 205, Col: 102}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 237, Col: 102}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var104))
 							if templ_7745c5c3_Err != nil {
@@ -1726,7 +1726,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 								var templ_7745c5c3_Var105 string
 								templ_7745c5c3_Var105, templ_7745c5c3_Err = templ.JoinStringErrs(riskRef(risk.RefNum))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 207, Col: 33}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 239, Col: 33}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var105))
 								if templ_7745c5c3_Err != nil {
@@ -1740,7 +1740,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 							var templ_7745c5c3_Var106 string
 							templ_7745c5c3_Var106, templ_7745c5c3_Err = templ.JoinStringErrs(risk.Name)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 209, Col: 21}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 241, Col: 21}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var106))
 							if templ_7745c5c3_Err != nil {
@@ -1758,7 +1758,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 								var templ_7745c5c3_Var107 string
 								templ_7745c5c3_Var107, templ_7745c5c3_Err = templ.JoinStringErrs(risk.Description)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 212, Col: 35}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 244, Col: 35}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var107))
 								if templ_7745c5c3_Err != nil {
@@ -1822,7 +1822,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 			var templ_7745c5c3_Var108 string
 			templ_7745c5c3_Var108, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_delete_assessment"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 231, Col: 55}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 263, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var108))
 			if templ_7745c5c3_Err != nil {
@@ -1835,7 +1835,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 			var templ_7745c5c3_Var109 templ.SafeURL
 			templ_7745c5c3_Var109, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/delete"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 233, Col: 96}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 265, Col: 96}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var109))
 			if templ_7745c5c3_Err != nil {
@@ -1848,7 +1848,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 			var templ_7745c5c3_Var110 string
 			templ_7745c5c3_Var110, templ_7745c5c3_Err = templ.ResolveAttributeValue(csrf.TokenFromContext(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 234, Col: 72}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 266, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var110)
 			if templ_7745c5c3_Err != nil {
@@ -1861,7 +1861,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 			var templ_7745c5c3_Var111 string
 			templ_7745c5c3_Var111, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_delete_assessment"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 235, Col: 88}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/risk/templates/assessment_preview.templ`, Line: 267, Col: 88}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var111))
 			if templ_7745c5c3_Err != nil {
@@ -1873,7 +1873,7 @@ func AssessmentDetailPreview(vm AssessmentDetailVM) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = ui2.Page("").Render(templ.WithChildren(ctx, templ_7745c5c3_Var22), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ui2.Page("ui2-risk").Render(templ.WithChildren(ctx, templ_7745c5c3_Var22), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

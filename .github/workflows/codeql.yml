@@ -46,8 +46,8 @@ jobs:
             go:github.com/a-h/templ/cmd/templ
       - name: Generate templ
         run: templ generate ./...
-      - name: Stub Tailwind output # autobuild must be able to compile
-        run: touch cmd/server/public/css/output.css
+      - name: Build CSS
+        run: make css-build
       - uses: github/codeql-action/init@v4
         with:
           languages: go

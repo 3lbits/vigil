@@ -15,7 +15,7 @@ import (
 	"github.com/3lbits/vigil/internal/locale"
 	"github.com/3lbits/vigil/internal/middleware"
 	assetstemplates "github.com/3lbits/vigil/internal/modules/assets/templates"
-	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 const assetsPageSize int32 = 50
@@ -63,14 +63,14 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 		httputil.Render(w, r, assetstemplates.AssetTable(rows, hasMore, offset+assetsPageSize, search, status))
 		return
 	}
-	httputil.Render(w, r, layout.Layout("page_assets_title", "page_assets_subtitle", "assets", user,
+	httputil.Render(w, r, ui2.Layout("page_assets_title", "page_assets_subtitle", "assets", user,
 		assetstemplates.AssetList(rows, search, status, flash, flashType, hasMore, offset+assetsPageSize),
 	))
 }
 
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	user, _ := middleware.FromContext(r.Context())
-	httputil.Render(w, r, layout.Layout("page_assets_add_title", "page_assets_add_subtitle", "assets", user,
+	httputil.Render(w, r, ui2.Layout("page_assets_add_title", "page_assets_add_subtitle", "assets", user,
 		assetstemplates.AssetForm(nil, "", "", nil),
 	))
 }
@@ -95,7 +95,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Error("create asset", "error", err)
 		user, _ := middleware.FromContext(r.Context())
-		httputil.Render(w, r, layout.Layout("page_assets_add_title", "page_assets_add_subtitle", "assets", user,
+		httputil.Render(w, r, ui2.Layout("page_assets_add_title", "page_assets_add_subtitle", "assets", user,
 			assetstemplates.AssetForm(nil, locale.T(r.Context(), "assets_flash_create_failed"), "error", nil),
 		))
 		return
@@ -130,7 +130,7 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Warn("list audit log for asset", "asset_id", id.String(), "error", err) // #nosec G706
 	}
-	httputil.Render(w, r, layout.Layout(asset.Name, "page_assets_detail_subtitle", "assets", user,
+	httputil.Render(w, r, ui2.Layout(asset.Name, "page_assets_detail_subtitle", "assets", user,
 		assetstemplates.AssetDetail(asset, canEdit, flash, flashType, auditLog),
 	))
 }
@@ -151,7 +151,7 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 		slog.Warn("list audit log for asset edit", "asset_id", id.String(), "error", err) // #nosec G706
 	}
 	user, _ := middleware.FromContext(r.Context())
-	httputil.Render(w, r, layout.Layout("page_assets_edit_title", asset.Name, "assets", user,
+	httputil.Render(w, r, ui2.Layout("page_assets_edit_title", asset.Name, "assets", user,
 		assetstemplates.AssetForm(&asset, "", "", auditLog),
 	))
 }
@@ -182,7 +182,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		slog.Error("update asset", "error", err)
 		user, _ := middleware.FromContext(r.Context())
 		fallback := db.Asset{ID: id, Name: strings.TrimSpace(r.FormValue("name"))}
-		httputil.Render(w, r, layout.Layout("page_assets_edit_title", "page_assets_item_subtitle", "assets", user,
+		httputil.Render(w, r, ui2.Layout("page_assets_edit_title", "page_assets_item_subtitle", "assets", user,
 			assetstemplates.AssetForm(&fallback, locale.T(r.Context(), "assets_flash_update_failed"), "error", nil),
 		))
 		return

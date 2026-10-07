@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/alexedwards/scs/v2"
@@ -23,6 +24,17 @@ type authProviderStub struct {
 	lastExOpts   authpkg.ExchangeOptions
 	identity     authpkg.Identity
 	exchangeErr  error
+}
+
+func TestLoginPageUI2(t *testing.T) {
+	h := NewHandler(&authQ{}, []authpkg.Provider{&authProviderStub{name: "github"}}, nil, nil, "", false)
+	w := httptest.NewRecorder()
+	h.LoginPage(w, httptest.NewRequest(http.MethodGet, "/login", nil))
+	if !strings.Contains(w.Body.String(), `class="ui2 ui2-login-page"`) ||
+		!strings.Contains(w.Body.String(), `<main id="main-content">`) ||
+		!strings.Contains(w.Body.String(), `href="/auth/github"`) {
+		t.Error("login page should preserve provider links in the UI2 layout")
+	}
 }
 
 func (p *authProviderStub) Name() string { return p.name }

@@ -1119,7 +1119,7 @@ other = "htmx + Alpine.js gir interaktivitet uten en tung SPA."
 other = "PostgreSQL + sqlc + goose holder datatilgang SQL-først, typesikker og migreringsdrevet."
 
 [about_approach_4]
-other = "Tailwind CSS CLI bygger stilene ved build-tid, uten Node-verktøykjede i runtime."
+other = "Vanlig CSS holder stilene enkle, uten CSS-rammeverk eller runtime-verktøy."
 
 [about_approach_5]
 other = "OPA/Rego holder autorisasjon policy-basert og sentralt håndhevet."

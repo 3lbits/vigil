@@ -30,7 +30,7 @@ func renderToDoc(t *testing.T, comp interface {
 	return doc
 }
 
-func TestDashboardContent_EmptyFrameworksMessage(t *testing.T) {
+func TestDashboardUI2_EmptyFrameworksMessage(t *testing.T) {
 	allOn := middleware.ModuleFlags{ComplianceEnabled: true, RiskEnabled: true, ActivitiesEnabled: true}
 	doc := renderToDoc(t, DashboardUI2(Stats{}, nil, "all", 0, 0, 0, 0, nil, nil, nil, RiskStats{}, allOn))
 
@@ -45,7 +45,7 @@ func TestDashboardContent_EmptyFrameworksMessage(t *testing.T) {
 	}
 }
 
-func TestDashboardContent_FrameworkCoverageRows(t *testing.T) {
+func TestDashboardUI2_FrameworkCoverageRows(t *testing.T) {
 	summaries := []FrameworkSummary{
 		{Name: "ISO 27001", Coverage: 75},
 		{Name: "NIST CSF", Coverage: 40},
@@ -66,7 +66,7 @@ func TestDashboardUI2_RiskAndFilter(t *testing.T) {
 	id := uuid.New()
 	risk := RiskStats{
 		Total: 1, RedCount: 1, LowMax: 5, HighMin: 12,
-		Matrix:      layout.BuildRiskMatrixCellsT(map[[2]int]int{{3, 4}: 1}, layout.RiskThresholds{LowMax: 5, HighMin: 12}),
+		Matrix:      layout.BuildRiskMatrixCells(map[[2]int]int{{3, 4}: 1}),
 		TopRisks:    []db.ListTopRisksRow{{ID: id, Name: "Important risk", LikelihoodCurrent: sql.NullInt32{Int32: 3, Valid: true}, ConsequenceCurrent: sql.NullInt32{Int32: 4, Valid: true}}},
 		OrgOptions:  []OrgFilterOption{{ID: id.String(), Name: "North"}},
 		OrgSelected: id.String(),
@@ -94,24 +94,5 @@ func TestDashboardUI2_RiskAndFilter(t *testing.T) {
 	}
 	if doc.Find(`.ui2-dashboard .ui2-grid`).Length() == 0 {
 		t.Error("dashboard must use the shared UI2 grid")
-	}
-}
-
-func TestStats_ImplementedPct(t *testing.T) {
-	tests := []struct {
-		measures    int64
-		implemented int64
-		expectedPct int
-	}{
-		{measures: 0, implemented: 0, expectedPct: 0},
-		{measures: 10, implemented: 5, expectedPct: 50},
-		{measures: 3, implemented: 3, expectedPct: 100},
-		{measures: 4, implemented: 1, expectedPct: 25},
-	}
-	for _, tc := range tests {
-		s := Stats{MeasuresCount: tc.measures, ImplementedCount: tc.implemented}
-		if got := s.ImplementedPct(); got != tc.expectedPct {
-			t.Errorf("ImplementedPct(%d/%d): expected %d, got %d", tc.implemented, tc.measures, tc.expectedPct, got)
-		}
 	}
 }

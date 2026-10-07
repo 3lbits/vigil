@@ -330,7 +330,7 @@ func (h *Handler) buildRiskStats(r *http.Request) dashboardtemplates.RiskStats {
 		RedCount:          redCount,
 		YellowCount:       yellowCount,
 		GreenCount:        greenCount,
-		Matrix:            layout.BuildRiskMatrixCellsT(matrixCounts, thresholds),
+		Matrix:            layout.BuildRiskMatrixCells(matrixCounts),
 		TopRisks:          topRisks,
 		ReviewNeededCount: reviewNeededCount,
 		ReviewQueue:       reviewQueue,

@@ -2,12 +2,11 @@ package risktemplates
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
-	"github.com/3lbits/vigil/internal/ui"
-	formstemplates "github.com/3lbits/vigil/internal/ui/forms"
+	formstemplates "github.com/3lbits/vigil/internal/ui2/forms"
+	"github.com/google/uuid"
 )
 
 templ WizardStep4(vm WizardStep4VM) {
@@ -15,40 +14,28 @@ templ WizardStep4(vm WizardStep4VM) {
 	if vm.IsReview {
 		@reviewBanner(vm.Assessment)
 	}
-	<div class="max-w-6xl">
+	<div class="risk-wide">
 		if len(vm.Risks) == 0 {
-			<div class="rounded-xl border border-dashed border-sand-300 p-8 text-center">
-				<p class="text-[13px] text-sand-700 mb-2">{ locale.T(ctx, "empty_no_risks_marked_treatment") }</p>
-				<p class="text-[12px] text-sand-700 dark:text-zinc-400 mb-3">{ locale.T(ctx, "text_all_risks_accepted_or_escalated") }</p>
+			<div class="ui2-panel">
+				<p class="risk-description">{ locale.T(ctx, "empty_no_risks_marked_treatment") }</p>
+				<p class="risk-description">{ locale.T(ctx, "text_all_risks_accepted_or_escalated") }</p>
 				<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/4") }>
 					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-					@ui.Button(ui.ButtonProps{
-						Attrs: templ.Attributes{
-							"type": "submit",
-						},
-					}) {
-						{ locale.T(ctx, "action_finalise_assessment") }
-					}
+					<button type="submit">{ locale.T(ctx, "action_finalise_assessment") }</button>
 				</form>
 			</div>
 		} else {
-			<p class="text-[12px] text-sand-700 mb-4">{ locale.T(ctx, "text_link_controls_and_activities_to_treat_risks") }</p>
-			<div class="flex flex-col gap-5 mb-6">
+			<p class="risk-description">{ locale.T(ctx, "text_link_controls_and_activities_to_treat_risks") }</p>
+			<div class="risk-fields">
 				for _, risk := range vm.Risks {
 					@treatmentPanel(risk, vm.RiskMeasures[risk.ID], vm.RiskActivities[risk.ID], vm.Users, vm.Assessment.ID, vm.OverdueRisks[risk.ID], vm.LowMax, vm.HighMin)
 				}
 			</div>
-			<div class="flex items-center justify-between">
-				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/3/evaluate") } class="text-[13px] text-sand-700 hover:text-sand-800">← { locale.T(ctx, "action_back_to_evaluation") }</a>
+			<div class="risk-split">
+				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/3/evaluate") } class="risk-back-link">← { locale.T(ctx, "action_back_to_evaluation") }</a>
 				<form id="finalise-form" method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/4") }>
 					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-					@ui.Button(ui.ButtonProps{
-						Attrs: templ.Attributes{
-							"type": "submit",
-						},
-					}) {
-						{ locale.T(ctx, "action_finalise_assessment") }
-					}
+					<button type="submit">{ locale.T(ctx, "action_finalise_assessment") }</button>
 				</form>
 			</div>
 		}
@@ -56,86 +43,70 @@ templ WizardStep4(vm WizardStep4VM) {
 }
 
 templ treatmentPanel(risk db.Risk, measures []db.Measure, activities []db.Activity, users []db.User, assessmentID uuid.UUID, overdue bool, lowMax, highMin int) {
-	<div
-		class={ "border rounded-[10px] p-4", treatmentBorderClass(overdue) }
+	<section
+		class={ "ui2-panel", treatmentBorderClass(overdue) }
 		x-data={ fmt.Sprintf("treatmentScorer(%d,%d,%d,%d)", risk.LikelihoodTarget.Int32, risk.ConsequenceTarget.Int32, highMin, lowMax) }
 	>
-		<div id={ "risk-status-" + risk.ID.String() } class="sr-only" aria-live="polite" aria-atomic="true"></div>
-		<div class="flex items-center gap-2 flex-wrap mb-3">
-			<div id={ "risk-heading-" + risk.ID.String() } tabindex="-1" class="text-[13px] font-semibold text-sand-900">{ risk.Name }</div>
+		<div id={ "risk-status-" + risk.ID.String() } class="risk-visually-hidden" aria-live="polite" aria-atomic="true"></div>
+		<div class="risk-chip-list">
+			<h2 id={ "risk-heading-" + risk.ID.String() } tabindex="-1" class="risk-result-name" style="font-size: 13px">{ risk.Name }</h2>
 			if risk.LikelihoodCurrent.Valid && risk.ConsequenceCurrent.Valid {
-				<div class={ "px-1.5 py-0.5 rounded text-[10px] font-bold text-white", bgClassT(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, lowMax, highMin) }>
+				<div class={ "risk-score-tile", bgClassT(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, lowMax, highMin) }>
 					Current: L{ fmt.Sprint(risk.LikelihoodCurrent.Int32) }×C{ fmt.Sprint(risk.ConsequenceCurrent.Int32) }={ scoreStr(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32) }
 				</div>
 			}
 			if overdue {
-				<div class="text-[11px] text-red-600 ml-1">⚠ Overdue activities</div>
+				<div class="risk-error-text">⚠ Overdue activities</div>
 			}
 		</div>
-		<div class="border border-sand-100 rounded-lg p-3 bg-sand-50/50 mb-3 max-w-sm">
-			<div class="text-[11px] font-semibold text-sand-700 mb-0.5">{ locale.T(ctx, "label_target_risk") }</div>
-			<div class="text-[10px] text-sand-700 dark:text-zinc-400 mb-2">{ locale.T(ctx, "label_after_planned_treatment") }</div>
-			<div class="grid grid-cols-2 gap-2 mb-2">
+		<fieldset class="risk-score-fieldset">
+			<legend class="risk-caption">{ locale.T(ctx, "label_target_risk") }</legend>
+			<p class="risk-caption">{ locale.T(ctx, "label_after_planned_treatment") }</p>
+			<div class="risk-score-fields">
 				<div>
-					<label for={ "tl-" + risk.ID.String() } class="block text-[10px] text-sand-700 mb-1">{ locale.T(ctx, "label_likelihood_1_5") }</label>
-					@ui.Select(ui.SelectProps{
-						ID:    "tl-" + risk.ID.String(),
-						Name:  "target_likelihood_" + risk.ID.String(),
-						Class: "px-2 py-1 text-[12px] focus:ring-1",
-						Attrs: templ.Attributes{
-							"form":    "finalise-form",
-							"x-model": "tl",
-						},
-					}) {
+					<label for={ "tl-" + risk.ID.String() } class="risk-caption">{ locale.T(ctx, "label_likelihood_1_5") }</label>
+					<select id={ "tl-" + risk.ID.String() } name={ "target_likelihood_" + risk.ID.String() } form="finalise-form" x-model="tl">
 						<option value="0">—</option>
 						for i := 1; i <= 5; i++ {
 							<option value={ fmt.Sprint(i) } selected?={ risk.LikelihoodTarget.Valid && int(risk.LikelihoodTarget.Int32) == i }>{ fmt.Sprint(i) } { likelihoodLabel(i) }</option>
 						}
-					}
+					</select>
 				</div>
 				<div>
-					<label for={ "tc-" + risk.ID.String() } class="block text-[10px] text-sand-700 mb-1">{ locale.T(ctx, "label_consequence_1_5") }</label>
-					@ui.Select(ui.SelectProps{
-						ID:    "tc-" + risk.ID.String(),
-						Name:  "target_consequence_" + risk.ID.String(),
-						Class: "px-2 py-1 text-[12px] focus:ring-1",
-						Attrs: templ.Attributes{
-							"form":    "finalise-form",
-							"x-model": "tc",
-						},
-					}) {
+					<label for={ "tc-" + risk.ID.String() } class="risk-caption">{ locale.T(ctx, "label_consequence_1_5") }</label>
+					<select id={ "tc-" + risk.ID.String() } name={ "target_consequence_" + risk.ID.String() } form="finalise-form" x-model="tc">
 						<option value="0">—</option>
 						for i := 1; i <= 5; i++ {
 							<option value={ fmt.Sprint(i) } selected?={ risk.ConsequenceTarget.Valid && int(risk.ConsequenceTarget.Int32) == i }>{ fmt.Sprint(i) } { consequenceLabel(i) }</option>
 						}
-					}
+					</select>
 				</div>
 			</div>
 			<template x-if="tl > 0 && tc > 0">
 				<div
-					class="flex items-center justify-between px-2 py-1.5 rounded text-[11px] font-semibold text-white transition-colors"
-					:class="bgClass(tl * tc)"
+					class="risk-live-score"
+					:class="'risk-score-' + label(tl * tc).toLowerCase()"
 				>
 					<span x-text="'Score: ' + (tl * tc)"></span>
-					<span class="bg-white/25 px-1.5 rounded text-[10px]" x-text="label(tl * tc)"></span>
+					<span class="risk-score-label" x-text="label(tl * tc)"></span>
 				</div>
 			</template>
-		</div>
-		<div id={ "linked-measures-" + risk.ID.String() } class="flex flex-wrap gap-1.5 mb-3">
+		</fieldset>
+		<div id={ "linked-measures-" + risk.ID.String() } class="risk-chip-list">
 			for _, m := range measures {
 				@measureChip(m, risk.ID.String(), assessmentID.String())
 			}
 		</div>
-		<div id={ "linked-activities-" + risk.ID.String() } class="flex flex-wrap gap-1.5 mb-2">
+		<div id={ "linked-activities-" + risk.ID.String() } class="risk-chip-list">
 			for _, a := range activities {
 				@activityChip(a, risk.ID.String(), assessmentID.String())
 			}
 		</div>
-		<div x-data={ fmt.Sprintf("{ expanded: %v }", len(measures) == 0) } class="mb-3">
+		<div x-data={ fmt.Sprintf("{ expanded: %v }", len(measures) == 0) } class="risk-spaced">
 			<button
 				type="button"
 				@click="expanded=!expanded"
-				class="text-[12px] font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1 mb-2"
+				class="risk-link-toggle"
 			>
 				<span x-text="expanded ? '↑ Hide' : '+ New measure'"></span>
 			</button>
@@ -147,97 +118,69 @@ templ treatmentPanel(risk db.Risk, measures []db.Measure, activities []db.Activi
 					hx-target={ "#linked-measures-" + risk.ID.String() }
 					hx-swap="beforeend"
 					@htmx:after-request="if($event.detail.successful){ $el.reset(); expanded=false }"
-					class="border border-sand-200 rounded-lg p-3 bg-sand-50/30 flex flex-col gap-2"
+					class="risk-create-form"
 				>
 					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 					@formstemplates.MeasureCreateFields(users, "risk-"+risk.ID.String())
-					<div class="flex justify-end">
-						@ui.Button(ui.ButtonProps{
-							Size: "sm",
-							Attrs: templ.Attributes{
-								"type": "submit",
-							},
-						}) {
-							Create &amp; link
-						}
+					<div class="risk-end-actions">
+						<button type="submit">Create &amp; link</button>
 					</div>
 				</form>
 			</div>
 		</div>
-		<div x-data="{ showMeasureSearch: false, showActivitySearch: false }" class="flex flex-col gap-1.5 mt-1">
+		<div x-data="{ showMeasureSearch: false, showActivitySearch: false }" class="risk-fields">
 			<div>
 				<button
 					type="button"
 					@click="showMeasureSearch=!showMeasureSearch"
-					class="text-[11px] text-sand-700 hover:text-sand-600 flex items-center gap-1"
+					class="risk-link-toggle"
 				>
 					<span x-text="showMeasureSearch ? '↑ Hide' : '+ Link existing measure'"></span>
 				</button>
-				<div x-show="showMeasureSearch" class="mt-1.5">
-					<form method="GET" action={ templ.SafeURL("/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/measures/search") } class="flex items-center gap-2">
-						<label for={ "measure-search-" + risk.ID.String() } class="sr-only">{ locale.T(ctx, "label_search_measures") }</label>
-						@ui.Input(ui.InputProps{
-							ID:          "measure-search-" + risk.ID.String(),
-							Name:        "q",
-							Type:        "text",
-							Placeholder: locale.T(ctx, "placeholder_search_measures"),
-							Class:       "text-[12px] focus:ring-1",
-							Attrs: templ.Attributes{
-								"hx-get":     "/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/measures/search",
-								"hx-trigger": "input changed delay:300ms",
-								"hx-target":  "#measure-results-" + risk.ID.String(),
-							},
-						})
-						<button type="submit" class="text-[11px] px-2.5 py-1.5 rounded border border-sand-300 hover:bg-sand-50">{ locale.T(ctx, "action_search") }</button>
+				<div x-show="showMeasureSearch" class="risk-following">
+					<form method="GET" action={ templ.SafeURL("/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/measures/search") } class="risk-controls">
+						<label for={ "measure-search-" + risk.ID.String() } class="risk-visually-hidden">{ locale.T(ctx, "label_search_measures") }</label>
+						<input id={ "measure-search-" + risk.ID.String() } name="q" type="text" placeholder={ locale.T(ctx, "placeholder_search_measures") } hx-get={ "/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/measures/search" } hx-trigger="input changed delay:300ms" hx-target={ "#measure-results-" + risk.ID.String() }/>
+						<button type="submit" class="risk-secondary-button">{ locale.T(ctx, "action_search") }</button>
 					</form>
-					<div id={ "measure-results-" + risk.ID.String() } class="mt-1" aria-live="polite" aria-atomic="false"></div>
+					<div id={ "measure-results-" + risk.ID.String() } class="risk-following" aria-live="polite" aria-atomic="false"></div>
 				</div>
 			</div>
 			<div>
 				<button
 					type="button"
 					@click="showActivitySearch=!showActivitySearch"
-					class="text-[11px] text-sand-700 hover:text-sand-600 flex items-center gap-1"
+					class="risk-link-toggle"
 				>
 					<span x-text="showActivitySearch ? '↑ Hide' : '+ Link existing activity'"></span>
 				</button>
-				<div x-show="showActivitySearch" class="mt-1.5">
-					<form method="GET" action={ templ.SafeURL("/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/activities/search") } class="flex items-center gap-2">
-						<label for={ "activity-search-" + risk.ID.String() } class="sr-only">{ locale.T(ctx, "label_search_activities") }</label>
-						@ui.Input(ui.InputProps{
-							ID:          "activity-search-" + risk.ID.String(),
-							Name:        "q",
-							Type:        "text",
-							Placeholder: locale.T(ctx, "placeholder_search_activities"),
-							Class:       "text-[12px] focus:ring-1",
-							Attrs: templ.Attributes{
-								"hx-get":     "/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/activities/search",
-								"hx-trigger": "input changed delay:300ms",
-								"hx-target":  "#activity-results-" + risk.ID.String(),
-							},
-						})
-						<button type="submit" class="text-[11px] px-2.5 py-1.5 rounded border border-sand-300 hover:bg-sand-50">{ locale.T(ctx, "action_search") }</button>
+				<div x-show="showActivitySearch" class="risk-following">
+					<form method="GET" action={ templ.SafeURL("/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/activities/search") } class="risk-controls">
+						<label for={ "activity-search-" + risk.ID.String() } class="risk-visually-hidden">{ locale.T(ctx, "label_search_activities") }</label>
+						<input id={ "activity-search-" + risk.ID.String() } name="q" type="text" placeholder={ locale.T(ctx, "placeholder_search_activities") } hx-get={ "/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/activities/search" } hx-trigger="input changed delay:300ms" hx-target={ "#activity-results-" + risk.ID.String() }/>
+						<button type="submit" class="risk-secondary-button">{ locale.T(ctx, "action_search") }</button>
 					</form>
-					<div id={ "activity-results-" + risk.ID.String() } class="mt-1" aria-live="polite" aria-atomic="false"></div>
+					<div id={ "activity-results-" + risk.ID.String() } class="risk-following" aria-live="polite" aria-atomic="false"></div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</section>
 }
+
 templ measureChip(m db.Measure, riskID, assessmentID string) {
-	<div id={ "chip-m-" + m.ID.String() + "-" + riskID } class="flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-50 border border-blue-200 text-[11px] text-blue-800">
-		<span class="font-semibold">Measure:</span>
+	<div id={ "chip-m-" + m.ID.String() + "-" + riskID } class="risk-measure-chip">
+		<span class="risk-strong">Measure:</span>
 		<a
 			href={ templ.SafeURL("/measures/" + m.ID.String()) }
 			target="_blank"
 			rel="noopener noreferrer"
-			class="truncate max-w-56 hover:underline"
+			class="risk-chip-name"
 		>{ m.Name }</a>
 		if m.Status != "" {
-			<span class="text-[10px] px-1 py-0.5 rounded bg-white/70 border border-blue-200 capitalize">{ m.Status }</span>
+			<span class="risk-chip-status">{ m.Status }</span>
 		}
 		if m.Category != "" {
-			<span class="text-[10px] text-blue-700/80 truncate max-w-28">{ m.Category }</span>
+			<span class="risk-chip-category">{ m.Category }</span>
 		}
 		<form
 			method="POST"
@@ -249,18 +192,19 @@ templ measureChip(m db.Measure, riskID, assessmentID string) {
 			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 			<button
 				type="submit"
+				data-tone="danger"
 				hx-on::after-request="this.closest('[x-data]')?.querySelector('[id^=risk-status-]')?.replaceChildren(document.createTextNode('Measure unlinked')); this.closest('[x-data]')?.querySelector('[id^=risk-heading-]')?.focus()"
 				aria-label={ "Unlink " + m.Name }
-				class="text-blue-400 hover:text-blue-700 ml-0.5 shrink-0"
+				class="risk-chip-remove"
 			>×</button>
 		</form>
 	</div>
 }
 
 templ activityChip(a db.Activity, riskID, assessmentID string) {
-	<div id={ "chip-a-" + a.ID.String() + "-" + riskID } class="flex items-center gap-1 px-2 py-1 rounded-full bg-violet-50 border border-violet-200 text-[11px] text-violet-800">
-		<span class="font-semibold">Activity:</span>
-		<span class="truncate max-w-48">{ a.Title }</span>
+	<div id={ "chip-a-" + a.ID.String() + "-" + riskID } class="risk-activity-chip">
+		<span class="risk-strong">Activity:</span>
+		<span class="risk-chip-name">{ a.Title }</span>
 		<form
 			method="POST"
 			action={ templ.SafeURL("/risks/" + assessmentID + "/risks/" + riskID + "/activities/" + a.ID.String() + "/delete") }
@@ -271,9 +215,10 @@ templ activityChip(a db.Activity, riskID, assessmentID string) {
 			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 			<button
 				type="submit"
+				data-tone="danger"
 				hx-on::after-request="this.closest('[x-data]')?.querySelector('[id^=risk-status-]')?.replaceChildren(document.createTextNode('Activity unlinked')); this.closest('[x-data]')?.querySelector('[id^=risk-heading-]')?.focus()"
 				aria-label={ "Unlink " + a.Title }
-				class="text-violet-400 hover:text-violet-700 ml-0.5 shrink-0"
+				class="risk-chip-remove"
 			>×</button>
 		</form>
 	</div>
@@ -282,28 +227,28 @@ templ activityChip(a db.Activity, riskID, assessmentID string) {
 // MeasureSearchResults is the HTMX partial for measure search results.
 templ MeasureSearchResults(measures []db.Measure, riskID, assessmentID string) {
 	if len(measures) > 0 {
-		<div class="border border-sand-200 rounded-md overflow-hidden shadow-sm">
+		<div class="risk-search-results">
 			for _, m := range measures {
-				<div class="flex items-center gap-2 px-2 py-1.5 border-b border-sand-100 last:border-0">
+				<div class="risk-search-result">
 					<form
 						method="POST"
 						action={ templ.SafeURL("/risks/" + assessmentID + "/risks/" + riskID + "/measures/" + m.ID.String()) }
 						hx-post={ "/risks/" + assessmentID + "/risks/" + riskID + "/measures/" + m.ID.String() }
 						hx-target={ "#linked-measures-" + riskID }
 						hx-swap="beforeend"
-						class="flex-1"
+						class="risk-fill"
 					>
 						<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 						<button
 							type="submit"
-							class="w-full text-left px-1.5 py-1 text-[12px] text-sand-800 hover:bg-sand-50 rounded transition-colors"
+							class="risk-search-choice"
 						>
 							{ m.Name }
 							if m.Category != "" {
-								<span class="text-[10px] text-sand-700 ml-1">{ m.Category }</span>
+								<span class="risk-caption">{ m.Category }</span>
 							}
 							if m.Status != "" {
-								<span class="text-[10px] text-sand-700 ml-1 capitalize">· { m.Status }</span>
+								<span class="risk-caption">· { m.Status }</span>
 							}
 						</button>
 					</form>
@@ -311,7 +256,7 @@ templ MeasureSearchResults(measures []db.Measure, riskID, assessmentID string) {
 						href={ templ.SafeURL("/measures/" + m.ID.String()) }
 						target="_blank"
 						rel="noopener noreferrer"
-						class="text-[10px] px-2 py-1 rounded border border-sand-300 text-sand-700 hover:bg-sand-50 whitespace-nowrap"
+						class="risk-secondary-link"
 					>
 						Open ↗
 					</a>
@@ -324,7 +269,7 @@ templ MeasureSearchResults(measures []db.Measure, riskID, assessmentID string) {
 // ActivitySearchResults is the HTMX partial for activity search results.
 templ ActivitySearchResults(activities []db.Activity, riskID, assessmentID string) {
 	if len(activities) > 0 {
-		<div class="border border-sand-200 rounded-md overflow-hidden shadow-sm">
+		<div class="risk-search-results">
 			for _, a := range activities {
 				<form
 					method="POST"
@@ -336,10 +281,10 @@ templ ActivitySearchResults(activities []db.Activity, riskID, assessmentID strin
 					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 					<button
 						type="submit"
-						class="w-full text-left px-3 py-2 text-[12px] text-sand-800 hover:bg-sand-50 border-b border-sand-100 last:border-0 transition-colors"
+						class="risk-search-choice"
 					>
 						{ a.Title }
-						<span class="text-[10px] text-sand-700 ml-1">{ a.ActivityType }</span>
+						<span class="risk-caption">{ a.ActivityType }</span>
 					</button>
 				</form>
 			}
@@ -368,9 +313,9 @@ templ LinkedMeasureWithActivity(m db.Measure, a db.Activity, riskID, assessmentI
 
 func treatmentBorderClass(overdue bool) string {
 	if overdue {
-		return "border-red-200 bg-red-50/20"
+		return "risk-treatment-overdue"
 	}
-	return "border-sand-200"
+	return ""
 }
 
 func scoreStr(l, c int32) string {

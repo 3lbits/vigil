@@ -19,7 +19,7 @@ import (
 	"github.com/3lbits/vigil/internal/httputil"
 	"github.com/3lbits/vigil/internal/middleware"
 	compliancetemplates "github.com/3lbits/vigil/internal/modules/compliance/templates"
-	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 type Handler struct {
@@ -84,7 +84,7 @@ func (h *Handler) listPage(w http.ResponseWriter, r *http.Request, flash, flashT
 		})
 	}
 
-	httputil.Render(w, r, layout.Layout("Compliance", "Frameworks and requirements", "compliance", user,
+	httputil.Render(w, r, ui2.Layout("Compliance", "Frameworks and requirements", "compliance", user,
 		compliancetemplates.FrameworkList(vms, expandID, flash, flashType),
 	))
 }
@@ -99,7 +99,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) NewFramework(w http.ResponseWriter, r *http.Request) {
 	user, _ := middleware.FromContext(r.Context())
-	httputil.Render(w, r, layout.Layout("Add framework", "Register a new compliance standard", "compliance", user,
+	httputil.Render(w, r, ui2.Layout("Add framework", "Register a new compliance standard", "compliance", user,
 		compliancetemplates.FrameworkForm(nil, "", "", nil),
 	))
 }
@@ -124,7 +124,7 @@ func (h *Handler) CreateFramework(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Error("create framework", "error", err)
 		user, _ := middleware.FromContext(r.Context())
-		httputil.Render(w, r, layout.Layout("Add framework", "Register a new compliance standard", "compliance", user,
+		httputil.Render(w, r, ui2.Layout("Add framework", "Register a new compliance standard", "compliance", user,
 			compliancetemplates.FrameworkForm(nil, "Failed to create framework.", "error", nil),
 		))
 		return
@@ -169,7 +169,7 @@ func (h *Handler) EditFramework(w http.ResponseWriter, r *http.Request) {
 		slog.Warn("list audit log for framework edit", "framework_id", id.String(), "error", err) // #nosec G706
 	}
 	user, _ := middleware.FromContext(r.Context())
-	httputil.Render(w, r, layout.Layout("Edit framework", fw.Name, "compliance", user,
+	httputil.Render(w, r, ui2.Layout("Edit framework", fw.Name, "compliance", user,
 		compliancetemplates.FrameworkForm(&fw, "", "", auditLog),
 	))
 }
@@ -211,7 +211,7 @@ func (h *Handler) UpdateFramework(w http.ResponseWriter, r *http.Request) {
 			slog.Warn("list audit log for framework edit", "framework_id", id.String(), "error", logErr) // #nosec G706
 		}
 		user, _ := middleware.FromContext(r.Context())
-		httputil.Render(w, r, layout.Layout("Edit framework", existing.Name, "compliance", user,
+		httputil.Render(w, r, ui2.Layout("Edit framework", existing.Name, "compliance", user,
 			compliancetemplates.FrameworkForm(&existing, "Failed to save changes.", "error", auditLog),
 		))
 		return
@@ -250,7 +250,7 @@ func (h *Handler) NewRequirement(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user, _ := middleware.FromContext(r.Context())
-	httputil.Render(w, r, layout.Layout("Add requirement", "New requirement", "compliance", user,
+	httputil.Render(w, r, ui2.Layout("Add requirement", "New requirement", "compliance", user,
 		compliancetemplates.RequirementForm(fwID, nil, "", "", nil),
 	))
 }
@@ -277,7 +277,7 @@ func (h *Handler) CreateRequirement(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Error("create requirement", "error", err)
 		user, _ := middleware.FromContext(r.Context())
-		httputil.Render(w, r, layout.Layout("Add requirement", "New requirement", "compliance", user,
+		httputil.Render(w, r, ui2.Layout("Add requirement", "New requirement", "compliance", user,
 			compliancetemplates.RequirementForm(fwID.String(), nil, "Failed to create requirement.", "error", nil),
 		))
 		return
@@ -349,7 +349,7 @@ func (h *Handler) ShowFramework(w http.ResponseWriter, r *http.Request) {
 		CanEdit:                    canEdit,
 		AuditLog:                   auditLog,
 	}
-	httputil.Render(w, r, layout.Layout(fw.Name, fw.ShortName+" · "+fw.FrameworkType, "compliance", user,
+	httputil.Render(w, r, ui2.Layout(fw.Name, fw.ShortName+" · "+fw.FrameworkType, "compliance", user,
 		compliancetemplates.FrameworkDetail(vm),
 	))
 }
@@ -391,7 +391,7 @@ func (h *Handler) ShowRequirement(w http.ResponseWriter, r *http.Request) {
 		CanEdit:        canEdit,
 		AuditLog:       auditLog,
 	}
-	httputil.Render(w, r, layout.Layout(req.Title, req.Ref+" · "+fw.Name, "compliance", user,
+	httputil.Render(w, r, ui2.Layout(req.Title, req.Ref+" · "+fw.Name, "compliance", user,
 		compliancetemplates.RequirementDetail(vm),
 	))
 }
@@ -430,7 +430,7 @@ func (h *Handler) EditRequirement(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, _ := middleware.FromContext(r.Context())
-	httputil.Render(w, r, layout.Layout("Edit requirement", req.Title, "compliance", user,
+	httputil.Render(w, r, ui2.Layout("Edit requirement", req.Title, "compliance", user,
 		compliancetemplates.RequirementEditPage(vm, flash, flashType),
 	))
 }
@@ -564,7 +564,7 @@ func (h *Handler) UpdateRequirement(w http.ResponseWriter, r *http.Request) {
 			slog.Warn("list audit log for requirement edit", "requirement_id", id.String(), "error", logErr) // #nosec G706
 		}
 		user, _ := middleware.FromContext(r.Context())
-		httputil.Render(w, r, layout.Layout("Edit requirement", existing.Title, "compliance", user,
+		httputil.Render(w, r, ui2.Layout("Edit requirement", existing.Title, "compliance", user,
 			compliancetemplates.RequirementForm(existing.FrameworkID.String(), &existing, "Failed to save changes.", "error", auditLog),
 		))
 		return
@@ -609,7 +609,7 @@ func (h *Handler) ShowImportForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user, _ := middleware.FromContext(r.Context())
-	httputil.Render(w, r, layout.Layout("Import requirements", "Upload CSV", "compliance", user,
+	httputil.Render(w, r, ui2.Layout("Import requirements", "Upload CSV", "compliance", user,
 		compliancetemplates.ImportForm(fwID, "", "", nil),
 	))
 }
@@ -641,7 +641,7 @@ func (h *Handler) Import(w http.ResponseWriter, r *http.Request) {
 	result := parseAndImportCSV(r, h.q, fwID, file)
 
 	user, _ := middleware.FromContext(r.Context())
-	httputil.Render(w, r, layout.Layout("Import requirements", "Upload CSV", "compliance", user,
+	httputil.Render(w, r, ui2.Layout("Import requirements", "Upload CSV", "compliance", user,
 		compliancetemplates.ImportForm(fwID.String(), "", "", result),
 	))
 }

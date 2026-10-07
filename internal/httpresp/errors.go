@@ -16,7 +16,7 @@ func Error(w http.ResponseWriter, r *http.Request, status int) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(status)
 		_, _ = fmt.Fprintf(w,
-			`<div class="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-[12px] text-amber-900"><span class="font-semibold">HTTP %d · %s</span><span class="ml-1">%s</span></div>`,
+			`<p class="error-inline"><strong>HTTP %d · %s</strong> <span>%s</span></p>`,
 			status, template.HTMLEscapeString(title), template.HTMLEscapeString(message))
 		return
 	}
@@ -38,24 +38,24 @@ func Error(w http.ResponseWriter, r *http.Request, status int) {
 <title>%s</title>
 <link rel="stylesheet" href="/public/css/output.css"/>
 </head>
-<body class="font-sans bg-sand-50 text-sand-900 antialiased min-h-screen flex items-center justify-center px-4">
-<main class="w-full max-w-lg">
-<div class="bg-white border border-sand-200 rounded-xl p-6 shadow-sm">
-<div class="text-[11px] uppercase tracking-wide font-semibold text-sand-700 mb-2">HTTP %d</div>
-<h1 class="text-xl font-medium mb-2">%s</h1>
-<p class="text-sm text-sand-700 mb-5">%s</p>`,
+<body class="error-page error-page-centered">
+<main class="error-main">
+<article class="error-card">
+<p class="error-code">HTTP %d</p>
+<h1 class="error-title">%s</h1>
+<p class="error-message">%s</p>`,
 		template.HTMLEscapeString(locale.LangFromContext(r.Context())),
 		titleEsc, status, titleEsc, messageEsc)
 	if requestID != "" {
 		_, _ = fmt.Fprintf(w,
-			`<div class="text-[12px] font-mono text-sand-700 bg-sand-50 border border-sand-200 rounded-md px-3 py-2 mb-5">%s: %s</div>`,
+			`<p class="error-request">%s: %s</p>`,
 			requestIDLabel, requestID)
 	}
-	_, _ = fmt.Fprintf(w, `<div class="flex items-center gap-2">
-<a href="/" class="inline-flex items-center text-[12px] py-1.5 px-3 rounded-md bg-sand-900 text-white hover:bg-sand-800 transition-colors">%s</a>
-<button type="button" onclick="history.back()" class="inline-flex items-center text-[12px] py-1.5 px-3 rounded-md border border-sand-300 text-sand-700 hover:bg-sand-50 transition-colors cursor-pointer">%s</button>
+	_, _ = fmt.Fprintf(w, `<div class="error-actions">
+<a href="/" class="error-primary">%s</a>
+<button type="button" onclick="history.back()" class="error-secondary">%s</button>
 </div>
-</div>
+</article>
 </main>
 </body>
 </html>`, primaryLabel, backLabel)
