@@ -54,7 +54,7 @@ func TestAssessmentDetailPreview(t *testing.T) {
 		t.Fatal("matrix subtitles must describe controls and treatment without NS 5814")
 	}
 	for _, want := range []string{
-		"Preview &lt;assessment&gt;", "role=\"region\"", "scope=\"row\"",
+		"Preview &lt;assessment&gt;", "role=\"region\"", "scope=\"row\"", `class="ui2-panel"`,
 		`action="/risks/` + assessmentID.String() + `/accept"`,
 		`action="/risks/` + assessmentID.String() + `/decline"`,
 		`action="/risks/` + assessmentID.String() + `/delete"`,

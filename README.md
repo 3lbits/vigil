@@ -288,6 +288,7 @@ internal/
   config/            env config loader/validation
   obs/               tracing, metrics, security event logging
   locale/            i18n bundle + language middleware
+  ui2/               reusable templ page components for UI2 pilots
 modules/
   about/
   dashboard/
@@ -313,6 +314,12 @@ dependencies are passed to each module's constructor; the shared
 directly via sqlc. There is no service layer, no DTOs, and no per-module
 interfaces — these solve problems this stack does not have. Split a handler
 only when concerns are genuinely mixed or logic is duplicated.
+
+**UI2 pilot pages.** The dashboard and risk-assessment preview compose shared
+layout, page, panel and display components from `internal/ui2`; their module
+templates keep only feature-specific content. UI2 reuses the existing secure
+document/navigation shell in `internal/ui/layout`, rather than copying it.
+Other pages still use the original UI.
 
 **Generated code is not edited by hand.** `**/*_templ.go` (templ), the
 sqlc-generated Go, and `cmd/server/public/css/output.css` (Tailwind) are all

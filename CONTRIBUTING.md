@@ -101,6 +101,10 @@ applies equally to everyone, so reach for it when this summary isn't enough.
   the source and regenerate; the next generation overwrites hand edits.
 - **Keep it simple.** No speculative abstractions or unrequested configuration
   knobs. If 200 lines could be 50, write 50. Match the existing style.
+- **Compose UI2 pilot pages from `internal/ui2`.** Keep shared page structure
+  there and feature-specific content in module templates. UI2 reuses the
+  existing document/navigation shell; don't duplicate it or migrate other
+  pages implicitly.
 
 ## Using AI coding agents
 

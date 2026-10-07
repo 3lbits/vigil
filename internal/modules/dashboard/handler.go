@@ -16,6 +16,7 @@ import (
 	"github.com/3lbits/vigil/internal/middleware"
 	dashboardtemplates "github.com/3lbits/vigil/internal/modules/dashboard/templates"
 	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 type Handler struct {
@@ -169,8 +170,8 @@ func (h *Handler) Dashboard(w http.ResponseWriter, r *http.Request) { //nolint:g
 		}
 	}
 
-	httputil.Render(w, r, layout.Layout("page_dashboard_title", subtitle, "dashboard", user,
-		dashboardtemplates.DashboardContent(
+	httputil.Render(w, r, ui2.Layout("page_dashboard_title", subtitle, "dashboard", user,
+		dashboardtemplates.DashboardUI2(
 			vmStats,
 			visibleFrameworks,
 			frameworkFilter,

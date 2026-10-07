@@ -1,0 +1,51 @@
+package ui2
+
+import (
+	"fmt"
+
+	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui/layout"
+)
+
+func Tone(score, lowMax, highMin int) string {
+	switch {
+	case score >= highMin:
+		return "danger"
+	case score > lowMax:
+		return "warning"
+	default:
+		return "success"
+	}
+}
+
+templ Matrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) {
+	<div class="ui2-matrix">
+		@Table(label) {
+			<thead>
+				<tr>
+					<th scope="col">
+						<span class="sr-only">{ locale.T(ctx, "label_likelihood") } / { locale.T(ctx, "scale_consequence") }</span>
+						<span aria-hidden="true">L / C</span>
+					</th>
+					for consequence := 1; consequence <= 5; consequence++ {
+						<th scope="col">{ fmt.Sprint(consequence) }</th>
+					}
+				</tr>
+			</thead>
+			<tbody>
+				for likelihood := 5; likelihood >= 1; likelihood-- {
+					<tr>
+						<th scope="row">{ fmt.Sprint(likelihood) }</th>
+						for consequence := 1; consequence <= 5; consequence++ {
+							<td>
+								<span class="ui2-matrix-cell" data-tone={ Tone(likelihood*consequence, lowMax, highMin) }>
+									{ fmt.Sprint(cells[(5-likelihood)*5+consequence-1].Count) }
+								</span>
+							</td>
+						}
+					</tr>
+				}
+			</tbody>
+		}
+	</div>
+}

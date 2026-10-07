@@ -56,6 +56,7 @@ internal/
   config/            env config loader/validation
   obs/               tracing, metrics, security event logging
   locale/            i18n bundle + language middleware
+  ui2/               shared templ layout API and page components for UI2 pilots
 modules/             feature modules (about, dashboard, compliance,
                      measures, activities, risk, admin, auth)
 cmd/server/policies/authz.rego  source-of-truth authorization policy
@@ -97,6 +98,15 @@ If you need to change generated output, change the source (`.templ` file,
   problems this stack does not have.
 - Split a handler only when: unrelated concerns are genuinely mixed, or
   logic is duplicated across handlers.
+
+### UI2 pilot pages
+
+- Compose shared page markup from `internal/ui2` (layout entry point, page,
+  panels, grids, notices, metrics, badges and tables). Module templates own
+  their feature-specific forms, data rows, links and conditional content.
+- UI2's layout reuses the existing document/navigation shell in
+  `internal/ui/layout` for its auth, locale and CSP wiring; don't copy it.
+  Non-UI2 pages remain unchanged until migrated explicitly.
 
 ### Simplicity
 

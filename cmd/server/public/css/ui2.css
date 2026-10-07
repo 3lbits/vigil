@@ -1,4 +1,4 @@
-/* Elbriks-inspired palette, scoped to the assessment preview and its shell. */
+/* Elbriks-inspired palette, scoped to UI2 pages and their shell. */
 :is(.ui2, .ui2-shell) {
   color-scheme: light;
   --ui2-bg: light-dark(#e2e8f0, #0f172b);
@@ -70,7 +70,7 @@ body.ui2-shell { background: var(--ui2-bg); color: var(--ui2-fg); font-family: u
 .ui2-shell main h1 { color: var(--ui2-fg); font-size: 1.5rem; font-weight: 600; }
 .ui2-shell main > div > div:first-child p { color: var(--ui2-muted); }
 .ui2-shell main > div > div:first-child button { color: var(--ui2-fg); border-color: var(--ui2-border); }
-.ui2 > header, .ui2 article, .ui2 > details {
+.ui2 > header, .ui2 .ui2-panel, .ui2 > details {
   padding: 1rem;
   border: 1px solid var(--ui2-border);
   border-radius: 14px;
@@ -89,7 +89,7 @@ body.ui2-shell { background: var(--ui2-bg); color: var(--ui2-fg); font-family: u
 .ui2 p, .ui2 small, .ui2 dt { color: var(--ui2-muted); }
 .ui2 a { color: var(--ui2-link); text-decoration: underline; }
 .ui2 .ui2-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(21rem, 100%), 1fr)); gap: .75rem; }
-.ui2 .ui2-grid article { min-width: 0; }
+.ui2 .ui2-grid .ui2-panel { min-width: 0; }
 .ui2 dl { display: grid; grid-template-columns: minmax(7rem, max-content) 1fr; gap: .5rem 1.25rem; }
 .ui2 dd { white-space: pre-wrap; overflow-wrap: anywhere; }
 .ui2 summary { cursor: pointer; font-weight: 600; }
@@ -129,7 +129,7 @@ body.ui2-shell { background: var(--ui2-bg); color: var(--ui2-fg); font-family: u
 .ui2 [data-tone="danger"] { background: var(--ui2-danger-bg); color: var(--ui2-danger-fg); }
 .ui2 [data-tone="info"] { background: var(--ui2-info-bg); color: var(--ui2-info-fg); }
 .ui2 button[data-tone="danger"] { border: 0; background: var(--ui2-danger-bg); color: var(--ui2-danger-fg); }
-.ui2 [role="status"], .ui2 [role="alert"] { padding: .75rem 1rem; border: 1px solid var(--ui2-border); border-radius: 10px; }
+.ui2 .ui2-notice, .ui2 [role="status"], .ui2 [role="alert"] { padding: .75rem 1rem; border: 1px solid var(--ui2-border); border-radius: 10px; }
 .ui2 .ui2-table { overflow-x: auto; max-width: 100%; border: 1px solid var(--ui2-border); border-radius: 10px; }
 .ui2 table { width: 100%; border-collapse: collapse; min-width: 30rem; }
 .ui2 :is(th, td) { padding: .75rem; border-bottom: 1px solid var(--ui2-border); text-align: left; vertical-align: top; }
@@ -154,6 +154,27 @@ body.ui2-shell { background: var(--ui2-bg); color: var(--ui2-fg); font-family: u
 }
 .ui2 .ui2-diagram { overflow: auto; }
 .ui2 .ui2-diagram :is(svg, iframe) { max-width: 100%; }
+.ui2 .ui2-metric { padding: 1rem; border: 1px solid var(--ui2-border); border-radius: 14px; background: var(--ui2-card); }
+.ui2 .ui2-metric data { display: block; width: fit-content; padding: 0; border-radius: 0; background: transparent; color: var(--ui2-fg); font-size: 1.75rem; font-weight: 600; }
+.ui2-dashboard .ui2-grid section { min-width: 0; }
+.ui2-dashboard .ui2-panel > :not(:last-child), .ui2-dashboard .ui2-metric > :not(:last-child) { margin-bottom: .75rem; }
+.ui2-dashboard h2 { font-size: 1.125rem; font-weight: 600; }
+.ui2-dashboard h3 { font-size: 1rem; font-weight: 600; }
+.ui2-dashboard-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); gap: .75rem; }
+.ui2-dashboard .ui2-dashboard-heading, .ui2-dashboard .ui2-dashboard-filter, .ui2-dashboard .ui2-dashboard-filters, .ui2-dashboard .ui2-dashboard-list li {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem;
+}
+.ui2-dashboard .ui2-dashboard-heading { justify-content: space-between; }
+.ui2-dashboard .ui2-dashboard-filter select { min-width: 10rem; max-width: 100%; padding: .5rem; border: 1px solid var(--ui2-input); border-radius: 6px; background: var(--ui2-card); color: var(--ui2-fg); }
+.ui2-dashboard .ui2-dashboard-filters a { padding: .25rem .5rem; border-radius: 6px; }
+.ui2-dashboard .ui2-dashboard-filters a[aria-current="page"] { background: var(--ui2-accent); font-weight: 600; }
+.ui2-dashboard .ui2-dashboard-list { list-style: none; padding: 0; }
+.ui2-dashboard .ui2-dashboard-list li { padding: .65rem 0; border-bottom: 1px solid var(--ui2-border); }
+.ui2-dashboard .ui2-dashboard-list li:last-child { border: 0; }
+.ui2-dashboard progress { max-width: 100%; height: .75rem; accent-color: #1447e6; }
+.ui2-dashboard .ui2-dashboard-list progress { flex: 1 1 7rem; }
+.ui2-dashboard .ui2-legend { margin-top: .75rem; }
+.ui2-dashboard .ui2-notice a { color: inherit; font-weight: 600; }
 @media (max-width: 40rem) {
   .ui2-shell main > div { padding: .5rem; }
   .ui2 dl { grid-template-columns: 1fr; }

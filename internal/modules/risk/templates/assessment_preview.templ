@@ -9,18 +9,10 @@ import (
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/locale"
 	"github.com/3lbits/vigil/internal/ui2"
-	"github.com/3lbits/vigil/internal/ui/layout"
 )
 
 func previewTone(score, lowMax, highMin int) string {
-	switch {
-	case score >= highMin:
-		return "danger"
-	case score > lowMax:
-		return "warning"
-	default:
-		return "success"
-	}
+	return ui2.Tone(score, lowMax, highMin)
 }
 
 templ previewScore(l, c sql.NullInt32, lowMax, highMin int) {
@@ -33,66 +25,34 @@ templ previewScore(l, c sql.NullInt32, lowMax, highMin int) {
 	}
 }
 
-templ previewMatrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) {
-	<div class="ui2-matrix">
-		@ui2.Table(label) {
-			<thead>
-				<tr>
-					<th scope="col">
-						<span class="sr-only">{ locale.T(ctx, "label_likelihood") } / { locale.T(ctx, "scale_consequence") }</span>
-						<span aria-hidden="true">L / C</span>
-					</th>
-					for consequence := 1; consequence <= 5; consequence++ {
-						<th scope="col">{ fmt.Sprint(consequence) }</th>
-					}
-				</tr>
-			</thead>
-			<tbody>
-				for likelihood := 5; likelihood >= 1; likelihood-- {
-					<tr>
-						<th scope="row">{ fmt.Sprint(likelihood) }</th>
-						for consequence := 1; consequence <= 5; consequence++ {
-							<td>
-								<span class="ui2-matrix-cell" data-tone={ previewTone(likelihood*consequence, lowMax, highMin) }>
-									{ fmt.Sprint(cells[(5-likelihood)*5+consequence-1].Count) }
-								</span>
-							</td>
-						}
-					</tr>
-				}
-			</tbody>
-		}
-	</div>
-}
-
 templ previewStatus(status string) {
 	switch status {
 		case "active":
-			<span class="ui2-badge" data-tone="success">{ locale.T(ctx, "assessment_status_active") }</span>
+			@ui2.Badge("success") { { locale.T(ctx, "assessment_status_active") } }
 		case "archived":
-			<span class="ui2-badge">{ locale.T(ctx, "assessment_status_archived") }</span>
+			@ui2.Badge("") { { locale.T(ctx, "assessment_status_archived") } }
 		case "pending_acceptance":
-			<span class="ui2-badge" data-tone="warning">{ locale.T(ctx, "assessment_status_pending_acceptance") }</span>
+			@ui2.Badge("warning") { { locale.T(ctx, "assessment_status_pending_acceptance") } }
 		default:
-			<span class="ui2-badge" data-tone="warning">{ locale.T(ctx, "assessment_status_draft") }</span>
+			@ui2.Badge("warning") { { locale.T(ctx, "assessment_status_draft") } }
 	}
 }
 
 templ previewDecision(decision string) {
 	switch decision {
 		case "accept":
-			<span class="ui2-badge" data-tone="success">{ locale.T(ctx, "decision_accept") }</span>
+			@ui2.Badge("success") { { locale.T(ctx, "decision_accept") } }
 		case "treat":
-			<span class="ui2-badge" data-tone="info">{ locale.T(ctx, "decision_treat") }</span>
+			@ui2.Badge("info") { { locale.T(ctx, "decision_treat") } }
 		case "document":
-			<span class="ui2-badge">{ locale.T(ctx, "decision_document") }</span>
+			@ui2.Badge("") { { locale.T(ctx, "decision_document") } }
 		default:
 			<span>—</span>
 	}
 }
 
 templ AssessmentDetailPreview(vm AssessmentDetailVM) {
-	<section class="ui2" aria-label={ locale.T(ctx, "nav_risk_assessments") }>
+	@ui2.Page("") {
 		<header>
 			<div>
 				<h2>{ vm.Assessment.Name }</h2>
@@ -115,7 +75,7 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 			}
 		}
 		if vm.Assessment.Status == "pending_acceptance" && vm.Assessment.RiskOwnerID.UUID.String() == vm.CurrentUserID {
-			<article>
+			@ui2.Panel() {
 				<h3>{ locale.T(ctx, "assessment_pending_acceptance_msg") }</h3>
 				<div class="ui2-actions">
 					<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/accept") }>
@@ -132,7 +92,7 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 						</form>
 					</details>
 				</div>
-			</article>
+			}
 		}
 		if vm.Assessment.Status == "draft" && vm.Assessment.AcceptanceNote != "" {
 			<p role="status">{ locale.T(ctx, "assessment_returned_by") }: { vm.Assessment.AcceptanceNote }</p>
@@ -172,24 +132,24 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 				</tbody>
 			}
 		</details>
-		<div class="ui2-grid">
-			<article>
+		@ui2.Grid() {
+			@ui2.Panel() {
 				<h3>{ locale.T(ctx, "risk_current_map_title") }</h3>
-				@previewMatrix(locale.T(ctx, "risk_current_map_title"), vm.CurrentMatrix, vm.LowMax, vm.HighMin)
+				@ui2.Matrix(locale.T(ctx, "risk_current_map_title"), vm.CurrentMatrix, vm.LowMax, vm.HighMin)
 				<p>{ locale.T(ctx, "label_with_existing_controls") }</p>
-			</article>
-			<article>
+			}
+			@ui2.Panel() {
 				<h3>{ locale.T(ctx, "risk_target_map_title") }</h3>
-				@previewMatrix(locale.T(ctx, "risk_target_map_title"), vm.TargetMatrix, vm.LowMax, vm.HighMin)
+				@ui2.Matrix(locale.T(ctx, "risk_target_map_title"), vm.TargetMatrix, vm.LowMax, vm.HighMin)
 				<p>{ locale.T(ctx, "label_after_planned_treatment") }</p>
-			</article>
-		</div>
+			}
+		}
 		<p class="ui2-legend">
-			<span class="ui2-badge" data-tone="danger">{ fmt.Sprintf("%s (≥%d)", locale.T(ctx, "risk_level_high"), vm.HighMin) }</span>
-			<span class="ui2-badge" data-tone="warning">{ fmt.Sprintf("%s (%d–%d)", locale.T(ctx, "risk_level_medium"), vm.LowMax+1, vm.HighMin-1) }</span>
-			<span class="ui2-badge" data-tone="success">{ fmt.Sprintf("%s (≤%d)", locale.T(ctx, "risk_level_low"), vm.LowMax) }</span>
+			@ui2.Badge("danger") { { fmt.Sprintf("%s (≥%d)", locale.T(ctx, "risk_level_high"), vm.HighMin) } }
+			@ui2.Badge("warning") { { fmt.Sprintf("%s (%d–%d)", locale.T(ctx, "risk_level_medium"), vm.LowMax+1, vm.HighMin-1) } }
+			@ui2.Badge("success") { { fmt.Sprintf("%s (≤%d)", locale.T(ctx, "risk_level_low"), vm.LowMax) } }
 		</p>
-		<article>
+		@ui2.Panel() {
 			<h3>{ locale.T(ctx, "label_assessment") }</h3>
 			<dl>
 				if vm.OwnerName != "" {
@@ -213,7 +173,7 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 					<dt>{ locale.T(ctx, "label_last_reviewed") }</dt><dd><time datetime={ vm.Assessment.LastReviewedAt.Time.Format("2006-01-02") }>{ vm.Assessment.LastReviewedAt.Time.Format("2 Jan 2006") }</time></dd>
 				}
 			</dl>
-		</article>
+		}
 		if vm.Assessment.ThreatAssessmentEnabled {
 			<details x-data="mermaidPreview()" x-init={ "source = " + strconv.Quote(vm.Assessment.ThreatInformationFlow) } @toggle="if ($el.open) { render() }">
 				<summary>{ locale.T(ctx, "label_threat_diagram_toggle") }</summary>
@@ -226,7 +186,7 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 				}
 			</details>
 		}
-		<article>
+		@ui2.Panel() {
 			<h3>{ locale.TN(ctx, "risk_register_count", len(vm.Risks), map[string]any{"Count": len(vm.Risks)}) }</h3>
 			if len(vm.Risks) == 0 {
 				<p>{ locale.T(ctx, "risk_none_identified") } <a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") }>{ locale.T(ctx, "action_goto_identification") }</a></p>
@@ -266,7 +226,7 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 					</tbody>
 				}
 			}
-		</article>
+		}
 		<details>
 			<summary>{ locale.T(ctx, "action_delete_assessment") }</summary>
 			<p>Delete this assessment and all risks?</p>
@@ -275,5 +235,5 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 				<button type="submit" data-tone="danger">{ locale.T(ctx, "action_delete_assessment") }</button>
 			</form>
 		</details>
-	</section>
+	}
 }

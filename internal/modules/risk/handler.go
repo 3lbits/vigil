@@ -20,6 +20,7 @@ import (
 	"github.com/3lbits/vigil/internal/middleware"
 	risktemplates "github.com/3lbits/vigil/internal/modules/risk/templates"
 	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 type Handler struct {
@@ -993,7 +994,7 @@ func (h *Handler) renderDetail(w http.ResponseWriter, r *http.Request, preview b
 	}
 	page := layout.Layout(assessmentPageTitle(assessment), "Risk assessment", "risk", user, content)
 	if preview {
-		page = layout.LayoutPreview(assessmentPageTitle(assessment), "Risk assessment", "risk", user, content)
+		page = ui2.Layout(assessmentPageTitle(assessment), "Risk assessment", "risk", user, content)
 	}
 	httputil.Render(w, r, page)
 }

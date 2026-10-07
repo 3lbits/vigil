@@ -1,0 +1,48 @@
+package ui2
+
+import (
+	"fmt"
+
+	"github.com/3lbits/vigil/internal/middleware"
+	"github.com/3lbits/vigil/internal/ui/layout"
+)
+
+templ Layout(title, subtitle, activePage string, user middleware.SessionUser, content templ.Component) {
+	@layout.LayoutPreview(title, subtitle, activePage, user, content)
+}
+
+templ Page(class string) {
+	<div class={ "ui2", class }>
+		{ children... }
+	</div>
+}
+
+templ Panel() {
+	<section class="ui2-panel">
+		{ children... }
+	</section>
+}
+
+templ Grid() {
+	<div class="ui2-grid">
+		{ children... }
+	</div>
+}
+
+templ Notice(tone string) {
+	<p class="ui2-notice" data-tone={ tone }>
+		{ children... }
+	</p>
+}
+
+templ Badge(tone string) {
+	<span class="ui2-badge" data-tone={ tone }>{ children... }</span>
+}
+
+templ Metric(label string, value int64, note string) {
+	<article class="ui2-metric">
+		<h2>{ label }</h2>
+		<data value={ fmt.Sprint(value) }>{ fmt.Sprint(value) }</data>
+		<p>{ note }</p>
+	</article>
+}

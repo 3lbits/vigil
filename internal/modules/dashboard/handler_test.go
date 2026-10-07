@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/google/uuid"
@@ -73,6 +74,9 @@ func TestDashboard_OK(t *testing.T) {
 
 	if w.Code != http.StatusOK {
 		t.Errorf("expected 200, got %d", w.Code)
+	}
+	if !strings.Contains(w.Body.String(), "ui2-shell") || !strings.Contains(w.Body.String(), "ui2-dashboard") {
+		t.Error("dashboard did not render with UI2 layout and content")
 	}
 }
 
