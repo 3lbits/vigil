@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./ui2.css";
 
 @source "../../../templates/**/*.templ";
 @source "../../../modules/**/*.templ";

@@ -77,6 +77,14 @@ func UserInitials(name string) string {
 }
 
 templ Layout(title string, subtitle string, activePage string, user middleware.SessionUser, content templ.Component) {
+	@layoutFrame(title, subtitle, activePage, user, content, false)
+}
+
+templ LayoutPreview(title string, subtitle string, activePage string, user middleware.SessionUser, content templ.Component) {
+	@layoutFrame(title, subtitle, activePage, user, content, true)
+}
+
+templ layoutFrame(title string, subtitle string, activePage string, user middleware.SessionUser, content templ.Component, preview bool) {
 	<!DOCTYPE html>
 	<html lang={ locale.LangFromContext(ctx) }>
 	<head>
@@ -98,7 +106,7 @@ templ Layout(title string, subtitle string, activePage string, user middleware.S
 			});
 		</script>
 	</head>
-	<body class="font-sans bg-white dark:bg-zinc-950 text-sand-900 dark:text-zinc-100 antialiased">
+	<body class={ "font-sans bg-white dark:bg-zinc-950 text-sand-900 dark:text-zinc-100 antialiased", templ.KV("ui2-shell", preview) }>
 		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:text-[13px] focus:rounded-md">{ locale.T(ctx, "action_skip_to_main") }</a>
 		<div
 			x-data="appLayout"

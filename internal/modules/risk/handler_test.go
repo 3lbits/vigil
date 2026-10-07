@@ -586,8 +586,17 @@ func TestRiskModuleContract(t *testing.T) {
 	if err := m.Register(modregistry.Dependencies{}, r); err != nil {
 		t.Fatalf("register failed: %v", err)
 	}
-	if got := len(r.Meta()); got != 59 {
-		t.Fatalf("expected 59 routes, got %d", got)
+	if got := len(r.Meta()); got != 60 {
+		t.Fatalf("expected 60 routes, got %d", got)
+	}
+	var preview *modregistry.Policy
+	for _, route := range r.Meta() {
+		if route.Pattern == "GET /risks/{id}/ui2" {
+			preview = route.Policy
+		}
+	}
+	if preview == nil || preview.Resource != "risk" || preview.Action != "read" {
+		t.Fatalf("preview must require risk read policy, got %+v", preview)
 	}
 }
 

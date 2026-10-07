@@ -1,0 +1,279 @@
+package risktemplates
+
+import (
+	"database/sql"
+	"fmt"
+	"strconv"
+	"strings"
+
+	"github.com/3lbits/vigil/internal/csrf"
+	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui2"
+	"github.com/3lbits/vigil/internal/ui/layout"
+)
+
+func previewTone(score, lowMax, highMin int) string {
+	switch {
+	case score >= highMin:
+		return "danger"
+	case score > lowMax:
+		return "warning"
+	default:
+		return "success"
+	}
+}
+
+templ previewScore(l, c sql.NullInt32, lowMax, highMin int) {
+	if l.Valid && c.Valid {
+		<data value={ fmt.Sprint(l.Int32 * c.Int32) } data-tone={ previewTone(int(l.Int32*c.Int32), lowMax, highMin) }>
+			{ fmt.Sprint(l.Int32 * c.Int32) }
+		</data>
+	} else {
+		<span>—</span>
+	}
+}
+
+templ previewMatrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) {
+	<div class="ui2-matrix">
+		@ui2.Table(label) {
+			<thead>
+				<tr>
+					<th scope="col">
+						<span class="sr-only">{ locale.T(ctx, "label_likelihood") } / { locale.T(ctx, "scale_consequence") }</span>
+						<span aria-hidden="true">L / C</span>
+					</th>
+					for consequence := 1; consequence <= 5; consequence++ {
+						<th scope="col">{ fmt.Sprint(consequence) }</th>
+					}
+				</tr>
+			</thead>
+			<tbody>
+				for likelihood := 5; likelihood >= 1; likelihood-- {
+					<tr>
+						<th scope="row">{ fmt.Sprint(likelihood) }</th>
+						for consequence := 1; consequence <= 5; consequence++ {
+							<td>
+								<span class="ui2-matrix-cell" data-tone={ previewTone(likelihood*consequence, lowMax, highMin) }>
+									{ fmt.Sprint(cells[(5-likelihood)*5+consequence-1].Count) }
+								</span>
+							</td>
+						}
+					</tr>
+				}
+			</tbody>
+		}
+	</div>
+}
+
+templ previewStatus(status string) {
+	switch status {
+		case "active":
+			<span class="ui2-badge" data-tone="success">{ locale.T(ctx, "assessment_status_active") }</span>
+		case "archived":
+			<span class="ui2-badge">{ locale.T(ctx, "assessment_status_archived") }</span>
+		case "pending_acceptance":
+			<span class="ui2-badge" data-tone="warning">{ locale.T(ctx, "assessment_status_pending_acceptance") }</span>
+		default:
+			<span class="ui2-badge" data-tone="warning">{ locale.T(ctx, "assessment_status_draft") }</span>
+	}
+}
+
+templ previewDecision(decision string) {
+	switch decision {
+		case "accept":
+			<span class="ui2-badge" data-tone="success">{ locale.T(ctx, "decision_accept") }</span>
+		case "treat":
+			<span class="ui2-badge" data-tone="info">{ locale.T(ctx, "decision_treat") }</span>
+		case "document":
+			<span class="ui2-badge">{ locale.T(ctx, "decision_document") }</span>
+		default:
+			<span>—</span>
+	}
+}
+
+templ AssessmentDetailPreview(vm AssessmentDetailVM) {
+	<section class="ui2" aria-label={ locale.T(ctx, "nav_risk_assessments") }>
+		<header>
+			<div>
+				<h2>{ vm.Assessment.Name }</h2>
+				@previewStatus(vm.Assessment.Status)
+				if vm.OrgName != "" {
+					<span>{ vm.OrgName }</span>
+				}
+			</div>
+			<nav aria-label={ locale.T(ctx, "nav_risk_assessments") }>
+				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String()) }>Original view</a>
+				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/review") }>{ locale.T(ctx, "action_review") }</a>
+				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") }>{ locale.T(ctx, "action_continue_wizard") }</a>
+			</nav>
+		</header>
+		if vm.Flash != "" {
+			if vm.FlashType == "error" {
+				<p role="alert" data-tone="danger">{ vm.Flash }</p>
+			} else {
+				<p role="status" data-tone="success">{ vm.Flash }</p>
+			}
+		}
+		if vm.Assessment.Status == "pending_acceptance" && vm.Assessment.RiskOwnerID.UUID.String() == vm.CurrentUserID {
+			<article>
+				<h3>{ locale.T(ctx, "assessment_pending_acceptance_msg") }</h3>
+				<div class="ui2-actions">
+					<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/accept") }>
+						<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+						<button type="submit">{ locale.T(ctx, "action_accept") }</button>
+					</form>
+					<details>
+						<summary>{ locale.T(ctx, "action_decline") }</summary>
+						<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/decline") }>
+							<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+							<label for="ui2-decline-note">Reason for declining (optional)</label>
+							<textarea id="ui2-decline-note" name="note" rows="3"></textarea>
+							<button type="submit">{ locale.T(ctx, "action_return_to_draft") }</button>
+						</form>
+					</details>
+				</div>
+			</article>
+		}
+		if vm.Assessment.Status == "draft" && vm.Assessment.AcceptanceNote != "" {
+			<p role="status">{ locale.T(ctx, "assessment_returned_by") }: { vm.Assessment.AcceptanceNote }</p>
+		}
+		if vm.CanTogglePublic {
+			<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/toggle-public") }>
+				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+				if vm.Assessment.IsPublic {
+					<button type="submit">Public</button>
+				} else {
+					<button type="submit">Private</button>
+				}
+			</form>
+		}
+		<details>
+			<summary>{ locale.T(ctx, "label_recent_changes_toggle") }</summary>
+			@ui2.Table(locale.T(ctx, "label_recent_changes")) {
+				<thead><tr>
+					<th scope="col">{ locale.T(ctx, "label_event") }</th>
+					<th scope="col">{ locale.T(ctx, "label_by") }</th>
+					<th scope="col">{ locale.T(ctx, "label_when") }</th>
+				</tr></thead>
+				<tbody>
+					if len(vm.AuditLog) == 0 {
+						<tr><td colspan="3">{ locale.T(ctx, "label_no_changes_yet") }</td></tr>
+					} else {
+						for i, entry := range vm.AuditLog {
+							if i < 5 {
+								<tr>
+									<td>{ riskAuditEventLabel(entry.Event) }</td>
+									<td>{ entry.UserName }</td>
+									<td><time datetime={ entry.EventTime.Format("2006-01-02T15:04:05Z07:00") }>{ entry.EventTime.Format("2 Jan 2006 15:04") }</time></td>
+								</tr>
+							}
+						}
+					}
+				</tbody>
+			}
+		</details>
+		<div class="ui2-grid">
+			<article>
+				<h3>{ locale.T(ctx, "risk_current_map_title") }</h3>
+				@previewMatrix(locale.T(ctx, "risk_current_map_title"), vm.CurrentMatrix, vm.LowMax, vm.HighMin)
+				<p>{ locale.T(ctx, "label_with_existing_controls") }</p>
+			</article>
+			<article>
+				<h3>{ locale.T(ctx, "risk_target_map_title") }</h3>
+				@previewMatrix(locale.T(ctx, "risk_target_map_title"), vm.TargetMatrix, vm.LowMax, vm.HighMin)
+				<p>{ locale.T(ctx, "label_after_planned_treatment") }</p>
+			</article>
+		</div>
+		<p class="ui2-legend">
+			<span class="ui2-badge" data-tone="danger">{ fmt.Sprintf("%s (≥%d)", locale.T(ctx, "risk_level_high"), vm.HighMin) }</span>
+			<span class="ui2-badge" data-tone="warning">{ fmt.Sprintf("%s (%d–%d)", locale.T(ctx, "risk_level_medium"), vm.LowMax+1, vm.HighMin-1) }</span>
+			<span class="ui2-badge" data-tone="success">{ fmt.Sprintf("%s (≤%d)", locale.T(ctx, "risk_level_low"), vm.LowMax) }</span>
+		</p>
+		<article>
+			<h3>{ locale.T(ctx, "label_assessment") }</h3>
+			<dl>
+				if vm.OwnerName != "" {
+					<dt>{ locale.T(ctx, "label_risk_owner") }</dt><dd>{ vm.OwnerName }</dd>
+				}
+				if vm.OrgName != "" {
+					<dt>{ locale.T(ctx, "label_organisation") }</dt><dd>{ vm.OrgName }</dd>
+				}
+				if vm.Assessment.Scope != "" {
+					<dt>{ locale.T(ctx, "label_scope") }</dt><dd>{ vm.Assessment.Scope }</dd>
+				}
+				if vm.Assessment.SecurityObjectives != "" {
+					<dt>{ locale.T(ctx, "label_objectives") }</dt><dd>{ vm.Assessment.SecurityObjectives }</dd>
+				}
+				if len(vm.Participants) > 0 {
+					<dt>{ locale.T(ctx, "label_participants") }</dt><dd>{ participantNames(vm.Participants) }</dd>
+				}
+				<dt>{ locale.T(ctx, "label_created") }</dt><dd><time datetime={ vm.Assessment.CreatedAt.Format("2006-01-02") }>{ vm.Assessment.CreatedAt.Format("2 Jan 2006") }</time></dd>
+				<dt>{ locale.T(ctx, "label_updated") }</dt><dd><time datetime={ vm.Assessment.UpdatedAt.Format("2006-01-02") }>{ vm.Assessment.UpdatedAt.Format("2 Jan 2006") }</time></dd>
+				if vm.Assessment.LastReviewedAt.Valid {
+					<dt>{ locale.T(ctx, "label_last_reviewed") }</dt><dd><time datetime={ vm.Assessment.LastReviewedAt.Time.Format("2006-01-02") }>{ vm.Assessment.LastReviewedAt.Time.Format("2 Jan 2006") }</time></dd>
+				}
+			</dl>
+		</article>
+		if vm.Assessment.ThreatAssessmentEnabled {
+			<details x-data="mermaidPreview()" x-init={ "source = " + strconv.Quote(vm.Assessment.ThreatInformationFlow) } @toggle="if ($el.open) { render() }">
+				<summary>{ locale.T(ctx, "label_threat_diagram_toggle") }</summary>
+				if strings.TrimSpace(vm.Assessment.ThreatInformationFlow) == "" {
+					<p>{ locale.T(ctx, "text_threat_diagram_empty") }</p>
+				} else {
+					<button type="button" @click="render()" :disabled="rendering">{ locale.T(ctx, "action_update_diagram") }</button>
+					<span x-show="error" x-text="error" role="alert"></span>
+					<div x-ref="out" class="ui2-diagram"></div>
+				}
+			</details>
+		}
+		<article>
+			<h3>{ locale.TN(ctx, "risk_register_count", len(vm.Risks), map[string]any{"Count": len(vm.Risks)}) }</h3>
+			if len(vm.Risks) == 0 {
+				<p>{ locale.T(ctx, "risk_none_identified") } <a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") }>{ locale.T(ctx, "action_goto_identification") }</a></p>
+			} else {
+				@ui2.Table(locale.T(ctx, "label_risks")) {
+					<thead><tr>
+						<th scope="col">{ locale.T(ctx, "label_risk") }</th>
+						<th scope="col">{ locale.T(ctx, "label_current") }</th>
+						<th scope="col">{ locale.T(ctx, "label_target") }</th>
+						<th scope="col">{ locale.T(ctx, "label_decision") }</th>
+					</tr></thead>
+					<tbody>
+						for _, risk := range vm.Risks {
+							<tr>
+								<th scope="row">
+									<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + risk.ID.String()) }>
+										if risk.RefNum.Valid {
+											{ riskRef(risk.RefNum) }
+										}
+										{ risk.Name }
+									</a>
+									if risk.Description != "" {
+										<small>{ risk.Description }</small>
+									}
+								</th>
+								<td>
+									@previewScore(risk.LikelihoodCurrent, risk.ConsequenceCurrent, vm.LowMax, vm.HighMin)
+								</td>
+								<td>
+									@previewScore(risk.LikelihoodTarget, risk.ConsequenceTarget, vm.LowMax, vm.HighMin)
+								</td>
+								<td>
+									@previewDecision(risk.RiskDecision)
+								</td>
+							</tr>
+						}
+					</tbody>
+				}
+			}
+		</article>
+		<details>
+			<summary>{ locale.T(ctx, "action_delete_assessment") }</summary>
+			<p>Delete this assessment and all risks?</p>
+			<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/delete") }>
+				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+				<button type="submit" data-tone="danger">{ locale.T(ctx, "action_delete_assessment") }</button>
+			</form>
+		</details>
+	</section>
+}

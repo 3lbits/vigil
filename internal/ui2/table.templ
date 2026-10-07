@@ -1,0 +1,10 @@
+package ui2
+
+templ Table(label string) {
+	<div class="ui2-table" role="region" aria-label={ label } tabindex="0">
+		<table>
+			<caption class="sr-only">{ label }</caption>
+			{ children... }
+		</table>
+	</div>
+}

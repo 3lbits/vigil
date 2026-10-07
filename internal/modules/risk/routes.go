@@ -37,6 +37,7 @@ func (riskModule) Register(deps modregistry.Dependencies, r *modregistry.Registr
 	r.Guarded("GET /risks/new", writePolicy, h.NewAssessment, moduleGuard)
 	r.Guarded("POST /risks", writePolicy, h.CreateAssessment, moduleGuard)
 	r.Guarded("GET /risks/{id}", readPolicy, h.Detail, moduleGuard, assessmentReadScoped)
+	r.Guarded("GET /risks/{id}/ui2", readPolicy, h.DetailPreview, moduleGuard, assessmentReadScoped)
 	r.Guarded("POST /risks/{id}/delete", deletePolicy, h.DeleteAssessment, moduleGuard, assessmentReadScoped)
 	r.Guarded("POST /risks/{id}/toggle-public", writePolicy, h.TogglePublic, moduleGuard, assessmentReadScoped, assessmentTogglePublic)
 

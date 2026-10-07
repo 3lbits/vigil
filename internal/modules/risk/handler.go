@@ -930,6 +930,14 @@ func (h *Handler) buildDetailData(r *http.Request, risks []db.Risk) detailData {
 }
 
 func (h *Handler) Detail(w http.ResponseWriter, r *http.Request) {
+	h.renderDetail(w, r, false)
+}
+
+func (h *Handler) DetailPreview(w http.ResponseWriter, r *http.Request) {
+	h.renderDetail(w, r, true)
+}
+
+func (h *Handler) renderDetail(w http.ResponseWriter, r *http.Request, preview bool) {
 	assessment, ok := h.loadAssessment(w, r)
 	if !ok {
 		return
@@ -961,26 +969,33 @@ func (h *Handler) Detail(w http.ResponseWriter, r *http.Request) {
 	flashType := r.URL.Query().Get("type")
 	user, _ := middleware.FromContext(r.Context())
 	canToggle := user.Role == "admin" || assessment.RiskOwnerID.UUID.String() == user.ID || assessment.CreatedBy.UUID.String() == user.ID
-	httputil.Render(w, r, layout.Layout(assessmentPageTitle(assessment), "Risk assessment", "risk", user,
-		risktemplates.AssessmentDetail(risktemplates.AssessmentDetailVM{
-			Assessment:      assessment,
-			Risks:           risks,
-			CurrentMatrix:   layout.BuildRiskMatrixCellsT(d.currentCounts, thresholds),
-			TargetMatrix:    layout.BuildRiskMatrixCellsT(d.targetCounts, thresholds),
-			RiskMeasures:    d.riskMeasures,
-			RiskActivities:  d.riskActivities,
-			OwnerName:       ownerName,
-			OrgName:         orgName,
-			Participants:    participants,
-			Flash:           flash,
-			FlashType:       flashType,
-			LowMax:          lowMax,
-			HighMin:         highMin,
-			CurrentUserID:   user.ID,
-			CanTogglePublic: canToggle,
-			AuditLog:        auditLog,
-		}),
-	))
+	vm := risktemplates.AssessmentDetailVM{
+		Assessment:      assessment,
+		Risks:           risks,
+		CurrentMatrix:   layout.BuildRiskMatrixCellsT(d.currentCounts, thresholds),
+		TargetMatrix:    layout.BuildRiskMatrixCellsT(d.targetCounts, thresholds),
+		RiskMeasures:    d.riskMeasures,
+		RiskActivities:  d.riskActivities,
+		OwnerName:       ownerName,
+		OrgName:         orgName,
+		Participants:    participants,
+		Flash:           flash,
+		FlashType:       flashType,
+		LowMax:          lowMax,
+		HighMin:         highMin,
+		CurrentUserID:   user.ID,
+		CanTogglePublic: canToggle,
+		AuditLog:        auditLog,
+	}
+	content := risktemplates.AssessmentDetail(vm)
+	if preview {
+		content = risktemplates.AssessmentDetailPreview(vm)
+	}
+	page := layout.Layout(assessmentPageTitle(assessment), "Risk assessment", "risk", user, content)
+	if preview {
+		page = layout.LayoutPreview(assessmentPageTitle(assessment), "Risk assessment", "risk", user, content)
+	}
+	httputil.Render(w, r, page)
 }
 
 func (h *Handler) RiskDetail(w http.ResponseWriter, r *http.Request) {
