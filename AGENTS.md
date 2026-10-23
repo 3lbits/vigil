@@ -14,7 +14,7 @@ a rule here changes.
 
 Vigil — Go-based GRC (governance, risk, compliance) toolbox.
 
-Stack: Go 1.26+, templ (server-side rendering), sqlc, goose, pgx/v5, htmx,
+Stack: Go 1.27.3+, templ (server-side rendering), sqlc, goose, pgx/v5, htmx,
 Alpine.js (CSP build), Tailwind CSS v4 CLI, air.
 
 Authorization is policy-based using embedded OPA Rego.
