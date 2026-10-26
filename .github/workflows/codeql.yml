@@ -39,7 +39,7 @@ jobs:
         with:
           egress-policy: audit
       - uses: actions/checkout@v7
-      - uses: jdx/mise-action@v5.2.0
+      - uses: jdx/mise-action@v5.2.2
         with:
           install_args: >-
             go
