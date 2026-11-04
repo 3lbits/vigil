@@ -57,7 +57,7 @@ jobs:
           img=$(grep -oP 'golang:\K[0-9.]+' Dockerfile | head -1)
           test -n "$mod" || { echo "no toolchain line in go.mod"; exit 1; }
           test "$mod" = "$img" || { echo "go.mod toolchain $mod != Dockerfile golang:$img"; exit 1; }
-      - uses: jdx/mise-action@v5.2.0
+      - uses: jdx/mise-action@v5.2.4
         with:
           install_args: >-
             go
@@ -86,7 +86,7 @@ jobs:
         with:
           egress-policy: audit
       - uses: actions/checkout@v7
-      - uses: jdx/mise-action@v5.2.0
+      - uses: jdx/mise-action@v5.2.4
         with:
           install_args: >-
             go
@@ -117,7 +117,7 @@ jobs:
         with:
           fetch-depth: 0 # full history is required by the gitleaks history scan
           persist-credentials: false # keep the checkout token out of git config
-      - uses: jdx/mise-action@v5.2.0
+      - uses: jdx/mise-action@v5.2.4
         with:
           install_args: >-
             go
