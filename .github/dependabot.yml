@@ -1,4 +1,5 @@
 version: 2
+
 updates:
   - package-ecosystem: "gomod"
     directory: "/"
@@ -6,76 +7,62 @@ updates:
       interval: "weekly"
       day: "monday"
       time: "06:00"
-      timezone: "UTC"
-    open-pull-requests-limit: 10
-    rebase-strategy: "auto"
-    labels:
-      - "dependencies"
-      - "go"
+      timezone: "Europe/Oslo"
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: "chore(deps)"
     groups:
+      go-security:
+        applies-to: security-updates
+        patterns: ["*"]
       go-minor-patch:
-        update-types:
-          - "minor"
-          - "patch"
+        applies-to: version-updates
+        update-types: ["minor", "patch"]
 
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "06:30"
-      timezone: "UTC"
-    open-pull-requests-limit: 5
-    rebase-strategy: "auto"
-    labels:
-      - "dependencies"
-      - "docker"
+      time: "06:00"
+      timezone: "Europe/Oslo"
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: "chore(deps)"
     groups:
-      docker-minor-patch:
-        update-types:
-          - "minor"
-          - "patch"
-  
+      docker:
+        patterns: ["*"]
+
   - package-ecosystem: "github-actions"
-    directory: "/"          
+    directory: "/"
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "06:15"
-      timezone: "UTC"
-    open-pull-requests-limit: 5
-    rebase-strategy: "auto"
-    labels:
-      - "dependencies"
-      - "ci"
+      interval: "monthly"
+      timezone: "Europe/Oslo"
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: "chore(deps)"
     groups:
-      actions-minor-patch:
-        update-types:
-          - "minor"
-          - "patch"
+      actions:
+        patterns: ["*"]
 
   - package-ecosystem: "bun"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "06:45"
-      timezone: "UTC"
-    open-pull-requests-limit: 5
-    rebase-strategy: "auto"
-    labels:
-      - "dependencies"
-      - "frontend"
+      time: "06:00"
+      timezone: "Europe/Oslo"
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: "chore(deps)"
     groups:
-      js-minor-patch:
-        update-types:
-          - "minor"
-          - "patch"
+      js-security:
+        applies-to: security-updates
+        patterns: ["*"]
+      js-tooling:
+        applies-to: version-updates
+        patterns: ["*"]

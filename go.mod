@@ -1,6 +1,7 @@
 module github.com/3lbits/vigil
 
-go 1.27.3
+go 1.27
+toolchain go1.27.3
 
 require (
 	github.com/BurntSushi/toml v1.6.0
