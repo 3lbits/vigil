@@ -17,10 +17,10 @@ WORKDIR /build
 
 ARG VERSION=dev
 
-# Install templ CLI (version pinned to match go.mod: v0.3.1001)
+# Install templ CLI (version pinned to match go.mod: v0.3.1100)
 # Placed before source copy so this layer is cached as long as the version is unchanged.
 # Now runs natively on the build host for every target -> built once, reused.
-RUN go install github.com/a-h/templ/cmd/templ@v0.3.1001
+RUN go install github.com/a-h/templ/cmd/templ@v0.3.1100
 
 # Install Tailwind v4 standalone CLI (no Node.js required)
 # This binary EXECUTES on the builder, so it must match the build HOST arch

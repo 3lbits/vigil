@@ -57,6 +57,12 @@ jobs:
           img=$(grep -oP 'golang:\K[0-9.]+' Dockerfile | head -1)
           test -n "$mod" || { echo "no toolchain line in go.mod"; exit 1; }
           test "$mod" = "$img" || { echo "go.mod toolchain $mod != Dockerfile golang:$img"; exit 1; }
+      - name: templ version consistent (go.mod vs Dockerfile)
+        run: |
+          mod=$(awk '$1 == "github.com/a-h/templ" {print $2}' go.mod)
+          cli=$(grep -oP 'github.com/a-h/templ/cmd/templ@\Kv[0-9.]+' Dockerfile)
+          test -n "$mod" || { echo "no templ dependency in go.mod"; exit 1; }
+          test "$mod" = "$cli" || { echo "go.mod templ $mod != Dockerfile templ CLI $cli"; exit 1; }
       - uses: jdx/mise-action@v5.2.4
         with:
           install_args: >-
