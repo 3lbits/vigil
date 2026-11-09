@@ -8,7 +8,7 @@
 # binary, so no target-arch code is ever executed at build time — QEMU emulation
 # is not needed. Digest pinning still works: the digest points at the manifest
 # index and $BUILDPLATFORM resolves the host variant from it.
-FROM --platform=$BUILDPLATFORM golang:1.27.1-bookworm@sha256:69a7b9788769bec032d238959b61854e9ae87f57be9029ec04e9885fabf99195 AS builder
+FROM --platform=$BUILDPLATFORM golang:1.27.3-bookworm@sha256:972b4110ba0f47539a975c31e52c64765e1ff19f2d74469ae4a595c6676e80a5 AS builder
 
 # Prevent Go from auto-downloading a newer toolchain at build time
 ENV GOTOOLCHAIN=local
@@ -17,10 +17,10 @@ WORKDIR /build
 
 ARG VERSION=dev
 
-# Install templ CLI (version pinned to match go.mod: v0.3.1001)
+# Install templ CLI (version pinned to match go.mod: v0.3.1100)
 # Placed before source copy so this layer is cached as long as the version is unchanged.
 # Now runs natively on the build host for every target -> built once, reused.
-RUN go install github.com/a-h/templ/cmd/templ@v0.3.1001
+RUN go install github.com/a-h/templ/cmd/templ@v0.3.1100
 
 # Fetch dependencies first for better layer caching
 COPY go.mod go.sum ./

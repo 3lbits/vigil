@@ -3,7 +3,6 @@
 [![License](https://img.shields.io/github/license/3lbits/vigil)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/3lbits/vigil)](https://github.com/3lbits/vigil/releases)
 [![CI](https://github.com/3lbits/vigil/actions/workflows/ci.yml/badge.svg)](https://github.com/3lbits/vigil/actions/workflows/ci.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/3lbits/vigil)](https://goreportcard.com/report/github.com/3lbits/vigil)
 [![CodeQL](https://github.com/3lbits/vigil/actions/workflows/codeql.yml/badge.svg)](https://github.com/3lbits/vigil/actions/workflows/codeql.yml)
 
 
@@ -43,7 +42,7 @@ Rego (`cmd/server/policies/authz.rego`), not hardcoded role checks in handlers.
 
 | Layer | Technology |
 |---|---|
-| Backend | Go 1.26+ (`net/http`) |
+| Backend | Go 1.27.3+ (`net/http`) |
 | HTML | [templ](https://templ.guide/) |
 | CSS / JS | Plain CSS, htmx, Alpine.js (CSP build) |
 | Data | PostgreSQL + pgx/v5 + sqlc |

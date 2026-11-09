@@ -19,7 +19,7 @@ See [SECURITY.md](SECURITY.md) for the disclosure process.
 
 ## Development setup
 
-Requirements: Go 1.26+, and Docker or Podman.
+Requirements: Go 1.27.3+, and Docker or Podman.
 
 ```sh
 git clone https://github.com/3lbits/vigil.git
