@@ -49,4 +49,6 @@ vigil-db/
 reports/
 
 /node_modules/
+/test-results/
+/playwright-report/
 /cmd/server/public/js/*.min.js

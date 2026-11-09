@@ -1,6 +1,6 @@
 *, *::before, *::after { box-sizing: border-box; }
-html { font-family: ui-sans-serif, system-ui, sans-serif; line-height: 1.5; }
-body { -webkit-font-smoothing: antialiased; }
+html { color-scheme: light; font-family: system-ui, sans-serif; line-height: 1.5; }
+html.dark { color-scheme: dark; }
 body, h1, h2, h3, h4, p, ul, ol, dl, dd, figure { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
 button, input, select, textarea { font: inherit; }
@@ -14,25 +14,22 @@ img, svg { display: block; }
 .skip-link {
   position: absolute; top: .5rem; left: .5rem; z-index: 100;
   transform: translateY(-200%); padding: .5rem 1rem;
-  border-radius: .375rem; background: #fff; color: #193cb8;
+  border-radius: .375rem; background: Canvas; color: LinkText;
 }
-.skip-link:focus { transform: none; outline: 2px solid #193cb8; }
-:focus-visible { outline: 2px solid #193cb8; outline-offset: 2px; }
+.skip-link:focus { transform: none; outline: 2px solid LinkText; }
+:focus-visible { outline: 2px solid LinkText; outline-offset: 2px; }
 
-/* Elbriks-inspired palette, scoped to UI2 pages and their shell. */
 :is(.ui2, .ui2-shell, .ui2-login, .error-page) {
-  color-scheme: light;
-  --ui2-bg: light-dark(#e2e8f0, #0f172b);
-  --ui2-card: light-dark(#fff, #1d293d);
-  --ui2-fg: light-dark(#1d293d, #f1f5f9);
-  --ui2-muted: light-dark(#52525c, #d4d4d8);
-  --ui2-link: light-dark(#193cb8, #51a2ff);
-  --ui2-border: light-dark(#cad5e2, #ffffff1a);
-  --ui2-input: light-dark(#8f8f8f, #ffffff66);
-  --ui2-primary-fg: light-dark(#eff6ff, #dbeafe);
-  --ui2-accent: light-dark(#f1f5f9, #314158);
-  --ui2-neutral-bg: light-dark(#f1f5f9, #0f172b);
-  --ui2-neutral-fg: light-dark(#314158, #cad5e2);
+  --ui2-bg: Canvas;
+  --ui2-card: Canvas;
+  --ui2-fg: CanvasText;
+  --ui2-muted: CanvasText;
+  --ui2-link: LinkText;
+  --ui2-border: ButtonBorder;
+  --ui2-input: ButtonBorder;
+  --ui2-accent: Canvas;
+  --ui2-neutral-bg: Canvas;
+  --ui2-neutral-fg: CanvasText;
   --ui2-success-bg: light-dark(#dcfce7, #032e15);
   --ui2-success-fg: light-dark(#0d542b, #00c950);
   --ui2-warning-bg: light-dark(#ffedd4, #441306);
@@ -42,15 +39,10 @@ img, svg { display: block; }
   --ui2-info-bg: light-dark(#dff2fe, #052f4a);
   --ui2-info-fg: light-dark(#00598a, #00a6f4);
 }
-.dark :is(.ui2, .ui2-shell, .ui2-login, .error-page) { color-scheme: dark; }
 .ui2 {
   display: grid;
   gap: .75rem;
-  background: var(--ui2-bg);
-  color: var(--ui2-fg);
-  font: 400 1rem/1.5 ui-sans-serif, system-ui, sans-serif;
 }
-body.ui2-shell { background: var(--ui2-bg); color: var(--ui2-fg); }
 .app-frame { display: flex; height: 100vh; overflow: hidden; }
 .sidebar-overlay { position: fixed; inset: 0; z-index: 30; background: #0003; }
 .app-sidebar {
@@ -124,7 +116,7 @@ body.ui2-shell { background: var(--ui2-bg); color: var(--ui2-fg); }
 .sidebar-locale-button:hover, .sidebar-dev-controls button:hover { background: var(--ui2-accent); }
 .sidebar-dev-role label { display: block; color: var(--ui2-muted); font-size: .625rem; }
 .sidebar-dev-controls select { width: 100%; min-width: 0; }
-.app-main { flex: 1; min-width: 0; overflow-y: auto; background: var(--ui2-bg); }
+.app-main { flex: 1; min-width: 0; overflow-y: auto; }
 .app-content { padding: .75rem 1rem; }
 .app-page-header {
   display: flex; align-items: center; gap: .625rem; margin-bottom: .75rem;
@@ -166,15 +158,14 @@ body.ui2-shell { background: var(--ui2-bg); color: var(--ui2-fg); }
 .ui2 details[open] > :not(summary) { margin-top: .75rem; }
 .ui2 button:not([class]) {
   padding: .5rem .75rem;
-  border: 1px solid #1c398e;
+  border: 1px solid ButtonBorder;
   border-bottom-width: 2px;
   border-radius: 8px;
-  background: #1447e6;
-  color: var(--ui2-primary-fg);
+  background: ButtonFace;
+  color: ButtonText;
   font-weight: 500;
   cursor: pointer;
 }
-.ui2 button:not([class]):hover { background: #155dfc; }
 .ui2 button:disabled { opacity: .6; cursor: not-allowed; }
 .ui2 :is(button, a, summary, .ui2-table):focus-visible { outline: 3px solid var(--ui2-link); outline-offset: 2px; }
 .ui2 textarea {
@@ -186,7 +177,7 @@ body.ui2-shell { background: var(--ui2-bg); color: var(--ui2-fg); }
   background: var(--ui2-card);
   color: var(--ui2-fg);
 }
-.ui2 progress { max-width: 100%; height: .75rem; accent-color: #1447e6; }
+.ui2 progress { max-width: 100%; height: .75rem; }
 .ui2 :is(input:not([type="hidden"], [type="checkbox"], [type="radio"]), select) {
   padding: .5rem;
   border: 1px solid var(--ui2-input);
@@ -268,7 +259,7 @@ body.ui2-shell { background: var(--ui2-bg); color: var(--ui2-fg); }
 .ui2-dashboard .ui2-legend { margin-top: .75rem; }
 .ui2-dashboard .ui2-notice a { color: inherit; font-weight: 600; }
 .ui2-avvik a[hx-target="#avvik-tab-panel"] { text-decoration: none; }
-.ui2-avvik a[hx-target="#avvik-tab-panel"].ops-tab-active { color: #fff; }
+.ui2-avvik a[hx-target="#avvik-tab-panel"].ops-tab-active { color: HighlightText; }
 .ui2-avvik a[hx-target="#avvik-tab-panel"].ops-tab-inactive { color: var(--ui2-fg); }
 .ui2-about { max-width: 55rem; }
 .ui2-about > section > :not(:last-child) { margin-bottom: .75rem; }
@@ -299,9 +290,8 @@ body.ui2-login { display: grid; min-height: 100vh; place-items: center; padding:
 .error-request { margin-bottom: 1.25rem; padding: .5rem .75rem; border: 1px solid var(--ui2-border); border-radius: .375rem; background: var(--ui2-neutral-bg); color: var(--ui2-muted); font: .75rem ui-monospace, monospace; }
 .error-actions { display: flex; align-items: center; gap: .5rem; }
 .error-actions :is(a, button) { display: inline-flex; align-items: center; padding: .375rem .75rem; border-radius: .375rem; font-size: .75rem; }
-.error-primary { border: 1px solid #1c398e; background: #1d293d; color: #fff; text-decoration: none; }
-.error-primary:hover { background: #314158; }
-.error-inline { padding: .5rem .75rem; border: 1px solid #fcd34d; border-radius: .375rem; background: #fffbeb; color: #78350f; font-size: .75rem; }
+.error-primary { border: 1px solid ButtonBorder; background: ButtonFace; color: ButtonText; text-decoration: none; }
+.error-inline { padding: .5rem .75rem; border: 1px solid ButtonBorder; border-radius: .375rem; font-size: .75rem; }
 .ui2-login main { width: min(100%, 28rem); }
 .ui2-login-page > header { display: grid; justify-items: center; text-align: center; }
 .ui2-login-logo { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border-radius: .75rem; background: var(--ui2-accent); color: var(--ui2-link); }

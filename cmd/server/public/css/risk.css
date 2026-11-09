@@ -1,9 +1,9 @@
 .ui2-risk {
-  --risk-soft: light-dark(#faf9f6, #263449);
-  --risk-blue-bg: light-dark(#eff6ff, #142b51);
-  --risk-blue-fg: light-dark(#1e40af, #bfdbfe);
-  --risk-violet-bg: light-dark(#f5f3ff, #30244c);
-  --risk-violet-fg: light-dark(#5b21b6, #ddd6fe);
+  --risk-soft: var(--ui2-accent);
+  --risk-blue-bg: var(--ui2-accent);
+  --risk-blue-fg: var(--ui2-fg);
+  --risk-violet-bg: var(--ui2-accent);
+  --risk-violet-fg: var(--ui2-fg);
   min-width: 0;
 }
 .ui2-risk .risk-visually-hidden {
@@ -168,9 +168,8 @@
 .ui2-risk .risk-score-fields select, .ui2-risk :is(.risk-form-width, .risk-narrow) :is(input:not([type=checkbox], [type=radio], [type=hidden]), select) { width: 100%; }
 .ui2-risk :is(.risk-form-width, .risk-narrow, .risk-wide) label:not(.risk-radio-option, .risk-check-option, .risk-visually-hidden) { display: block; margin-bottom: .25rem; }
 .ui2-risk .risk-radio-option, .ui2-risk .risk-check-option { cursor: pointer; }
-.ui2-risk .risk-radio { accent-color: #2563eb; }
 .ui2-risk .risk-check-option { display: flex; align-items: flex-start; gap: .75rem; }
-.ui2-risk .risk-check-input { width: 1rem; height: 1rem; margin-top: .125rem; accent-color: #2563eb; }
+.ui2-risk .risk-check-input { width: 1rem; height: 1rem; margin-top: .125rem; }
 .ui2-risk .risk-decision-option { font-size: .8125rem; }
 .ui2-risk .risk-decision-accept { color: var(--ui2-success-fg); }
 .ui2-risk .risk-decision-treat { color: var(--risk-blue-fg); }

@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
-.PHONY: help setup run dev build test lint pre-commit pre-commit-fast \
+.PHONY: help setup run dev build test test-ui lint pre-commit pre-commit-fast \
         generate db-up db-reset js-vendor clean \
         run-op dev-op generate-sqlc generate-templ css-build \
         semgrep deadcode db-start db-down db-down-clean db-logs db-psql \
@@ -34,6 +34,13 @@ dev: run ## Start the dev server with live reload
 
 test: ## Run race-enabled tests
 	go test -race -count=1 -timeout 120s ./...
+
+test-ui: ## Check dashboard colors/fonts with Playwright (app running on localhost:8080)
+	@test -x node_modules/.bin/playwright || { \
+		echo "One-time setup: bun add --dev @playwright/test && bunx playwright install chromium"; \
+		exit 1; \
+	}
+	node_modules/.bin/playwright test tests/ui2.spec.js
 
 coverage: ## Coverage report excluding sqlc/templ generated code
 	go test -coverprofile=coverage.out -count=1 -timeout 120s ./...

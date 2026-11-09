@@ -4,5 +4,8 @@
     "@alpinejs/csp": "~3.17.5",
     "htmx.org": "~2.0.11",
     "mermaid": "^12.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.0"
   }
 }
