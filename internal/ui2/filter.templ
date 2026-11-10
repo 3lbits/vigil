@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/3lbits/vigil/internal/locale"
-	"github.com/3lbits/vigil/internal/ui"
 )
 
 type FilterBarProps struct {
@@ -47,7 +46,7 @@ type FilterSearchProps struct {
 templ FilterSearch(p FilterSearchProps) {
 	<label for="q-search" class="sr-only">{ filterSearchPlaceholder(ctx, p.Columns) }</label>
 	<div class="ui2-filter-search">
-		<span aria-hidden="true">@ui.IconSVG("search", 13)</span>
+		<span aria-hidden="true">@IconSVG("search", 13)</span>
 		<input id="q-search" name="q" type="text" value={ p.Value } placeholder={ filterSearchPlaceholder(ctx, p.Columns) } class={ "ui2-filter-input", p.Class } autocomplete="off" hx-get={ p.Action } hx-target={ p.Target } hx-swap="innerHTML" hx-push-url="true" hx-include="closest form" hx-trigger="input changed delay:300ms"/>
 	</div>
 }

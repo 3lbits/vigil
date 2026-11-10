@@ -25,7 +25,7 @@ import (
 	"github.com/3lbits/vigil/internal/locale"
 	"github.com/3lbits/vigil/internal/middleware"
 	"github.com/3lbits/vigil/internal/obs"
-	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 type appState struct {
@@ -104,25 +104,25 @@ func bootstrap(ctx context.Context, cfg *config.Config, opts Options) (appState,
 	}
 	h := sha256.New()
 	h.Write(css)
-	layout.AssetVer = fmt.Sprintf("%x", h.Sum(nil)[:4])
+	ui2.AssetVer = fmt.Sprintf("%x", h.Sum(nil)[:4])
 
 	htmxJS, err := fs.ReadFile(opts.StaticFS, "public/js/htmx.min.js")
 	if err != nil {
 		return appState{}, fmt.Errorf("read embedded htmx js: %w", err)
 	}
-	layout.HTMXIntegrity = sri384(htmxJS)
+	ui2.HTMXIntegrity = sri384(htmxJS)
 
 	alpineJS, err := fs.ReadFile(opts.StaticFS, "public/js/alpine.min.js")
 	if err != nil {
 		return appState{}, fmt.Errorf("read embedded alpine js: %w", err)
 	}
-	layout.AlpineIntegrity = sri384(alpineJS)
+	ui2.AlpineIntegrity = sri384(alpineJS)
 
 	mermaidJS, err := fs.ReadFile(opts.StaticFS, "public/js/mermaid.min.js")
 	if err != nil {
 		return appState{}, fmt.Errorf("read embedded mermaid js: %w", err)
 	}
-	layout.MermaidIntegrity = sri384(mermaidJS)
+	ui2.MermaidIntegrity = sri384(mermaidJS)
 
 	return appState{
 		obsShutdown:  obsShutdown,

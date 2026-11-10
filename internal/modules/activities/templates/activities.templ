@@ -8,7 +8,6 @@ import (
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
-	"github.com/3lbits/vigil/internal/ui"
 	"github.com/3lbits/vigil/internal/ui2"
 	formstemplates "github.com/3lbits/vigil/internal/ui2/forms"
 )
@@ -132,7 +131,7 @@ templ ActivityList(rows []db.FilterActivitiesRow, filter, kind, q, sort, dir str
 	<div class="ops-toolbar">
 		<p class="ops-muted">{ locale.T(ctx, "nav_activities") }</p>
 		@ui2.Link("/activities/new", templ.Attributes{"class": "ops-button"}) {
-			@ui.IconSVG("plus", 13)
+			@ui2.IconSVG("plus", 13)
 			{ locale.T(ctx, "action_add_activity") }
 		}
 	</div>
@@ -508,7 +507,7 @@ templ ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string,
 
 	<div class="ops-toolbar">
 		@ui2.Link("/activities", templ.Attributes{"class": "ops-link"}) {
-			@ui.IconSVG("chevron", 13)
+			@ui2.IconSVG("chevron", 13)
 			Activities
 		}
 		if canEdit {

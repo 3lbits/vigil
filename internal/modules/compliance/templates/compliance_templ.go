@@ -14,7 +14,6 @@ import (
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
-	"github.com/3lbits/vigil/internal/ui"
 	"github.com/3lbits/vigil/internal/ui2"
 	"strings"
 )
@@ -60,7 +59,7 @@ func FrameworkList(frameworks []FrameworkVM, expandID, flash, flashType string) 
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(locale.TN(ctx, "fw_count", len(frameworks), map[string]any{"Count": len(frameworks)}))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 20, Col: 140}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 19, Col: 140}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -82,7 +81,7 @@ func FrameworkList(frameworks []FrameworkVM, expandID, flash, flashType string) 
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = ui.IconSVG("plus", 13).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = ui2.IconSVG("plus", 13).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -93,7 +92,7 @@ func FrameworkList(frameworks []FrameworkVM, expandID, flash, flashType string) 
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_add_framework"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 24, Col: 43}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 23, Col: 43}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -117,7 +116,7 @@ func FrameworkList(frameworks []FrameworkVM, expandID, flash, flashType string) 
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "frameworks_none_yet"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 31, Col: 62}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 30, Col: 62}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -211,7 +210,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templruntime.NewAttributeExpression("fw-" + fw.Framework.ID.String()).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 46, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 45, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
@@ -224,7 +223,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fw.Framework.Name).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 47, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 46, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 		if templ_7745c5c3_Err != nil {
@@ -244,7 +243,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = ui.IconSVG("chevron", 14).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ui2.IconSVG("chevron", 14).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -255,7 +254,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fw.Framework.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 55, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 54, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -273,7 +272,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fw.Framework.Version)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 57, Col: 53}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 56, Col: 53}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -300,7 +299,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_not_relevant"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 60, Col: 68}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 59, Col: 68}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -328,7 +327,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d%%", fw.Coverage))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 67, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 66, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -341,7 +340,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templruntime.NewAttributeExpression("fw-reqs-" + fw.Framework.ID.String()).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 73, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 72, Col: 45}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 		if templ_7745c5c3_Err != nil {
@@ -354,7 +353,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "section_requirements"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 77, Col: 68}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 76, Col: 68}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -376,7 +375,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = ui.IconSVG("plus", 11).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = ui2.IconSVG("plus", 11).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -387,7 +386,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_add_requirement"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 80, Col: 46}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 79, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -447,7 +446,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d reqs", fw.TotalReqs))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 93, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 92, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
@@ -491,7 +490,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = ui.IconSVG("upload", 11).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = ui2.IconSVG("upload", 11).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -502,7 +501,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 			var templ_7745c5c3_Var24 string
 			templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_import"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 97, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 96, Col: 36}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 			if templ_7745c5c3_Err != nil {
@@ -529,7 +528,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 			var templ_7745c5c3_Var26 string
 			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_edit"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 99, Col: 161}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 98, Col: 161}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 			if templ_7745c5c3_Err != nil {
@@ -548,7 +547,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 		var templ_7745c5c3_Var27 string
 		templ_7745c5c3_Var27, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.SafeURL("/compliance/frameworks/" + fw.Framework.ID.String() + "/delete")).ResolveURL(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 100, Col: 111}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 99, Col: 111}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var27)
 		if templ_7745c5c3_Err != nil {
@@ -577,7 +576,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 			var templ_7745c5c3_Var29 string
 			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_delete"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 103, Col: 132}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 102, Col: 132}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 			if templ_7745c5c3_Err != nil {
@@ -638,7 +637,7 @@ func RequirementsTable(reqs []RequirementVM) templ.Component {
 				var templ_7745c5c3_Var32 string
 				templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(rvm.Requirement.Ref)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 122, Col: 53}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 121, Col: 53}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 				if templ_7745c5c3_Err != nil {
@@ -663,7 +662,7 @@ func RequirementsTable(reqs []RequirementVM) templ.Component {
 					var templ_7745c5c3_Var34 string
 					templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(rvm.Requirement.Title)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 124, Col: 152}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 123, Col: 152}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 					if templ_7745c5c3_Err != nil {
@@ -691,7 +690,7 @@ func RequirementsTable(reqs []RequirementVM) templ.Component {
 						var templ_7745c5c3_Var36 string
 						templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_not_relevant"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 126, Col: 68}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 125, Col: 68}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 						if templ_7745c5c3_Err != nil {
@@ -820,7 +819,7 @@ func FrameworkForm(fw *db.Framework, flash, flashType string, auditLog []db.List
 			var templ_7745c5c3_Var40 string
 			templ_7745c5c3_Var40, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fwFormAction(fw)).ResolveURL(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 158, Col: 47}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 157, Col: 47}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var40)
 			if templ_7745c5c3_Err != nil {
@@ -857,7 +856,7 @@ func FrameworkForm(fw *db.Framework, flash, flashType string, auditLog []db.List
 			var templ_7745c5c3_Var41 string
 			templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_type"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 165, Col: 79}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 164, Col: 79}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 			if templ_7745c5c3_Err != nil {
@@ -896,7 +895,7 @@ func FrameworkForm(fw *db.Framework, flash, flashType string, auditLog []db.List
 				var templ_7745c5c3_Var43 string
 				templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "fw_type_regulation"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 167, Col: 181}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 166, Col: 181}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
 				if templ_7745c5c3_Err != nil {
@@ -919,7 +918,7 @@ func FrameworkForm(fw *db.Framework, flash, flashType string, auditLog []db.List
 				var templ_7745c5c3_Var44 string
 				templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "fw_type_standard"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 168, Col: 126}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 167, Col: 126}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 				if templ_7745c5c3_Err != nil {
@@ -942,7 +941,7 @@ func FrameworkForm(fw *db.Framework, flash, flashType string, auditLog []db.List
 				var templ_7745c5c3_Var45 string
 				templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "fw_type_directive"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 169, Col: 129}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 168, Col: 129}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var45))
 				if templ_7745c5c3_Err != nil {
@@ -973,7 +972,7 @@ func FrameworkForm(fw *db.Framework, flash, flashType string, auditLog []db.List
 			var templ_7745c5c3_Var46 string
 			templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_mark_not_relevant"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 176, Col: 47}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 175, Col: 47}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var46))
 			if templ_7745c5c3_Err != nil {
@@ -1007,7 +1006,7 @@ func FrameworkForm(fw *db.Framework, flash, flashType string, auditLog []db.List
 					var templ_7745c5c3_Var48 string
 					templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_create_framework"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 184, Col: 48}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 183, Col: 48}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var48))
 					if templ_7745c5c3_Err != nil {
@@ -1017,7 +1016,7 @@ func FrameworkForm(fw *db.Framework, flash, flashType string, auditLog []db.List
 					var templ_7745c5c3_Var49 string
 					templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_save_changes"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 186, Col: 44}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 185, Col: 44}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var49))
 					if templ_7745c5c3_Err != nil {
@@ -1045,7 +1044,7 @@ func FrameworkForm(fw *db.Framework, flash, flashType string, auditLog []db.List
 				var templ_7745c5c3_Var51 string
 				templ_7745c5c3_Var51, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_cancel"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 190, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 189, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var51))
 				if templ_7745c5c3_Err != nil {
@@ -1181,7 +1180,7 @@ func requirementFormContent(frameworkID string, req *db.Requirement, flash, flas
 		var templ_7745c5c3_Var55 string
 		templ_7745c5c3_Var55, templ_7745c5c3_Err = templruntime.NewAttributeExpression(reqFormAction(frameworkID, req)).ResolveURL(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 241, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 240, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var55)
 		if templ_7745c5c3_Err != nil {
@@ -1226,7 +1225,7 @@ func requirementFormContent(frameworkID string, req *db.Requirement, flash, flas
 		var templ_7745c5c3_Var56 string
 		templ_7745c5c3_Var56, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_mark_not_relevant"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 251, Col: 47}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 250, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var56))
 		if templ_7745c5c3_Err != nil {
@@ -1260,7 +1259,7 @@ func requirementFormContent(frameworkID string, req *db.Requirement, flash, flas
 				var templ_7745c5c3_Var58 string
 				templ_7745c5c3_Var58, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_add_requirement"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 259, Col: 47}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 258, Col: 47}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var58))
 				if templ_7745c5c3_Err != nil {
@@ -1270,7 +1269,7 @@ func requirementFormContent(frameworkID string, req *db.Requirement, flash, flas
 				var templ_7745c5c3_Var59 string
 				templ_7745c5c3_Var59, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_save_changes"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 261, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 260, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var59))
 				if templ_7745c5c3_Err != nil {
@@ -1298,7 +1297,7 @@ func requirementFormContent(frameworkID string, req *db.Requirement, flash, flas
 			var templ_7745c5c3_Var61 string
 			templ_7745c5c3_Var61, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_cancel"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 265, Col: 37}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 264, Col: 37}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var61))
 			if templ_7745c5c3_Err != nil {
@@ -1400,7 +1399,7 @@ func ImportForm(frameworkID string, flash, flashType string, result *ImportResul
 				var templ_7745c5c3_Var64 string
 				templ_7745c5c3_Var64, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("✓ Imported %d requirements successfully.", result.Count))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 310, Col: 77}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 309, Col: 77}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var64))
 				if templ_7745c5c3_Err != nil {
@@ -1424,7 +1423,7 @@ func ImportForm(frameworkID string, flash, flashType string, result *ImportResul
 					var templ_7745c5c3_Var65 string
 					templ_7745c5c3_Var65, templ_7745c5c3_Err = templ.JoinStringErrs(e)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 317, Col: 29}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 316, Col: 29}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var65))
 					if templ_7745c5c3_Err != nil {
@@ -1447,7 +1446,7 @@ func ImportForm(frameworkID string, flash, flashType string, result *ImportResul
 			var templ_7745c5c3_Var66 string
 			templ_7745c5c3_Var66, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.SafeURL("/compliance/frameworks/" + frameworkID + "/requirements/import")).ResolveURL(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 329, Col: 110}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 328, Col: 110}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var66)
 			if templ_7745c5c3_Err != nil {
@@ -1485,7 +1484,7 @@ func ImportForm(frameworkID string, flash, flashType string, result *ImportResul
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = ui.IconSVG("upload", 13).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = ui2.IconSVG("upload", 13).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -1496,7 +1495,7 @@ func ImportForm(frameworkID string, flash, flashType string, result *ImportResul
 				var templ_7745c5c3_Var68 string
 				templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_import_requirements"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 340, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 339, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var68))
 				if templ_7745c5c3_Err != nil {
@@ -1523,7 +1522,7 @@ func ImportForm(frameworkID string, flash, flashType string, result *ImportResul
 				var templ_7745c5c3_Var70 string
 				templ_7745c5c3_Var70, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_cancel"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 343, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 342, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var70))
 				if templ_7745c5c3_Err != nil {
@@ -1595,7 +1594,7 @@ func RequirementDetail(vm RequirementDetailVM) templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = ui.IconSVG("chevron", 13).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = ui2.IconSVG("chevron", 13).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -1606,7 +1605,7 @@ func RequirementDetail(vm RequirementDetailVM) templ.Component {
 				var templ_7745c5c3_Var74 string
 				templ_7745c5c3_Var74, templ_7745c5c3_Err = templ.JoinStringErrs(vm.FrameworkShort)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 358, Col: 22}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 357, Col: 22}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var74))
 				if templ_7745c5c3_Err != nil {
@@ -1652,7 +1651,7 @@ func RequirementDetail(vm RequirementDetailVM) templ.Component {
 				var templ_7745c5c3_Var76 string
 				templ_7745c5c3_Var76, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.SafeURL("/compliance/requirements/" + vm.Requirement.ID.String() + "/delete")).ResolveURL(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 365, Col: 116}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 364, Col: 116}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var76)
 				if templ_7745c5c3_Err != nil {
@@ -1681,7 +1680,7 @@ func RequirementDetail(vm RequirementDetailVM) templ.Component {
 					var templ_7745c5c3_Var78 string
 					templ_7745c5c3_Var78, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_delete"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 369, Col: 38}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 368, Col: 38}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var78))
 					if templ_7745c5c3_Err != nil {
@@ -1722,7 +1721,7 @@ func RequirementDetail(vm RequirementDetailVM) templ.Component {
 				var templ_7745c5c3_Var80 string
 				templ_7745c5c3_Var80, templ_7745c5c3_Err = templ.JoinStringErrs(vm.FrameworkShort)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 383, Col: 46}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 382, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var80))
 				if templ_7745c5c3_Err != nil {
@@ -1741,7 +1740,7 @@ func RequirementDetail(vm RequirementDetailVM) templ.Component {
 			var templ_7745c5c3_Var81 string
 			templ_7745c5c3_Var81, templ_7745c5c3_Err = templ.JoinStringErrs(vm.FrameworkName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 384, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 383, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var81))
 			if templ_7745c5c3_Err != nil {
@@ -1754,7 +1753,7 @@ func RequirementDetail(vm RequirementDetailVM) templ.Component {
 			var templ_7745c5c3_Var82 string
 			templ_7745c5c3_Var82, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Requirement.Ref)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 387, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 386, Col: 58}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var82))
 			if templ_7745c5c3_Err != nil {
@@ -1780,7 +1779,7 @@ func RequirementDetail(vm RequirementDetailVM) templ.Component {
 					var templ_7745c5c3_Var84 string
 					templ_7745c5c3_Var84, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_not_relevant"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 391, Col: 64}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 390, Col: 64}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var84))
 					if templ_7745c5c3_Err != nil {
@@ -1828,7 +1827,7 @@ func RequirementDetail(vm RequirementDetailVM) templ.Component {
 				var templ_7745c5c3_Var86 string
 				templ_7745c5c3_Var86, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Requirement.Description)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 398, Col: 53}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 397, Col: 53}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var86))
 				if templ_7745c5c3_Err != nil {
@@ -1848,7 +1847,7 @@ func RequirementDetail(vm RequirementDetailVM) templ.Component {
 					var templ_7745c5c3_Var87 string
 					templ_7745c5c3_Var87, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Requirement.NotRelevantReason)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 403, Col: 60}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 402, Col: 60}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var87))
 					if templ_7745c5c3_Err != nil {
@@ -1867,7 +1866,7 @@ func RequirementDetail(vm RequirementDetailVM) templ.Component {
 			var templ_7745c5c3_Var88 string
 			templ_7745c5c3_Var88, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(len(vm.Measures)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 411, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 410, Col: 58}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var88))
 			if templ_7745c5c3_Err != nil {
@@ -1885,7 +1884,7 @@ func RequirementDetail(vm RequirementDetailVM) templ.Component {
 				var templ_7745c5c3_Var89 string
 				templ_7745c5c3_Var89, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "req_none_linked"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 414, Col: 58}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 413, Col: 58}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var89))
 				if templ_7745c5c3_Err != nil {
@@ -1936,7 +1935,7 @@ func RequirementDetail(vm RequirementDetailVM) templ.Component {
 							var templ_7745c5c3_Var92 string
 							templ_7745c5c3_Var92, templ_7745c5c3_Err = templ.JoinStringErrs(m.Name)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 429, Col: 111}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 428, Col: 111}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var92))
 							if templ_7745c5c3_Err != nil {
@@ -1956,7 +1955,7 @@ func RequirementDetail(vm RequirementDetailVM) templ.Component {
 							var templ_7745c5c3_Var93 string
 							templ_7745c5c3_Var93, templ_7745c5c3_Err = templ.JoinStringErrs(m.Category)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 431, Col: 43}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 430, Col: 43}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var93))
 							if templ_7745c5c3_Err != nil {
@@ -2094,7 +2093,7 @@ func requirementLinksSection(vm RequirementEditVM) templ.Component {
 		var templ_7745c5c3_Var97 string
 		templ_7745c5c3_Var97, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_measures"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 468, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 467, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var97))
 		if templ_7745c5c3_Err != nil {
@@ -2112,7 +2111,7 @@ func requirementLinksSection(vm RequirementEditVM) templ.Component {
 			var templ_7745c5c3_Var98 string
 			templ_7745c5c3_Var98, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "req_none_linked"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 470, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 469, Col: 58}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var98))
 			if templ_7745c5c3_Err != nil {
@@ -2151,7 +2150,7 @@ func requirementLinksSection(vm RequirementEditVM) templ.Component {
 					var templ_7745c5c3_Var100 string
 					templ_7745c5c3_Var100, templ_7745c5c3_Err = templ.JoinStringErrs(m.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 486, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 485, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var100))
 					if templ_7745c5c3_Err != nil {
@@ -2169,7 +2168,7 @@ func requirementLinksSection(vm RequirementEditVM) templ.Component {
 						var templ_7745c5c3_Var101 string
 						templ_7745c5c3_Var101, templ_7745c5c3_Err = templ.JoinStringErrs(m.Category)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 488, Col: 43}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 487, Col: 43}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var101))
 						if templ_7745c5c3_Err != nil {
@@ -2195,7 +2194,7 @@ func requirementLinksSection(vm RequirementEditVM) templ.Component {
 					var templ_7745c5c3_Var102 string
 					templ_7745c5c3_Var102, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.SafeURL("/compliance/requirements/" + vm.Requirement.ID.String() + "/measures/" + m.ID.String() + "/delete")).ResolveURL(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 494, Col: 152}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 493, Col: 152}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var102)
 					if templ_7745c5c3_Err != nil {
@@ -2295,7 +2294,7 @@ func RequirementMeasureSearchResults(requirementID string, measures []db.Measure
 		var templ_7745c5c3_Var105 string
 		templ_7745c5c3_Var105, templ_7745c5c3_Err = templruntime.NewAttributeExpression("requirement-measure-search-results-" + requirementID).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 514, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 513, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var105)
 		if templ_7745c5c3_Err != nil {
@@ -2344,7 +2343,7 @@ func RequirementMeasureSearchResults(requirementID string, measures []db.Measure
 					var templ_7745c5c3_Var107 string
 					templ_7745c5c3_Var107, templ_7745c5c3_Err = templ.JoinStringErrs(m.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 526, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 525, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var107))
 					if templ_7745c5c3_Err != nil {
@@ -2362,7 +2361,7 @@ func RequirementMeasureSearchResults(requirementID string, measures []db.Measure
 						var templ_7745c5c3_Var108 string
 						templ_7745c5c3_Var108, templ_7745c5c3_Err = templ.JoinStringErrs(m.Category)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 528, Col: 43}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 527, Col: 43}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var108))
 						if templ_7745c5c3_Err != nil {
@@ -2388,7 +2387,7 @@ func RequirementMeasureSearchResults(requirementID string, measures []db.Measure
 					var templ_7745c5c3_Var109 string
 					templ_7745c5c3_Var109, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.SafeURL("/compliance/requirements/" + requirementID + "/measures")).ResolveURL(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 533, Col: 110}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 532, Col: 110}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var109)
 					if templ_7745c5c3_Err != nil {
@@ -2421,7 +2420,7 @@ func RequirementMeasureSearchResults(requirementID string, measures []db.Measure
 						var templ_7745c5c3_Var111 string
 						templ_7745c5c3_Var111, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "action_link_measure"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 536, Col: 119}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 535, Col: 119}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var111))
 						if templ_7745c5c3_Err != nil {
@@ -2486,7 +2485,7 @@ func inputField(labelKey, name, placeholder, value string, required bool) templ.
 		var templ_7745c5c3_Var113 string
 		templ_7745c5c3_Var113, templ_7745c5c3_Err = templruntime.NewAttributeExpression(name).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 552, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 551, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var113)
 		if templ_7745c5c3_Err != nil {
@@ -2499,7 +2498,7 @@ func inputField(labelKey, name, placeholder, value string, required bool) templ.
 		var templ_7745c5c3_Var114 string
 		templ_7745c5c3_Var114, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, labelKey))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 553, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 552, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var114))
 		if templ_7745c5c3_Err != nil {
@@ -2555,7 +2554,7 @@ func textareaField(labelKey, name, placeholder, value string) templ.Component {
 		var templ_7745c5c3_Var116 string
 		templ_7745c5c3_Var116, templ_7745c5c3_Err = templruntime.NewAttributeExpression(name).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 564, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 563, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var116)
 		if templ_7745c5c3_Err != nil {
@@ -2568,7 +2567,7 @@ func textareaField(labelKey, name, placeholder, value string) templ.Component {
 		var templ_7745c5c3_Var117 string
 		templ_7745c5c3_Var117, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, labelKey))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 564, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 563, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var117))
 		if templ_7745c5c3_Err != nil {
@@ -2593,7 +2592,7 @@ func textareaField(labelKey, name, placeholder, value string) templ.Component {
 			var templ_7745c5c3_Var119 string
 			templ_7745c5c3_Var119, templ_7745c5c3_Err = templ.JoinStringErrs(value)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 565, Col: 132}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 564, Col: 132}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var119))
 			if templ_7745c5c3_Err != nil {
@@ -2639,7 +2638,7 @@ func complianceFlash(flash, flashType string) templ.Component {
 				var templ_7745c5c3_Var121 string
 				templ_7745c5c3_Var121, templ_7745c5c3_Err = templ.JoinStringErrs(flash)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 572, Col: 74}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 571, Col: 74}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var121))
 				if templ_7745c5c3_Err != nil {
@@ -2657,7 +2656,7 @@ func complianceFlash(flash, flashType string) templ.Component {
 				var templ_7745c5c3_Var122 string
 				templ_7745c5c3_Var122, templ_7745c5c3_Err = templ.JoinStringErrs(flash)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 574, Col: 76}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 573, Col: 76}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var122))
 				if templ_7745c5c3_Err != nil {
@@ -2675,7 +2674,7 @@ func complianceFlash(flash, flashType string) templ.Component {
 				var templ_7745c5c3_Var123 string
 				templ_7745c5c3_Var123, templ_7745c5c3_Err = templ.JoinStringErrs(flash)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 576, Col: 56}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 575, Col: 56}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var123))
 				if templ_7745c5c3_Err != nil {
@@ -2725,7 +2724,7 @@ func measureStatusBadge(status string) templ.Component {
 				var templ_7745c5c3_Var126 string
 				templ_7745c5c3_Var126, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "status_implemented"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 585, Col: 41}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 584, Col: 41}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var126))
 				if templ_7745c5c3_Err != nil {
@@ -2735,7 +2734,7 @@ func measureStatusBadge(status string) templ.Component {
 				var templ_7745c5c3_Var127 string
 				templ_7745c5c3_Var127, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "status_in_progress"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 587, Col: 41}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 586, Col: 41}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var127))
 				if templ_7745c5c3_Err != nil {
@@ -2745,7 +2744,7 @@ func measureStatusBadge(status string) templ.Component {
 				var templ_7745c5c3_Var128 string
 				templ_7745c5c3_Var128, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "status_planned"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 589, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 588, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var128))
 				if templ_7745c5c3_Err != nil {
@@ -2755,7 +2754,7 @@ func measureStatusBadge(status string) templ.Component {
 				var templ_7745c5c3_Var129 string
 				templ_7745c5c3_Var129, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "status_deprecated"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 591, Col: 40}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 590, Col: 40}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var129))
 				if templ_7745c5c3_Err != nil {
@@ -2765,7 +2764,7 @@ func measureStatusBadge(status string) templ.Component {
 				var templ_7745c5c3_Var130 string
 				templ_7745c5c3_Var130, templ_7745c5c3_Err = templ.JoinStringErrs(status)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 593, Col: 12}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 592, Col: 12}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var130))
 				if templ_7745c5c3_Err != nil {
@@ -2841,7 +2840,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = ui.IconSVG("chevron", 13).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = ui2.IconSVG("chevron", 13).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -2891,7 +2890,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 			var templ_7745c5c3_Var135 string
 			templ_7745c5c3_Var135, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Framework.FrameworkType)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 633, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 632, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var135))
 			if templ_7745c5c3_Err != nil {
@@ -2909,7 +2908,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 				var templ_7745c5c3_Var136 string
 				templ_7745c5c3_Var136, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Framework.Version)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 636, Col: 47}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 635, Col: 47}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var136))
 				if templ_7745c5c3_Err != nil {
@@ -2928,7 +2927,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 				var templ_7745c5c3_Var137 string
 				templ_7745c5c3_Var137, templ_7745c5c3_Err = templ.JoinStringErrs(vm.Framework.Description)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 640, Col: 51}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 639, Col: 51}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var137))
 				if templ_7745c5c3_Err != nil {
@@ -2946,7 +2945,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 			var templ_7745c5c3_Var138 string
 			templ_7745c5c3_Var138, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_coverage"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 642, Col: 57}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 641, Col: 57}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var138))
 			if templ_7745c5c3_Err != nil {
@@ -2959,7 +2958,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 			var templ_7745c5c3_Var139 string
 			templ_7745c5c3_Var139, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(vm.CoveredReqs))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 644, Col: 55}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 643, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var139))
 			if templ_7745c5c3_Err != nil {
@@ -2972,7 +2971,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 			var templ_7745c5c3_Var140 string
 			templ_7745c5c3_Var140, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(len(vm.Requirements)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 644, Col: 94}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 643, Col: 94}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var140))
 			if templ_7745c5c3_Err != nil {
@@ -3087,7 +3086,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 						var templ_7745c5c3_Var144 string
 						templ_7745c5c3_Var144, templ_7745c5c3_Err = templ.JoinStringErrs(row.Requirement.Ref)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 677, Col: 56}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 676, Col: 56}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var144))
 						if templ_7745c5c3_Err != nil {
@@ -3112,7 +3111,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 							var templ_7745c5c3_Var146 string
 							templ_7745c5c3_Var146, templ_7745c5c3_Err = templ.JoinStringErrs(row.Requirement.Title)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 679, Col: 155}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 678, Col: 155}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var146))
 							if templ_7745c5c3_Err != nil {
@@ -3158,7 +3157,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 									var templ_7745c5c3_Var148 string
 									templ_7745c5c3_Var148, templ_7745c5c3_Err = templ.JoinStringErrs(m.Name)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 688, Col: 115}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 687, Col: 115}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var148))
 									if templ_7745c5c3_Err != nil {
@@ -3211,7 +3210,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 			var templ_7745c5c3_Var149 string
 			templ_7745c5c3_Var149, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(len(vm.Requirements)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 705, Col: 62}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 704, Col: 62}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var149))
 			if templ_7745c5c3_Err != nil {
@@ -3283,7 +3282,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 						var templ_7745c5c3_Var152 string
 						templ_7745c5c3_Var152, templ_7745c5c3_Err = templ.JoinStringErrs(req.Ref)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 727, Col: 44}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 726, Col: 44}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var152))
 						if templ_7745c5c3_Err != nil {
@@ -3308,7 +3307,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 							var templ_7745c5c3_Var154 string
 							templ_7745c5c3_Var154, templ_7745c5c3_Err = templ.JoinStringErrs(req.Title)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 729, Col: 131}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 728, Col: 131}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var154))
 							if templ_7745c5c3_Err != nil {
@@ -3328,7 +3327,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 							var templ_7745c5c3_Var155 string
 							templ_7745c5c3_Var155, templ_7745c5c3_Err = templ.JoinStringErrs(req.Description)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 731, Col: 61}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 730, Col: 61}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var155))
 							if templ_7745c5c3_Err != nil {
@@ -3359,7 +3358,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 								var templ_7745c5c3_Var157 string
 								templ_7745c5c3_Var157, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_not_relevant"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 736, Col: 71}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 735, Col: 71}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var157))
 								if templ_7745c5c3_Err != nil {
@@ -3403,7 +3402,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 							var templ_7745c5c3_Var159 string
 							templ_7745c5c3_Var159, templ_7745c5c3_Err = templ.JoinStringErrs(req.NotRelevantReason)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 743, Col: 33}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 742, Col: 33}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var159))
 							if templ_7745c5c3_Err != nil {
@@ -3513,7 +3512,7 @@ func requirementRecentChanges(auditLog []db.ListAuditLogForRequirementRow, wrapp
 		var templ_7745c5c3_Var163 string
 		templ_7745c5c3_Var163, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_recent_changes_toggle"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 761, Col: 77}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 760, Col: 77}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var163))
 		if templ_7745c5c3_Err != nil {
@@ -3542,7 +3541,7 @@ func requirementRecentChanges(auditLog []db.ListAuditLogForRequirementRow, wrapp
 			var templ_7745c5c3_Var165 string
 			templ_7745c5c3_Var165, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_event"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 766, Col: 74}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 765, Col: 74}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var165))
 			if templ_7745c5c3_Err != nil {
@@ -3555,7 +3554,7 @@ func requirementRecentChanges(auditLog []db.ListAuditLogForRequirementRow, wrapp
 			var templ_7745c5c3_Var166 string
 			templ_7745c5c3_Var166, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_by"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 767, Col: 71}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 766, Col: 71}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var166))
 			if templ_7745c5c3_Err != nil {
@@ -3568,7 +3567,7 @@ func requirementRecentChanges(auditLog []db.ListAuditLogForRequirementRow, wrapp
 			var templ_7745c5c3_Var167 string
 			templ_7745c5c3_Var167, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_when"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 768, Col: 73}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 767, Col: 73}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var167))
 			if templ_7745c5c3_Err != nil {
@@ -3586,7 +3585,7 @@ func requirementRecentChanges(auditLog []db.ListAuditLogForRequirementRow, wrapp
 				var templ_7745c5c3_Var168 string
 				templ_7745c5c3_Var168, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_no_changes_yet"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 774, Col: 64}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 773, Col: 64}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var168))
 				if templ_7745c5c3_Err != nil {
@@ -3606,7 +3605,7 @@ func requirementRecentChanges(auditLog []db.ListAuditLogForRequirementRow, wrapp
 						var templ_7745c5c3_Var169 string
 						templ_7745c5c3_Var169, templ_7745c5c3_Err = templ.JoinStringErrs(complianceAuditEventLabel(entry.Event))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 780, Col: 55}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 779, Col: 55}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var169))
 						if templ_7745c5c3_Err != nil {
@@ -3620,7 +3619,7 @@ func requirementRecentChanges(auditLog []db.ListAuditLogForRequirementRow, wrapp
 							var templ_7745c5c3_Var170 string
 							templ_7745c5c3_Var170, templ_7745c5c3_Err = templ.JoinStringErrs(entry.UserName)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 783, Col: 27}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 782, Col: 27}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var170))
 							if templ_7745c5c3_Err != nil {
@@ -3639,7 +3638,7 @@ func requirementRecentChanges(auditLog []db.ListAuditLogForRequirementRow, wrapp
 						var templ_7745c5c3_Var171 string
 						templ_7745c5c3_Var171, templ_7745c5c3_Err = templ.JoinStringErrs(entry.EventTime.Format("2 Jan 2006 15:04"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 788, Col: 80}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 787, Col: 80}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var171))
 						if templ_7745c5c3_Err != nil {
@@ -3730,7 +3729,7 @@ func frameworkRecentChanges(auditLog []db.ListAuditLogForFrameworkRow, wrapperCl
 		var templ_7745c5c3_Var175 string
 		templ_7745c5c3_Var175, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_recent_changes_toggle"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 801, Col: 77}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 800, Col: 77}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var175))
 		if templ_7745c5c3_Err != nil {
@@ -3759,7 +3758,7 @@ func frameworkRecentChanges(auditLog []db.ListAuditLogForFrameworkRow, wrapperCl
 			var templ_7745c5c3_Var177 string
 			templ_7745c5c3_Var177, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_event"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 806, Col: 74}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 805, Col: 74}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var177))
 			if templ_7745c5c3_Err != nil {
@@ -3772,7 +3771,7 @@ func frameworkRecentChanges(auditLog []db.ListAuditLogForFrameworkRow, wrapperCl
 			var templ_7745c5c3_Var178 string
 			templ_7745c5c3_Var178, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_by"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 807, Col: 71}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 806, Col: 71}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var178))
 			if templ_7745c5c3_Err != nil {
@@ -3785,7 +3784,7 @@ func frameworkRecentChanges(auditLog []db.ListAuditLogForFrameworkRow, wrapperCl
 			var templ_7745c5c3_Var179 string
 			templ_7745c5c3_Var179, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_when"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 808, Col: 73}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 807, Col: 73}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var179))
 			if templ_7745c5c3_Err != nil {
@@ -3803,7 +3802,7 @@ func frameworkRecentChanges(auditLog []db.ListAuditLogForFrameworkRow, wrapperCl
 				var templ_7745c5c3_Var180 string
 				templ_7745c5c3_Var180, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_no_changes_yet"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 814, Col: 64}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 813, Col: 64}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var180))
 				if templ_7745c5c3_Err != nil {
@@ -3823,7 +3822,7 @@ func frameworkRecentChanges(auditLog []db.ListAuditLogForFrameworkRow, wrapperCl
 						var templ_7745c5c3_Var181 string
 						templ_7745c5c3_Var181, templ_7745c5c3_Err = templ.JoinStringErrs(complianceAuditEventLabel(entry.Event))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 820, Col: 55}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 819, Col: 55}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var181))
 						if templ_7745c5c3_Err != nil {
@@ -3837,7 +3836,7 @@ func frameworkRecentChanges(auditLog []db.ListAuditLogForFrameworkRow, wrapperCl
 							var templ_7745c5c3_Var182 string
 							templ_7745c5c3_Var182, templ_7745c5c3_Err = templ.JoinStringErrs(entry.UserName)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 823, Col: 27}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 822, Col: 27}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var182))
 							if templ_7745c5c3_Err != nil {
@@ -3856,7 +3855,7 @@ func frameworkRecentChanges(auditLog []db.ListAuditLogForFrameworkRow, wrapperCl
 						var templ_7745c5c3_Var183 string
 						templ_7745c5c3_Var183, templ_7745c5c3_Err = templ.JoinStringErrs(entry.EventTime.Format("2 Jan 2006 15:04"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 828, Col: 80}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 827, Col: 80}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var183))
 						if templ_7745c5c3_Err != nil {

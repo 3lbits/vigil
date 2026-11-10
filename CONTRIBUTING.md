@@ -107,7 +107,7 @@ applies equally to everyone, so reach for it when this summary isn't enough.
   there and feature-specific content in native HTML in module templates. Use
   UI2 controls for interactive elements; add a component only for cross-page
   reuse or a shared invariant. Use `ui2.UntrustedLink` for stored/user-supplied
-  URLs. UI2 reuses the existing document/navigation shell; don't duplicate it.
+  URLs.   UI2 owns the document/navigation shell; don't duplicate it.
 - **Use plain CSS.** Shared styles live in `ui2.css` and feature styles beside
   it; `make css-build` combines them without a CSS framework.
 

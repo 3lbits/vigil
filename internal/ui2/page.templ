@@ -1,15 +1,6 @@
 package ui2
 
-import (
-	"fmt"
-
-	"github.com/3lbits/vigil/internal/middleware"
-	"github.com/3lbits/vigil/internal/ui/layout"
-)
-
-templ Layout(title, subtitle, activePage string, user middleware.SessionUser, content templ.Component) {
-	@layout.Layout(title, subtitle, activePage, user, content)
-}
+import "fmt"
 
 templ Page(class string) {
 	<div class={ "ui2", class }>

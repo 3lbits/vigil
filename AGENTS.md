@@ -56,11 +56,10 @@ internal/
   config/            env config loader/validation
   obs/               tracing, metrics, security event logging
   locale/            i18n bundle + language middleware
-  ui2/               shared templ layout API and page components
+  ui2/               shared templ document/navigation shell and page components
 modules/             feature modules (about, dashboard, compliance,
                      measures, activities, risk, admin, auth)
 cmd/server/policies/authz.rego  source-of-truth authorization policy
-templates/layout/    shared templ layout and components
 ```
 
 ---
@@ -109,8 +108,7 @@ If you need to change generated output, change the source (`.templ` file,
   reused across pages or enforces a shared invariant; do not wrap every tag.
 - Use `ui2.Link` for app-built trusted URLs and `ui2.UntrustedLink` for
   stored or user-supplied URLs so templ can sanitize them.
-- UI2's layout reuses the existing document/navigation shell in
-  `internal/ui/layout` for its auth, locale and CSP wiring; don't copy it.
+- UI2 owns the document/navigation shell and its auth, locale and CSP wiring.
   The login page has its own document shell because it has no session navigation.
 - Style shared components in `cmd/server/public/css/ui2.css` and feature pages
   in the plain CSS files beside it. Use semantic classes and native CSS rather

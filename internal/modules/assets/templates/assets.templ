@@ -8,7 +8,6 @@ import (
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
-	"github.com/3lbits/vigil/internal/ui"
 	"github.com/3lbits/vigil/internal/ui2"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -41,7 +40,7 @@ templ AssetList(assets []db.Asset, q, status, flash, flashType string, hasMore b
 	<div class="ops-toolbar">
 		<p class="ops-muted">{ locale.T(ctx, "assets_inventory") }</p>
 		@ui2.Link("/assets/new", templ.Attributes{"class": "ops-button"}) {
-			@ui.IconSVG("plus", 13)
+			@ui2.IconSVG("plus", 13)
 			{ locale.T(ctx, "action_add_asset") }
 		}
 	</div>

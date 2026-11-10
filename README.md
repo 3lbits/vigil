@@ -319,8 +319,8 @@ components from `internal/ui2`; module templates keep feature-specific content.
 Use UI2 controls for interactive elements and native HTML for feature-specific
 structure. Add components only for cross-page reuse or shared invariants; use
 `ui2.UntrustedLink` for stored/user-supplied URLs, not `ui2.Link`.
-UI2 reuses the secure document/navigation shell in `internal/ui/layout` rather
-than copying it. The login page uses a separate shell without session navigation.
+UI2 owns the secure document/navigation shell. The login page uses a separate
+shell without session navigation.
 Shared styling lives in `cmd/server/public/css/ui2.css` and feature styling
 in the plain CSS files beside it. `make css-build` concatenates them without a
 CSS framework.

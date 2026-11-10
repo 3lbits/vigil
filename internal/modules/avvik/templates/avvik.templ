@@ -7,7 +7,6 @@ import (
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
-	"github.com/3lbits/vigil/internal/ui"
 	"github.com/3lbits/vigil/internal/ui2"
 	formstemplates "github.com/3lbits/vigil/internal/ui2/forms"
 )
@@ -33,7 +32,7 @@ templ AvvikList(items []db.Avvik, orgs []db.Organization, q, status, risk, orgUn
 	<div class="ops-between">
 		<p class="ops-muted">{ fmt.Sprintf("%d avvik", len(items)) }</p>
 		@ui2.Link("/avvik/new", templ.Attributes{"class": "ops-button"}) {
-			@ui.IconSVG("plus", 13)
+			@ui2.IconSVG("plus", 13)
 			New Avvik
 		}
 	</div>

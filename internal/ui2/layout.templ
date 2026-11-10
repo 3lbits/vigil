@@ -1,11 +1,10 @@
-package layout
+package ui2
 
 import (
 	"context"
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/locale"
 	"github.com/3lbits/vigil/internal/middleware"
-	"github.com/3lbits/vigil/internal/ui"
 )
 
 type NavItem struct {
@@ -134,14 +133,14 @@ templ layoutFrame(title string, subtitle string, activePage string, user middlew
 				<!-- Logo -->
 				<header class="sidebar-brand">
 					<div class="sidebar-logo">
-						@ui.IconSVG("eye", 13)
+						@IconSVG("eye", 13)
 					</div>
 					<a href="/" @click="sidebarOpen = false" class="sidebar-brand-link">
 						<div class="sidebar-brand-name">Vigil</div>
 						<div class="sidebar-small sidebar-truncate">{ middleware.TopOrgNameFromContext(ctx) }</div>
 					</a>
 					<button x-ref="closeBtn" aria-label={ locale.T(ctx, "action_close_menu") } @click="sidebarOpen = false" class="sidebar-close">
-						@ui.IconSVG("x", 16)
+						@IconSVG("x", 16)
 					</button>
 				</header>
 
@@ -161,7 +160,7 @@ templ layoutFrame(title string, subtitle string, activePage string, user middlew
 											}
 											class="sidebar-nav-link"
 										>
-											@ui.IconSVG(item.Icon, 18)
+											@IconSVG(item.Icon, 18)
 											{ item.Label }
 										</a>
 									</li>
@@ -191,13 +190,13 @@ templ layoutFrame(title string, subtitle string, activePage string, user middlew
 									aria-label={ locale.T(ctx, "action_toggle_dark_mode") }
 									class="sidebar-icon-button"
 								>
-									<span x-show="!darkMode">@ui.IconSVG("moon", 15)</span>
-									<span x-show="darkMode" x-cloak>@ui.IconSVG("sun", 15)</span>
+									<span x-show="!darkMode">@IconSVG("moon", 15)</span>
+									<span x-show="darkMode" x-cloak>@IconSVG("sun", 15)</span>
 								</button>
 								<form method="POST" action="/logout">
 									<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
 									<button type="submit" aria-label={ locale.T(ctx, "action_sign_out") } class="sidebar-icon-button">
-										@ui.IconSVG("logout", 15)
+										@IconSVG("logout", 15)
 									</button>
 								</form>
 							</div>
@@ -255,7 +254,7 @@ templ layoutFrame(title string, subtitle string, activePage string, user middlew
 					<!-- Page header -->
 					<header class="app-page-header">
 						<button type="button" x-ref="openBtn" aria-label={ locale.T(ctx, "action_open_menu") } aria-controls="app-sidebar" :aria-expanded="sidebarOpen.toString()" @click="sidebarOpen = true" class="app-menu-button">
-							@ui.IconSVG("menu", 16)
+							@IconSVG("menu", 16)
 						</button>
 						<div>
 							<h1>{ locale.T(ctx, title) }</h1>

@@ -6,7 +6,6 @@ import (
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
-	"github.com/3lbits/vigil/internal/ui"
 	"github.com/3lbits/vigil/internal/ui2"
 )
 
@@ -20,7 +19,7 @@ templ FrameworkList(frameworks []FrameworkVM, expandID, flash, flashType string)
 		<p data-testid="framework-count" class="ops-muted">{ locale.TN(ctx, "fw_count", len(frameworks), map[string]any{"Count": len(frameworks)}) }</p>
 		<div class="ops-inline">
 			@ui2.Link("/compliance/frameworks/new", templ.Attributes{"class": "ops-button"}) {
-				@ui.IconSVG("plus", 13)
+				@ui2.IconSVG("plus", 13)
 				{ locale.T(ctx, "action_add_framework") }
 			}
 		</div>
@@ -48,7 +47,7 @@ templ frameworkAccordion(fw FrameworkVM, expandID string) {
 		<details class="fw-accordion" open?={ fw.Framework.ID.String() == expandID }>
 			<summary class="ops-link">
 				<span class="ops-muted" aria-hidden="true">
-					@ui.IconSVG("chevron", 14)
+					@ui2.IconSVG("chevron", 14)
 				</span>
 				<span >
 					<span >
@@ -76,7 +75,7 @@ templ frameworkAccordion(fw FrameworkVM, expandID string) {
 			<header >
 				<h2 class="ops-overline">{ locale.T(ctx, "section_requirements") }</h2>
 				@ui2.Link(templ.SafeURL("/compliance/frameworks/"+fw.Framework.ID.String()+"/requirements/new"), templ.Attributes{"class": "ops-link"}) {
-					@ui.IconSVG("plus", 11)
+					@ui2.IconSVG("plus", 11)
 					{ locale.T(ctx, "action_add_requirement") }
 				}
 			</header>
@@ -93,7 +92,7 @@ templ frameworkAccordion(fw FrameworkVM, expandID string) {
 			<span class="ops-muted">{ fmt.Sprintf("%d reqs", fw.TotalReqs) }</span>
 			@ui2.Link(templ.SafeURL("/compliance/frameworks/"+fw.Framework.ID.String()), templ.Attributes{"class": "ops-button"}) { Open }
 			@ui2.Link(templ.SafeURL("/compliance/frameworks/"+fw.Framework.ID.String()+"/requirements/import"), templ.Attributes{"class": "ops-button"}) {
-				@ui.IconSVG("upload", 11)
+				@ui2.IconSVG("upload", 11)
 				{ locale.T(ctx, "action_import") }
 			}
 			@ui2.Link(templ.SafeURL("/compliance/frameworks/"+fw.Framework.ID.String()+"/edit"), templ.Attributes{"class": "ops-button"}) { { locale.T(ctx, "action_edit") } }
@@ -336,7 +335,7 @@ templ ImportForm(frameworkID string, flash, flashType string, result *ImportResu
 			</div>
 			<div class="ops-inline">
 				@ui2.Button(templ.Attributes{"type": "submit"}) {
-					@ui.IconSVG("upload", 13)
+					@ui2.IconSVG("upload", 13)
 					{ locale.T(ctx, "action_import_requirements") }
 				}
 				@ui2.Link("/compliance", templ.Attributes{"class": "ops-button"}) {
@@ -354,7 +353,7 @@ templ RequirementDetail(vm RequirementDetailVM) {
 	@ui2.Page("ui2-compliance") {
 	<div class="ops-toolbar ops-spaced">
 		@ui2.Link(templ.SafeURL("/compliance/frameworks/"+vm.Requirement.FrameworkID.String()), templ.Attributes{"class": "ops-link"}) {
-			@ui.IconSVG("chevron", 13)
+			@ui2.IconSVG("chevron", 13)
 			{ vm.FrameworkShort }
 		}
 		if vm.CanEdit {
@@ -614,7 +613,7 @@ templ FrameworkDetail(vm FrameworkDetailVM) {
 	@ui2.Page("ui2-compliance") {
 	<div class="ops-toolbar ops-spaced">
 		@ui2.Link("/compliance", templ.Attributes{"class": "ops-link"}) {
-			@ui.IconSVG("chevron", 13)
+			@ui2.IconSVG("chevron", 13)
 			Compliance
 		}
 		if vm.CanEdit {
