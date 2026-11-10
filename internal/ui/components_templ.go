@@ -58,7 +58,7 @@ func IconSVG(name string, size int) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"></rect><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"></rect><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"></rect><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"></rect></svg>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M10 13.25C10.4142 13.25 10.75 13.5858 10.75 14V20C10.75 20.4142 10.4142 20.75 10 20.75H4C3.58579 20.75 3.25 20.4142 3.25 20V14C3.25 13.5858 3.58579 13.25 4 13.25H10ZM20 13.25C20.4142 13.25 20.75 13.5858 20.75 14V20C20.75 20.4142 20.4142 20.75 20 20.75H14C13.5858 20.75 13.25 20.4142 13.25 20V14C13.25 13.5858 13.5858 13.25 14 13.25H20ZM4.75 19.25H9.25V14.75H4.75V19.25ZM14.75 19.25H19.25V14.75H14.75V19.25ZM10 3.25C10.4142 3.25 10.75 3.58579 10.75 4V10C10.75 10.4142 10.4142 10.75 10 10.75H4C3.58579 10.75 3.25 10.4142 3.25 10V4C3.25 3.58579 3.58579 3.25 4 3.25H10ZM20 3.25C20.4142 3.25 20.75 3.58579 20.75 4V10C20.75 10.4142 20.4142 10.75 20 10.75H14C13.5858 10.75 13.25 10.4142 13.25 10V4C13.25 3.58579 13.5858 3.25 14 3.25H20ZM4.75 9.25H9.25V4.75H4.75V9.25ZM14.75 9.25H19.25V4.75H14.75V9.25Z\" fill=\"currentColor\"></path></svg>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -89,7 +89,7 @@ func IconSVG(name string, size int) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M9 11l3 3L22 4\"></path><path d=\"M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11\"></path></svg>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M5.25 4.5C5.25 3.80964 5.80964 3.25 6.5 3.25H14C14.1989 3.25 14.3897 3.32902 14.5303 3.46967L18.5303 7.46967C18.671 7.61032 18.75 7.80109 18.75 8V19.5C18.75 20.1904 18.1904 20.75 17.5 20.75H6.5C5.80964 20.75 5.25 20.1904 5.25 19.5V4.5ZM14.5 8.75C13.8096 8.75 13.25 8.19036 13.25 7.5V4.75H6.75V19.25H17.25V8.75H14.5ZM14.75 5.81066L16.1893 7.25H14.75V5.81066ZM14.5303 13.0303C14.8232 12.7374 14.8232 12.2626 14.5303 11.9697C14.2374 11.6768 13.7626 11.6768 13.4697 11.9697L11.5 13.9393L10.5303 12.9697C10.2374 12.6768 9.76256 12.6768 9.46967 12.9697C9.17678 13.2626 9.17678 13.7374 9.46967 14.0303L10.9697 15.5303C11.2626 15.8232 11.7374 15.8232 12.0303 15.5303L14.5303 13.0303Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"></path></svg>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -120,7 +120,7 @@ func IconSVG(name string, size int) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z\"></path></svg>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M19.75 4.01992C19.75 3.53224 19.3003 3.16875 18.8235 3.27093L18.4572 3.34943C14.2007 4.26153 9.79929 4.26153 5.54282 3.34943L5.17649 3.27093C4.69967 3.16875 4.25 3.53223 4.25 4.01992V13.0001C4.25 17.2803 7.71979 20.7501 12 20.7501C16.2802 20.7501 19.75 17.2803 19.75 13.0001V4.01992ZM5.75 4.92339C9.87693 5.73687 14.1231 5.73687 18.25 4.92339V13.0001C18.25 16.4519 15.4518 19.2501 12 19.2501C8.54822 19.2501 5.75 16.4519 5.75 13.0001V4.92339ZM15.7803 10.2803C16.0732 9.98744 16.0732 9.51256 15.7803 9.21967C15.4874 8.92678 15.0126 8.92678 14.7197 9.21967L11 12.9393L9.28033 11.2197C8.98744 10.9268 8.51256 10.9268 8.21967 11.2197C7.92678 11.5126 7.92678 11.9874 8.21967 12.2803L10.4697 14.5303C10.7626 14.8232 11.2374 14.8232 11.5303 14.5303L15.7803 10.2803Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"></path></svg>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -403,7 +403,7 @@ func IconSVG(name string, size int) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		case "users":
+		case "person":
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" width=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -430,7 +430,7 @@ func IconSVG(name string, size int) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2\"></path><circle cx=\"9\" cy=\"7\" r=\"4\"></circle><path d=\"M23 21v-2a4 4 0 00-3-3.87\"></path><path d=\"M16 3.13a4 4 0 010 7.75\"></path></svg>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M8.25 7.5C8.25 5.42893 9.92893 3.75 12 3.75C14.0711 3.75 15.75 5.42893 15.75 7.5C15.75 9.57107 14.0711 11.25 12 11.25C9.92893 11.25 8.25 9.57107 8.25 7.5ZM12 2.25C9.10051 2.25 6.75 4.60051 6.75 7.5C6.75 10.3995 9.10051 12.75 12 12.75C14.8995 12.75 17.25 10.3995 17.25 7.5C17.25 4.60051 14.8995 2.25 12 2.25ZM8.28769 17.2877C9.27225 16.3031 10.6076 15.75 12 15.75C13.3924 15.75 14.7277 16.3031 15.7123 17.2877C16.6969 18.2723 17.25 19.6076 17.25 21C17.25 21.4142 17.5858 21.75 18 21.75C18.4142 21.75 18.75 21.4142 18.75 21C18.75 19.2098 18.0388 17.4929 16.773 16.227C15.5071 14.9612 13.7902 14.25 12 14.25C10.2098 14.25 8.4929 14.9612 7.22703 16.227C5.96116 17.4929 5.25 19.2098 5.25 21C5.25 21.4142 5.58579 21.75 6 21.75C6.41421 21.75 6.75 21.4142 6.75 21C6.75 19.6076 7.30312 18.2723 8.28769 17.2877Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"></path></svg>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -492,7 +492,7 @@ func IconSVG(name string, size int) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"18\" rx=\"2\" ry=\"2\"></rect><line x1=\"16\" y1=\"2\" x2=\"16\" y2=\"6\"></line><line x1=\"8\" y1=\"2\" x2=\"8\" y2=\"6\"></line><line x1=\"3\" y1=\"10\" x2=\"21\" y2=\"10\"></line></svg>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M9 2.25C9.41421 2.25 9.75 2.58579 9.75 3V4.25H14.25V3C14.25 2.58579 14.5858 2.25 15 2.25C15.4142 2.25 15.75 2.58579 15.75 3V4.25H19.5C20.1904 4.25 20.75 4.80964 20.75 5.5V18.5C20.75 19.1904 20.1904 19.75 19.5 19.75H4.5C3.80964 19.75 3.25 19.1904 3.25 18.5V5.5C3.25 4.80964 3.80964 4.25 4.5 4.25H8.25V3C8.25 2.58579 8.58579 2.25 9 2.25ZM15.75 7C15.75 7.41421 15.4142 7.75 15 7.75C14.5858 7.75 14.25 7.41421 14.25 7V5.75H9.75V7C9.75 7.41421 9.41421 7.75 9 7.75C8.58579 7.75 8.25 7.41421 8.25 7V5.75H4.75V9.25H19.25V5.75H15.75V7ZM4.75 18.25V10.75H19.25V18.25H4.75ZM6.75 13C6.75 12.5858 7.08579 12.25 7.5 12.25H8.5C8.91421 12.25 9.25 12.5858 9.25 13C9.25 13.4142 8.91421 13.75 8.5 13.75H7.5C7.08579 13.75 6.75 13.4142 6.75 13ZM10.75 13C10.75 12.5858 11.0858 12.25 11.5 12.25H12.5C12.9142 12.25 13.25 12.5858 13.25 13C13.25 13.4142 12.9142 13.75 12.5 13.75H11.5C11.0858 13.75 10.75 13.4142 10.75 13ZM15.5 12.25C15.0858 12.25 14.75 12.5858 14.75 13C14.75 13.4142 15.0858 13.75 15.5 13.75H16.5C16.9142 13.75 17.25 13.4142 17.25 13C17.25 12.5858 16.9142 12.25 16.5 12.25H15.5ZM10.75 16C10.75 15.5858 11.0858 15.25 11.5 15.25H12.5C12.9142 15.25 13.25 15.5858 13.25 16C13.25 16.4142 12.9142 16.75 12.5 16.75H11.5C11.0858 16.75 10.75 16.4142 10.75 16ZM15.5 15.25C15.0858 15.25 14.75 15.5858 14.75 16C14.75 16.4142 15.0858 16.75 15.5 16.75H16.5C16.9142 16.75 17.25 16.4142 17.25 16C17.25 15.5858 16.9142 15.25 16.5 15.25H15.5ZM6.75 16C6.75 15.5858 7.08579 15.25 7.5 15.25H8.5C8.91421 15.25 9.25 15.5858 9.25 16C9.25 16.4142 8.91421 16.75 8.5 16.75H7.5C7.08579 16.75 6.75 16.4142 6.75 16Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"></path></svg>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -585,11 +585,11 @@ func IconSVG(name string, size int) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z\"></path><line x1=\"12\" y1=\"9\" x2=\"12\" y2=\"13\"></line><line x1=\"12\" y1=\"17\" x2=\"12.01\" y2=\"17\"></line></svg>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M12 2.25C12.2731 2.25 12.5245 2.3984 12.6565 2.63743L22.1828 19.8874C22.3111 20.1198 22.3071 20.4026 22.1722 20.6312C22.0373 20.8597 21.7917 21 21.5263 21H2.47372C2.20832 21 1.96268 20.8597 1.8278 20.6312C1.69292 20.4026 1.68888 20.1198 1.81718 19.8874L11.3435 2.63743C11.4755 2.3984 11.7269 2.25 12 2.25ZM20.2553 19.5L12 4.55142L3.74467 19.5H20.2553ZM12 8.75C12.4142 8.75 12.75 9.08579 12.75 9.5V13.5C12.75 13.9142 12.4142 14.25 12 14.25C11.5858 14.25 11.25 13.9142 11.25 13.5V9.5C11.25 9.08579 11.5858 8.75 12 8.75ZM12 15.5C11.4477 15.5 11 15.9477 11 16.5C11 17.0523 11.4477 17.5 12 17.5C12.5523 17.5 13 17.0523 13 16.5C13 15.9477 12.5523 15.5 12 15.5Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"></path></svg>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		case "package":
+		case "assessment":
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" width=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -616,11 +616,11 @@ func IconSVG(name string, size int) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M21 8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z\"></path><path d=\"M3.3 7L12 12l8.7-5\"></path><path d=\"M12 22V12\"></path></svg>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M5.75 20.25V3.75H18.25V20.25H5.75ZM5.5 2.25C4.80964 2.25 4.25 2.80964 4.25 3.5V20.5C4.25 21.1904 4.80964 21.75 5.5 21.75H18.5C19.1904 21.75 19.75 21.1904 19.75 20.5V3.5C19.75 2.80964 19.1904 2.25 18.5 2.25H5.5ZM10.95 6.15004C11.2814 6.39857 11.3485 6.86867 11.1 7.20004L9.6 9.20004C9.46955 9.37398 9.27004 9.48274 9.05317 9.49816C8.8363 9.51357 8.62341 9.43411 8.46967 9.28037L7.46967 8.28037C7.17678 7.98748 7.17678 7.51261 7.46967 7.21971C7.76256 6.92682 8.23744 6.92682 8.53033 7.21971L8.91885 7.60824L9.9 6.30004C10.1485 5.96867 10.6186 5.90152 10.95 6.15004ZM13 7.25C12.5858 7.25 12.25 7.58579 12.25 8C12.25 8.41421 12.5858 8.75 13 8.75H15.5C15.9142 8.75 16.25 8.41421 16.25 8C16.25 7.58579 15.9142 7.25 15.5 7.25H13ZM9 11.25C8.58579 11.25 8.25 11.5858 8.25 12C8.25 12.4142 8.58579 12.75 9 12.75H9.01C9.42421 12.75 9.76 12.4142 9.76 12C9.76 11.5858 9.42421 11.25 9.01 11.25H9ZM11.25 12C11.25 11.5858 11.5858 11.25 12 11.25H15.5C15.9142 11.25 16.25 11.5858 16.25 12C16.25 12.4142 15.9142 12.75 15.5 12.75H12C11.5858 12.75 11.25 12.4142 11.25 12ZM11.25 16C11.25 15.5858 11.5858 15.25 12 15.25H15.5C15.9142 15.25 16.25 15.5858 16.25 16C16.25 16.4142 15.9142 16.75 15.5 16.75H12C11.5858 16.75 11.25 16.4142 11.25 16ZM8.25 16C8.25 15.5858 8.58579 15.25 9 15.25H9.01C9.42421 15.25 9.76 15.5858 9.76 16C9.76 16.4142 9.42421 16.75 9.01 16.75H9C8.58579 16.75 8.25 16.4142 8.25 16Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"></path></svg>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		case "info":
+		case "avvik":
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" width=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -647,11 +647,11 @@ func IconSVG(name string, size int) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><line x1=\"12\" y1=\"16\" x2=\"12\" y2=\"12\"></line><line x1=\"12\" y1=\"8\" x2=\"12.01\" y2=\"8\"></line></svg>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M12.75 6.5C12.75 6.08579 12.4142 5.75 12 5.75C11.5858 5.75 11.25 6.08579 11.25 6.5V14.5C11.25 14.9142 11.5858 15.25 12 15.25C12.4142 15.25 12.75 14.9142 12.75 14.5V6.5ZM12 16.5C11.4477 16.5 11 16.9477 11 17.5C11 18.0523 11.4477 18.5 12 18.5C12.5523 18.5 13 18.0523 13 17.5C13 16.9477 12.5523 16.5 12 16.5Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"></path></svg>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		case "moon":
+		case "admin":
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "<svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" width=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -678,11 +678,11 @@ func IconSVG(name string, size int) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z\"></path></svg>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M14.5233 2.58223C12.4501 2.02672 10.2516 2.17082 8.26863 2.99218C7.01117 3.51304 5.88497 4.28779 4.95557 5.25898V3C4.95557 2.58579 4.61978 2.25 4.20557 2.25C3.79135 2.25 3.45557 2.58579 3.45557 3V7.5C3.45557 7.83946 3.68356 8.13659 4.01145 8.22445C4.33934 8.3123 4.68536 8.16898 4.85509 7.875C5.76314 6.30221 7.16479 5.07299 8.84266 4.378C10.5205 3.683 12.3808 3.56107 14.1351 4.03112C15.8893 4.50116 17.4394 5.53691 18.545 6.97772C19.6505 8.41854 20.2498 10.1839 20.2498 12C20.2498 12.4142 20.5856 12.75 20.9998 12.75C21.414 12.75 21.7498 12.4142 21.7498 12C21.7498 9.85369 21.0416 7.76736 19.735 6.06458C18.4284 4.3618 16.5965 3.13773 14.5233 2.58223ZM11.3773 6.25C11.1183 6.25 10.8776 6.38367 10.7407 6.60357L10.1546 7.54479L9.06468 7.29135C8.81237 7.23268 8.54765 7.30836 8.36448 7.49153L7.49153 8.36448C7.30836 8.54765 7.23268 8.81237 7.29135 9.06468L7.54479 10.1546L6.60357 10.7407C6.38367 10.8776 6.25 11.1183 6.25 11.3773V12.6227C6.25 12.8817 6.38367 13.1224 6.60357 13.2593L7.54479 13.8454L7.29135 14.9353C7.23268 15.1876 7.30836 15.4524 7.49153 15.6355L8.36448 16.5085C8.54765 16.6916 8.81237 16.7673 9.06468 16.7087L10.1546 16.4552L10.7407 17.3964C10.8776 17.6163 11.1183 17.75 11.3773 17.75H12.6227C12.8817 17.75 13.1224 17.6163 13.2593 17.3964L13.8454 16.4552L14.9353 16.7087C15.1876 16.7673 15.4524 16.6916 15.6355 16.5085L16.5085 15.6355C16.6916 15.4524 16.7673 15.1876 16.7087 14.9353L16.4552 13.8454L17.3964 13.2593C17.6163 13.1224 17.75 12.8817 17.75 12.6227V11.3773C17.75 11.1183 17.6163 10.8776 17.3964 10.7407L16.4552 10.1546L16.7087 9.06468C16.7673 8.81237 16.6916 8.54765 16.5085 8.36448L15.6355 7.49153C15.4524 7.30836 15.1876 7.23268 14.9353 7.29135L13.8454 7.54479L13.2593 6.60357C13.1224 6.38367 12.8817 6.25 12.6227 6.25H11.3773ZM11.2338 8.64933L11.7938 7.75H12.2062L12.7662 8.64933C12.8536 8.7897 12.9849 8.89725 13.1398 8.95525C13.2098 8.98148 13.2787 9.01007 13.3464 9.04092C13.497 9.10959 13.6661 9.1265 13.8274 9.08901L14.8694 8.8467L15.1533 9.13063L14.911 10.1726C14.8735 10.3339 14.8904 10.503 14.9591 10.6536C14.9899 10.7213 15.0185 10.7902 15.0448 10.8602C15.1027 11.0151 15.2103 11.1464 15.3507 11.2338L16.25 11.7938V12.2062L15.3507 12.7662C15.2103 12.8536 15.1027 12.9849 15.0448 13.1398C15.0185 13.2098 14.9899 13.2787 14.9591 13.3464C14.8904 13.497 14.8735 13.6661 14.911 13.8274L15.1533 14.8694L14.8694 15.1533L13.8274 14.911C13.6661 14.8735 13.497 14.8904 13.3464 14.9591C13.2787 14.9899 13.2098 15.0185 13.1398 15.0448C12.9849 15.1027 12.8536 15.2103 12.7662 15.3507L12.2062 16.25H11.7938L11.2338 15.3507C11.1464 15.2103 11.0151 15.1027 10.8602 15.0448C10.7902 15.0185 10.7213 14.9899 10.6536 14.9591C10.503 14.8904 10.3339 14.8735 10.1726 14.911L9.13063 15.1533L8.8467 14.8694L9.08901 13.8274C9.1265 13.6661 9.10959 13.497 9.04092 13.3464C9.01007 13.2787 8.98148 13.2098 8.95525 13.1398C8.89725 12.9849 8.7897 12.8536 8.64933 12.7662L7.75 12.2062V11.7938L8.64933 11.2338C8.7897 11.1464 8.89725 11.0151 8.95525 10.8602C8.98148 10.7902 9.01007 10.7213 9.04092 10.6536C9.10959 10.503 9.1265 10.3339 9.08901 10.1726L8.8467 9.13063L9.13063 8.8467L10.1726 9.08901C10.3339 9.1265 10.503 9.10959 10.6536 9.04092C10.7213 9.01007 10.7902 8.98148 10.8602 8.95525C11.0151 8.89725 11.1464 8.7897 11.2338 8.64933ZM3 11.25C3.41421 11.25 3.75 11.5858 3.75 12C3.75 13.8161 4.34926 15.5815 5.45483 17.0223C6.56041 18.4631 8.11052 19.4988 9.86474 19.9689C11.619 20.4389 13.4793 20.317 15.1571 19.622C16.835 18.927 18.2367 17.6978 19.1447 16.125C19.3144 15.831 19.6605 15.6877 19.9883 15.7756C20.3162 15.8634 20.5442 16.1605 20.5442 16.5V21C20.5442 21.4142 20.2084 21.75 19.7942 21.75C19.38 21.75 19.0442 21.4142 19.0442 21V18.741C18.1148 19.7122 16.9886 20.487 15.7312 21.0078C13.7482 21.8292 11.5497 21.9733 9.47651 21.4178C7.40334 20.8623 5.57139 19.6382 4.2648 17.9354C2.95821 16.2326 2.25 14.1463 2.25 12C2.25 11.5858 2.58579 11.25 3 11.25ZM12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"></path></svg>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		case "sun":
+		case "package":
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "<svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" width=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -709,7 +709,100 @@ func IconSVG(name string, size int) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><circle cx=\"12\" cy=\"12\" r=\"5\"></circle><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"3\"></line><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"23\"></line><line x1=\"4.22\" y1=\"4.22\" x2=\"5.64\" y2=\"5.64\"></line><line x1=\"18.36\" y1=\"18.36\" x2=\"19.78\" y2=\"19.78\"></line><line x1=\"1\" y1=\"12\" x2=\"3\" y2=\"12\"></line><line x1=\"21\" y1=\"12\" x2=\"23\" y2=\"12\"></line><line x1=\"4.22\" y1=\"19.78\" x2=\"5.64\" y2=\"18.36\"></line><line x1=\"18.36\" y1=\"5.64\" x2=\"19.78\" y2=\"4.22\"></line></svg>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M11.6248 2.35048C11.8568 2.21651 12.1427 2.21651 12.3748 2.35048L20.169 6.85048C20.4011 6.98446 20.544 7.23205 20.544 7.5V16.5C20.544 16.7679 20.4011 17.0155 20.169 17.1495L12.3748 21.6495C12.1427 21.7835 11.8568 21.7835 11.6248 21.6495L3.83057 17.1495C3.59852 17.0155 3.45557 16.7679 3.45557 16.5V7.5C3.45557 7.23205 3.59852 6.98446 3.83057 6.85048L11.6248 2.35048ZM11.9998 3.86603L5.70558 7.49999L12 11.134L18.294 7.50001L11.9998 3.86603ZM19.044 8.79906L12.75 12.433L12.7498 19.7009L19.044 16.067V8.79906ZM11.2498 19.701L11.25 12.433L4.95557 8.79902V16.067L11.2498 19.701Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"></path></svg>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		case "info":
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "<svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" width=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var46 string
+			templ_7745c5c3_Var46, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprint(size)).Resolve(ctx)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components.templ`, Line: 54, Col: 86}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var46)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "\" height=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var47 string
+			templ_7745c5c3_Var47, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprint(size)).Resolve(ctx)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components.templ`, Line: 54, Col: 114}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var47)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M12 5.5C11.4477 5.5 11 5.94772 11 6.5C11 7.05228 11.4477 7.5 12 7.5C12.5523 7.5 13 7.05228 13 6.5C13 5.94772 12.5523 5.5 12 5.5ZM9.25 9.5C9.25 9.08579 9.58579 8.75 10 8.75H12C12.4142 8.75 12.75 9.08579 12.75 9.5V16.75H14C14.4142 16.75 14.75 17.0858 14.75 17.5C14.75 17.9142 14.4142 18.25 14 18.25H10C9.58579 18.25 9.25 17.9142 9.25 17.5C9.25 17.0858 9.58579 16.75 10 16.75H11.25V10.25H10C9.58579 10.25 9.25 9.91421 9.25 9.5Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"></path></svg>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		case "moon":
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "<svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" width=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var48 string
+			templ_7745c5c3_Var48, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprint(size)).Resolve(ctx)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components.templ`, Line: 56, Col: 86}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var48)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "\" height=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var49 string
+			templ_7745c5c3_Var49, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprint(size)).Resolve(ctx)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components.templ`, Line: 56, Col: 114}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var49)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z\"></path></svg>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		case "sun":
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, "<svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" width=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var50 string
+			templ_7745c5c3_Var50, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprint(size)).Resolve(ctx)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components.templ`, Line: 58, Col: 86}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var50)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 74, "\" height=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var51 string
+			templ_7745c5c3_Var51, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprint(size)).Resolve(ctx)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components.templ`, Line: 58, Col: 114}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var51)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 75, "\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><circle cx=\"12\" cy=\"12\" r=\"5\"></circle><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"3\"></line><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"23\"></line><line x1=\"4.22\" y1=\"4.22\" x2=\"5.64\" y2=\"5.64\"></line><line x1=\"18.36\" y1=\"18.36\" x2=\"19.78\" y2=\"19.78\"></line><line x1=\"1\" y1=\"12\" x2=\"3\" y2=\"12\"></line><line x1=\"21\" y1=\"12\" x2=\"23\" y2=\"12\"></line><line x1=\"4.22\" y1=\"19.78\" x2=\"5.64\" y2=\"18.36\"></line><line x1=\"18.36\" y1=\"5.64\" x2=\"19.78\" y2=\"4.22\"></line></svg>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

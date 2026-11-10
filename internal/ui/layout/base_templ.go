@@ -44,11 +44,11 @@ func navGroups(ctx context.Context, isAdmin bool, flags middleware.ModuleFlags) 
 	}
 	if flags.RiskEnabled {
 		riskItems := []NavItem{
-			{Key: "risk", Icon: "risk", Label: locale.T(ctx, "nav_risk_assessments"), Href: "/risks"},
+			{Key: "risk", Icon: "assessment", Label: locale.T(ctx, "nav_risk_assessments"), Href: "/risks"},
 			{Key: "risk-register", Icon: "risk", Label: locale.T(ctx, "nav_risk_register"), Href: "/risk-register"},
 		}
 		if flags.AvvikEnabled {
-			riskItems = append(riskItems, NavItem{Key: "avvik", Icon: "risk", Label: locale.T(ctx, "nav_avvik"), Href: "/avvik"})
+			riskItems = append(riskItems, NavItem{Key: "avvik", Icon: "avvik", Label: locale.T(ctx, "nav_avvik"), Href: "/avvik"})
 		}
 		groups = append(groups, NavGroup{Section: locale.T(ctx, "nav_section_risk"), Items: riskItems})
 	}
@@ -63,12 +63,12 @@ func navGroups(ctx context.Context, isAdmin bool, flags middleware.ModuleFlags) 
 		}})
 	}
 	groups = append(groups, NavGroup{Section: locale.T(ctx, "nav_section_info"), Items: []NavItem{
-		{Key: "me", Icon: "users", Label: locale.T(ctx, "nav_my_page"), Href: "/me"},
+		{Key: "me", Icon: "person", Label: locale.T(ctx, "nav_my_page"), Href: "/me"},
 		{Key: "about", Icon: "info", Label: locale.T(ctx, "nav_about"), Href: "/about"},
 	}})
 	if isAdmin {
 		groups = append(groups, NavGroup{Section: locale.T(ctx, "nav_section_administration"), Items: []NavItem{
-			{Key: "admin", Icon: "users", Label: locale.T(ctx, "nav_admin"), Href: "/admin"},
+			{Key: "admin", Icon: "admin", Label: locale.T(ctx, "nav_admin"), Href: "/admin"},
 		}})
 	}
 	return groups
@@ -401,7 +401,7 @@ func layoutFrame(title string, subtitle string, activePage string, user middlewa
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = ui.IconSVG(item.Icon, 15).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = ui.IconSVG(item.Icon, 18).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
