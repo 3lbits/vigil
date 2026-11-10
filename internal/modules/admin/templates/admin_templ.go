@@ -2682,14 +2682,14 @@ func moduleToggleRow(label, name string, checked bool, description string) templ
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 221, "</p></div><label class=\"admin-switch\"><input type=\"checkbox\" name=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 221, "</p></div><input type=\"checkbox\" name=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var163 string
 		templ_7745c5c3_Var163, templ_7745c5c3_Err = templruntime.NewAttributeExpression(name).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 474, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 473, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var163)
 		if templ_7745c5c3_Err != nil {
@@ -2712,13 +2712,13 @@ func moduleToggleRow(label, name string, checked bool, description string) templ
 		var templ_7745c5c3_Var164 string
 		templ_7745c5c3_Var164, templ_7745c5c3_Err = templruntime.NewAttributeExpression(label).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 474, Col: 90}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 473, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var164)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 225, "\" class=\"admin-switch-input\"><div class=\"admin-switch-track\"></div></label></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 225, "\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -2752,7 +2752,7 @@ func adminFlash(flash, flashType string) templ.Component {
 				var templ_7745c5c3_Var166 string
 				templ_7745c5c3_Var166, templ_7745c5c3_Err = templ.JoinStringErrs(flash)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 483, Col: 64}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 480, Col: 64}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var166))
 				if templ_7745c5c3_Err != nil {
@@ -2770,7 +2770,7 @@ func adminFlash(flash, flashType string) templ.Component {
 				var templ_7745c5c3_Var167 string
 				templ_7745c5c3_Var167, templ_7745c5c3_Err = templ.JoinStringErrs(flash)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 485, Col: 66}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 482, Col: 66}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var167))
 				if templ_7745c5c3_Err != nil {
@@ -2788,7 +2788,7 @@ func adminFlash(flash, flashType string) templ.Component {
 				var templ_7745c5c3_Var168 string
 				templ_7745c5c3_Var168, templ_7745c5c3_Err = templ.JoinStringErrs(flash)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 487, Col: 46}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 484, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var168))
 				if templ_7745c5c3_Err != nil {
@@ -2864,7 +2864,7 @@ func scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) templ.Com
 		var templ_7745c5c3_Var172 string
 		templ_7745c5c3_Var172, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(level))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 494, Col: 27}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 491, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var172))
 		if templ_7745c5c3_Err != nil {
@@ -2877,7 +2877,7 @@ func scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) templ.Com
 		var templ_7745c5c3_Var173 string
 		templ_7745c5c3_Var173, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "-label-" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 495, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 492, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var173)
 		if templ_7745c5c3_Err != nil {
@@ -2890,7 +2890,7 @@ func scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) templ.Com
 		var templ_7745c5c3_Var174 string
 		templ_7745c5c3_Var174, templ_7745c5c3_Err = templ.JoinStringErrs(scale + " label " + fmt.Sprint(level))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 495, Col: 125}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 492, Col: 125}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var174))
 		if templ_7745c5c3_Err != nil {
@@ -2903,7 +2903,7 @@ func scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) templ.Com
 		var templ_7745c5c3_Var175 string
 		templ_7745c5c3_Var175, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "-label-" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 497, Col: 46}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 494, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var175)
 		if templ_7745c5c3_Err != nil {
@@ -2916,7 +2916,7 @@ func scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) templ.Com
 		var templ_7745c5c3_Var176 string
 		templ_7745c5c3_Var176, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "_label_" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 499, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 496, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var176)
 		if templ_7745c5c3_Err != nil {
@@ -2929,7 +2929,7 @@ func scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) templ.Com
 		var templ_7745c5c3_Var177 string
 		templ_7745c5c3_Var177, templ_7745c5c3_Err = templruntime.NewAttributeExpression(sl.Label).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 500, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 497, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var177)
 		if templ_7745c5c3_Err != nil {
@@ -2942,7 +2942,7 @@ func scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) templ.Com
 		var templ_7745c5c3_Var178 string
 		templ_7745c5c3_Var178, templ_7745c5c3_Err = templruntime.NewAttributeExpression(locale.T(ctx, "admin_short_label_placeholder")).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 501, Col: 63}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 498, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var178)
 		if templ_7745c5c3_Err != nil {
@@ -2955,7 +2955,7 @@ func scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) templ.Com
 		var templ_7745c5c3_Var179 string
 		templ_7745c5c3_Var179, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "_scale_" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 505, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 502, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var179)
 		if templ_7745c5c3_Err != nil {
@@ -2968,7 +2968,7 @@ func scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) templ.Com
 		var templ_7745c5c3_Var180 string
 		templ_7745c5c3_Var180, templ_7745c5c3_Err = templruntime.NewAttributeExpression(scale).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 506, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 503, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var180)
 		if templ_7745c5c3_Err != nil {
@@ -2981,7 +2981,7 @@ func scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) templ.Com
 		var templ_7745c5c3_Var181 string
 		templ_7745c5c3_Var181, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "-desc-" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 508, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 505, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var181)
 		if templ_7745c5c3_Err != nil {
@@ -2994,7 +2994,7 @@ func scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) templ.Com
 		var templ_7745c5c3_Var182 string
 		templ_7745c5c3_Var182, templ_7745c5c3_Err = templ.JoinStringErrs(scale + " description " + fmt.Sprint(level))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 508, Col: 130}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 505, Col: 130}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var182))
 		if templ_7745c5c3_Err != nil {
@@ -3007,7 +3007,7 @@ func scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) templ.Com
 		var templ_7745c5c3_Var183 string
 		templ_7745c5c3_Var183, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "-desc-" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 510, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 507, Col: 45}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var183)
 		if templ_7745c5c3_Err != nil {
@@ -3020,7 +3020,7 @@ func scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) templ.Com
 		var templ_7745c5c3_Var184 string
 		templ_7745c5c3_Var184, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "_desc_" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 511, Col: 47}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 508, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var184)
 		if templ_7745c5c3_Err != nil {
@@ -3033,7 +3033,7 @@ func scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) templ.Com
 		var templ_7745c5c3_Var185 string
 		templ_7745c5c3_Var185, templ_7745c5c3_Err = templruntime.NewAttributeExpression(locale.T(ctx, "admin_scale_description_placeholder")).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 513, Col: 69}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 510, Col: 69}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var185)
 		if templ_7745c5c3_Err != nil {
@@ -3046,7 +3046,7 @@ func scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) templ.Com
 		var templ_7745c5c3_Var186 string
 		templ_7745c5c3_Var186, templ_7745c5c3_Err = templ.JoinStringErrs(sl.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 514, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 511, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var186))
 		if templ_7745c5c3_Err != nil {
@@ -3120,7 +3120,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var190 string
 		templ_7745c5c3_Var190, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(level))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 520, Col: 27}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 517, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var190))
 		if templ_7745c5c3_Err != nil {
@@ -3133,7 +3133,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var191 string
 		templ_7745c5c3_Var191, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "-label-" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 521, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 518, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var191)
 		if templ_7745c5c3_Err != nil {
@@ -3146,7 +3146,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var192 string
 		templ_7745c5c3_Var192, templ_7745c5c3_Err = templ.JoinStringErrs("consequence label " + fmt.Sprint(level))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 521, Col: 128}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 518, Col: 128}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var192))
 		if templ_7745c5c3_Err != nil {
@@ -3159,7 +3159,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var193 string
 		templ_7745c5c3_Var193, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "-label-" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 523, Col: 46}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 520, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var193)
 		if templ_7745c5c3_Err != nil {
@@ -3172,7 +3172,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var194 string
 		templ_7745c5c3_Var194, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "_label_" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 525, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 522, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var194)
 		if templ_7745c5c3_Err != nil {
@@ -3185,7 +3185,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var195 string
 		templ_7745c5c3_Var195, templ_7745c5c3_Err = templruntime.NewAttributeExpression(sl.Label).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 526, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 523, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var195)
 		if templ_7745c5c3_Err != nil {
@@ -3198,7 +3198,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var196 string
 		templ_7745c5c3_Var196, templ_7745c5c3_Err = templruntime.NewAttributeExpression(locale.T(ctx, "admin_short_label_placeholder")).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 527, Col: 63}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 524, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var196)
 		if templ_7745c5c3_Err != nil {
@@ -3211,7 +3211,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var197 string
 		templ_7745c5c3_Var197, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "-finops-" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 531, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 528, Col: 56}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var197)
 		if templ_7745c5c3_Err != nil {
@@ -3224,7 +3224,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var198 string
 		templ_7745c5c3_Var198, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "-finops-" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 533, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 530, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var198)
 		if templ_7745c5c3_Err != nil {
@@ -3237,7 +3237,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var199 string
 		templ_7745c5c3_Var199, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "_finops_desc_" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 534, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 531, Col: 56}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var199)
 		if templ_7745c5c3_Err != nil {
@@ -3250,7 +3250,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var200 string
 		templ_7745c5c3_Var200, templ_7745c5c3_Err = templ.JoinStringErrs(consequenceTopicDescription(sl.Description, "Financial / Operational"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 536, Col: 77}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 533, Col: 77}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var200))
 		if templ_7745c5c3_Err != nil {
@@ -3263,7 +3263,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var201 string
 		templ_7745c5c3_Var201, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "-confdata-" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 539, Col: 58}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 536, Col: 58}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var201)
 		if templ_7745c5c3_Err != nil {
@@ -3276,7 +3276,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var202 string
 		templ_7745c5c3_Var202, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "-confdata-" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 541, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 538, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var202)
 		if templ_7745c5c3_Err != nil {
@@ -3289,7 +3289,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var203 string
 		templ_7745c5c3_Var203, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "_confdata_desc_" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 542, Col: 58}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 539, Col: 58}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var203)
 		if templ_7745c5c3_Err != nil {
@@ -3302,7 +3302,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var204 string
 		templ_7745c5c3_Var204, templ_7745c5c3_Err = templ.JoinStringErrs(consequenceTopicDescription(sl.Description, "Confidentiality / Data"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 544, Col: 76}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 541, Col: 76}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var204))
 		if templ_7745c5c3_Err != nil {
@@ -3315,7 +3315,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var205 string
 		templ_7745c5c3_Var205, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "-reglegal-" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 547, Col: 58}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 544, Col: 58}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var205)
 		if templ_7745c5c3_Err != nil {
@@ -3328,7 +3328,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var206 string
 		templ_7745c5c3_Var206, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "-reglegal-" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 549, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 546, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var206)
 		if templ_7745c5c3_Err != nil {
@@ -3341,7 +3341,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var207 string
 		templ_7745c5c3_Var207, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "_reglegal_desc_" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 550, Col: 58}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 547, Col: 58}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var207)
 		if templ_7745c5c3_Err != nil {
@@ -3354,7 +3354,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var208 string
 		templ_7745c5c3_Var208, templ_7745c5c3_Err = templ.JoinStringErrs(consequenceTopicDescription(sl.Description, "Regulatory / Legal"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 552, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 549, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var208))
 		if templ_7745c5c3_Err != nil {
@@ -3367,7 +3367,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var209 string
 		templ_7745c5c3_Var209, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "-reptrust-" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 555, Col: 58}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 552, Col: 58}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var209)
 		if templ_7745c5c3_Err != nil {
@@ -3380,7 +3380,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var210 string
 		templ_7745c5c3_Var210, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "-reptrust-" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 557, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 554, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var210)
 		if templ_7745c5c3_Err != nil {
@@ -3393,7 +3393,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var211 string
 		templ_7745c5c3_Var211, templ_7745c5c3_Err = templruntime.NewAttributeExpression(prefix + "_reptrust_desc_" + fmt.Sprint(level)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 558, Col: 58}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 555, Col: 58}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var211)
 		if templ_7745c5c3_Err != nil {
@@ -3406,7 +3406,7 @@ func consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) templ
 		var templ_7745c5c3_Var212 string
 		templ_7745c5c3_Var212, templ_7745c5c3_Err = templ.JoinStringErrs(consequenceTopicDescription(sl.Description, "Reputation / Trust"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 560, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 557, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var212))
 		if templ_7745c5c3_Err != nil {
@@ -3534,7 +3534,7 @@ func orgRowInline(o db.Organization, depth int, all []db.Organization) templ.Com
 		var templ_7745c5c3_Var216 string
 		templ_7745c5c3_Var216, templ_7745c5c3_Err = templ.JoinStringErrs(o.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 610, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 607, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var216))
 		if templ_7745c5c3_Err != nil {
@@ -3552,7 +3552,7 @@ func orgRowInline(o db.Organization, depth int, all []db.Organization) templ.Com
 			var templ_7745c5c3_Var217 string
 			templ_7745c5c3_Var217, templ_7745c5c3_Err = templ.JoinStringErrs(o.Key.String)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 612, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 609, Col: 24}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var217))
 			if templ_7745c5c3_Err != nil {
@@ -3570,7 +3570,7 @@ func orgRowInline(o db.Organization, depth int, all []db.Organization) templ.Com
 		var templ_7745c5c3_Var218 string
 		templ_7745c5c3_Var218, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.SafeURL("/admin/orgs/" + o.ID.String() + "/delete")).ResolveURL(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 615, Col: 88}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 612, Col: 88}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var218)
 		if templ_7745c5c3_Err != nil {
@@ -3583,7 +3583,7 @@ func orgRowInline(o db.Organization, depth int, all []db.Organization) templ.Com
 		var templ_7745c5c3_Var219 string
 		templ_7745c5c3_Var219, templ_7745c5c3_Err = templruntime.NewAttributeExpression(csrf.TokenFromContext(ctx)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 616, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 613, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var219)
 		if templ_7745c5c3_Err != nil {
@@ -3596,7 +3596,7 @@ func orgRowInline(o db.Organization, depth int, all []db.Organization) templ.Com
 		var templ_7745c5c3_Var220 string
 		templ_7745c5c3_Var220, templ_7745c5c3_Err = templruntime.NewAttributeExpression("Delete " + o.Name).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 617, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 614, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var220)
 		if templ_7745c5c3_Err != nil {
@@ -3667,7 +3667,7 @@ func adminTab(key, label, activeTab string) templ.Component {
 		var templ_7745c5c3_Var222 string
 		templ_7745c5c3_Var222, templ_7745c5c3_Err = templruntime.NewAttributeExpression("tab-btn-" + key).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 645, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 642, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var222)
 		if templ_7745c5c3_Err != nil {
@@ -3680,7 +3680,7 @@ func adminTab(key, label, activeTab string) templ.Component {
 		var templ_7745c5c3_Var223 string
 		templ_7745c5c3_Var223, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.SafeURL("/admin?tab=" + key)).ResolveURL(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 646, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 643, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var223)
 		if templ_7745c5c3_Err != nil {
@@ -3693,7 +3693,7 @@ func adminTab(key, label, activeTab string) templ.Component {
 		var templ_7745c5c3_Var224 string
 		templ_7745c5c3_Var224, templ_7745c5c3_Err = templruntime.NewAttributeExpression(key).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 647, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 644, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var224)
 		if templ_7745c5c3_Err != nil {
@@ -3706,7 +3706,7 @@ func adminTab(key, label, activeTab string) templ.Component {
 		var templ_7745c5c3_Var225 string
 		templ_7745c5c3_Var225, templ_7745c5c3_Err = templruntime.NewAttributeExpression("tab-panel-" + key).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 649, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 646, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var225)
 		if templ_7745c5c3_Err != nil {
@@ -3719,7 +3719,7 @@ func adminTab(key, label, activeTab string) templ.Component {
 		var templ_7745c5c3_Var226 string
 		templ_7745c5c3_Var226, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprint(activeTab == key)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 650, Col: 46}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 647, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var226)
 		if templ_7745c5c3_Err != nil {
@@ -3732,7 +3732,7 @@ func adminTab(key, label, activeTab string) templ.Component {
 		var templ_7745c5c3_Var227 string
 		templ_7745c5c3_Var227, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 652, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 649, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var227))
 		if templ_7745c5c3_Err != nil {
@@ -3826,7 +3826,7 @@ func ProviderBadge(provider string) templ.Component {
 				var templ_7745c5c3_Var232 string
 				templ_7745c5c3_Var232, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "admin_pending_sso"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 662, Col: 63}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 659, Col: 63}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var232))
 				if templ_7745c5c3_Err != nil {
@@ -3854,7 +3854,7 @@ func ProviderBadge(provider string) templ.Component {
 				var templ_7745c5c3_Var234 string
 				templ_7745c5c3_Var234, templ_7745c5c3_Err = templ.JoinStringErrs(provider)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 664, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 661, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var234))
 				if templ_7745c5c3_Err != nil {
@@ -3905,7 +3905,7 @@ func RoleBadge(role string) templ.Component {
 				var templ_7745c5c3_Var237 string
 				templ_7745c5c3_Var237, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "role_admin"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 671, Col: 55}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 668, Col: 55}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var237))
 				if templ_7745c5c3_Err != nil {
@@ -3933,7 +3933,7 @@ func RoleBadge(role string) templ.Component {
 				var templ_7745c5c3_Var239 string
 				templ_7745c5c3_Var239, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "role_editor"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 673, Col: 57}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 670, Col: 57}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var239))
 				if templ_7745c5c3_Err != nil {
@@ -3961,7 +3961,7 @@ func RoleBadge(role string) templ.Component {
 				var templ_7745c5c3_Var241 string
 				templ_7745c5c3_Var241, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "role_contributor"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 675, Col: 59}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 672, Col: 59}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var241))
 				if templ_7745c5c3_Err != nil {
@@ -3989,7 +3989,7 @@ func RoleBadge(role string) templ.Component {
 				var templ_7745c5c3_Var243 string
 				templ_7745c5c3_Var243, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "role_viewer"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 677, Col: 57}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 674, Col: 57}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var243))
 				if templ_7745c5c3_Err != nil {
@@ -4040,7 +4040,7 @@ func adminAuditEventBadge(event string) templ.Component {
 				var templ_7745c5c3_Var246 string
 				templ_7745c5c3_Var246, templ_7745c5c3_Err = templ.JoinStringErrs(event)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 684, Col: 33}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 681, Col: 33}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var246))
 				if templ_7745c5c3_Err != nil {
@@ -4068,7 +4068,7 @@ func adminAuditEventBadge(event string) templ.Component {
 				var templ_7745c5c3_Var248 string
 				templ_7745c5c3_Var248, templ_7745c5c3_Err = templ.JoinStringErrs(event)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 686, Col: 34}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 683, Col: 34}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var248))
 				if templ_7745c5c3_Err != nil {
@@ -4096,7 +4096,7 @@ func adminAuditEventBadge(event string) templ.Component {
 				var templ_7745c5c3_Var250 string
 				templ_7745c5c3_Var250, templ_7745c5c3_Err = templ.JoinStringErrs(event)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 688, Col: 34}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 685, Col: 34}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var250))
 				if templ_7745c5c3_Err != nil {
@@ -4124,7 +4124,7 @@ func adminAuditEventBadge(event string) templ.Component {
 				var templ_7745c5c3_Var252 string
 				templ_7745c5c3_Var252, templ_7745c5c3_Err = templ.JoinStringErrs(event)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 690, Col: 34}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/admin/templates/admin.templ`, Line: 687, Col: 34}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var252))
 				if templ_7745c5c3_Err != nil {

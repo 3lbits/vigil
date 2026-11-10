@@ -4,6 +4,27 @@
   --ops-muted: var(--ui2-muted);
   --ops-surface: var(--ui2-card);
 }
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-muted {
+  color: var(--ops-muted);
+  font-size: .875rem;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(a, button).ops-button:not([data-tone]) {
+  display: inline-block;
+  padding: .5rem 1rem;
+  border: 0;
+  border-radius: var(--ui2-radius);
+  background: var(--ui2-accent);
+  color: var(--ui2-fg);
+  font-weight: 600;
+  text-decoration: none;
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) button.ops-button:not([data-tone]) {
+  background: var(--ui2-link);
+  color: var(--ui2-bg);
+}
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(a, button).ops-button:hover {
+  filter: brightness(.9);
+}
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-toolbar, .ops-between) {
   display: flex;
   flex-wrap: wrap;
@@ -31,7 +52,7 @@
   list-style: none;
   padding: 0;
   border: 1px solid var(--ops-border);
-  border-radius: 10px;
+  border-radius: var(--ui2-radius);
   overflow: hidden;
 }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-list-item + .ops-list-item,
@@ -59,7 +80,6 @@
 }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-input {
   width: 100%;
-  font-size: .8125rem;
 }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) input[type="checkbox"].ops-input {
   width: 1rem;
@@ -83,14 +103,6 @@
   gap: .5rem;
   font-weight: 500;
 }
-:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-file::file-selector-button {
-  margin-right: .75rem;
-  padding: .25rem .5rem;
-  border: 1px solid var(--ops-border);
-  border-radius: 6px;
-  background: var(--ui2-accent);
-  color: var(--ui2-fg);
-}
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-progress { width: 100%; }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-narrow { max-width: 32rem; }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-medium { max-width: 36rem; }
@@ -106,7 +118,7 @@
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-card {
   padding: 1rem;
   border: 1px solid var(--ops-border);
-  border-radius: 10px;
+  border-radius: var(--ui2-radius);
   background: var(--ops-surface);
 }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ui2-panel.ops-card { padding: 0; overflow: hidden; }
@@ -121,15 +133,11 @@
   margin-bottom: .75rem;
 }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-overline {
-  font-size: .6875rem;
+  font-size: .875rem;
   font-weight: 600;
   letter-spacing: .05em;
   text-transform: uppercase;
   color: var(--ops-muted);
-}
-:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-muted {
-  color: var(--ops-muted);
-  font-size: .8125rem;
 }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-reference {
   font-family: ui-monospace, SFMono-Regular, monospace;
@@ -142,14 +150,14 @@
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-break { overflow-wrap: anywhere; }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-pre-wrap { white-space: pre-wrap; }
-:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-button, .ops-tab) {
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-tab {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: .35rem;
   padding: .375rem .75rem;
   border: 1px solid var(--ops-border);
-  border-radius: 6px;
+  border-radius: var(--ui2-radius);
   background: var(--ops-surface);
   color: var(--ui2-fg);
   font-size: .8125rem;
@@ -158,35 +166,27 @@
   text-decoration: none;
   cursor: pointer;
 }
-:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-button, .ops-tab, .ops-link-action):hover {
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-tab, .ops-link-action):hover {
   background: var(--ui2-accent);
 }
-:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-button, .ops-tab, .ops-link):focus-visible {
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-tab, .ops-link):focus-visible {
   outline: 3px solid var(--ui2-link);
   outline-offset: 2px;
 }
-:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-button, .ops-tab):disabled {
+:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-tab:disabled {
   opacity: .55;
   cursor: not-allowed;
 }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-danger-link { color: var(--ui2-danger-fg); }
-:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-confirm {
-  padding: .5rem 1rem;
-  border: 1px solid ButtonBorder;
-  border-radius: 6px;
-  background: ButtonFace;
-  color: ButtonText;
-  cursor: pointer;
-}
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-tag, .ops-kind, .ops-asset-badge) {
   display: inline-flex;
   align-items: center;
   padding: .125rem .375rem;
   border: 1px solid var(--ops-border);
-  border-radius: 5px;
+  border-radius: var(--ui2-radius);
   background: var(--ui2-neutral-bg);
   color: var(--ui2-neutral-fg);
-  font-size: .6875rem;
+  font-size: .875rem;
   font-weight: 500;
 }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-risk-tag, .ops-kind-assessment, .ops-kind-exercise),
@@ -214,22 +214,22 @@
   max-width: 100%;
   overflow-x: auto;
   border: 1px solid var(--ops-border);
-  border-radius: 10px;
+  border-radius: var(--ui2-radius);
 }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-data-table { min-width: 38rem; }
 .ui2-activities .ops-data-table { min-width: 56rem; }
 .ui2-assets .ops-data-table { min-width: 47rem; }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-table-head {
-  background: var(--ui2-accent);
+  background: var(--ui2-card);
   color: var(--ops-muted);
 }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-sort-heading, thead th) {
-  font-size: .6875rem;
+  font-size: .875rem;
 }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-success-panel {
   padding: 1rem;
   border: 1px solid var(--ui2-success-fg);
-  border-radius: 10px;
+  border-radius: var(--ui2-radius);
   background: var(--ui2-success-bg);
   color: var(--ui2-success-fg);
 }
@@ -241,7 +241,7 @@
 .ui2-avvik #avvik-tab-panel > .ops-stack > :is(.ops-card, .ops-form-inline) {
   padding: 1rem;
   border: 1px solid var(--ops-border);
-  border-radius: 10px;
+  border-radius: var(--ui2-radius);
   background: var(--ops-surface);
 }
 .ui2-avvik #avvik-tab-panel > .ops-stack > .ops-card { padding: 1rem; }
@@ -257,7 +257,7 @@
 .ui2-avvik .ops-warning-panel {
   padding: .75rem 1rem;
   border: 1px solid var(--ui2-info-fg);
-  border-radius: 10px;
+  border-radius: var(--ui2-radius);
   background: var(--ui2-info-bg);
   color: var(--ui2-info-fg);
   font-size: .8125rem;
@@ -273,7 +273,7 @@
   top: .5rem;
   z-index: 10;
   padding: .5rem 1rem;
-  border-radius: 6px;
+  border-radius: var(--ui2-radius);
   background: var(--ui2-danger-bg);
 }
 .ui2-avvik .ops-tab-active,
@@ -336,14 +336,14 @@
   justify-items: center;
   min-width: 2rem;
   padding: .15rem .4rem;
-  border-radius: 5px;
+  border-radius: var(--ui2-radius);
   color: #fff;
-  font-size: .6875rem;
+  font-size: .875rem;
   font-weight: 700;
 }
-.ui2-measures .ops-risk-high, .ui2-activities .ops-risk-high { background: #ef4444; }
-.ui2-measures .ops-risk-medium, .ui2-activities .ops-risk-medium { background: #d97706; }
-.ui2-measures .ops-risk-low, .ui2-activities .ops-risk-low { background: #15803d; }
+.ui2-measures .ops-risk-high, .ui2-activities .ops-risk-high { background: var(--ui2-danger-bg); color: var(--ui2-danger-fg); }
+.ui2-measures .ops-risk-medium, .ui2-activities .ops-risk-medium { background: var(--ui2-warning-bg); color: var(--ui2-warning-fg); }
+.ui2-measures .ops-risk-low, .ui2-activities .ops-risk-low { background: var(--ui2-success-bg); color: var(--ui2-success-fg); }
 .ui2-activities .ops-due-overdue { color: var(--ui2-danger-fg); font-weight: 600; }
 @media (max-width: 40rem) {
   :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) :is(.ops-fields, .ops-fields-three) {

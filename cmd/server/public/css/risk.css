@@ -6,6 +6,20 @@
   --risk-violet-fg: var(--ui2-fg);
   min-width: 0;
 }
+.ui2-risk :is(a, button):is(.risk-secondary-button, .risk-secondary-link, .risk-small-button):not([data-tone]) {
+  display: inline-block;
+  padding: .5rem 1rem;
+  border: 0;
+  border-radius: var(--ui2-radius);
+  background: var(--ui2-accent);
+  color: var(--ui2-fg);
+  font-weight: 600;
+  text-decoration: none;
+}
+.ui2-risk :is(a, button).risk-small-button:not([data-tone]) { padding: .25rem .5rem; }
+.ui2-risk :is(a, button):is(.risk-secondary-button, .risk-secondary-link, .risk-small-button):hover {
+  filter: brightness(.9);
+}
 .ui2-risk .risk-visually-hidden {
   position: absolute;
   width: 1px;
@@ -58,16 +72,16 @@
 .ui2-risk .risk-monospace { font-family: ui-monospace, monospace; font-variant-numeric: tabular-nums; }
 .ui2-risk :is(.risk-description, .risk-back-link, .risk-result-detail, .risk-linked-detail) { color: var(--ui2-muted); }
 .ui2-risk .risk-description { font-size: .8125rem; }
-.ui2-risk .risk-caption { color: var(--ui2-muted); font-size: .6875rem; }
+.ui2-risk .risk-caption { color: var(--ui2-muted); font-size: .875rem; }
 .ui2-risk :is(.risk-result-name, .risk-linked-name) { color: var(--ui2-fg); font-size: .8125rem; font-weight: 500; }
 .ui2-risk :is(.risk-result-name, .risk-result-detail, .risk-chip-name, .risk-chip-category) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.ui2-risk .risk-result-detail { font-size: .6875rem; }
+.ui2-risk .risk-result-detail { font-size: .875rem; }
 .ui2-risk .risk-linked-name, .ui2-risk .risk-linked-detail { display: block; }
-.ui2-risk .risk-linked-detail { font-size: .6875rem; }
+.ui2-risk .risk-linked-detail { font-size: .875rem; }
 .ui2-risk .risk-section-heading, .ui2-risk .risk-subheading {
   color: var(--ui2-muted);
   font-size: .75rem;
@@ -76,7 +90,7 @@
   letter-spacing: .04em;
   margin-bottom: .75rem;
 }
-.ui2-risk .risk-subheading { font-size: .6875rem; margin-bottom: .25rem; }
+.ui2-risk .risk-subheading { font-size: .875rem; margin-bottom: .25rem; }
 .ui2-risk .risk-list-heading { padding: .75rem 1rem; background: var(--risk-soft); border-bottom: 1px solid var(--ui2-border); }
 .ui2-risk .risk-list-title { color: var(--ui2-muted); font-size: .75rem; font-weight: 600; margin: 0; }
 .ui2-risk .risk-list-heading + :is(.risk-empty-list, .risk-description) { padding: 1.5rem 1rem; text-align: center; }
@@ -90,7 +104,7 @@
 .ui2-risk .risk-list-heading ~ div:last-child { padding: .75rem 1rem; border-top: 1px solid var(--ui2-border); }
 .ui2-risk .risk-results, .ui2-risk .risk-search-results {
   border: 1px solid var(--ui2-border);
-  border-radius: 6px;
+  border-radius: var(--ui2-radius);
   overflow: hidden;
   background: var(--ui2-card);
 }
@@ -101,20 +115,6 @@
 .ui2-risk .risk-search-result { padding: .375rem .5rem; }
 .ui2-risk .risk-search-choice { width: 100%; padding: .5rem; text-align: left; color: var(--ui2-fg); background: transparent; border: 0; cursor: pointer; }
 .ui2-risk .risk-search-choice:hover { background: var(--ui2-accent); }
-.ui2-risk :is(.risk-secondary-button, .risk-small-button, .risk-secondary-link) {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid var(--ui2-border);
-  border-radius: 6px;
-  padding: .375rem .75rem;
-  background: var(--ui2-card);
-  color: var(--ui2-fg);
-  font-size: .75rem;
-  text-decoration: none;
-  cursor: pointer;
-}
-.ui2-risk .risk-small-button { padding: .25rem .5rem; font-size: .6875rem; }
-.ui2-risk :is(.risk-secondary-button, .risk-small-button, .risk-secondary-link):hover { background: var(--ui2-accent); }
 .ui2-risk .risk-back-link { font-size: .8125rem; }
 .ui2-risk .risk-link-toggle { display: inline-flex; align-items: center; gap: .25rem; color: var(--ui2-link); background: transparent; border: 0; font-size: .75rem; cursor: pointer; }
 .ui2-risk .risk-link-toggle:hover, .ui2-risk .risk-back-link:hover { text-decoration: underline; }
@@ -126,43 +126,43 @@
 .ui2-risk .risk-review-badge, .ui2-risk .risk-decision-hint {
   color: var(--ui2-warning-fg);
   background: var(--ui2-warning-bg);
-  border-radius: 6px;
+  border-radius: var(--ui2-radius);
   padding: .125rem .5rem;
-  font-size: .6875rem;
+  font-size: .875rem;
 }
-.ui2-risk [role="status"].risk-reassessment-status { padding: .5rem .75rem; margin-bottom: .75rem; border: 1px solid var(--ui2-border); border-radius: 6px; font-size: .75rem; }
+.ui2-risk [role="status"].risk-reassessment-status { padding: .5rem .75rem; margin-bottom: .75rem; border: 1px solid var(--ui2-border); border-radius: var(--ui2-radius); font-size: .75rem; }
 .ui2-risk .risk-reassessment-error { background: var(--ui2-danger-bg); color: var(--ui2-danger-fg); }
 .ui2-risk .risk-reassessment-success { background: var(--ui2-success-bg); color: var(--ui2-success-fg); }
 .ui2-risk .risk-score-tile, .ui2-risk .risk-eval-score, .ui2-risk .risk-live-score {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: var(--ui2-radius);
   color: #fff;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 .ui2-risk .risk-score-tile { min-width: 3rem; height: 2.5rem; padding: .25rem; font-size: .8125rem; }
 .ui2-risk .risk-eval-score { flex-direction: column; margin: auto; width: 4rem; padding: .25rem; font-size: .8125rem; }
-.ui2-risk .risk-eval-score span + span { font-size: .625rem; opacity: .85; }
-.ui2-risk .risk-live-score { justify-content: space-between; padding: .375rem .5rem; font-size: .6875rem; }
-.ui2-risk .risk-score-label { padding: .1rem .375rem; background: #ffffff40; border-radius: 4px; font-size: .625rem; }
-.ui2-risk :is(.risk-score-high, .risk-score-red) { background: #dc2626; }
-.ui2-risk :is(.risk-score-medium, .risk-score-yellow) { background: #d97706; color: #1a1a1a; }
-.ui2-risk :is(.risk-score-low, .risk-score-green) { background: #16a34a; }
+.ui2-risk .risk-eval-score span + span { font-size: .875rem; opacity: .85; }
+.ui2-risk .risk-live-score { justify-content: space-between; padding: .375rem .5rem; font-size: .875rem; }
+.ui2-risk .risk-score-label { padding: .1rem .375rem; background: #ffffff40; border-radius: var(--ui2-radius); font-size: .875rem; }
+.ui2-risk :is(.risk-score-high, .risk-score-red) { background: var(--ui2-danger-bg); color: var(--ui2-danger-fg); }
+.ui2-risk :is(.risk-score-medium, .risk-score-yellow) { background: var(--ui2-warning-bg); color: var(--ui2-warning-fg); }
+.ui2-risk :is(.risk-score-low, .risk-score-green) { background: var(--ui2-success-bg); color: var(--ui2-success-fg); }
 .ui2-risk .risk-treatment-overdue { border-color: var(--ui2-danger-fg); background: color-mix(in srgb, var(--ui2-danger-bg) 20%, var(--ui2-card)); }
 .ui2-risk .risk-score-fieldset {
   max-width: 24rem;
   margin-bottom: .75rem;
   padding: .75rem;
   border: 1px solid var(--ui2-border);
-  border-radius: 8px;
+  border-radius: var(--ui2-radius);
   background: var(--risk-soft);
 }
-.ui2-risk .risk-score-fieldset legend { color: var(--ui2-muted); font-size: .6875rem; font-weight: 600; }
+.ui2-risk .risk-score-fieldset legend { color: var(--ui2-muted); font-size: .875rem; font-weight: 600; }
 .ui2-risk .risk-score-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; margin-bottom: .5rem; }
-.ui2-risk .risk-score-fields label { display: block; margin-bottom: .25rem; color: var(--ui2-muted); font-size: .6875rem; }
-.ui2-risk .risk-score-fieldset > p { margin-bottom: .5rem; font-size: .6875rem; }
+.ui2-risk .risk-score-fields label { display: block; margin-bottom: .25rem; color: var(--ui2-muted); font-size: .875rem; }
+.ui2-risk .risk-score-fieldset > p { margin-bottom: .5rem; font-size: .875rem; }
 .ui2-risk .ui2-panel h2 > button.risk-split { width: 100%; padding: 0; border: 0; background: transparent; color: var(--ui2-fg); text-align: left; cursor: pointer; }
 .ui2-risk .ui2-panel > details > summary.risk-split { padding: .5rem; cursor: pointer; }
 .ui2-risk .risk-score-fields select, .ui2-risk :is(.risk-form-width, .risk-narrow) :is(input:not([type=checkbox], [type=radio], [type=hidden]), select) { width: 100%; }
@@ -178,7 +178,7 @@
 .ui2-risk .risk-info-title { color: var(--risk-blue-fg); font-size: .8125rem; font-weight: 600; }
 .ui2-risk .risk-info-description { color: var(--risk-blue-fg); font-size: .75rem; }
 .ui2-risk .risk-info-criteria { margin-top: .5rem; padding-top: .5rem; border-top: 1px solid var(--ui2-border); color: var(--risk-blue-fg); font-size: .75rem; }
-.ui2-risk .risk-criteria-missing { padding: 1rem; margin-bottom: 1rem; border: 1px dashed var(--ui2-border); border-radius: 10px; color: var(--ui2-muted); font-size: .8125rem; }
+.ui2-risk .risk-criteria-missing { padding: 1rem; margin-bottom: 1rem; border: 1px dashed var(--ui2-border); border-radius: var(--ui2-radius); color: var(--ui2-muted); font-size: .8125rem; }
 .ui2-risk .risk-decision-layout { display: grid; grid-template-columns: 18.75rem minmax(0, 1fr); gap: 1rem; }
 .ui2-risk .risk-decision-sidebar { align-self: start; position: sticky; top: .75rem; }
 .ui2-risk .risk-decision-list { max-height: 60vh; overflow: auto; }
@@ -187,7 +187,7 @@
 .ui2-risk .risk-decision-selected { background: var(--risk-blue-bg); }
 .ui2-risk .risk-decision-available:hover { background: var(--ui2-accent); }
 .ui2-risk .risk-eval-header, .ui2-risk .risk-eval-row { display: grid; grid-template-columns: minmax(0, 1fr) 5.625rem 9.375rem; gap: .75rem; padding: .75rem 1rem; }
-.ui2-risk .risk-eval-header { background: var(--risk-soft); color: var(--ui2-muted); font-size: .625rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.ui2-risk .risk-eval-header { background: var(--risk-soft); color: var(--ui2-muted); font-size: .875rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
 .ui2-risk .risk-eval-item { border-top: 1px solid var(--ui2-border); }
 .ui2-risk .risk-eval-notes { padding: 0 1rem .75rem; }
 .ui2-risk .risk-add-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .5rem; }
@@ -196,15 +196,15 @@
 .ui2-risk .risk-add-description textarea { min-height: 4.5rem; resize: vertical; }
 .ui2-risk .risk-add-section { padding-top: .75rem; border-top: 1px solid var(--ui2-border); }
 .ui2-risk .risk-add-section input[type=search], .ui2-risk .risk-controls input[type=search] { min-width: 0; flex: 1; }
-.ui2-risk .risk-create-form { display: flex; flex-direction: column; gap: .5rem; padding: .75rem; border: 1px solid var(--ui2-border); border-radius: 8px; background: var(--risk-soft); }
+.ui2-risk .risk-create-form { display: flex; flex-direction: column; gap: .5rem; padding: .75rem; border: 1px solid var(--ui2-border); border-radius: var(--ui2-radius); background: var(--risk-soft); }
 .ui2-risk .risk-participant-chip, .ui2-risk .risk-asset-chip, .ui2-risk :is(.risk-measure-chip, .risk-activity-chip) {
   display: inline-flex;
   align-items: center;
   gap: .375rem;
   padding: .25rem .5rem;
   border: 1px solid;
-  border-radius: 999px;
-  font-size: .6875rem;
+  border-radius: var(--ui2-radius);
+  font-size: .875rem;
   font-weight: 500;
 }
 .ui2-risk :is(.risk-participant-chip, .risk-measure-chip) { background: var(--risk-blue-bg); color: var(--risk-blue-fg); border-color: var(--ui2-border); }
@@ -213,10 +213,10 @@
 .ui2-risk button.risk-asset-chip[data-tone="danger"] { background: var(--risk-violet-bg); color: var(--risk-violet-fg); border-color: var(--ui2-border); }
 .ui2-risk .risk-chip-name { max-width: 14rem; color: inherit; }
 .ui2-risk .risk-chip-category { max-width: 7rem; opacity: .8; }
-.ui2-risk .risk-chip-status { border: 1px solid var(--ui2-border); border-radius: 4px; padding: .125rem .25rem; text-transform: capitalize; }
+.ui2-risk .risk-chip-status { border: 1px solid var(--ui2-border); border-radius: var(--ui2-radius); padding: .125rem .25rem; text-transform: capitalize; }
 .ui2-risk button.risk-chip-remove { padding: 0 .25rem; background: transparent; border: 0; color: inherit; cursor: pointer; }
 .ui2-risk .risk-help { display: inline-flex; align-items: center; position: relative; }
-.ui2-risk .risk-help button { display: grid; place-items: center; width: 1rem; height: 1rem; padding: 0; border: 1px solid var(--ui2-border); border-radius: 50%; background: var(--ui2-card); color: var(--ui2-muted); font-size: .625rem; font-weight: 700; cursor: help; }
+.ui2-risk .risk-help button { display: grid; place-items: center; width: 1.25rem; height: 1.25rem; padding: 0; border: 1px solid var(--ui2-border); border-radius: 50%; background: var(--ui2-card); color: var(--ui2-muted); font-size: .875rem; font-weight: 700; cursor: help; }
 .ui2-risk .risk-help-text {
   position: absolute;
   z-index: 10;
@@ -225,10 +225,10 @@
   transform: translateX(-50%);
   width: 13rem;
   padding: .375rem .625rem;
-  border-radius: 6px;
+  border-radius: var(--ui2-radius);
   background: var(--ui2-fg);
   color: var(--ui2-card);
-  font-size: .6875rem;
+  font-size: .875rem;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -236,9 +236,9 @@
 .ui2-risk .risk-help:is(:hover, :focus-within) .risk-help-text { opacity: 1; visibility: visible; }
 .ui2-risk .risk-threat-tips { list-style: disc; padding-left: 1.25rem; margin: .5rem 0 .75rem; color: var(--ui2-muted); font-size: .75rem; }
 .ui2-risk .risk-threat-tips li + li { margin-top: .25rem; }
-.ui2-risk .risk-threat-assets { padding: .75rem; margin-bottom: .75rem; border: 1px solid var(--ui2-border); border-radius: 6px; background: var(--risk-blue-bg); }
-.ui2-risk .risk-threat-asset { min-width: 0; padding: .5rem .625rem; border: 1px solid var(--ui2-border); border-radius: 6px; background: var(--ui2-card); }
-.ui2-risk .risk-diagram { min-height: 4rem; margin-top: .5rem; padding: .75rem; border: 1px solid var(--ui2-border); border-radius: 6px; background: var(--ui2-card); overflow: auto; }
+.ui2-risk .risk-threat-assets { padding: .75rem; margin-bottom: .75rem; border: 1px solid var(--ui2-border); border-radius: var(--ui2-radius); background: var(--risk-blue-bg); }
+.ui2-risk .risk-threat-asset { min-width: 0; padding: .5rem .625rem; border: 1px solid var(--ui2-border); border-radius: var(--ui2-radius); background: var(--ui2-card); }
+.ui2-risk .risk-diagram { min-height: 4rem; margin-top: .5rem; padding: .75rem; border: 1px solid var(--ui2-border); border-radius: var(--ui2-radius); background: var(--ui2-card); overflow: auto; }
 .ui2-risk .risk-diagram :is(svg, iframe) { max-width: 100%; }
 .ui2-risk .risk-diagram iframe { width: 100%; min-height: 22.5rem; border: 0; }
 .ui2-risk :is(button, a, input, select, textarea, summary):focus-visible { outline: 3px solid var(--ui2-link); outline-offset: 2px; }

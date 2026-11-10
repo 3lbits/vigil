@@ -47,7 +47,7 @@
 .ui2-admin > section {
   padding: 1rem;
   border: 1px solid var(--admin-line);
-  border-radius: .75rem;
+  border-radius: var(--ui2-radius);
   background: var(--admin-surface);
 }
 .ui2-admin [role="tabpanel"] h2,
@@ -88,7 +88,7 @@
 .ui2-admin > p:not([role]) {
   padding: 2rem;
   border: 1px dashed var(--admin-line);
-  border-radius: .75rem;
+  border-radius: var(--ui2-radius);
   text-align: center;
   color: var(--admin-muted);
 }
@@ -98,7 +98,7 @@
 }
 .ui2-admin .ui2-table table { width: 100%; min-width: 42rem; font-size: .8125rem; }
 .ui2-admin .ui2-table thead {
-  background: var(--ui2-accent);
+  background: var(--ui2-card);
   color: var(--admin-muted);
   font-size: .75rem;
 }
@@ -119,18 +119,10 @@
 }
 .ui2-admin .ui2-table td form label { margin: 0; }
 .ui2-admin .ui2-table :is(select, button) { font-size: .75rem; }
-.ui2-admin .ui2-table td button:not([data-tone]) {
-  padding: .25rem .625rem;
-  border: 1px solid var(--admin-line);
-  border-radius: .375rem;
-  background: var(--admin-surface);
-  color: var(--ui2-fg);
-}
-.ui2-admin .ui2-table td button:not([data-tone]):hover { background: var(--ui2-accent); }
 .ui2-admin button[data-tone="danger"] {
   padding: .25rem .625rem;
   border: 1px solid var(--ui2-danger-fg);
-  border-radius: .375rem;
+  border-radius: var(--ui2-radius);
   background: var(--ui2-danger-bg);
   color: var(--ui2-danger-fg);
   cursor: pointer;
@@ -148,7 +140,7 @@
 .ui2-admin #tab-panel-audit > nav a {
   padding: .25rem .75rem;
   border: 1px solid var(--admin-line);
-  border-radius: .375rem;
+  border-radius: var(--ui2-radius);
   color: var(--ui2-fg);
   text-decoration: none;
 }
@@ -189,7 +181,7 @@
   display: block;
   padding: 1rem;
   border: 1px solid var(--admin-line);
-  border-radius: .75rem;
+  border-radius: var(--ui2-radius);
   background: var(--admin-surface);
 }
 .ui2-admin #tab-panel-status dl dt { font-size: .75rem; }
@@ -239,7 +231,7 @@
   max-width: 32rem;
   overflow: hidden;
   border: 1px solid var(--admin-line);
-  border-radius: .75rem;
+  border-radius: var(--ui2-radius);
 }
 .ui2-admin #tab-panel-orgs ul,
 .ui2-admin > ul,
@@ -258,10 +250,10 @@
 .ui2-admin .admin-org-row > span { display: inline-flex; align-items: center; gap: .25rem; min-width: 0; overflow-wrap: anywhere; }
 .ui2-admin .admin-org-row code {
   padding: .125rem .375rem;
-  border-radius: .25rem;
+  border-radius: var(--ui2-radius);
   background: var(--ui2-accent);
   color: var(--admin-muted);
-  font-size: .7rem;
+  font-size: .875rem;
 }
 .ui2-admin .admin-org-row button { min-width: 1.5rem; min-height: 1.5rem; }
 .ui2-admin #tab-panel-risk > div { max-width: 42rem; }
@@ -279,7 +271,7 @@
 .ui2-admin #tab-panel-risk fieldset:nth-of-type(n+2) > div {
   overflow: auto;
   border: 1px solid var(--admin-line);
-  border-radius: .5rem;
+  border-radius: var(--ui2-radius);
 }
 .ui2-admin #tab-panel-risk fieldset:nth-of-type(n+2) > div > div:first-child,
 .ui2-admin .admin-scale-row {
@@ -293,7 +285,7 @@
 .ui2-admin #tab-panel-risk fieldset:nth-of-type(n+2) > div > div:first-child {
   background: var(--ui2-accent);
   color: var(--admin-muted);
-  font-size: .6875rem;
+  font-size: .875rem;
   font-weight: 600;
   text-transform: uppercase;
 }
@@ -306,13 +298,13 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: .5rem;
 }
-.ui2-admin .admin-scale-row > div label { font-size: .6875rem; }
+.ui2-admin .admin-scale-row > div label { font-size: .875rem; }
 .ui2-admin #tab-panel-modules > div { max-width: 32rem; }
 .ui2-admin #tab-panel-modules form { display: grid; gap: .75rem; }
 .ui2-admin #tab-panel-modules fieldset {
   overflow: hidden;
   border: 1px solid var(--admin-line);
-  border-radius: .75rem;
+  border-radius: var(--ui2-radius);
 }
 .ui2-admin #tab-panel-modules fieldset > div {
   display: flex;
@@ -329,40 +321,6 @@
   font-weight: 600;
 }
 .ui2-admin #tab-panel-modules fieldset > div > div > p:last-child { font-size: .75rem; }
-.ui2-admin .admin-switch { position: relative; display: inline-flex; flex: none; align-items: center; cursor: pointer; }
-.ui2-admin .admin-switch-input {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-.ui2-admin .admin-switch-track {
-  width: 2.25rem;
-  height: 1.25rem;
-  border-radius: 999px;
-  background: var(--ui2-input);
-  pointer-events: none;
-}
-.ui2-admin .admin-switch-track::after {
-  content: "";
-  display: block;
-  width: 1rem;
-  height: 1rem;
-  margin: .125rem;
-  border-radius: 50%;
-  background: var(--admin-surface);
-  box-shadow: 0 1px 2px #0004;
-  transition: transform .15s ease;
-}
-.ui2-admin .admin-switch-input:checked + .admin-switch-track { background: var(--ui2-link); }
-.ui2-admin .admin-switch-input:checked + .admin-switch-track::after { transform: translateX(1rem); }
-.ui2-admin .admin-switch-input:focus-visible + .admin-switch-track {
-  outline: 2px solid var(--ui2-link);
-  outline-offset: 2px;
-}
-[dir="rtl"] .ui2-admin .admin-switch-input:checked + .admin-switch-track::after { transform: translateX(-1rem); }
 .ui2-me .ui2-panel li a { font-weight: 500; }
 .ui2-me .ui2-panel li a:hover { text-decoration: underline; }
 .ui2-login > .skip-link {
@@ -376,7 +334,4 @@
   .ui2-admin #tab-panel-risk fieldset:first-of-type > div { grid-template-columns: 1fr; }
   .ui2-admin .admin-scale-row > div { grid-template-columns: 1fr; }
   .ui2-admin [role="tabpanel"] > section { padding: .75rem; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ui2-admin .admin-switch-track::after { transition: none; }
 }

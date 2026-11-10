@@ -51,4 +51,5 @@ reports/
 /node_modules/
 /test-results/
 /playwright-report/
+/.playwright-mcp/
 /cmd/server/public/js/*.min.js

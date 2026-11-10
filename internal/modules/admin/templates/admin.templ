@@ -470,10 +470,7 @@ templ moduleToggleRow(label, name string, checked bool, description string) {
 			<p>{ label }</p>
 			<p>{ description }</p>
 		</div>
-		<label class="admin-switch">
-			<input type="checkbox" name={ name } value="on" checked?={ checked } aria-label={ label } class="admin-switch-input"/>
-			<div class="admin-switch-track"></div>
-		</label>
+		<input type="checkbox" name={ name } value="on" checked?={ checked } aria-label={ label }/>
 	</div>
 }
 
