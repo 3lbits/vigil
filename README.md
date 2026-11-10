@@ -322,6 +322,23 @@ Shared styling lives in `cmd/server/public/css/ui2.css` and feature styling
 in the plain CSS files beside it. `make css-build` concatenates them without a
 CSS framework.
 
+### Optimisation principle
+
+"Don't optimise prematurely" is not permission to pessimise. Most slow, bloated
+software is not unoptimised — it does work it never needed to do. Avoiding that
+costs almost nothing up front and a lot later.
+
+**Do the 95 % that comes cheap. Skip the last 5 % that costs more time than it saves.**
+
+- **Don't pessimise.** No needless layers, abstractions, dependencies or work.
+  Simple and direct is the default, not a later optimisation.
+- **Platform first.** Use what HTML, CSS, the browser and the Go standard library
+  already provide before writing or adding anything.
+- **Delete before you add.** Code that does not exist needs no maintenance.
+- **Budgets are guardrails, not targets.** They catch drift; staying under is enough.
+- **Stop when the next gain costs real time.** If an improvement is not a small,
+  obvious change, leave it — and note it if it is worth revisiting.
+
 **Generated code is not edited by hand.** `**/*_templ.go` (templ), the
 sqlc-generated Go, and `cmd/server/public/css/output.css` (plain CSS bundle)
 are all produced by `make generate`. Change the source (`.templ`,

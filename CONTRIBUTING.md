@@ -99,8 +99,10 @@ applies equally to everyone, so reach for it when this summary isn't enough.
   `cmd/server/public/css/output.css` are produced by `make generate`. Change
   the `.templ`, SQL, or authored CSS source and regenerate; the next generation
   overwrites hand edits.
-- **Keep it simple.** No speculative abstractions or unrequested configuration
-  knobs. If 200 lines could be 50, write 50. Match the existing style.
+- **Avoid needless work.** Prefer native HTML, CSS, browser features and the
+  Go standard library over new layers or dependencies. Delete before adding;
+  treat budgets as guardrails, not targets. Do the cheap improvements and stop
+  when the next gain costs more than it saves. Match the existing style.
 - **Compose app pages from `internal/ui2`.** Keep shared page structure
   there and feature-specific content in module templates. UI2 reuses the
   existing document/navigation shell; don't duplicate it.

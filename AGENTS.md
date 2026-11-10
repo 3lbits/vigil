@@ -113,9 +113,14 @@ If you need to change generated output, change the source (`.templ` file,
 
 ### Simplicity
 
-- No unasked features or speculative abstractions.
-- No configuration knobs or "flexibility" that weren't requested.
-- If 200 lines could be 50, write 50.
+- "Don't optimise prematurely" is not permission to pessimise: avoid
+  needless work, layers, dependencies and speculative flexibility up front.
+- Prefer native HTML, CSS, browser features and the Go standard library.
+  Delete unnecessary code before adding more.
+- Do the cheap 95 %; skip the last 5 % when it costs more than it saves.
+  Budgets are guardrails, not targets — staying under is enough.
+- Stop when the next improvement is no longer small and obvious. Note it
+  only if it is worth revisiting.
 
 ### Surgical changes
 
