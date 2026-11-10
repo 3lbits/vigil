@@ -146,8 +146,8 @@ templ treatmentPanel(risk db.Risk, measures []db.Measure, activities []db.Activi
 						@ui2.Button(templ.Attributes{"type": "submit", "class": "risk-secondary-button"}) { { locale.T(ctx, "action_search") } }
 					</form>
 					<div id={ "activity-results-" + risk.ID.String() } class="risk-following" aria-live="polite" aria-atomic="false"></div>
-					</div>
-				</details>
+				</div>
+			</details>
 		</div>
 	</section>
 }
