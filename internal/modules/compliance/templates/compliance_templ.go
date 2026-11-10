@@ -313,14 +313,14 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</span> <span><span><progress max=\"100\" class=\"ops-progress\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</span> <span><span><meter min=\"0\" max=\"100\" low=\"50\" high=\"80\" optimum=\"100\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprint(fw.Coverage)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 65, Col: 79}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 65, Col: 96}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 		if templ_7745c5c3_Err != nil {
@@ -333,7 +333,7 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templruntime.NewAttributeExpression(locale.T(ctx, "label_coverage")).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 65, Col: 126}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 65, Col: 143}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 		if templ_7745c5c3_Err != nil {
@@ -346,13 +346,13 @@ func frameworkAccordion(fw FrameworkVM, expandID string) templ.Component {
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d%%", fw.Coverage))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 65, Col: 163}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 65, Col: 180}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</progress></span> <span class=\"ops-muted ops-align-end\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</meter></span> <span class=\"ops-muted ops-align-end\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -3014,14 +3014,14 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if len(vm.Requirements) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 192, "<span><progress max=\"100\" class=\"ops-progress\" value=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 192, "<span><meter min=\"0\" max=\"100\" low=\"50\" high=\"80\" optimum=\"100\" value=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var144 string
 				templ_7745c5c3_Var144, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprint(int(vm.CoveredReqs * 100 / int64(len(vm.Requirements))))).Resolve(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 647, Col: 121}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 647, Col: 138}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var144)
 				if templ_7745c5c3_Err != nil {
@@ -3034,7 +3034,7 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 				var templ_7745c5c3_Var145 string
 				templ_7745c5c3_Var145, templ_7745c5c3_Err = templruntime.NewAttributeExpression(locale.T(ctx, "label_coverage")).Resolve(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 647, Col: 168}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 647, Col: 185}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var145)
 				if templ_7745c5c3_Err != nil {
@@ -3047,13 +3047,13 @@ func FrameworkDetail(vm FrameworkDetailVM) templ.Component {
 				var templ_7745c5c3_Var146 string
 				templ_7745c5c3_Var146, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d%%", int(vm.CoveredReqs*100/int64(len(vm.Requirements)))))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 647, Col: 249}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/modules/compliance/templates/compliance.templ`, Line: 647, Col: 266}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var146))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 195, "</progress></span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 195, "</meter></span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

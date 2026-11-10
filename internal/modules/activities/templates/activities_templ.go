@@ -3044,7 +3044,7 @@ func ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string, 
 				return templ_7745c5c3_Err
 			}
 			if a.Status == "completed" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 229, "<section class=\"ops-card ops-success-panel\"><h2 class=\"ops-heading\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 229, "<section class=\"ops-success-panel\"><h2 class=\"ops-heading\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -3057,7 +3057,7 @@ func ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string, 
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 230, "</h2><div class=\"ops-fields ops-success-panel\"><dl><dt class=\"ops-success-text\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 230, "</h2><div class=\"ops-fields\"><dl><dt class=\"ops-success-text\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -3121,7 +3121,7 @@ func ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string, 
 					return templ_7745c5c3_Err
 				}
 				if a.Notes != "" {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 236, "<div class=\"ops-success-panel ops-separated\"><h3 class=\"ops-heading\">Notes</h3><p class=\"ops-success-text\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 236, "<div><h3 class=\"ops-heading\">Notes</h3><p class=\"ops-success-text\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -3140,7 +3140,7 @@ func ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string, 
 					}
 				}
 				if a.EvidenceUrl != "" {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 238, "<div class=\"ops-success-panel ops-separated\"><h3 class=\"ops-heading\">Evidence</h3>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 238, "<div><h3 class=\"ops-heading\">Evidence</h3>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -3177,7 +3177,7 @@ func ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string, 
 					}
 				}
 				if canEdit {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 240, "<div class=\"ops-success-panel ops-separated\"><form method=\"POST\" action=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 240, "<div><form method=\"POST\" action=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

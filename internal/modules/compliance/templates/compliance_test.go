@@ -57,6 +57,17 @@ func TestFrameworkList_ShowsCount(t *testing.T) {
 	if !strings.Contains(el.Text(), "2") {
 		t.Errorf("expected count to contain '2', got %q", el.Text())
 	}
+	if doc.Find(`meter[low="50"][high="80"][optimum="100"]`).Length() != 2 {
+		t.Error("framework coverage should use native meters")
+	}
+}
+
+func TestFrameworkDetail_CoverageMeter(t *testing.T) {
+	vm := FrameworkDetailVM{Requirements: []db.Requirement{{}, {}}, CoveredReqs: 1}
+	doc := renderToDoc(t, FrameworkDetail(vm))
+	if doc.Find(`meter[value="50"][max="100"]`).Length() != 1 {
+		t.Error("framework detail should show 50% coverage in a meter")
+	}
 }
 
 func TestFrameworkList_EmptyState(t *testing.T) {

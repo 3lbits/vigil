@@ -172,8 +172,8 @@ body.ui2-shell { color: var(--ui2-fg); background: var(--ui2-bg); }
 }
 .ui2 :is(input[type="checkbox"], input[type="radio"], progress) { accent-color: var(--ui2-link); }
 .ui2 progress { max-width: 100%; height: .75rem; }
+.ui2 meter { width: 100%; min-width: 0; max-width: 100%; }
 .ui2 .ui2-coverage { display: grid; grid-template-columns: minmax(6rem, 9rem) minmax(0, 1fr) 3rem; align-items: center; gap: .75rem; font-variant-numeric: tabular-nums; }
-.ui2 .ui2-coverage meter { width: 100%; min-width: 0; }
 .ui2 .ui2-coverage > :last-child { text-align: right; }
 .ui2 button[type="submit"]:not([class], [data-tone]) {
   padding: .5rem 1rem;

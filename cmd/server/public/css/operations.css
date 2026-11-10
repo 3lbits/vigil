@@ -103,7 +103,6 @@
   gap: .5rem;
   font-weight: 500;
 }
-:is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-progress { width: 100%; }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-narrow { max-width: 32rem; }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-medium { max-width: 36rem; }
 :is(.ui2-measures, .ui2-activities, .ui2-assets, .ui2-avvik, .ui2-compliance) .ops-wide { max-width: 48rem; }
@@ -223,10 +222,6 @@
   background: var(--ui2-success-bg);
   color: var(--ui2-success-fg);
 }
-.ui2-activities .ops-success-panel .ops-success-panel {
-  padding: 0;
-  border: 0;
-}
 .ui2-activities .ops-success-panel .ops-muted { color: inherit; }
 .ui2-avvik #avvik-tab-panel > .ops-stack > :is(.ops-card, .ops-form-inline) {
   padding: 1rem;
@@ -306,7 +301,6 @@
   gap: .5rem;
   margin-bottom: .25rem;
 }
-.ui2-compliance .ui2-panel.ops-card progress { width: 100%; }
 .ui2-compliance .fw-accordion[open] summary > .ops-muted { transform: rotate(90deg); }
 .ui2-compliance .fw-accordion summary > .ops-muted { transition: transform .15s; }
 .ui2-compliance .fw-actions { padding: .875rem 1rem; }
