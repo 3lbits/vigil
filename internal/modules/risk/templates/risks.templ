@@ -134,7 +134,7 @@ templ AssessmentItems(vm AssessmentListPageVM) {
 							<td>—</td>
 						}
 						<td>
-							@previewStatus(a.Assessment.Status)
+							@detailStatus(a.Assessment.Status)
 						</td>
 						<td><time datetime={ a.Assessment.UpdatedAt.Format("2006-01-02") }>{ a.Assessment.UpdatedAt.Format("2 Jan 2006") }</time></td>
 						<td><progress value={ fmt.Sprint(a.Assessment.CurrentStep) } max="4">{ fmt.Sprint(a.Assessment.CurrentStep) }/4</progress></td>
@@ -195,10 +195,10 @@ templ RiskRegister(risks []db.ListAllRisksRow, q string, lowMax, highMin int) {
 							{ risk.AssessmentName }
 						</td>
 						<td>
-							@previewScore(risk.LikelihoodCurrent, risk.ConsequenceCurrent, lowMax, highMin)
+							@detailScore(risk.LikelihoodCurrent, risk.ConsequenceCurrent, lowMax, highMin)
 						</td>
 						<td>
-							@previewDecision(risk.RiskDecision)
+							@detailDecision(risk.RiskDecision)
 						</td>
 					</tr>
 				}

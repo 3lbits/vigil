@@ -620,7 +620,7 @@ func AssessmentItems(vm AssessmentListPageVM) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = previewStatus(a.Assessment.Status).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = detailStatus(a.Assessment.Status).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -1053,7 +1053,7 @@ func RiskRegister(risks []db.ListAllRisksRow, q string, lowMax, highMin int) tem
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = previewScore(risk.LikelihoodCurrent, risk.ConsequenceCurrent, lowMax, highMin).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = detailScore(risk.LikelihoodCurrent, risk.ConsequenceCurrent, lowMax, highMin).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -1061,7 +1061,7 @@ func RiskRegister(risks []db.ListAllRisksRow, q string, lowMax, highMin int) tem
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = previewDecision(risk.RiskDecision).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = detailDecision(risk.RiskDecision).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

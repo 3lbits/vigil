@@ -16,7 +16,7 @@ import (
 	"github.com/3lbits/vigil/internal/ui2"
 )
 
-func TestAssessmentDetailPreview(t *testing.T) {
+func TestAssessmentDetail(t *testing.T) {
 	bundle, err := locale.NewBundle()
 	if err != nil {
 		t.Fatal(err)
@@ -43,7 +43,7 @@ func TestAssessmentDetailPreview(t *testing.T) {
 		t.Helper()
 		var out bytes.Buffer
 		//nolint:contextcheck // templ components receive the context through Render.
-		if err := AssessmentDetailPreview(vm).Render(ctx, &out); err != nil {
+		if err := AssessmentDetail(vm).Render(ctx, &out); err != nil {
 			t.Fatal(err)
 		}
 		return out.String()

@@ -28,7 +28,7 @@ templ RiskDetail(vm RiskDetailVM) {
 			}
 		</header>
 		<div class="risk-controls">
-			@previewDecision(vm.Risk.RiskDecision)
+			@detailDecision(vm.Risk.RiskDecision)
 			@ui2.Link(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/decision/" + vm.Risk.ID.String()), templ.Attributes{"class": "risk-secondary-link"}) {
 				Edit decision
 			}

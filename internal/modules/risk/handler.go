@@ -930,14 +930,6 @@ func (h *Handler) buildDetailData(r *http.Request, risks []db.Risk) detailData {
 }
 
 func (h *Handler) Detail(w http.ResponseWriter, r *http.Request) {
-	h.renderDetail(w, r)
-}
-
-func (h *Handler) DetailPreview(w http.ResponseWriter, r *http.Request) {
-	h.renderDetail(w, r)
-}
-
-func (h *Handler) renderDetail(w http.ResponseWriter, r *http.Request) {
 	assessment, ok := h.loadAssessment(w, r)
 	if !ok {
 		return
@@ -987,7 +979,7 @@ func (h *Handler) renderDetail(w http.ResponseWriter, r *http.Request) {
 		AuditLog:        auditLog,
 	}
 	httputil.Render(w, r, ui2.Layout(assessmentPageTitle(assessment), "Risk assessment", "risk", user,
-		risktemplates.AssessmentDetailPreview(vm)))
+		risktemplates.AssessmentDetail(vm)))
 }
 
 func (h *Handler) RiskDetail(w http.ResponseWriter, r *http.Request) {

@@ -11,7 +11,7 @@ import (
 	"github.com/3lbits/vigil/internal/ui2"
 )
 
-templ previewScore(l, c sql.NullInt32, lowMax, highMin int) {
+templ detailScore(l, c sql.NullInt32, lowMax, highMin int) {
 	if l.Valid && c.Valid {
 		@ui2.RiskLevel(int(l.Int32*c.Int32), lowMax, highMin)
 	} else {
@@ -19,7 +19,7 @@ templ previewScore(l, c sql.NullInt32, lowMax, highMin int) {
 	}
 }
 
-templ previewStatus(status string) {
+templ detailStatus(status string) {
 	switch status {
 		case "active":
 			@ui2.Badge("success") {
@@ -40,7 +40,7 @@ templ previewStatus(status string) {
 	}
 }
 
-templ previewDecision(decision string) {
+templ detailDecision(decision string) {
 	switch decision {
 		case "accept":
 			@ui2.Badge("success") {
@@ -59,12 +59,12 @@ templ previewDecision(decision string) {
 	}
 }
 
-templ AssessmentDetailPreview(vm AssessmentDetailVM) {
+templ AssessmentDetail(vm AssessmentDetailVM) {
 	@ui2.Page("ui2-risk") {
 		<header>
 			<div>
 				<h2>{ vm.Assessment.Name }</h2>
-				@previewStatus(vm.Assessment.Status)
+				@detailStatus(vm.Assessment.Status)
 				if vm.OrgName != "" {
 					<span>{ vm.OrgName }</span>
 				}
@@ -239,13 +239,13 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 									}
 								</th>
 								<td>
-									@previewScore(risk.LikelihoodCurrent, risk.ConsequenceCurrent, vm.LowMax, vm.HighMin)
+									@detailScore(risk.LikelihoodCurrent, risk.ConsequenceCurrent, vm.LowMax, vm.HighMin)
 								</td>
 								<td>
-									@previewScore(risk.LikelihoodTarget, risk.ConsequenceTarget, vm.LowMax, vm.HighMin)
+									@detailScore(risk.LikelihoodTarget, risk.ConsequenceTarget, vm.LowMax, vm.HighMin)
 								</td>
 								<td>
-									@previewDecision(risk.RiskDecision)
+									@detailDecision(risk.RiskDecision)
 								</td>
 							</tr>
 						}

@@ -129,7 +129,7 @@ func RiskDetail(vm RiskDetailVM) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = previewDecision(vm.Risk.RiskDecision).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = detailDecision(vm.Risk.RiskDecision).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
