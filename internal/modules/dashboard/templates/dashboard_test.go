@@ -11,7 +11,7 @@ import (
 
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/middleware"
-	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 func renderToDoc(t *testing.T, comp interface {
@@ -74,7 +74,7 @@ func TestDashboardUI2_RiskAndFilter(t *testing.T) {
 	id := uuid.New()
 	risk := RiskStats{
 		Total: 1, RedCount: 1, LowMax: 5, HighMin: 12,
-		Matrix:      layout.BuildRiskMatrixCells(map[[2]int]int{{3, 4}: 1}),
+		Matrix:      ui2.BuildRiskMatrixCells(map[[2]int]int{{3, 4}: 1}),
 		TopRisks:    []db.ListTopRisksRow{{ID: id, AssessmentID: id, Name: "Important risk", LikelihoodCurrent: sql.NullInt32{Int32: 3, Valid: true}, ConsequenceCurrent: sql.NullInt32{Int32: 4, Valid: true}}},
 		OrgOptions:  []OrgFilterOption{{ID: id.String(), Name: "North"}},
 		OrgSelected: id.String(),

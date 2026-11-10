@@ -13,7 +13,7 @@ import (
 
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
-	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 func TestAssessmentDetailPreview(t *testing.T) {
@@ -32,8 +32,8 @@ func TestAssessmentDetailPreview(t *testing.T) {
 			Status:      "pending_acceptance",
 			RiskOwnerID: uuid.NullUUID{UUID: ownerID, Valid: true},
 		},
-		CurrentMatrix:   layout.BuildRiskMatrixCells(map[[2]int]int{{3, 4}: 1}),
-		TargetMatrix:    layout.BuildRiskMatrixCells(nil),
+		CurrentMatrix:   ui2.BuildRiskMatrixCells(map[[2]int]int{{3, 4}: 1}),
+		TargetMatrix:    ui2.BuildRiskMatrixCells(nil),
 		LowMax:          5,
 		HighMin:         12,
 		CurrentUserID:   ownerID.String(),

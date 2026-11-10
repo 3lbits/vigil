@@ -6,12 +6,10 @@ import (
 	"fmt"
 	"strings"
 	"testing"
-
-	"github.com/3lbits/vigil/internal/ui/layout"
 )
 
 func TestMatrixLabelsAxes(t *testing.T) {
-	cells := layout.BuildRiskMatrixCells(nil)
+	cells := BuildRiskMatrixCells(nil)
 	var out bytes.Buffer
 	if err := Matrix("Risk map", cells, 5, 12).Render(context.Background(), &out); err != nil {
 		t.Fatal(err)

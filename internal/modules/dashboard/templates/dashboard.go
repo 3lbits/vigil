@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/3lbits/vigil/internal/db"
-	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 type Stats struct {
@@ -68,7 +68,7 @@ type RiskStats struct {
 	RedCount          int64
 	YellowCount       int64
 	GreenCount        int64
-	Matrix            []layout.RiskMatrixCell
+	Matrix            []ui2.RiskMatrixCell
 	TopRisks          []db.ListTopRisksRow
 	ReviewNeededCount int64
 	ReviewQueue       []RiskReviewItem

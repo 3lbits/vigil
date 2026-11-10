@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/3lbits/vigil/internal/locale"
-	"github.com/3lbits/vigil/internal/ui/layout"
 )
 
 func Tone(score, lowMax, highMin int) string {
@@ -22,7 +21,7 @@ templ RiskLevel(score, lowMax, highMin int) {
 	<data value={ fmt.Sprint(score) } data-tone={ Tone(score, lowMax, highMin) }>{ fmt.Sprint(score) }</data>
 }
 
-templ Matrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) {
+templ Matrix(label string, cells []RiskMatrixCell, lowMax, highMin int) {
 	<div class="ui2-matrix">
 		@Table(label) {
 			<thead>

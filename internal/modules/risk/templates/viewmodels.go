@@ -4,7 +4,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/3lbits/vigil/internal/db"
-	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 type AssessmentListVM struct {
@@ -115,8 +115,8 @@ type DecisionVM struct {
 type AssessmentDetailVM struct {
 	Assessment      db.RiskAssessment
 	Risks           []db.Risk
-	CurrentMatrix   []layout.RiskMatrixCell
-	TargetMatrix    []layout.RiskMatrixCell
+	CurrentMatrix   []ui2.RiskMatrixCell
+	TargetMatrix    []ui2.RiskMatrixCell
 	RiskMeasures    map[uuid.UUID][]db.Measure
 	RiskActivities  map[uuid.UUID][]db.Activity
 	Flash           string

@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/3lbits/vigil/internal/db"
-	"github.com/3lbits/vigil/internal/ui/layout"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 func TestDescendantOrgIDsAndRiskScope(t *testing.T) {
@@ -102,7 +102,7 @@ func TestAggregateRiskStatsAndHelpers(t *testing.T) {
 	assessmentOrg := map[uuid.UUID]uuid.NullUUID{
 		assessmentID: {UUID: uuid.New(), Valid: true},
 	}
-	thresholds := layout.RiskThresholds{LowMax: 5, HighMin: 12}
+	thresholds := ui2.RiskThresholds{LowMax: 5, HighMin: 12}
 	matrix, top, red, yellow, green := aggregateRiskStats(rows, assessmentOrg, nil, thresholds)
 	if red != 1 || yellow != 0 || green != 0 {
 		t.Fatalf("unexpected counters red=%d yellow=%d green=%d", red, yellow, green)

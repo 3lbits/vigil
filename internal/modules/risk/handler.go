@@ -19,7 +19,6 @@ import (
 	"github.com/3lbits/vigil/internal/httputil"
 	"github.com/3lbits/vigil/internal/middleware"
 	risktemplates "github.com/3lbits/vigil/internal/modules/risk/templates"
-	"github.com/3lbits/vigil/internal/ui/layout"
 	"github.com/3lbits/vigil/internal/ui2"
 )
 
@@ -972,8 +971,8 @@ func (h *Handler) renderDetail(w http.ResponseWriter, r *http.Request) {
 	vm := risktemplates.AssessmentDetailVM{
 		Assessment:      assessment,
 		Risks:           risks,
-		CurrentMatrix:   layout.BuildRiskMatrixCells(d.currentCounts),
-		TargetMatrix:    layout.BuildRiskMatrixCells(d.targetCounts),
+		CurrentMatrix:   ui2.BuildRiskMatrixCells(d.currentCounts),
+		TargetMatrix:    ui2.BuildRiskMatrixCells(d.targetCounts),
 		RiskMeasures:    d.riskMeasures,
 		RiskActivities:  d.riskActivities,
 		OwnerName:       ownerName,

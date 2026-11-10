@@ -13,7 +13,6 @@ import (
 	"fmt"
 
 	"github.com/3lbits/vigil/internal/locale"
-	"github.com/3lbits/vigil/internal/ui/layout"
 )
 
 func Tone(score, lowMax, highMin int) string {
@@ -51,7 +50,7 @@ func RiskLevel(score, lowMax, highMin int) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprint(score)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 22, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 21, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
@@ -64,7 +63,7 @@ func RiskLevel(score, lowMax, highMin int) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templruntime.NewAttributeExpression(Tone(score, lowMax, highMin)).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 22, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 21, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -77,7 +76,7 @@ func RiskLevel(score, lowMax, highMin int) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(score))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 22, Col: 97}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 21, Col: 97}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -91,7 +90,7 @@ func RiskLevel(score, lowMax, highMin int) templ.Component {
 	})
 }
 
-func Matrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) templ.Component {
+func Matrix(label string, cells []RiskMatrixCell, lowMax, highMin int) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -131,7 +130,7 @@ func Matrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) te
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_likelihood"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 31, Col: 63}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 30, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -144,7 +143,7 @@ func Matrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) te
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "scale_consequence"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 31, Col: 104}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 30, Col: 104}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -162,7 +161,7 @@ func Matrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) te
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "scale_consequence"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 35, Col: 80}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 34, Col: 80}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -175,7 +174,7 @@ func Matrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) te
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(consequence))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 35, Col: 115}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 34, Col: 115}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -198,7 +197,7 @@ func Matrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) te
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(locale.T(ctx, "label_likelihood"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 42, Col: 79}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 41, Col: 79}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -211,7 +210,7 @@ func Matrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) te
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(likelihood))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 42, Col: 113}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 41, Col: 113}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -229,7 +228,7 @@ func Matrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) te
 					var templ_7745c5c3_Var13 string
 					templ_7745c5c3_Var13, templ_7745c5c3_Err = templruntime.NewAttributeExpression(Tone(likelihood*consequence, lowMax, highMin)).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 45, Col: 95}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 44, Col: 95}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 					if templ_7745c5c3_Err != nil {
@@ -248,7 +247,7 @@ func Matrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) te
 						var templ_7745c5c3_Var14 string
 						templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(cells[(5-likelihood)*5+consequence-1].Count))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 49, Col: 67}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui2/matrix.templ`, Line: 48, Col: 67}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 						if templ_7745c5c3_Err != nil {

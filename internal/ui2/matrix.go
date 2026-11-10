@@ -1,4 +1,4 @@
-package layout
+package ui2
 
 type RiskMatrixCell struct {
 	Count int

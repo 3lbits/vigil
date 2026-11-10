@@ -15,7 +15,6 @@ import (
 	"github.com/3lbits/vigil/internal/locale"
 	"github.com/3lbits/vigil/internal/middleware"
 	dashboardtemplates "github.com/3lbits/vigil/internal/modules/dashboard/templates"
-	"github.com/3lbits/vigil/internal/ui/layout"
 	"github.com/3lbits/vigil/internal/ui2"
 )
 
@@ -319,9 +318,9 @@ func (h *Handler) buildRiskStats(r *http.Request) dashboardtemplates.RiskStats {
 	}
 	reviewNeededCount, reviewQueue := h.buildRiskReviewQueue(r, assessmentOrg, allowedOrgIDs)
 	gs, _ := h.q.GetRiskGlobalSettings(r.Context())
-	thresholds := layout.RiskThresholds{LowMax: int(gs.LowMax), HighMin: int(gs.HighMin)}
+	thresholds := ui2.RiskThresholds{LowMax: int(gs.LowMax), HighMin: int(gs.HighMin)}
 	if thresholds.LowMax == 0 {
-		thresholds = layout.DefaultThresholds()
+		thresholds = ui2.DefaultThresholds()
 	}
 	matrixCounts, topRisks, redCount, yellowCount, greenCount := aggregateRiskStats(allRisks, assessmentOrg, allowedOrgIDs, thresholds)
 	total := redCount + yellowCount + greenCount
@@ -330,7 +329,7 @@ func (h *Handler) buildRiskStats(r *http.Request) dashboardtemplates.RiskStats {
 		RedCount:          redCount,
 		YellowCount:       yellowCount,
 		GreenCount:        greenCount,
-		Matrix:            layout.BuildRiskMatrixCells(matrixCounts),
+		Matrix:            ui2.BuildRiskMatrixCells(matrixCounts),
 		TopRisks:          topRisks,
 		ReviewNeededCount: reviewNeededCount,
 		ReviewQueue:       reviewQueue,
@@ -461,7 +460,7 @@ func aggregateRiskStats(
 	allRisks []db.ListAllRisksRow,
 	assessmentOrg map[uuid.UUID]uuid.NullUUID,
 	allowedOrgIDs map[uuid.UUID]struct{},
-	thresholds layout.RiskThresholds,
+	thresholds ui2.RiskThresholds,
 ) (map[[2]int]int, []db.ListTopRisksRow, int64, int64, int64) {
 	matrixCounts := make(map[[2]int]int)
 	topRisks := make([]db.ListTopRisksRow, 0, 5)
