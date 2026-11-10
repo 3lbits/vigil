@@ -107,6 +107,20 @@ func TestStandaloneAdminForms_NativeFieldsAndFlash(t *testing.T) {
 	}
 }
 
+func TestOrgsPage_FieldControls(t *testing.T) {
+	var out bytes.Buffer
+	if err := OrgsPage(nil, "", "").Render(context.Background(), &out); err != nil {
+		t.Fatal(err)
+	}
+	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(out.Bytes()))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := doc.Find(`form[action="/admin/orgs"] .ui2-field label[for="org_name"] + input[required], form[action="/admin/orgs"] .ui2-field label[for="parent_id"] + select`).Length(); got != 2 {
+		t.Errorf("expected labeled UI2 input and select, got %d", got)
+	}
+}
+
 func TestAdminPage_SemanticSettingsAndStatus(t *testing.T) {
 	var out bytes.Buffer
 	if err := AdminPage(nil, nil, nil, "test", time.Now(), true, "", "", "risk", "all",
@@ -117,15 +131,16 @@ func TestAdminPage_SemanticSettingsAndStatus(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := doc.Find(`[role="tabpanel"]`).Length(); got != 7 {
-		t.Errorf("expected seven accessible tab panels, got %d", got)
+	if got := doc.Find(`.admin-panel`).Length(); got != 7 {
+		t.Errorf("expected seven admin sections, got %d", got)
 	}
-	doc.Find(`[role="tab"]`).Each(func(_ int, tab *goquery.Selection) {
-		panelID, ok := tab.Attr("aria-controls")
-		if !ok || panelID == "" || doc.Find("#"+panelID).AttrOr("aria-labelledby", "") != tab.AttrOr("id", "") {
-			t.Errorf("tab %q must control a panel that labels itself with the tab", tab.Text())
-		}
-	})
+	if got := doc.Find(`nav.admin-sections a`).Length(); got != 7 {
+		t.Errorf("expected seven section links, got %d", got)
+	}
+	if doc.Find(`nav.admin-sections a[href="/admin?tab=risk"][aria-current="page"]`).Length() != 1 ||
+		doc.Find(`.admin-panel:not(.admin-hidden)`).AttrOr("id", "") != "tab-panel-risk" {
+		t.Error("active admin section is not identified")
+	}
 	if got := doc.Find(`#tab-panel-users > section > h2, #tab-panel-orgs > section > h2, #tab-panel-status > div > section > h2`).Length(); got != 3 {
 		t.Errorf("expected three section headings under their sections, got %d", got)
 	}

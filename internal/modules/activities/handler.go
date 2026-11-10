@@ -236,13 +236,18 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Warn("list risks for activity", "activity_id", id.String(), "error", err) // #nosec G706
 	}
+	gs, _ := h.q.GetRiskGlobalSettings(r.Context())
+	lowMax, highMin := int(gs.LowMax), int(gs.HighMin)
+	if lowMax == 0 {
+		lowMax, highMin = 5, 12
+	}
 
 	activityTitle := a.Title
 	if a.RefNum.Valid {
 		activityTitle = fmt.Sprintf("A-%03d · %s", a.RefNum.Int32, a.Title)
 	}
 	httputil.Render(w, r, ui2.Layout(activityTitle, a.MeasureName, "activities", user,
-		activitiestemplates.ActivityDetail(a, canEdit, flash, flashType, users, auditLog, linkedRisks),
+		activitiestemplates.ActivityDetail(a, canEdit, flash, flashType, users, auditLog, linkedRisks, lowMax, highMin),
 	))
 }
 

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/google/uuid"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 
@@ -58,12 +59,19 @@ func TestAssessmentDetailPreview(t *testing.T) {
 		`action="/risks/`+assessmentID.String()+`/accept"`,
 		`action="/risks/`+assessmentID.String()+`/decline"`,
 		`action="/risks/`+assessmentID.String()+`/delete"`,
-		`<button type="submit" data-tone="danger">`,
 		`href="/risks"`,
 		`href="/risks/`+assessmentID.String()+`/review"`,
 		`href="/risks/`+assessmentID.String()+`/step/2"`,
 		"ui2-table", locale.T(ctx, "risk_none_identified"),
 	)
+	doc, parseErr := goquery.NewDocumentFromReader(strings.NewReader(empty))
+	if parseErr != nil {
+		t.Fatal(parseErr)
+	}
+	if doc.Find(`form[action$="/decline"] button[type="submit"][data-tone="danger"]`).Length() != 1 ||
+		doc.Find(`form[action$="/delete"] button[type="submit"][data-tone="danger"]`).Length() != 1 {
+		t.Error("decline and delete forms must retain destructive submit buttons")
+	}
 	requireAbsent(t, empty,
 		"Original view",
 		`href="/risks/`+assessmentID.String()+`"`,
@@ -95,17 +103,4 @@ func TestAssessmentDetailPreview(t *testing.T) {
 		`action="/risks/`+assessmentID.String()+`/accept"`,
 		`action="/risks/`+assessmentID.String()+`/toggle-public"`,
 	)
-}
-
-func TestPreviewToneThresholds(t *testing.T) {
-	for _, tc := range []struct {
-		score int
-		want  string
-	}{
-		{5, "success"}, {6, "warning"}, {11, "warning"}, {12, "danger"},
-	} {
-		if got := previewTone(tc.score, 5, 12); got != tc.want {
-			t.Errorf("score %d: got %q, want %q", tc.score, got, tc.want)
-		}
-	}
 }

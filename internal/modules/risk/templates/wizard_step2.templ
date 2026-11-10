@@ -14,7 +14,7 @@ templ WizardStep2(vm WizardStep2VM) {
 		@reviewBanner(vm.Assessment)
 	}
 	@wizardFlash(vm.Flash)
-	<div id="risk-step2-status" class="risk-visually-hidden" aria-live="polite" aria-atomic="true"></div>
+	<div id="risk-step2-status" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 	@ui2.Panel() {
 		<h2>{ locale.T(ctx, "heading_add_risk") }</h2>
 		<form
@@ -26,22 +26,22 @@ templ WizardStep2(vm WizardStep2VM) {
 			hx-on::after-request="this.reset(); document.getElementById('empty-row')?.remove(); document.getElementById('risk-step2-status').textContent='Risk added'; document.getElementById('risk_name')?.focus()"
 			class="risk-add-form"
 		>
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 			<div class="risk-add-title">
 				<label for="risk_name">{ locale.T(ctx, "label_title") } *</label>
-				<input id="risk_name" name="name" type="text" required placeholder={ locale.T(ctx, "placeholder_risk_title_example") }/>
+				@ui2.Input(templ.Attributes{"id": "risk_name", "name": "name", "type": "text", "required": true, "placeholder": locale.T(ctx, "placeholder_risk_title_example")})
 			</div>
 			<div class="risk-add-description">
 				<label for="risk_description">{ locale.T(ctx, "label_description") }</label>
-				<textarea id="risk_description" name="description" rows="2" placeholder={ locale.T(ctx, "placeholder_risk_description_brief") }></textarea>
+				@ui2.Textarea(templ.Attributes{"id": "risk_description", "name": "description", "rows": "2", "placeholder": locale.T(ctx, "placeholder_risk_description_brief")}) {}
 			</div>
-			<button type="submit">
+			@ui2.Button(templ.Attributes{"type": "submit"}) {
 				{ locale.T(ctx, "action_add") }
-			</button>
+			}
 		</form>
 	}
 	<form method="POST" action={ templ.SafeURL(step2FormAction(vm.Assessment.ID.String(), vm.IsReview)) }>
-		<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+		@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 		@ui2.Table(locale.T(ctx, "label_risks")) {
 			<thead>
 				<tr>
@@ -61,10 +61,10 @@ templ WizardStep2(vm WizardStep2VM) {
 			</tbody>
 		}
 		<div class="risk-split">
-			<a href={ templ.SafeURL(wizardStepHref(vm.Assessment.ID.String(), "framework")) } class="risk-back-link">← Back to Framework</a>
+			@ui2.Link(templ.SafeURL(wizardStepHref(vm.Assessment.ID.String(), "framework")), templ.Attributes{"class": "risk-back-link"}) { ← Back to Framework }
 			<div class="risk-controls">
-				<button type="submit" name="step2_action" value="save" class="risk-secondary-button">Save</button>
-				<button type="submit" name="step2_action" value="continue">Save &amp; analyse →</button>
+				@ui2.Button(templ.Attributes{"type": "submit", "name": "step2_action", "value": "save", "class": "risk-secondary-button"}) { Save }
+				@ui2.Button(templ.Attributes{"type": "submit", "name": "step2_action", "value": "continue"}) { Save &amp; analyse → }
 			</div>
 		</div>
 	</form>
@@ -80,12 +80,12 @@ templ riskIdentRow(
 ) {
 	<tr id={ "risk-row-" + risk.ID.String() }>
 		<td>
-			<label for={ "risk-name-" + risk.ID.String() } class="risk-visually-hidden">{ locale.T(ctx, "label_title") }</label>
-			<input id={ "risk-name-" + risk.ID.String() } name={ "name_" + risk.ID.String() } type="text" value={ risk.Name } placeholder={ locale.T(ctx, "placeholder_risk_title") }/>
+			<label for={ "risk-name-" + risk.ID.String() } class="sr-only">{ locale.T(ctx, "label_title") }</label>
+			@ui2.Input(templ.Attributes{"id": "risk-name-" + risk.ID.String(), "name": "name_" + risk.ID.String(), "type": "text", "value": risk.Name, "placeholder": locale.T(ctx, "placeholder_risk_title")})
 		</td>
 		<td>
-			<label for={ "risk-description-" + risk.ID.String() } class="risk-visually-hidden">{ locale.T(ctx, "label_description") }</label>
-			<textarea id={ "risk-description-" + risk.ID.String() } name={ "description_" + risk.ID.String() } rows="2" placeholder={ locale.T(ctx, "placeholder_risk_description_brief") }>{ risk.Description }</textarea>
+			<label for={ "risk-description-" + risk.ID.String() } class="sr-only">{ locale.T(ctx, "label_description") }</label>
+			@ui2.Textarea(templ.Attributes{"id": "risk-description-" + risk.ID.String(), "name": "description_" + risk.ID.String(), "rows": "2", "placeholder": locale.T(ctx, "placeholder_risk_description_brief")}) { { risk.Description } }
 		</td>
 		<td>
 			<div class="risk-fields">
@@ -104,22 +104,22 @@ templ riskIdentRow(
 									}
 								</div>
 								<form method="POST" action={ templ.SafeURL("/risks/" + assessmentID + "/risks/" + risk.ID.String() + "/assets/" + a.ID.String() + "/remove") }>
-									<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-									<input type="hidden" name="return_to" value="step2"/>
-									<input type="hidden" name="review" value={ reviewValue(isReview) }/>
-									<input type="hidden" name="asset_q" value={ assetQueries[risk.ID] }/>
-									<input type="hidden" name="asset_risk_id" value={ risk.ID.String() }/>
-									<button type="submit" data-tone="danger" class="risk-small-button">{ locale.T(ctx, "action_remove") }</button>
+									@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+									@ui2.Input(templ.Attributes{"type": "hidden", "name": "return_to", "value": "step2"})
+									@ui2.Input(templ.Attributes{"type": "hidden", "name": "review", "value": reviewValue(isReview)})
+									@ui2.Input(templ.Attributes{"type": "hidden", "name": "asset_q", "value": assetQueries[risk.ID]})
+									@ui2.Input(templ.Attributes{"type": "hidden", "name": "asset_risk_id", "value": risk.ID.String()})
+									@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "class": "risk-small-button"}) { { locale.T(ctx, "action_remove") } }
 								</form>
 							</div>
 						}
 					}
 				</div>
 				<div id={ "risk-asset-search-controls-" + risk.ID.String() } class="risk-controls">
-					<label for={ "asset-q-" + risk.ID.String() } class="risk-visually-hidden">{ locale.T(ctx, "label_search_assets") }</label>
-					<input type="hidden" name="asset_risk_id" value={ risk.ID.String() }/>
-					<input type="hidden" name="asset_search_partial" value="1"/>
-					<input id={ "asset-q-" + risk.ID.String() } name="asset_q" type="search" value={ assetQueries[risk.ID] } placeholder={ locale.T(ctx, "placeholder_search_name_or_owner") } hx-get={ step2FormAction(assessmentID, isReview) } hx-trigger="input changed delay:500ms, search" hx-target={ "#risk-asset-search-results-" + risk.ID.String() } hx-include={ "#risk-asset-search-controls-" + risk.ID.String() } hx-swap="innerHTML"/>
+					<label for={ "asset-q-" + risk.ID.String() } class="sr-only">{ locale.T(ctx, "label_search_assets") }</label>
+					@ui2.Input(templ.Attributes{"type": "hidden", "name": "asset_risk_id", "value": risk.ID.String()})
+					@ui2.Input(templ.Attributes{"type": "hidden", "name": "asset_search_partial", "value": "1"})
+					@ui2.Input(templ.Attributes{"id": "asset-q-" + risk.ID.String(), "name": "asset_q", "type": "search", "value": assetQueries[risk.ID], "placeholder": locale.T(ctx, "placeholder_search_name_or_owner"), "hx-get": step2FormAction(assessmentID, isReview), "hx-trigger": "input changed delay:500ms, search", "hx-target": "#risk-asset-search-results-" + risk.ID.String(), "hx-include": "#risk-asset-search-controls-" + risk.ID.String(), "hx-swap": "innerHTML"})
 				</div>
 				<div id={ "risk-asset-search-results-" + risk.ID.String() }>
 					@Step2AssetSearchResults(assessmentID, risk.ID.String(), isReview, assetQueries[risk.ID], assetResults[risk.ID])
@@ -135,16 +135,10 @@ templ riskIdentRow(
 				hx-swap="outerHTML"
 				hx-confirm="Delete this risk?"
 			>
-				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-				<button
-					type="submit"
-					data-tone="danger"
-					hx-on::after-request="document.getElementById('risk-step2-status').textContent='Risk deleted'; document.getElementById('risk_name')?.focus()"
-					class="risk-delete-button"
-					aria-label={ locale.T(ctx, "action_delete_risk") }
-				>
+				@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+				@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "hx-on::after-request": templ.JSUnsafeFuncCall("document.getElementById('risk-step2-status').textContent='Risk deleted'; document.getElementById('risk_name')?.focus()"), "class": "risk-delete-button", "aria-label": locale.T(ctx, "action_delete_risk")}) {
 					×
-				</button>
+				}
 			</form>
 		</td>
 	</tr>
@@ -170,12 +164,12 @@ templ Step2AssetSearchResults(assessmentID, riskID string, isReview bool, assetQ
 							}
 						</div>
 						<form method="POST" action={ templ.SafeURL("/risks/" + assessmentID + "/risks/" + riskID + "/assets/" + a.ID.String() + "/add") }>
-							<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-							<input type="hidden" name="return_to" value="step2"/>
-							<input type="hidden" name="review" value={ reviewValue(isReview) }/>
-							<input type="hidden" name="asset_q" value={ assetQuery }/>
-							<input type="hidden" name="asset_risk_id" value={ riskID }/>
-							<button type="submit" class="risk-small-button">{ locale.T(ctx, "action_add") }</button>
+							@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+							@ui2.Input(templ.Attributes{"type": "hidden", "name": "return_to", "value": "step2"})
+							@ui2.Input(templ.Attributes{"type": "hidden", "name": "review", "value": reviewValue(isReview)})
+							@ui2.Input(templ.Attributes{"type": "hidden", "name": "asset_q", "value": assetQuery})
+							@ui2.Input(templ.Attributes{"type": "hidden", "name": "asset_risk_id", "value": riskID})
+							@ui2.Button(templ.Attributes{"type": "submit", "class": "risk-small-button"}) { { locale.T(ctx, "action_add") } }
 						</form>
 					</div>
 				}

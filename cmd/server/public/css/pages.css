@@ -6,23 +6,13 @@
 }
 .ui2-admin :is(input, select, textarea) { box-sizing: border-box; }
 .ui2-admin .admin-hidden { display: none; }
-.ui2-admin .admin-visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-.ui2-admin > [role="tablist"] {
+.ui2-admin > .admin-sections {
   display: flex;
   flex-wrap: wrap;
   border-bottom: 1px solid var(--admin-line);
   margin: -.25rem 0 .5rem;
 }
-.ui2-admin [role="tab"] {
+.ui2-admin .admin-sections a {
   display: inline-block;
   padding: .5rem 1rem;
   margin-bottom: -1px;
@@ -31,40 +21,40 @@
   font-size: .875rem;
   text-decoration: none;
 }
-.ui2-admin [role="tab"]:hover { color: var(--ui2-fg); }
-.ui2-admin [role="tab"][aria-selected="true"] {
+.ui2-admin .admin-sections a:hover { color: var(--ui2-fg); }
+.ui2-admin .admin-sections a[aria-current="page"] {
   border-bottom-color: var(--ui2-link);
   color: var(--ui2-link);
   font-weight: 600;
 }
-.ui2-admin [role="tabpanel"] { min-width: 0; }
+.ui2-admin .admin-panel { min-width: 0; }
 .ui2-admin :is(input, select, textarea, button, a):focus-visible {
   outline: 2px solid var(--ui2-link);
   outline-offset: 2px;
 }
-.ui2-admin [role="tabpanel"] > section,
-.ui2-admin [role="tabpanel"] > div > section,
+.ui2-admin .admin-panel > section,
+.ui2-admin .admin-panel > div > section,
 .ui2-admin > section {
   padding: 1rem;
   border: 1px solid var(--admin-line);
   border-radius: var(--ui2-radius);
   background: var(--admin-surface);
 }
-.ui2-admin [role="tabpanel"] h2,
+.ui2-admin .admin-panel h2,
 .ui2-admin > section h2 {
   margin: 0 0 .75rem;
   color: var(--admin-muted);
   font-size: .8rem;
   font-weight: 600;
 }
-.ui2-admin [role="tabpanel"] :is(label, legend) { color: var(--admin-muted); }
-.ui2-admin [role="tabpanel"] form label:not(.admin-switch) {
+.ui2-admin .admin-panel :is(label, legend) { color: var(--admin-muted); }
+.ui2-admin .admin-panel form label:not(.admin-switch) {
   display: block;
   margin-bottom: .25rem;
   font-size: .8rem;
   font-weight: 500;
 }
-.ui2-admin [role="tabpanel"] :is(input:not([type="hidden"], [type="checkbox"]), select, textarea),
+.ui2-admin .admin-panel :is(input:not([type="hidden"], [type="checkbox"]), select, textarea),
 .ui2-admin > section :is(input, select, textarea) {
   max-width: 100%;
   border-color: var(--ui2-input);
@@ -72,7 +62,7 @@
   color: var(--ui2-fg);
   font-size: .8125rem;
 }
-.ui2-admin [role="tabpanel"] form[action="/admin/users"] {
+.ui2-admin .admin-panel form[action="/admin/users"] {
   display: flex;
   align-items: end;
   flex-wrap: wrap;
@@ -83,7 +73,7 @@
 .ui2-admin #add-user-email { width: 14rem; }
 .ui2-admin #tab-panel-users > section > p { margin-top: .5rem; font-size: .75rem; }
 .ui2-admin #tab-panel-users > section { margin-bottom: 1rem; }
-.ui2-admin [role="tabpanel"] > p:only-child,
+.ui2-admin .admin-panel > p:only-child,
 .ui2-admin #tab-panel-orgs > p,
 .ui2-admin > p:not([role]) {
   padding: 2rem;
@@ -333,5 +323,5 @@
   .ui2-admin #tab-panel-status > div > div { grid-template-columns: 1fr; }
   .ui2-admin #tab-panel-risk fieldset:first-of-type > div { grid-template-columns: 1fr; }
   .ui2-admin .admin-scale-row > div { grid-template-columns: 1fr; }
-  .ui2-admin [role="tabpanel"] > section { padding: .75rem; }
+  .ui2-admin .admin-panel > section { padding: .75rem; }
 }

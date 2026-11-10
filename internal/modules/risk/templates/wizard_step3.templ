@@ -5,6 +5,7 @@ import (
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 // scaleReference renders a collapsible reference panel for likelihood and consequence scales.
@@ -77,7 +78,7 @@ templ WizardStep3(vm WizardStep3VM) {
 	if len(vm.Risks) == 0 {
 		<div class="ui2-panel">
 			<p class="risk-description">{ locale.T(ctx, "risk_none_identified") }</p>
-			<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") } class="risk-link-toggle">← { locale.T(ctx, "action_go_back_add_risks_first") }</a>
+			@ui2.Link(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2"), templ.Attributes{"class": "risk-link-toggle"}) { ← { locale.T(ctx, "action_go_back_add_risks_first") } }
 		</div>
 	} else {
 		<p class="risk-description">{ locale.T(ctx, "text_risk_scoring_guidance") }</p>
@@ -85,15 +86,15 @@ templ WizardStep3(vm WizardStep3VM) {
 			@scaleReference(vm.ScaleLabels)
 		}
 		<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/3") }>
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 			<div class="risk-fields">
 				for _, risk := range vm.Risks {
 					@riskScoreRow(risk, vm.LowMax, vm.HighMin)
 				}
 			</div>
 			<div class="risk-split">
-				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") } class="risk-back-link">← { locale.T(ctx, "action_back_to_identify") }</a>
-				<button type="submit">{ locale.T(ctx, "action_save_evaluate") } →</button>
+				@ui2.Link(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2"), templ.Attributes{"class": "risk-back-link"}) { ← { locale.T(ctx, "action_back_to_identify") } }
+				@ui2.Button(templ.Attributes{"type": "submit"}) { { locale.T(ctx, "action_save_evaluate") } → }
 			</div>
 		</form>
 	}
@@ -105,16 +106,10 @@ templ riskScoreRow(risk db.Risk, lowMax, highMin int) {
 		x-data="{ expanded: true }"
 	>
 		<h2 style="font-size: 13px">
-			<button
-				type="button"
-				@click="expanded = !expanded"
-				:aria-expanded="expanded.toString()"
-				aria-controls={ "risk-body-" + risk.ID.String() }
-				class="risk-split"
-			>
+			@ui2.Button(templ.Attributes{"type": "button", "@click": "expanded = !expanded", ":aria-expanded": "expanded.toString()", "aria-controls": "risk-body-" + risk.ID.String(), "class": "risk-split"}) {
 				<span class="risk-result-name">{ risk.Name }</span>
 				<span class="risk-caption" x-text="expanded ? 'Hide details' : 'Show details'"></span>
-			</button>
+			}
 		</h2>
 		<div
 			id={ "risk-body-" + risk.ID.String() }
@@ -131,11 +126,11 @@ templ riskScoreRow(risk db.Risk, lowMax, highMin int) {
 			<div class="risk-two-columns">
 				<div>
 					<label for={ "lr-" + risk.ID.String() }>{ locale.T(ctx, "label_likelihood_reasoning") }</label>
-					<textarea id={ "lr-" + risk.ID.String() } name={ "likelihood_reasoning_" + risk.ID.String() } rows="2" placeholder={ locale.T(ctx, "placeholder_likelihood_reasoning") }>{ risk.LikelihoodReasoning }</textarea>
+					@ui2.Textarea(templ.Attributes{"id": "lr-" + risk.ID.String(), "name": "likelihood_reasoning_" + risk.ID.String(), "rows": "2", "placeholder": locale.T(ctx, "placeholder_likelihood_reasoning")}) { { risk.LikelihoodReasoning } }
 				</div>
 				<div>
 					<label for={ "cr-" + risk.ID.String() }>{ locale.T(ctx, "label_consequence_reasoning") }</label>
-					<textarea id={ "cr-" + risk.ID.String() } name={ "consequence_reasoning_" + risk.ID.String() } rows="2" placeholder={ locale.T(ctx, "placeholder_consequence_reasoning") }>{ risk.ConsequenceReasoning }</textarea>
+					@ui2.Textarea(templ.Attributes{"id": "cr-" + risk.ID.String(), "name": "consequence_reasoning_" + risk.ID.String(), "rows": "2", "placeholder": locale.T(ctx, "placeholder_consequence_reasoning")}) { { risk.ConsequenceReasoning } }
 				</div>
 			</div>
 		</div>
@@ -151,21 +146,21 @@ templ scorePanel(riskID, kind, labelKey, subKey string, l, c int, valid bool) {
 		<div class="risk-score-fields">
 			<div>
 				<label for={ kind + "-likelihood-" + riskID } class="risk-caption">{ locale.T(ctx, "label_likelihood_1_5") }</label>
-				<select id={ kind + "-likelihood-" + riskID } name={ kind + "_likelihood_" + riskID } x-model="l">
+				@ui2.Select(templ.Attributes{"id": kind + "-likelihood-" + riskID, "name": kind + "_likelihood_" + riskID, "x-model": "l"}) {
 					<option value="0">—</option>
 					for i := 1; i <= 5; i++ {
 						<option value={ fmt.Sprint(i) } selected?={ valid && l == i }>{ fmt.Sprint(i) } { likelihoodLabel(i) }</option>
 					}
-				</select>
+				}
 			</div>
 			<div>
 				<label for={ kind + "-consequence-" + riskID } class="risk-caption">{ locale.T(ctx, "label_consequence_1_5") }</label>
-				<select id={ kind + "-consequence-" + riskID } name={ kind + "_consequence_" + riskID } x-model="c">
+				@ui2.Select(templ.Attributes{"id": kind + "-consequence-" + riskID, "name": kind + "_consequence_" + riskID, "x-model": "c"}) {
 					<option value="0">—</option>
 					for i := 1; i <= 5; i++ {
 						<option value={ fmt.Sprint(i) } selected?={ valid && c == i }>{ fmt.Sprint(i) } { consequenceLabel(i) }</option>
 					}
-				</select>
+				}
 			</div>
 		</div>
 		<template x-if="l > 0 && c > 0">

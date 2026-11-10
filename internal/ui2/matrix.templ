@@ -18,6 +18,10 @@ func Tone(score, lowMax, highMin int) string {
 	}
 }
 
+templ RiskLevel(score, lowMax, highMin int) {
+	<data value={ fmt.Sprint(score) } data-tone={ Tone(score, lowMax, highMin) }>{ fmt.Sprint(score) }</data>
+}
+
 templ Matrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) {
 	<div class="ui2-matrix">
 		@Table(label) {
@@ -39,7 +43,11 @@ templ Matrix(label string, cells []layout.RiskMatrixCell, lowMax, highMin int) {
 						for consequence := 1; consequence <= 5; consequence++ {
 							<td>
 								<span class="ui2-matrix-cell" data-tone={ Tone(likelihood*consequence, lowMax, highMin) }>
-									{ fmt.Sprint(cells[(5-likelihood)*5+consequence-1].Count) }
+									if cells[(5-likelihood)*5+consequence-1].Count == 0 {
+										<span class="sr-only">0</span>
+									} else {
+										{ fmt.Sprint(cells[(5-likelihood)*5+consequence-1].Count) }
+									}
 								</span>
 							</td>
 						}

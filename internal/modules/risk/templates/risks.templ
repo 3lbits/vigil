@@ -70,13 +70,13 @@ templ AssessmentList(vm AssessmentListPageVM) {
 			<p>
 				{ locale.TN(ctx, "assessment_count", len(vm.Assessments), map[string]any{"Count": len(vm.Assessments)}) }
 			</p>
-			<a href="/risks/new">{ locale.T(ctx, "action_new_assessment") }</a>
+			@ui2.Link("/risks/new", nil) { { locale.T(ctx, "action_new_assessment") } }
 		</header>
-		<p class="risk-visually-hidden" aria-live="polite">Results update automatically when filters change.</p>
+		<p class="sr-only" aria-live="polite">Results update automatically when filters change.</p>
 		<form action="/risks" method="GET" role="search">
 			<label for="assessment-search">{ locale.T(ctx, "label_name") }</label>
-			<input id="assessment-search" type="search" name="q" value={ vm.Q } hx-get="/risks" hx-target="#assessment-list" hx-swap="innerHTML" hx-push-url="true" hx-include="closest form" hx-trigger="input changed delay:300ms" hx-on::after-request="if(event.detail.successful){document.querySelector('#assessment-list [role=region]')?.focus()}"/>
-			<button type="submit">{ locale.T(ctx, "action_search") }</button>
+			@ui2.Input(templ.Attributes{"id": "assessment-search", "type": "search", "name": "q", "value": vm.Q, "hx-get": "/risks", "hx-target": "#assessment-list", "hx-swap": "innerHTML", "hx-push-url": "true", "hx-include": "closest form", "hx-trigger": "input changed delay:300ms", "hx-on::after-request": templ.JSUnsafeFuncCall("if(event.detail.successful){document.querySelector('#assessment-list [role=region]')?.focus()}")})
+			@ui2.Button(templ.Attributes{"type": "submit"}) { { locale.T(ctx, "action_search") } }
 		</form>
 	}
 	<div id="assessment-list" aria-live="polite" aria-atomic="false">
@@ -94,7 +94,7 @@ templ AssessmentItems(vm AssessmentListPageVM) {
 	if len(vm.Assessments) == 0 {
 		@ui2.Panel() {
 			<p>{ locale.T(ctx, "assessment_none_yet") }</p>
-			<a href="/risks/new">{ locale.T(ctx, "assessment_start_first") }</a>
+			@ui2.Link("/risks/new", nil) { { locale.T(ctx, "assessment_start_first") } }
 		}
 	} else {
 		@ui2.Table(locale.T(ctx, "nav_risk_assessments")) {
@@ -112,12 +112,12 @@ templ AssessmentItems(vm AssessmentListPageVM) {
 				for _, a := range vm.Assessments {
 					<tr>
 						<th scope="row">
-							<a href={ templ.SafeURL("/risks/" + a.Assessment.ID.String()) }>
+							@ui2.Link(templ.SafeURL("/risks/" + a.Assessment.ID.String()), nil) {
 								if a.Assessment.RefNum.Valid {
 									{ assessmentRef(a.Assessment.RefNum) }
 								}
 								{ a.Assessment.Name }
-							</a>
+							}
 							if a.Assessment.IsPublic {
 								@ui2.Badge("info") {
 									{ "Public" }
@@ -149,11 +149,11 @@ templ AssessmentItems(vm AssessmentListPageVM) {
 templ RiskRegisterPage(risks []db.ListAllRisksRow, q string, lowMax, highMin int) {
 	@ui2.Panel() {
 		<p>{ fmt.Sprintf("%d risks", len(risks)) }</p>
-		<p class="risk-visually-hidden" aria-live="polite">Results update automatically when filters change.</p>
+		<p class="sr-only" aria-live="polite">Results update automatically when filters change.</p>
 		<form action="/risks/register" method="GET" role="search">
 			<label for="register-search">{ locale.T(ctx, "label_name") }</label>
-			<input id="register-search" type="search" name="q" value={ q } hx-get="/risks/register" hx-target="#risk-register-table" hx-swap="innerHTML" hx-push-url="true" hx-include="closest form" hx-trigger="input changed delay:300ms" hx-on::after-request="if(event.detail.successful){document.querySelector('#risk-register-table [role=region]')?.focus()}"/>
-			<button type="submit">{ locale.T(ctx, "action_search") }</button>
+			@ui2.Input(templ.Attributes{"id": "register-search", "type": "search", "name": "q", "value": q, "hx-get": "/risks/register", "hx-target": "#risk-register-table", "hx-swap": "innerHTML", "hx-push-url": "true", "hx-include": "closest form", "hx-trigger": "input changed delay:300ms", "hx-on::after-request": templ.JSUnsafeFuncCall("if(event.detail.successful){document.querySelector('#risk-register-table [role=region]')?.focus()}")})
+			@ui2.Button(templ.Attributes{"type": "submit"}) { { locale.T(ctx, "action_search") } }
 		</form>
 	}
 	<div id="risk-register-table" aria-live="polite" aria-atomic="false">
@@ -165,7 +165,7 @@ templ RiskRegister(risks []db.ListAllRisksRow, q string, lowMax, highMin int) {
 	if len(risks) == 0 {
 		@ui2.Panel() {
 			<p>{ locale.T(ctx, "risk_none_identified") }</p>
-			<a href="/risks">Start a risk assessment →</a>
+			@ui2.Link("/risks", nil) { Start a risk assessment → }
 		}
 	} else {
 		@ui2.Table(locale.T(ctx, "nav_risk_register")) {
@@ -183,7 +183,7 @@ templ RiskRegister(risks []db.ListAllRisksRow, q string, lowMax, highMin int) {
 					<tr>
 						<td>{ riskRef(risk.RefNum) }</td>
 						<th scope="row">
-							<a href={ templ.SafeURL("/risks/" + risk.AssessmentID.String() + "/risks/" + risk.ID.String()) }>{ risk.Name }</a>
+							@ui2.Link(templ.SafeURL("/risks/" + risk.AssessmentID.String() + "/risks/" + risk.ID.String()), nil) { { risk.Name } }
 							if risk.Description != "" {
 								<small>{ risk.Description }</small>
 							}

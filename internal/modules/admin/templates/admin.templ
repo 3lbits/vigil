@@ -13,10 +13,7 @@ import (
 
 templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, auditLog []db.ListAuditLogAdminRow, version string, startTime time.Time, dbOK bool, flash, flashType, activeTab, auditFilter string, orgs []db.Organization, gs db.RiskGlobalSetting, scaleLabels []db.RiskScaleLabel, appSettings db.AppSetting) {
 	@ui2.Page("ui2-admin") {
-		<div
-			role="tablist"
-			aria-label={ locale.T(ctx, "admin_sections") }
-		>
+		<nav class="admin-sections" aria-label={ locale.T(ctx, "admin_sections") }>
 			@adminTab("users", locale.T(ctx, "tab_users"), activeTab)
 			@adminTab("sessions", locale.T(ctx, "tab_sessions"), activeTab)
 			@adminTab("audit", locale.T(ctx, "tab_audit"), activeTab)
@@ -24,47 +21,34 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 			@adminTab("orgs", locale.T(ctx, "tab_orgs"), activeTab)
 			@adminTab("risk", locale.T(ctx, "tab_risk_settings"), activeTab)
 			@adminTab("modules", locale.T(ctx, "tab_modules"), activeTab)
-		</div>
+		</nav>
 		@adminFlash(flash, flashType)
-		<div id="tab-panel-users" role="tabpanel" aria-labelledby="tab-btn-users" class={ templ.KV("admin-hidden", activeTab != "users") }>
+		<div id="tab-panel-users" class={ "admin-panel", templ.KV("admin-hidden", activeTab != "users") }>
 			<!-- Add user form -->
 			<section>
 				<h2>{ locale.T(ctx, "admin_add_user") }</h2>
 				<form method="POST" action="/admin/users">
-					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+					@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 					<div>
 						<label for="add-user-name">{ locale.T(ctx, "label_name") }</label>
-						<input
-							id="add-user-name"
-							type="text"
-							name="name"
-							autocomplete="name"
-							placeholder="Jane Smith"
-						/>
+						@ui2.Input(templ.Attributes{"id": "add-user-name", "type": "text", "name": "name", "autocomplete": "name", "placeholder": "Jane Smith"})
 					</div>
 					<div>
 						<label for="add-user-email">{ locale.T(ctx, "label_email") }</label>
-						<input
-							id="add-user-email"
-							type="email"
-							name="email"
-							required
-							autocomplete="email"
-							placeholder="user@example.com"
-						/>
+						@ui2.Input(templ.Attributes{"id": "add-user-email", "type": "email", "name": "email", "required": true, "autocomplete": "email", "placeholder": "user@example.com"})
 					</div>
 					<div>
 						<label for="add-user-role">{ locale.T(ctx, "label_role") }</label>
-						<select id="add-user-role" name="role">
+						@ui2.Select(templ.Attributes{"id": "add-user-role", "name": "role"}) {
 							<option value="viewer">{ locale.T(ctx, "role_viewer") }</option>
 							<option value="contributor">{ locale.T(ctx, "role_contributor") }</option>
 							<option value="editor">{ locale.T(ctx, "role_editor") }</option>
 							<option value="admin">{ locale.T(ctx, "role_admin") }</option>
-						</select>
+						}
 					</div>
-					<button type="submit">
+					@ui2.Button(templ.Attributes{"type": "submit"}) {
 						{ locale.T(ctx, "action_add") }
-					</button>
+					}
 				</form>
 				<p>{ locale.T(ctx, "admin_add_user_hint") }</p>
 			</section>
@@ -77,7 +61,7 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 							<th scope="col"> { locale.T(ctx, "label_provider") } </th>
 							<th scope="col"> { locale.T(ctx, "label_role") } </th>
 							<th scope="col"> { locale.T(ctx, "label_org_unit") } </th>
-							<th scope="col"> <span class="admin-visually-hidden">{ locale.T(ctx, "label_actions") }</span> </th>
+							<th scope="col"> <span class="sr-only">{ locale.T(ctx, "label_actions") }</span> </th>
 						</tr>
 					</thead>
 					<tbody>
@@ -105,39 +89,39 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 								</td>
 								<td>
 									<form method="POST" action={ templ.SafeURL("/admin/users/" + u.ID.String() + "/org") }>
-										<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-										<label for={ "org-" + u.ID.String() } class="admin-visually-hidden">{ locale.T(ctx, "label_org_unit") } { adminUserLabel(u) }</label>
-										<select id={ "org-" + u.ID.String() } name="org_id">
+										@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+										<label for={ "org-" + u.ID.String() } class="sr-only">{ locale.T(ctx, "label_org_unit") } { adminUserLabel(u) }</label>
+										@ui2.Select(templ.Attributes{"id": "org-" + u.ID.String(), "name": "org_id"}) {
 											<option value="">— { locale.T(ctx, "label_none") } —</option>
 											for _, o := range orgs {
 												<option value={ o.ID.String() } selected?={ u.OrgID.Valid && u.OrgID.UUID == o.ID }>{ o.Name }</option>
 											}
-										</select>
-										<button type="submit" aria-label={ locale.T(ctx, "action_save") + " " + locale.T(ctx, "label_org_unit") + " " + locale.T(ctx, "label_for") + " " + adminUserLabel(u) }>
+										}
+										@ui2.Button(templ.Attributes{"type": "submit", "aria-label": locale.T(ctx, "action_save") + " " + locale.T(ctx, "label_org_unit") + " " + locale.T(ctx, "label_for") + " " + adminUserLabel(u)}) {
 											{ locale.T(ctx, "action_save") }
-										</button>
+										}
 									</form>
 								</td>
 								<td>
 									<div>
 										<form method="POST" action={ templ.SafeURL("/admin/users/" + u.ID.String() + "/role") }>
-											<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-											<label for={ "role-" + u.ID.String() } class="admin-visually-hidden">{ locale.T(ctx, "label_role") } { locale.T(ctx, "label_for") } { adminUserLabel(u) }</label>
-											<select id={ "role-" + u.ID.String() } name="role">
+											@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+											<label for={ "role-" + u.ID.String() } class="sr-only">{ locale.T(ctx, "label_role") } { locale.T(ctx, "label_for") } { adminUserLabel(u) }</label>
+											@ui2.Select(templ.Attributes{"id": "role-" + u.ID.String(), "name": "role"}) {
 												<option value="viewer" selected?={ u.Role == "viewer" }>{ locale.T(ctx, "role_viewer") }</option>
 												<option value="contributor" selected?={ u.Role == "contributor" }>{ locale.T(ctx, "role_contributor") }</option>
 												<option value="editor" selected?={ u.Role == "editor" }>{ locale.T(ctx, "role_editor") }</option>
 												<option value="admin" selected?={ u.Role == "admin" }>{ locale.T(ctx, "role_admin") }</option>
-											</select>
-											<button type="submit" aria-label={ locale.T(ctx, "action_save") + " " + locale.T(ctx, "label_role") + " " + locale.T(ctx, "label_for") + " " + adminUserLabel(u) }>
+											}
+											@ui2.Button(templ.Attributes{"type": "submit", "aria-label": locale.T(ctx, "action_save") + " " + locale.T(ctx, "label_role") + " " + locale.T(ctx, "label_for") + " " + adminUserLabel(u)}) {
 												{ locale.T(ctx, "action_save") }
-											</button>
+											}
 										</form>
 										<form method="POST" action={ templ.SafeURL("/admin/users/" + u.ID.String() + "/delete") } onsubmit="return confirm('Delete this user?')">
-											<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-											<button type="submit" data-tone="danger" aria-label={ locale.T(ctx, "action_delete") + " " + adminUserLabel(u) }>
+											@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+											@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "aria-label": locale.T(ctx, "action_delete") + " " + adminUserLabel(u)}) {
 												{ locale.T(ctx, "action_delete") }
-											</button>
+											}
 										</form>
 									</div>
 								</td>
@@ -147,7 +131,7 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 				}
 			</div>
 		</div>
-		<div id="tab-panel-sessions" role="tabpanel" aria-labelledby="tab-btn-sessions" class={ templ.KV("admin-hidden", activeTab != "sessions") }>
+		<div id="tab-panel-sessions" class={ "admin-panel", templ.KV("admin-hidden", activeTab != "sessions") }>
 			if len(sessions) == 0 {
 				<p>
 					{ locale.T(ctx, "admin_no_active_sessions") }
@@ -161,7 +145,7 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 								<th scope="col"> { locale.T(ctx, "label_role") } </th>
 								<th scope="col"> { locale.T(ctx, "label_sessions") } </th>
 								<th scope="col"> { locale.T(ctx, "label_expires") } </th>
-								<th scope="col"> <span class="admin-visually-hidden">{ locale.T(ctx, "label_actions") }</span> </th>
+								<th scope="col"> <span class="sr-only">{ locale.T(ctx, "label_actions") }</span> </th>
 							</tr>
 						</thead>
 						<tbody>
@@ -180,14 +164,10 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 									</td>
 									<td>
 										<form method="POST" action={ templ.SafeURL("/admin/sessions/" + s.UserID.String() + "/revoke") }>
-											<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-											<button
-												type="submit"
-												data-tone="danger"
-												aria-label={ locale.T(ctx, "admin_revoke_sessions_for") + " " + s.Name }
-											>
+											@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+											@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "aria-label": locale.T(ctx, "admin_revoke_sessions_for") + " " + s.Name}) {
 												{ locale.T(ctx, "action_revoke") }
-											</button>
+											}
 										</form>
 									</td>
 								</tr>
@@ -198,24 +178,12 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 			}
 		</div>
 		<!-- Audit tab -->
-		<div id="tab-panel-audit" role="tabpanel" aria-labelledby="tab-btn-audit" class={ templ.KV("admin-hidden", activeTab != "audit") }>
+		<div id="tab-panel-audit" class={ "admin-panel", templ.KV("admin-hidden", activeTab != "audit") }>
 			<nav aria-label={ locale.T(ctx, "label_filter") }>
 				<span>{ locale.T(ctx, "label_filter") }:</span>
-				<a
-					href="/admin?tab=audit&audit=all"
-					if auditFilter == "all" { aria-current="page" }
-					class={ templ.KV("admin-audit-selected", auditFilter == "all") }
-				>{ locale.T(ctx, "audit_filter_all") }</a>
-				<a
-					href="/admin?tab=audit&audit=delete"
-					if auditFilter == "delete" { aria-current="page" }
-					class={ templ.KV("admin-audit-selected", auditFilter == "delete") }
-				>{ locale.T(ctx, "audit_filter_deletions") }</a>
-				<a
-					href="/admin?tab=audit&audit=update"
-					if auditFilter == "update" { aria-current="page" }
-					class={ templ.KV("admin-audit-selected", auditFilter == "update") }
-				>{ locale.T(ctx, "audit_filter_updates") }</a>
+				@ui2.Link("/admin?tab=audit&audit=all", auditLinkAttrs(auditFilter == "all")) { { locale.T(ctx, "audit_filter_all") } }
+				@ui2.Link("/admin?tab=audit&audit=delete", auditLinkAttrs(auditFilter == "delete")) { { locale.T(ctx, "audit_filter_deletions") } }
+				@ui2.Link("/admin?tab=audit&audit=update", auditLinkAttrs(auditFilter == "update")) { { locale.T(ctx, "audit_filter_updates") } }
 				<span>{ locale.T(ctx, "audit_last_500") }</span>
 			</nav>
 			if len(auditLog) == 0 {
@@ -260,7 +228,7 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 			}
 		</div>
 
-		<div id="tab-panel-status" role="tabpanel" aria-labelledby="tab-btn-status" class={ templ.KV("admin-hidden", activeTab != "status") }>
+		<div id="tab-panel-status" class={ "admin-panel", templ.KV("admin-hidden", activeTab != "status") }>
 			<div>
 				<div>
 					<dl>
@@ -309,31 +277,25 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 			</div>
 		</div>
 		<!-- Organisations tab -->
-		<div id="tab-panel-orgs" role="tabpanel" aria-labelledby="tab-btn-orgs" class={ templ.KV("admin-hidden", activeTab != "orgs") }>
+		<div id="tab-panel-orgs" class={ "admin-panel", templ.KV("admin-hidden", activeTab != "orgs") }>
 			<div>
 				<p>{ locale.T(ctx, "admin_org_tree_help") }</p>
 			</div>
 			<section>
 				<h2>{ locale.T(ctx, "action_add_org_unit") }</h2>
 				<form method="POST" action="/admin/orgs">
-					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+					@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 					<div>
 						<label for="org_name">{ locale.T(ctx, "label_name") } <span>*</span></label>
-						<input
-							id="org_name" name="name" type="text" required
-							placeholder={ locale.T(ctx, "admin_org_placeholder") }
-						/>
+						@ui2.Input(templ.Attributes{"id": "org_name", "name": "name", "type": "text", "required": true, "placeholder": locale.T(ctx, "admin_org_placeholder")})
 					</div>
 					<div>
 						<label for="org_key">{ locale.T(ctx, "label_key") }</label>
-						<input
-							id="org_key" name="key" type="text"
-							placeholder="e.g. corp, engineering, platform"
-						/>
+						@ui2.Input(templ.Attributes{"id": "org_key", "name": "key", "type": "text", "placeholder": "e.g. corp, engineering, platform"})
 					</div>
 					<div>
 						<label for="parent_id">{ locale.T(ctx, "admin_parent_unit") }</label>
-						<select id="parent_id" name="parent_id">
+						@ui2.Select(templ.Attributes{"id": "parent_id", "name": "parent_id"}) {
 							<option value="">— { locale.T(ctx, "admin_top_level") } —</option>
 							for _, o := range orgs {
 								if !o.ParentID.Valid {
@@ -345,12 +307,12 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 									}
 								}
 							}
-						</select>
+						}
 					</div>
 					<div>
-						<button type="submit">
+						@ui2.Button(templ.Attributes{"type": "submit"}) {
 							{ locale.T(ctx, "action_add") }
-						</button>
+						}
 					</div>
 				</form>
 			</section>
@@ -369,29 +331,23 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 			}
 		</div>
 		<!-- Risk settings tab -->
-		<div id="tab-panel-risk" role="tabpanel" aria-labelledby="tab-btn-risk" class={ templ.KV("admin-hidden", activeTab != "risk") }>
+		<div id="tab-panel-risk" class={ "admin-panel", templ.KV("admin-hidden", activeTab != "risk") }>
 			<div>
 				<p>{ locale.T(ctx, "admin_risk_settings_help") }</p>
 				<form method="POST" action="/admin/risk-settings">
-					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+					@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 					<!-- Thresholds -->
 					<fieldset>
 						<legend>{ locale.T(ctx, "admin_risk_level_thresholds") }</legend>
 						<div>
 							<div>
 								<label for="low_max">{ locale.T(ctx, "admin_green_lowmax") }</label>
-								<input
-									id="low_max" name="low_max" type="number" min="1" max="24"
-									value={ fmt.Sprint(gs.LowMax) }
-								/>
+								@ui2.Input(templ.Attributes{"id": "low_max", "name": "low_max", "type": "number", "min": "1", "max": "24", "value": fmt.Sprint(gs.LowMax)})
 								<p>{ locale.T(ctx, "admin_scores_green_help") }</p>
 							</div>
 							<div>
 								<label for="high_min">{ locale.T(ctx, "admin_red_highmin") }</label>
-								<input
-									id="high_min" name="high_min" type="number" min="2" max="25"
-									value={ fmt.Sprint(gs.HighMin) }
-								/>
+								@ui2.Input(templ.Attributes{"id": "high_min", "name": "high_min", "type": "number", "min": "2", "max": "25", "value": fmt.Sprint(gs.HighMin)})
 								<p>{ locale.T(ctx, "admin_scores_red_help") }</p>
 							</div>
 						</div>
@@ -400,10 +356,7 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 					<!-- Acceptance criteria -->
 					<div>
 						<label for="acceptance_criteria">{ locale.T(ctx, "label_acceptance_criteria") }</label>
-						<textarea
-							id="acceptance_criteria" name="acceptance_criteria" rows="4"
-							placeholder={ locale.T(ctx, "admin_acceptance_criteria_placeholder") }
-						>{ gs.AcceptanceCriteria }</textarea>
+						@ui2.Textarea(templ.Attributes{"id": "acceptance_criteria", "name": "acceptance_criteria", "rows": "4", "placeholder": locale.T(ctx, "admin_acceptance_criteria_placeholder")}) { { gs.AcceptanceCriteria } }
 					</div>
 					<!-- Likelihood scale -->
 					<fieldset>
@@ -432,21 +385,21 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 						</div>
 					</fieldset>
 					<div>
-						<button type="submit">
+						@ui2.Button(templ.Attributes{"type": "submit"}) {
 							{ locale.T(ctx, "admin_save_all_settings") }
-						</button>
+						}
 					</div>
 				</form>
 			</div>
 		</div>
 		<!-- Modules tab -->
-		<div id="tab-panel-modules" role="tabpanel" aria-labelledby="tab-btn-modules" class={ templ.KV("admin-hidden", activeTab != "modules") }>
+		<div id="tab-panel-modules" class={ "admin-panel", templ.KV("admin-hidden", activeTab != "modules") }>
 			<div>
 				<p>{ locale.T(ctx, "admin_modules_help") }</p>
 				<form method="POST" action="/admin/module-settings">
-					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+					@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 					<fieldset>
-						<legend class="admin-visually-hidden">{ locale.T(ctx, "tab_modules") }</legend>
+						<legend class="sr-only">{ locale.T(ctx, "tab_modules") }</legend>
 						@moduleToggleRow(locale.T(ctx, "nav_compliance"), "compliance_enabled", appSettings.ComplianceEnabled, locale.T(ctx, "admin_module_compliance_desc"))
 						@moduleToggleRow(locale.T(ctx, "nav_section_risk"), "risk_enabled", appSettings.RiskEnabled, locale.T(ctx, "admin_module_risk_desc"))
 						@moduleToggleRow(locale.T(ctx, "nav_activities"), "activities_enabled", appSettings.ActivitiesEnabled, locale.T(ctx, "admin_module_activities_desc"))
@@ -454,14 +407,21 @@ templ AdminPage(users []db.User, sessions []db.ListActiveSessionsByUserRow, audi
 						@moduleToggleRow(locale.T(ctx, "nav_avvik"), "avvik_enabled", appSettings.AvvikEnabled, locale.T(ctx, "admin_module_avvik_desc"))
 					</fieldset>
 					<div>
-						<button type="submit">
+						@ui2.Button(templ.Attributes{"type": "submit"}) {
 							{ locale.T(ctx, "action_save") }
-						</button>
+						}
 					</div>
 				</form>
 			</div>
 		</div>
 	}
+}
+
+func auditLinkAttrs(selected bool) templ.Attributes {
+	if selected {
+		return templ.Attributes{"aria-current": "page", "class": "admin-audit-selected"}
+	}
+	return nil
 }
 
 templ moduleToggleRow(label, name string, checked bool, description string) {
@@ -470,7 +430,7 @@ templ moduleToggleRow(label, name string, checked bool, description string) {
 			<p>{ label }</p>
 			<p>{ description }</p>
 		</div>
-		<input type="checkbox" name={ name } value="on" checked?={ checked } aria-label={ label }/>
+		@ui2.Input(templ.Attributes{"type": "checkbox", "name": name, "value": "on", "checked": checked, "aria-label": label})
 	</div>
 }
 
@@ -489,72 +449,35 @@ templ adminFlash(flash, flashType string) {
 templ scaleRow(prefix, scale string, level int32, sl db.RiskScaleLabel) {
 	<div class={ "admin-scale-row", scaleRowBg(level) }>
 		<span>{ fmt.Sprint(level) }</span>
-		<label for={ prefix + "-label-" + fmt.Sprint(level) } class="admin-visually-hidden">{ scale + " label " + fmt.Sprint(level) }</label>
-		<input
-			id={ prefix + "-label-" + fmt.Sprint(level) }
-			type="text"
-			name={ prefix + "_label_" + fmt.Sprint(level) }
-			value={ sl.Label }
-			placeholder={ locale.T(ctx, "admin_short_label_placeholder") }
-		/>
-		<input
-			type="hidden"
-			name={ prefix + "_scale_" + fmt.Sprint(level) }
-			value={ scale }
-		/>
-		<label for={ prefix + "-desc-" + fmt.Sprint(level) } class="admin-visually-hidden">{ scale + " description " + fmt.Sprint(level) }</label>
-		<textarea
-			id={ prefix + "-desc-" + fmt.Sprint(level) }
-			name={ prefix + "_desc_" + fmt.Sprint(level) }
-			rows="2"
-			placeholder={ locale.T(ctx, "admin_scale_description_placeholder") }
-		>{ sl.Description }</textarea>
+		<label for={ prefix + "-label-" + fmt.Sprint(level) } class="sr-only">{ scale + " label " + fmt.Sprint(level) }</label>
+		@ui2.Input(templ.Attributes{"id": prefix + "-label-" + fmt.Sprint(level), "type": "text", "name": prefix + "_label_" + fmt.Sprint(level), "value": sl.Label, "placeholder": locale.T(ctx, "admin_short_label_placeholder")})
+		@ui2.Input(templ.Attributes{"type": "hidden", "name": prefix + "_scale_" + fmt.Sprint(level), "value": scale})
+		<label for={ prefix + "-desc-" + fmt.Sprint(level) } class="sr-only">{ scale + " description " + fmt.Sprint(level) }</label>
+		@ui2.Textarea(templ.Attributes{"id": prefix + "-desc-" + fmt.Sprint(level), "name": prefix + "_desc_" + fmt.Sprint(level), "rows": "2", "placeholder": locale.T(ctx, "admin_scale_description_placeholder")}) { { sl.Description } }
 	</div>
 }
 
 templ consequenceScaleRow(prefix string, level int32, sl db.RiskScaleLabel) {
 	<div class={ "admin-scale-row", scaleRowBg(level) }>
 		<span>{ fmt.Sprint(level) }</span>
-		<label for={ prefix + "-label-" + fmt.Sprint(level) } class="admin-visually-hidden">{ "consequence label " + fmt.Sprint(level) }</label>
-		<input
-			id={ prefix + "-label-" + fmt.Sprint(level) }
-			type="text"
-			name={ prefix + "_label_" + fmt.Sprint(level) }
-			value={ sl.Label }
-			placeholder={ locale.T(ctx, "admin_short_label_placeholder") }
-		/>
+		<label for={ prefix + "-label-" + fmt.Sprint(level) } class="sr-only">{ "consequence label " + fmt.Sprint(level) }</label>
+		@ui2.Input(templ.Attributes{"id": prefix + "-label-" + fmt.Sprint(level), "type": "text", "name": prefix + "_label_" + fmt.Sprint(level), "value": sl.Label, "placeholder": locale.T(ctx, "admin_short_label_placeholder")})
 		<div>
 			<div>
 				<label for={ prefix + "-finops-" + fmt.Sprint(level) }>Financial / Operational</label>
-				<textarea
-					id={ prefix + "-finops-" + fmt.Sprint(level) }
-					name={ prefix + "_finops_desc_" + fmt.Sprint(level) }
-					rows="2"
-				>{ consequenceTopicDescription(sl.Description, "Financial / Operational") }</textarea>
+				@ui2.Textarea(templ.Attributes{"id": prefix + "-finops-" + fmt.Sprint(level), "name": prefix + "_finops_desc_" + fmt.Sprint(level), "rows": "2"}) { { consequenceTopicDescription(sl.Description, "Financial / Operational") } }
 			</div>
 			<div>
 				<label for={ prefix + "-confdata-" + fmt.Sprint(level) }>Confidentiality / Data</label>
-				<textarea
-					id={ prefix + "-confdata-" + fmt.Sprint(level) }
-					name={ prefix + "_confdata_desc_" + fmt.Sprint(level) }
-					rows="2"
-				>{ consequenceTopicDescription(sl.Description, "Confidentiality / Data") }</textarea>
+				@ui2.Textarea(templ.Attributes{"id": prefix + "-confdata-" + fmt.Sprint(level), "name": prefix + "_confdata_desc_" + fmt.Sprint(level), "rows": "2"}) { { consequenceTopicDescription(sl.Description, "Confidentiality / Data") } }
 			</div>
 			<div>
 				<label for={ prefix + "-reglegal-" + fmt.Sprint(level) }>Regulatory / Legal</label>
-				<textarea
-					id={ prefix + "-reglegal-" + fmt.Sprint(level) }
-					name={ prefix + "_reglegal_desc_" + fmt.Sprint(level) }
-					rows="2"
-				>{ consequenceTopicDescription(sl.Description, "Regulatory / Legal") }</textarea>
+				@ui2.Textarea(templ.Attributes{"id": prefix + "-reglegal-" + fmt.Sprint(level), "name": prefix + "_reglegal_desc_" + fmt.Sprint(level), "rows": "2"}) { { consequenceTopicDescription(sl.Description, "Regulatory / Legal") } }
 			</div>
 			<div>
 				<label for={ prefix + "-reptrust-" + fmt.Sprint(level) }>Reputation / Trust</label>
-				<textarea
-					id={ prefix + "-reptrust-" + fmt.Sprint(level) }
-					name={ prefix + "_reptrust_desc_" + fmt.Sprint(level) }
-					rows="2"
-				>{ consequenceTopicDescription(sl.Description, "Reputation / Trust") }</textarea>
+				@ui2.Textarea(templ.Attributes{"id": prefix + "-reptrust-" + fmt.Sprint(level), "name": prefix + "_reptrust_desc_" + fmt.Sprint(level), "rows": "2"}) { { consequenceTopicDescription(sl.Description, "Reputation / Trust") } }
 			</div>
 		</div>
 	</div>
@@ -610,8 +533,8 @@ templ orgRowInline(o db.Organization, depth int, all []db.Organization) {
 			}
 		</span>
 		<form method="POST" action={ templ.SafeURL("/admin/orgs/" + o.ID.String() + "/delete") } onsubmit="return confirm('Delete this org unit? This may affect linked assessments.')">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-			<button type="submit" data-tone="danger" aria-label={ "Delete " + o.Name }><span aria-hidden="true">×</span></button>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+			@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "aria-label": "Delete " + o.Name}) { <span aria-hidden="true">×</span> }
 		</form>
 	</div>
 	if orgHasChildren(o, all) {
@@ -638,15 +561,14 @@ func orgRowBgInline(depth int) string {
 }
 
 templ adminTab(key, label, activeTab string) {
-	<a
-		id={ "tab-btn-" + key }
-		href={ templ.SafeURL("/admin?tab=" + key) }
-		data-tab={ key }
-		role="tab"
-		aria-controls={ "tab-panel-" + key }
-		aria-selected={ fmt.Sprint(activeTab == key) }
-		tabindex="0"
-	>{ label }</a>
+	@ui2.Link(templ.SafeURL("/admin?tab="+key), adminTabAttrs(activeTab == key)) { { label } }
+}
+
+func adminTabAttrs(selected bool) templ.Attributes {
+	if selected {
+		return templ.Attributes{"aria-current": "page"}
+	}
+	return nil
 }
 
 templ ProviderBadge(provider string) {

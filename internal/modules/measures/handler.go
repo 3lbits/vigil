@@ -278,6 +278,11 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Warn("list risks for measure", "measure_id", id.String(), "error", err) // #nosec G706
 	}
+	gs, _ := h.q.GetRiskGlobalSettings(r.Context())
+	lowMax, highMin := int(gs.LowMax), int(gs.HighMin)
+	if lowMax == 0 {
+		lowMax, highMin = 5, 12
+	}
 	user, _ := middleware.FromContext(r.Context())
 	canEdit, err := h.engine.Allow(r.Context(), user.ID, user.Role, "measures", "write")
 	if err != nil {
@@ -289,6 +294,8 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 		Activities:  activities,
 		Links:       links,
 		LinkedRisks: linkedRisks,
+		LowMax:      lowMax,
+		HighMin:     highMin,
 		CanEdit:     canEdit,
 		AuditLog:    auditLog,
 	}

@@ -108,8 +108,15 @@ func TestCompliancePages_UI2RootsAndControls(t *testing.T) {
 			Requirement: db.Requirement{ID: uuid.New(), Ref: "A.1", Title: "Policy"},
 		}},
 	}}, id.String(), "", ""))
-	if doc.Find("#fw-"+id.String()+`[x-data] button[aria-controls="fw-reqs-`+id.String()+`"]`).Length() != 1 {
-		t.Error("framework accordion must retain its Alpine disclosure control")
+	if doc.Find("#fw-"+id.String()+` > details[open] > summary`).Length() != 1 {
+		t.Error("requested framework must render expanded")
+	}
+	if doc.Find("#fw-"+id.String()+` > .fw-actions a[href$="/edit"]`).Length() != 1 {
+		t.Error("framework actions must remain outside the disclosure")
+	}
+	closed := renderToDoc(t, FrameworkList([]FrameworkVM{{Framework: db.Framework{ID: id, Name: "ISO"}}}, "", "", ""))
+	if closed.Find("#fw-"+id.String()+` > details:not([open]) > summary`).Length() != 1 {
+		t.Error("framework without expand parameter must render collapsed")
 	}
 	if doc.Find(`.ui2-table[aria-label="Requirements"] table caption`).Length() != 1 {
 		t.Error("requirements table must retain one accessible label")

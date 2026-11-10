@@ -5,6 +5,7 @@ import (
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui2"
 	formstemplates "github.com/3lbits/vigil/internal/ui2/forms"
 	"github.com/google/uuid"
 )
@@ -20,8 +21,8 @@ templ WizardStep4(vm WizardStep4VM) {
 				<p class="risk-description">{ locale.T(ctx, "empty_no_risks_marked_treatment") }</p>
 				<p class="risk-description">{ locale.T(ctx, "text_all_risks_accepted_or_escalated") }</p>
 				<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/4") }>
-					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-					<button type="submit">{ locale.T(ctx, "action_finalise_assessment") }</button>
+					@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+					@ui2.Button(templ.Attributes{"type": "submit"}) { { locale.T(ctx, "action_finalise_assessment") } }
 				</form>
 			</div>
 		} else {
@@ -32,10 +33,10 @@ templ WizardStep4(vm WizardStep4VM) {
 				}
 			</div>
 			<div class="risk-split">
-				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/3/evaluate") } class="risk-back-link">← { locale.T(ctx, "action_back_to_evaluation") }</a>
+				@ui2.Link(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/3/evaluate"), templ.Attributes{"class": "risk-back-link"}) { ← { locale.T(ctx, "action_back_to_evaluation") } }
 				<form id="finalise-form" method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/4") }>
-					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-					<button type="submit">{ locale.T(ctx, "action_finalise_assessment") }</button>
+					@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+					@ui2.Button(templ.Attributes{"type": "submit"}) { { locale.T(ctx, "action_finalise_assessment") } }
 				</form>
 			</div>
 		}
@@ -47,7 +48,7 @@ templ treatmentPanel(risk db.Risk, measures []db.Measure, activities []db.Activi
 		class={ "ui2-panel", treatmentBorderClass(overdue) }
 		x-data={ fmt.Sprintf("treatmentScorer(%d,%d,%d,%d)", risk.LikelihoodTarget.Int32, risk.ConsequenceTarget.Int32, highMin, lowMax) }
 	>
-		<div id={ "risk-status-" + risk.ID.String() } class="risk-visually-hidden" aria-live="polite" aria-atomic="true"></div>
+		<div id={ "risk-status-" + risk.ID.String() } class="sr-only" aria-live="polite" aria-atomic="true"></div>
 		<div class="risk-chip-list">
 			<h2 id={ "risk-heading-" + risk.ID.String() } tabindex="-1" class="risk-result-name" style="font-size: 13px">{ risk.Name }</h2>
 			if risk.LikelihoodCurrent.Valid && risk.ConsequenceCurrent.Valid {
@@ -65,21 +66,21 @@ templ treatmentPanel(risk db.Risk, measures []db.Measure, activities []db.Activi
 			<div class="risk-score-fields">
 				<div>
 					<label for={ "tl-" + risk.ID.String() } class="risk-caption">{ locale.T(ctx, "label_likelihood_1_5") }</label>
-					<select id={ "tl-" + risk.ID.String() } name={ "target_likelihood_" + risk.ID.String() } form="finalise-form" x-model="tl">
+					@ui2.Select(templ.Attributes{"id": "tl-" + risk.ID.String(), "name": "target_likelihood_" + risk.ID.String(), "form": "finalise-form", "x-model": "tl"}) {
 						<option value="0">—</option>
 						for i := 1; i <= 5; i++ {
 							<option value={ fmt.Sprint(i) } selected?={ risk.LikelihoodTarget.Valid && int(risk.LikelihoodTarget.Int32) == i }>{ fmt.Sprint(i) } { likelihoodLabel(i) }</option>
 						}
-					</select>
+					}
 				</div>
 				<div>
 					<label for={ "tc-" + risk.ID.String() } class="risk-caption">{ locale.T(ctx, "label_consequence_1_5") }</label>
-					<select id={ "tc-" + risk.ID.String() } name={ "target_consequence_" + risk.ID.String() } form="finalise-form" x-model="tc">
+					@ui2.Select(templ.Attributes{"id": "tc-" + risk.ID.String(), "name": "target_consequence_" + risk.ID.String(), "form": "finalise-form", "x-model": "tc"}) {
 						<option value="0">—</option>
 						for i := 1; i <= 5; i++ {
 							<option value={ fmt.Sprint(i) } selected?={ risk.ConsequenceTarget.Valid && int(risk.ConsequenceTarget.Int32) == i }>{ fmt.Sprint(i) } { consequenceLabel(i) }</option>
 						}
-					</select>
+					}
 				</div>
 			</div>
 			<template x-if="tl > 0 && tc > 0">
@@ -103,13 +104,9 @@ templ treatmentPanel(risk db.Risk, measures []db.Measure, activities []db.Activi
 			}
 		</div>
 		<div x-data={ fmt.Sprintf("{ expanded: %v }", len(measures) == 0) } class="risk-spaced">
-			<button
-				type="button"
-				@click="expanded=!expanded"
-				class="risk-link-toggle"
-			>
+			@ui2.Button(templ.Attributes{"type": "button", "@click": "expanded=!expanded", "class": "risk-link-toggle"}) {
 				<span x-text="expanded ? '↑ Hide' : '+ New measure'"></span>
-			</button>
+			}
 			<div x-show="expanded">
 				<form
 					method="POST"
@@ -120,45 +117,37 @@ templ treatmentPanel(risk db.Risk, measures []db.Measure, activities []db.Activi
 					@htmx:after-request="if($event.detail.successful){ $el.reset(); expanded=false }"
 					class="risk-create-form"
 				>
-					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+					@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 					@formstemplates.MeasureCreateFields(users, "risk-"+risk.ID.String())
 					<div class="risk-end-actions">
-						<button type="submit">Create &amp; link</button>
+						@ui2.Button(templ.Attributes{"type": "submit"}) { Create &amp; link }
 					</div>
 				</form>
 			</div>
 		</div>
 		<div x-data="{ showMeasureSearch: false, showActivitySearch: false }" class="risk-fields">
 			<div>
-				<button
-					type="button"
-					@click="showMeasureSearch=!showMeasureSearch"
-					class="risk-link-toggle"
-				>
+				@ui2.Button(templ.Attributes{"type": "button", "@click": "showMeasureSearch=!showMeasureSearch", "class": "risk-link-toggle"}) {
 					<span x-text="showMeasureSearch ? '↑ Hide' : '+ Link existing measure'"></span>
-				</button>
+				}
 				<div x-show="showMeasureSearch" class="risk-following">
 					<form method="GET" action={ templ.SafeURL("/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/measures/search") } class="risk-controls">
-						<label for={ "measure-search-" + risk.ID.String() } class="risk-visually-hidden">{ locale.T(ctx, "label_search_measures") }</label>
-						<input id={ "measure-search-" + risk.ID.String() } name="q" type="text" placeholder={ locale.T(ctx, "placeholder_search_measures") } hx-get={ "/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/measures/search" } hx-trigger="input changed delay:300ms" hx-target={ "#measure-results-" + risk.ID.String() }/>
-						<button type="submit" class="risk-secondary-button">{ locale.T(ctx, "action_search") }</button>
+						<label for={ "measure-search-" + risk.ID.String() } class="sr-only">{ locale.T(ctx, "label_search_measures") }</label>
+						@ui2.Input(templ.Attributes{"id": "measure-search-" + risk.ID.String(), "name": "q", "type": "text", "placeholder": locale.T(ctx, "placeholder_search_measures"), "hx-get": "/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/measures/search", "hx-trigger": "input changed delay:300ms", "hx-target": "#measure-results-" + risk.ID.String()})
+						@ui2.Button(templ.Attributes{"type": "submit", "class": "risk-secondary-button"}) { { locale.T(ctx, "action_search") } }
 					</form>
 					<div id={ "measure-results-" + risk.ID.String() } class="risk-following" aria-live="polite" aria-atomic="false"></div>
 				</div>
 			</div>
 			<div>
-				<button
-					type="button"
-					@click="showActivitySearch=!showActivitySearch"
-					class="risk-link-toggle"
-				>
+				@ui2.Button(templ.Attributes{"type": "button", "@click": "showActivitySearch=!showActivitySearch", "class": "risk-link-toggle"}) {
 					<span x-text="showActivitySearch ? '↑ Hide' : '+ Link existing activity'"></span>
-				</button>
+				}
 				<div x-show="showActivitySearch" class="risk-following">
 					<form method="GET" action={ templ.SafeURL("/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/activities/search") } class="risk-controls">
-						<label for={ "activity-search-" + risk.ID.String() } class="risk-visually-hidden">{ locale.T(ctx, "label_search_activities") }</label>
-						<input id={ "activity-search-" + risk.ID.String() } name="q" type="text" placeholder={ locale.T(ctx, "placeholder_search_activities") } hx-get={ "/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/activities/search" } hx-trigger="input changed delay:300ms" hx-target={ "#activity-results-" + risk.ID.String() }/>
-						<button type="submit" class="risk-secondary-button">{ locale.T(ctx, "action_search") }</button>
+						<label for={ "activity-search-" + risk.ID.String() } class="sr-only">{ locale.T(ctx, "label_search_activities") }</label>
+						@ui2.Input(templ.Attributes{"id": "activity-search-" + risk.ID.String(), "name": "q", "type": "text", "placeholder": locale.T(ctx, "placeholder_search_activities"), "hx-get": "/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/activities/search", "hx-trigger": "input changed delay:300ms", "hx-target": "#activity-results-" + risk.ID.String()})
+						@ui2.Button(templ.Attributes{"type": "submit", "class": "risk-secondary-button"}) { { locale.T(ctx, "action_search") } }
 					</form>
 					<div id={ "activity-results-" + risk.ID.String() } class="risk-following" aria-live="polite" aria-atomic="false"></div>
 				</div>
@@ -170,12 +159,7 @@ templ treatmentPanel(risk db.Risk, measures []db.Measure, activities []db.Activi
 templ measureChip(m db.Measure, riskID, assessmentID string) {
 	<div id={ "chip-m-" + m.ID.String() + "-" + riskID } class="risk-measure-chip">
 		<span class="risk-strong">Measure:</span>
-		<a
-			href={ templ.SafeURL("/measures/" + m.ID.String()) }
-			target="_blank"
-			rel="noopener noreferrer"
-			class="risk-chip-name"
-		>{ m.Name }</a>
+		@ui2.Link(templ.SafeURL("/measures/" + m.ID.String()), templ.Attributes{"target": "_blank", "rel": "noopener noreferrer", "class": "risk-chip-name"}) { { m.Name } }
 		if m.Status != "" {
 			<span class="risk-chip-status">{ m.Status }</span>
 		}
@@ -189,14 +173,8 @@ templ measureChip(m db.Measure, riskID, assessmentID string) {
 			hx-target={ "#chip-m-" + m.ID.String() + "-" + riskID }
 			hx-swap="outerHTML"
 		>
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-			<button
-				type="submit"
-				data-tone="danger"
-				hx-on::after-request="this.closest('[x-data]')?.querySelector('[id^=risk-status-]')?.replaceChildren(document.createTextNode('Measure unlinked')); this.closest('[x-data]')?.querySelector('[id^=risk-heading-]')?.focus()"
-				aria-label={ "Unlink " + m.Name }
-				class="risk-chip-remove"
-			>×</button>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+			@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "hx-on::after-request": templ.JSUnsafeFuncCall("this.closest('[x-data]')?.querySelector('[id^=risk-status-]')?.replaceChildren(document.createTextNode('Measure unlinked')); this.closest('[x-data]')?.querySelector('[id^=risk-heading-]')?.focus()"), "aria-label": "Unlink " + m.Name, "class": "risk-chip-remove"}) { × }
 		</form>
 	</div>
 }
@@ -212,14 +190,8 @@ templ activityChip(a db.Activity, riskID, assessmentID string) {
 			hx-target={ "#chip-a-" + a.ID.String() + "-" + riskID }
 			hx-swap="outerHTML"
 		>
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-			<button
-				type="submit"
-				data-tone="danger"
-				hx-on::after-request="this.closest('[x-data]')?.querySelector('[id^=risk-status-]')?.replaceChildren(document.createTextNode('Activity unlinked')); this.closest('[x-data]')?.querySelector('[id^=risk-heading-]')?.focus()"
-				aria-label={ "Unlink " + a.Title }
-				class="risk-chip-remove"
-			>×</button>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+			@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "hx-on::after-request": templ.JSUnsafeFuncCall("this.closest('[x-data]')?.querySelector('[id^=risk-status-]')?.replaceChildren(document.createTextNode('Activity unlinked')); this.closest('[x-data]')?.querySelector('[id^=risk-heading-]')?.focus()"), "aria-label": "Unlink " + a.Title, "class": "risk-chip-remove"}) { × }
 		</form>
 	</div>
 }
@@ -238,11 +210,8 @@ templ MeasureSearchResults(measures []db.Measure, riskID, assessmentID string) {
 						hx-swap="beforeend"
 						class="risk-fill"
 					>
-						<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-						<button
-							type="submit"
-							class="risk-search-choice"
-						>
+						@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+						@ui2.Button(templ.Attributes{"type": "submit", "class": "risk-search-choice"}) {
 							{ m.Name }
 							if m.Category != "" {
 								<span class="risk-caption">{ m.Category }</span>
@@ -250,16 +219,11 @@ templ MeasureSearchResults(measures []db.Measure, riskID, assessmentID string) {
 							if m.Status != "" {
 								<span class="risk-caption">· { m.Status }</span>
 							}
-						</button>
+						}
 					</form>
-					<a
-						href={ templ.SafeURL("/measures/" + m.ID.String()) }
-						target="_blank"
-						rel="noopener noreferrer"
-						class="risk-secondary-link"
-					>
+					@ui2.Link(templ.SafeURL("/measures/" + m.ID.String()), templ.Attributes{"target": "_blank", "rel": "noopener noreferrer", "class": "risk-secondary-link"}) {
 						Open ↗
-					</a>
+					}
 				</div>
 			}
 		</div>
@@ -278,14 +242,11 @@ templ ActivitySearchResults(activities []db.Activity, riskID, assessmentID strin
 					hx-target={ "#linked-activities-" + riskID }
 					hx-swap="beforeend"
 				>
-					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-					<button
-						type="submit"
-						class="risk-search-choice"
-					>
+					@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+					@ui2.Button(templ.Attributes{"type": "submit", "class": "risk-search-choice"}) {
 						{ a.Title }
 						<span class="risk-caption">{ a.ActivityType }</span>
-					</button>
+					}
 				</form>
 			}
 		</div>

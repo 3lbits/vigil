@@ -26,6 +26,8 @@ type MeasureDetailVM struct {
 	Activities  []db.ListActivitiesForMeasureRow
 	Links       []db.MeasureLink
 	LinkedRisks []db.Risk
+	LowMax      int
+	HighMin     int
 	CanEdit     bool
 	AuditLog    []db.ListAuditLogForMeasureRow
 }

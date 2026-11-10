@@ -3,6 +3,7 @@ package forms
 import (
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 func sharedFieldID(prefix, suffix string) string { return prefix + "-" + suffix }
@@ -11,15 +12,15 @@ func measureUserLookupValue(u db.User) string { return u.Name + " (" + u.Email +
 templ MeasureCreateFields(users []db.User, idPrefix string) {
 	<div class="ui2-field">
 		<label for={ sharedFieldID(idPrefix, "measure-name") }>{ locale.T(ctx, "label_name") } <span aria-hidden="true">*</span></label>
-		<input id={ sharedFieldID(idPrefix, "measure-name") } name="name" type="text" placeholder="e.g. Patch management process" required/>
+		@ui2.Input(templ.Attributes{"id": sharedFieldID(idPrefix, "measure-name"), "name": "name", "type": "text", "placeholder": "e.g. Patch management process", "required": true})
 	</div>
 	<div class="ui2-field">
 		<label for={ sharedFieldID(idPrefix, "measure-category") }>{ locale.T(ctx, "label_category") }</label>
-		<input id={ sharedFieldID(idPrefix, "measure-category") } name="category" type="text" placeholder="e.g. Technical, Organisational"/>
+		@ui2.Input(templ.Attributes{"id": sharedFieldID(idPrefix, "measure-category"), "name": "category", "type": "text", "placeholder": "e.g. Technical, Organisational"})
 	</div>
 	<div class="ui2-field">
 		<label for={ sharedFieldID(idPrefix, "measure-owner") }>{ locale.T(ctx, "label_owner_text_team") }</label>
-		<input id={ sharedFieldID(idPrefix, "measure-owner") } name="owner" type="search" placeholder="Search user or enter custom owner" list={ sharedFieldID(idPrefix, "measure-owner-list") }/>
+		@ui2.Input(templ.Attributes{"id": sharedFieldID(idPrefix, "measure-owner"), "name": "owner", "type": "search", "placeholder": "Search user or enter custom owner", "list": sharedFieldID(idPrefix, "measure-owner-list")})
 		<datalist id={ sharedFieldID(idPrefix, "measure-owner-list") }>
 			for _, u := range users {
 				<option value={ measureUserLookupValue(u) } label={ u.Email }></option>
@@ -28,7 +29,7 @@ templ MeasureCreateFields(users []db.User, idPrefix string) {
 	</div>
 	<div class="ui2-field">
 		<label for={ sharedFieldID(idPrefix, "measure-assignee-lookup") }>{ locale.T(ctx, "label_assignee_registered") }</label>
-		<input id={ sharedFieldID(idPrefix, "measure-assignee-lookup") } name="assignee_lookup" type="search" placeholder="Search user by name or email" list={ sharedFieldID(idPrefix, "measure-assignee-list") }/>
+		@ui2.Input(templ.Attributes{"id": sharedFieldID(idPrefix, "measure-assignee-lookup"), "name": "assignee_lookup", "type": "search", "placeholder": "Search user by name or email", "list": sharedFieldID(idPrefix, "measure-assignee-list")})
 		<datalist id={ sharedFieldID(idPrefix, "measure-assignee-list") }>
 			for _, u := range users {
 				<option value={ measureUserLookupValue(u) }></option>
@@ -37,11 +38,11 @@ templ MeasureCreateFields(users []db.User, idPrefix string) {
 	</div>
 	<div class="ui2-field">
 		<label for={ sharedFieldID(idPrefix, "measure-due-date") }>{ locale.T(ctx, "label_due_date") } <small>({ locale.T(ctx, "label_due_date_measure_hint") })</small></label>
-		<input id={ sharedFieldID(idPrefix, "measure-due-date") } name="due_date" type="date"/>
+		@ui2.Input(templ.Attributes{"id": sharedFieldID(idPrefix, "measure-due-date"), "name": "due_date", "type": "date"})
 	</div>
 	<div class="ui2-field">
 		<label for={ sharedFieldID(idPrefix, "measure-description") }>{ locale.T(ctx, "label_description") }</label>
-		<textarea id={ sharedFieldID(idPrefix, "measure-description") } name="description" placeholder="Optional detailed description"></textarea>
+		@ui2.Textarea(templ.Attributes{"id": sharedFieldID(idPrefix, "measure-description"), "name": "description", "placeholder": "Optional detailed description"}) {}
 	</div>
 }
 
@@ -49,75 +50,75 @@ templ ActivityCreateFields(measures []db.Measure, users []db.User, idPrefix, def
 	<div class="ui2-create-fields">
 		<div class="ui2-field ui2-wide">
 			<label for={ sharedFieldID(idPrefix, "measure_id") }>{ locale.T(ctx, "label_measure") }</label>
-			<select id={ sharedFieldID(idPrefix, "measure_id") } name="measure_id">
+			@ui2.Select(templ.Attributes{"id": sharedFieldID(idPrefix, "measure_id"), "name": "measure_id"}) {
 				<option value="">— { locale.T(ctx, "label_none") } —</option>
 				for _, m := range measures {
 					<option value={ m.ID.String() }>{ m.Name }</option>
 				}
-			</select>
+			}
 		</div>
 		<div class="ui2-field ui2-wide">
 			<label for={ sharedFieldID(idPrefix, "title") }>{ locale.T(ctx, "label_title") } <span aria-hidden="true">*</span></label>
-			<input id={ sharedFieldID(idPrefix, "title") } name="title" type="text" value={ defaultTitle } placeholder="e.g. Annual penetration test" required/>
+			@ui2.Input(templ.Attributes{"id": sharedFieldID(idPrefix, "title"), "name": "title", "type": "text", "value": defaultTitle, "placeholder": "e.g. Annual penetration test", "required": true})
 		</div>
 		<div class="ui2-field ui2-wide">
 			<label for={ sharedFieldID(idPrefix, "description") }>{ locale.T(ctx, "label_description") }</label>
-			<textarea id={ sharedFieldID(idPrefix, "description") } name="description" placeholder="Optional context or scope" rows="3"></textarea>
+			@ui2.Textarea(templ.Attributes{"id": sharedFieldID(idPrefix, "description"), "name": "description", "placeholder": "Optional context or scope", "rows": "3"}) {}
 		</div>
 		<div class="ui2-field">
 			<label for={ sharedFieldID(idPrefix, "activity_type") }>{ locale.T(ctx, "label_type") }</label>
-			<select id={ sharedFieldID(idPrefix, "activity_type") } name="activity_type">
+			@ui2.Select(templ.Attributes{"id": sharedFieldID(idPrefix, "activity_type"), "name": "activity_type"}) {
 				<option value="one_off" selected>{ locale.T(ctx, "label_one_off") }</option>
 				<option value="recurring">{ locale.T(ctx, "type_recurring") }</option>
-			</select>
+			}
 		</div>
 		<div class="ui2-field">
 			<label for={ sharedFieldID(idPrefix, "recurrence") }>{ locale.T(ctx, "label_recurrence") }</label>
-			<select id={ sharedFieldID(idPrefix, "recurrence") } name="recurrence">
+			@ui2.Select(templ.Attributes{"id": sharedFieldID(idPrefix, "recurrence"), "name": "recurrence"}) {
 				<option value="none" selected>{ locale.T(ctx, "recurrence_none") }</option>
 				<option value="monthly">{ locale.T(ctx, "recurrence_monthly") }</option>
 				<option value="tertially">{ locale.T(ctx, "recurrence_tertially") }</option>
 				<option value="annual">{ locale.T(ctx, "recurrence_annual") }</option>
 				<option value="ad_hoc">{ locale.T(ctx, "recurrence_ad_hoc") }</option>
-			</select>
+			}
 		</div>
 		<div class="ui2-field">
 			<label for={ sharedFieldID(idPrefix, "kind") }>{ locale.T(ctx, "label_kind") }</label>
-			<select id={ sharedFieldID(idPrefix, "kind") } name="kind">
+			@ui2.Select(templ.Attributes{"id": sharedFieldID(idPrefix, "kind"), "name": "kind"}) {
 				<option value="training">{ locale.T(ctx, "kind_training") }</option>
 				<option value="exercise">{ locale.T(ctx, "kind_exercise") }</option>
 				<option value="assessment">{ locale.T(ctx, "kind_assessment") }</option>
 				<option value="audit">{ locale.T(ctx, "kind_audit") }</option>
 				<option value="remediation">{ locale.T(ctx, "kind_remediation") }</option>
 				<option value="review" selected>{ locale.T(ctx, "kind_review") }</option>
-			</select>
+			}
 		</div>
 		<div class="ui2-field">
 			<label for={ sharedFieldID(idPrefix, "priority") }>{ locale.T(ctx, "label_priority") }</label>
-			<select id={ sharedFieldID(idPrefix, "priority") } name="priority">
+			@ui2.Select(templ.Attributes{"id": sharedFieldID(idPrefix, "priority"), "name": "priority"}) {
 				<option value="low">{ locale.T(ctx, "priority_low") }</option>
 				<option value="medium" selected>{ locale.T(ctx, "priority_medium") }</option>
 				<option value="high">{ locale.T(ctx, "priority_high") }</option>
-			</select>
+			}
 		</div>
 		<div class="ui2-wide" x-data="{ assigneeID: '', owner: '' }">
 			<div class="ui2-field">
 				<label for={ sharedFieldID(idPrefix, "assignee_id") }>{ locale.T(ctx, "label_assignee_registered") }</label>
-				<select id={ sharedFieldID(idPrefix, "assignee_id") } name="assignee_id" x-model="assigneeID" @change="if (assigneeID !== '') { owner = $el.options[$el.selectedIndex].dataset.name } else { owner = '' }">
+				@ui2.Select(templ.Attributes{"id": sharedFieldID(idPrefix, "assignee_id"), "name": "assignee_id", "x-model": "assigneeID", "@change": "if (assigneeID !== '') { owner = $el.options[$el.selectedIndex].dataset.name } else { owner = '' }"}) {
 					<option value="">{ locale.T(ctx, "label_or_enter_name_below") }</option>
 					for _, u := range users {
 						<option value={ u.ID.String() } data-name={ u.Name }>{ u.Name } ({ u.Email })</option>
 					}
-				</select>
+				}
 			</div>
 			<div class="ui2-field">
 				<label for={ sharedFieldID(idPrefix, "owner") }>{ locale.T(ctx, "label_owner_free_text_name") }</label>
-				<input id={ sharedFieldID(idPrefix, "owner") } name="owner" type="text" placeholder="e.g. security team" x-model="owner" :disabled="assigneeID !== ''"/>
+				@ui2.Input(templ.Attributes{"id": sharedFieldID(idPrefix, "owner"), "name": "owner", "type": "text", "placeholder": "e.g. security team", "x-model": "owner", ":disabled": "assigneeID !== ''"})
 			</div>
 		</div>
 		<div class="ui2-field ui2-wide">
 			<label for={ sharedFieldID(idPrefix, "due_date") }>{ locale.T(ctx, "label_due_date") }</label>
-			<input id={ sharedFieldID(idPrefix, "due_date") } name="due_date" type="date"/>
+			@ui2.Input(templ.Attributes{"id": sharedFieldID(idPrefix, "due_date"), "name": "due_date", "type": "date"})
 		</div>
 	</div>
 }

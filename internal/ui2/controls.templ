@@ -1,0 +1,37 @@
+package ui2
+
+templ Link(href templ.SafeURL, attrs templ.Attributes) {
+	<a href={ href } { attrs... }>{ children... }</a>
+}
+
+templ UntrustedLink(href string, attrs templ.Attributes) {
+	<a href={ href } { attrs... }>{ children... }</a>
+}
+
+templ Button(attrs templ.Attributes) {
+	<button { attrs... }>{ children... }</button>
+}
+
+templ Input(attrs templ.Attributes) {
+	<input { attrs... }/>
+}
+
+templ Select(attrs templ.Attributes) {
+	<select { attrs... }>{ children... }</select>
+}
+
+templ Textarea(attrs templ.Attributes) {
+	<textarea { attrs... }>{ children... }</textarea>
+}
+
+templ Field(id, label string, required bool) {
+	<div class="ui2-field">
+		<label for={ id }>
+			{ label }
+			if required {
+				<span aria-hidden="true">*</span>
+			}
+		</label>
+		{ children... }
+	</div>
+}

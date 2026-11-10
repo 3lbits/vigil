@@ -28,14 +28,7 @@ templ WizardDecision(vm DecisionVM) {
 				<h2 class="risk-section-heading" style="font-size: 12px">{ locale.T(ctx, "label_risks_in_treatment_phase") }</h2>
 				<div class="risk-decision-list">
 					for _, risk := range vm.Risks {
-						<a
-							href={ templ.SafeURL(decisionGetPath(vm.Assessment.ID.String(), risk.ID.String(), vm.IsReview)) }
-							class={
-								"risk-decision-item",
-								templ.KV("risk-decision-selected", risk.ID == vm.Risk.ID),
-								templ.KV("risk-decision-available", risk.ID != vm.Risk.ID),
-							}
-						>
+						@ui2.Link(templ.SafeURL(decisionGetPath(vm.Assessment.ID.String(), risk.ID.String(), vm.IsReview)), templ.Attributes{"class": "risk-decision-item " + decisionItemStateClass(risk.ID == vm.Risk.ID)}) {
 							<div class="risk-split">
 								<div class="risk-truncation-container">
 									<div class="risk-caption">
@@ -62,7 +55,7 @@ templ WizardDecision(vm DecisionVM) {
 									<span class="risk-caption">{ locale.T(ctx, "label_not_decided") }</span>
 								}
 							</div>
-						</a>
+						}
 					}
 				</div>
 			</aside>
@@ -113,21 +106,13 @@ templ WizardDecision(vm DecisionVM) {
 					}
 				</section>
 				<form id="finalise-form" method="POST" action={ templ.SafeURL(decisionPostPath(vm.Assessment.ID.String(), vm.Risk.ID.String(), vm.IsReview)) } class="risk-spaced">
-					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+					@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 					<fieldset class="risk-spaced">
 						<legend class="risk-section-heading">Decision</legend>
 						<div class="risk-chip-list">
 							for _, opt := range []struct{ v, key string }{{"accept", "decision_accept"}, {"treat", "decision_treat"}, {"document", "decision_document"}} {
 								<label class="risk-radio-option">
-									<input
-										type="radio"
-										name="decision"
-										value={ opt.v }
-										class="risk-radio"
-										checked?={ vm.Risk.RiskDecision == opt.v }
-										disabled?={ (opt.v == "accept" && !vm.CanAccept) || (opt.v != "accept" && vm.CanAccept) }
-										x-model="decision"
-									/>
+									@ui2.Input(templ.Attributes{"type": "radio", "name": "decision", "value": opt.v, "class": "risk-radio", "checked": vm.Risk.RiskDecision == opt.v, "disabled": (opt.v == "accept" && !vm.CanAccept) || (opt.v != "accept" && vm.CanAccept), "x-model": "decision"})
 									<span class={ "risk-decision-option", decisionOptionColor(opt.v), decisionOptionStateClass(opt.v, vm.CanAccept) }>{ locale.T(ctx, opt.key) }</span>
 								</label>
 							}
@@ -140,20 +125,20 @@ templ WizardDecision(vm DecisionVM) {
 					}
 					<div class="risk-spaced" x-show="decision === 'document'">
 						<label for="decision_notes">{ locale.T(ctx, "label_documentation_notes") }</label>
-						<textarea id="decision_notes" name="decision_notes" rows="3" placeholder={ locale.T(ctx, "placeholder_why_decision_appropriate") }>{ vm.Risk.DecisionNotes }</textarea>
+						@ui2.Textarea(templ.Attributes{"id": "decision_notes", "name": "decision_notes", "rows": "3", "placeholder": locale.T(ctx, "placeholder_why_decision_appropriate")}) { { vm.Risk.DecisionNotes } }
 					</div>
 					<div class="risk-split">
 						<div class="risk-controls">
 							if vm.PrevRiskID.Valid {
-								<a href={ templ.SafeURL(decisionGetPath(vm.Assessment.ID.String(), vm.PrevRiskID.UUID.String(), vm.IsReview)) } class="risk-secondary-button">← { locale.T(ctx, "action_previous_risk") }</a>
+								@ui2.Link(templ.SafeURL(decisionGetPath(vm.Assessment.ID.String(), vm.PrevRiskID.UUID.String(), vm.IsReview)), templ.Attributes{"class": "risk-secondary-button"}) { ← { locale.T(ctx, "action_previous_risk") } }
 							}
 						</div>
 						<div class="risk-controls">
-							<button type="submit" name="next" value="0" class="risk-secondary-button">{ locale.T(ctx, "action_save") }</button>
+							@ui2.Button(templ.Attributes{"type": "submit", "name": "next", "value": "0", "class": "risk-secondary-button"}) { { locale.T(ctx, "action_save") } }
 							if vm.NextRiskID.Valid {
-								<button type="submit" name="next" value="1">{ locale.T(ctx, "action_save_next") } →</button>
+								@ui2.Button(templ.Attributes{"type": "submit", "name": "next", "value": "1"}) { { locale.T(ctx, "action_save_next") } → }
 							} else {
-								<button type="submit" name="submit_assessment" value="1">{ locale.T(ctx, "action_finalise_assessment") }</button>
+								@ui2.Button(templ.Attributes{"type": "submit", "name": "submit_assessment", "value": "1"}) { { locale.T(ctx, "action_finalise_assessment") } }
 							}
 						</div>
 					</div>
@@ -164,6 +149,13 @@ templ WizardDecision(vm DecisionVM) {
 			</div>
 		</div>
 	</div>
+}
+
+func decisionItemStateClass(selected bool) string {
+	if selected {
+		return "risk-decision-selected"
+	}
+	return "risk-decision-available"
 }
 
 func decisionGetPath(assessmentID, riskID string, review bool) string {

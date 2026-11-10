@@ -19,17 +19,17 @@ templ FrameworkList(frameworks []FrameworkVM, expandID, flash, flashType string)
 	<div class="ops-toolbar">
 		<p data-testid="framework-count" class="ops-muted">{ locale.TN(ctx, "fw_count", len(frameworks), map[string]any{"Count": len(frameworks)}) }</p>
 		<div class="ops-inline">
-			<a href="/compliance/frameworks/new" class="ops-button">
+			@ui2.Link("/compliance/frameworks/new", templ.Attributes{"class": "ops-button"}) {
 				@ui.IconSVG("plus", 13)
 				{ locale.T(ctx, "action_add_framework") }
-			</a>
+			}
 		</div>
 	</div>
 
 	if len(frameworks) == 0 {
 		<div data-testid="no-frameworks-empty" class="ops-card">
 			<p class="ops-muted">{ locale.T(ctx, "frameworks_none_yet") }</p>
-			<a href="/compliance/frameworks/new" class="ops-link">Add your first framework →</a>
+			@ui2.Link("/compliance/frameworks/new", templ.Attributes{"class": "ops-link"}) { Add your first framework → }
 		</div>
 	} else {
 		<ul class="ops-list">
@@ -44,21 +44,10 @@ templ FrameworkList(frameworks []FrameworkVM, expandID, flash, flashType string)
 templ frameworkAccordion(fw FrameworkVM, expandID string) {
 	<article class="ui2-panel ops-card"
 		id={ "fw-" + fw.Framework.ID.String() }
-		aria-label={ fw.Framework.Name }
-		x-data={ "{ expanded: " + fmt.Sprint(fw.Framework.ID.String() == expandID) + " }" }>
-		<div class="ops-inline ops-fill">
-			<button
-				type="button"
-				class="ops-link"
-				@click="expanded = !expanded"
-				:aria-expanded="expanded ? 'true' : 'false'"
-				aria-controls={ "fw-reqs-" + fw.Framework.ID.String() }
-			>
-				<span
-					class="ops-muted"
-					:class="expanded ? 'ops-expanded' : ''"
-					aria-hidden="true"
-				>
+		aria-label={ fw.Framework.Name }>
+		<details class="fw-accordion" open?={ fw.Framework.ID.String() == expandID }>
+			<summary class="ops-link">
+				<span class="ops-muted" aria-hidden="true">
 					@ui.IconSVG("chevron", 14)
 				</span>
 				<span >
@@ -78,68 +67,43 @@ templ frameworkAccordion(fw FrameworkVM, expandID string) {
 						<span class="ops-muted ops-align-end">{ fmt.Sprintf("%d%%", fw.Coverage) }</span>
 					</span>
 				</span>
-			</button>
-			<div class="ops-inline">
-				<span class="ops-muted">{ fmt.Sprintf("%d reqs", fw.TotalReqs) }</span>
-				<div class="ops-inline">
-					<a href={ templ.SafeURL("/compliance/frameworks/" + fw.Framework.ID.String()) }
-						class="ops-button">
-						Open
-					</a>
-					<a href={ templ.SafeURL("/compliance/frameworks/" + fw.Framework.ID.String() + "/requirements/import") }
-						class="ops-button">
-						@ui.IconSVG("upload", 11)
-						{ locale.T(ctx, "action_import") }
-					</a>
-					<a href={ templ.SafeURL("/compliance/frameworks/" + fw.Framework.ID.String() + "/edit") }
-						class="ops-button">
-						{ locale.T(ctx, "action_edit") }
-					</a>
-					<form method="POST" action={ templ.SafeURL("/compliance/frameworks/" + fw.Framework.ID.String() + "/delete") }
-						onsubmit="return confirm('Delete this framework and all its requirements?')">
-						<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-						<button type="submit" data-tone="danger" class="ops-button">
-							{ locale.T(ctx, "action_delete") }
-						</button>
-					</form>
-				</div>
-			</div>
-		</div>
+			</summary>
 
-		<!-- Requirements table (expanded) -->
 		<div
 			id={ "fw-reqs-" + fw.Framework.ID.String() }
-			x-show="expanded"
-			:aria-hidden="expanded ? 'false' : 'true'"
 			class="ops-separated"
 		>
 			<header >
 				<h2 class="ops-overline">{ locale.T(ctx, "section_requirements") }</h2>
-				<a href={ templ.SafeURL("/compliance/frameworks/" + fw.Framework.ID.String() + "/requirements/new") }
-					class="ops-link">
+				@ui2.Link(templ.SafeURL("/compliance/frameworks/"+fw.Framework.ID.String()+"/requirements/new"), templ.Attributes{"class": "ops-link"}) {
 					@ui.IconSVG("plus", 11)
 					{ locale.T(ctx, "action_add_requirement") }
-				</a>
+				}
 			</header>
 			if len(fw.Requirements) == 0 {
 				<p class="ops-muted ops-align-center">
-					No requirements yet. <a href={ templ.SafeURL("/compliance/frameworks/" + fw.Framework.ID.String() + "/requirements/import") } class="ops-link">Import from CSV</a> or add manually.
+					No requirements yet. @ui2.Link(templ.SafeURL("/compliance/frameworks/"+fw.Framework.ID.String()+"/requirements/import"), templ.Attributes{"class": "ops-link"}) { Import from CSV } or add manually.
 				</p>
 			} else {
 				@RequirementsTable(fw.Requirements)
 			}
 		</div>
+		</details>
+		<div class="ops-inline fw-actions">
+			<span class="ops-muted">{ fmt.Sprintf("%d reqs", fw.TotalReqs) }</span>
+			@ui2.Link(templ.SafeURL("/compliance/frameworks/"+fw.Framework.ID.String()), templ.Attributes{"class": "ops-button"}) { Open }
+			@ui2.Link(templ.SafeURL("/compliance/frameworks/"+fw.Framework.ID.String()+"/requirements/import"), templ.Attributes{"class": "ops-button"}) {
+				@ui.IconSVG("upload", 11)
+				{ locale.T(ctx, "action_import") }
+			}
+			@ui2.Link(templ.SafeURL("/compliance/frameworks/"+fw.Framework.ID.String()+"/edit"), templ.Attributes{"class": "ops-button"}) { { locale.T(ctx, "action_edit") } }
+			<form method="POST" action={ templ.SafeURL("/compliance/frameworks/" + fw.Framework.ID.String() + "/delete") }
+				onsubmit="return confirm('Delete this framework and all its requirements?')">
+				@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+				@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "class": "ops-button"}) { { locale.T(ctx, "action_delete") } }
+			</form>
+		</div>
 	</article>
-}
-
-templ CoverageBadge(pct int) {
-	if pct >= 80 {
-		@ui2.Badge("success") { { fmt.Sprintf("%d%%", pct) } }
-	} else if pct >= 50 {
-		@ui2.Badge("info") { { fmt.Sprintf("%d%%", pct) } }
-	} else {
-		@ui2.Badge("warning") { { fmt.Sprintf("%d%%", pct) } }
-	}
 }
 
 templ RequirementsTable(reqs []RequirementVM) {
@@ -157,7 +121,7 @@ templ RequirementsTable(reqs []RequirementVM) {
 				<tr >
 					<td class="ops-reference"> { rvm.Requirement.Ref } </td>
 					<td>
-						<a href={ templ.SafeURL("/compliance/requirements/" + rvm.Requirement.ID.String()) } class="ops-link">{ rvm.Requirement.Title }</a>
+						@ui2.Link(templ.SafeURL("/compliance/requirements/"+rvm.Requirement.ID.String()), templ.Attributes{"class": "ops-link"}) { { rvm.Requirement.Title } }
 						if rvm.Requirement.NotRelevant {
 							@ui2.Badge("neutral") { { locale.T(ctx, "label_not_relevant") } }
 						}
@@ -176,9 +140,7 @@ templ RequirementsTable(reqs []RequirementVM) {
 						}
 					</td>
 					<td class="ops-align-end">
-						<a href={ templ.SafeURL("/compliance/requirements/" + rvm.Requirement.ID.String() + "/edit") }
-							aria-label={ "Edit requirement " + rvm.Requirement.Ref + ": " + rvm.Requirement.Title }
-							class="ops-link">edit</a>
+						@ui2.Link(templ.SafeURL("/compliance/requirements/"+rvm.Requirement.ID.String()+"/edit"), templ.Attributes{"aria-label": "Edit requirement " + rvm.Requirement.Ref + ": " + rvm.Requirement.Title, "class": "ops-link"}) { edit }
 					</td>
 				</tr>
 			}
@@ -194,40 +156,39 @@ templ FrameworkForm(fw *db.Framework, flash, flashType string, auditLog []db.Lis
 
 	<div class="ops-stack ops-narrow">
 		<form method="POST" action={ fwFormAction(fw) } class="ops-form-inline">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 			@inputField("label_name", "name", "e.g. ISO 27001", fwFieldVal(fw, "name"), true)
 			@inputField("label_short_name", "short_name", "e.g. ISO", fwFieldVal(fw, "short_name"), false)
 			@inputField("label_version", "version", "e.g. 2022", fwFieldVal(fw, "version"), false)
 			@textareaField("label_description", "description", "Optional description", fwFieldVal(fw, "description"))
 			<div>
 				<label for="framework_type" class="ops-label">{ locale.T(ctx, "label_type") }</label>
-				<select id="framework_type" name="framework_type" class="ops-input">
+				@ui2.Select(templ.Attributes{"id": "framework_type", "name": "framework_type", "class": "ops-input"}) {
 					<option value="regulation" selected?={ fwFieldVal(fw, "framework_type") != "standard" && fwFieldVal(fw, "framework_type") != "directive" }>{ locale.T(ctx, "fw_type_regulation") }</option>
 					<option value="standard" selected?={ fwFieldVal(fw, "framework_type") == "standard" }>{ locale.T(ctx, "fw_type_standard") }</option>
 					<option value="directive" selected?={ fwFieldVal(fw, "framework_type") == "directive" }>{ locale.T(ctx, "fw_type_directive") }</option>
-				</select>
+				}
 			</div>
 
 			<div class="ops-stack ops-separated">
 				<label class="ops-check-label">
-					<input type="checkbox" name="not_relevant" value="on" checked?={ fw != nil && fw.NotRelevant }
-						class="ops-input"/>
+					@ui2.Input(templ.Attributes{"type": "checkbox", "name": "not_relevant", "value": "on", "checked": fw != nil && fw.NotRelevant, "class": "ops-input"})
 					{ locale.T(ctx, "label_mark_not_relevant") }
 				</label>
 				@textareaField("label_reason_optional", "not_relevant_reason", "Explain why this framework does not apply", fwFieldVal(fw, "not_relevant_reason"))
 			</div>
 
 			<div class="ops-inline">
-				<button type="submit">
+				@ui2.Button(templ.Attributes{"type": "submit"}) {
 					if fw == nil {
 						{ locale.T(ctx, "action_create_framework") }
 					} else {
 						{ locale.T(ctx, "action_save_changes") }
 					}
-				</button>
-				<a href="/compliance" class="ops-button">
+				}
+				@ui2.Link("/compliance", templ.Attributes{"class": "ops-button"}) {
 					{ locale.T(ctx, "action_cancel") }
-				</a>
+				}
 			</div>
 		</form>
 		if fw != nil {
@@ -278,7 +239,7 @@ templ requirementFormContent(frameworkID string, req *db.Requirement, flash, fla
 
 	<div class="ops-stack ops-narrow">
 		<form method="POST" action={ reqFormAction(frameworkID, req) } class="ops-form-inline">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 			@inputField("label_reference", "ref", "e.g. A.5.1 or Art.21", reqFieldVal(req, "ref"), true)
 			@inputField("label_title", "title", "Short title of the requirement", reqFieldVal(req, "title"), true)
 			@textareaField("label_description", "description", "Optional detailed description", reqFieldVal(req, "description"))
@@ -286,24 +247,23 @@ templ requirementFormContent(frameworkID string, req *db.Requirement, flash, fla
 
 			<div class="ops-stack ops-separated">
 				<label class="ops-check-label">
-					<input type="checkbox" name="not_relevant" value="on" checked?={ req != nil && req.NotRelevant }
-						class="ops-input"/>
+					@ui2.Input(templ.Attributes{"type": "checkbox", "name": "not_relevant", "value": "on", "checked": req != nil && req.NotRelevant, "class": "ops-input"})
 					{ locale.T(ctx, "label_mark_not_relevant") }
 				</label>
 				@textareaField("label_reason_required_if_not_relevant", "not_relevant_reason", "Explain why this requirement does not apply", reqFieldVal(req, "not_relevant_reason"))
 			</div>
 
 			<div class="ops-inline">
-				<button type="submit">
+				@ui2.Button(templ.Attributes{"type": "submit"}) {
 					if req == nil {
 						{ locale.T(ctx, "action_add_requirement") }
 					} else {
 						{ locale.T(ctx, "action_save_changes") }
 					}
-				</button>
-				<a href="/compliance" class="ops-button">
+				}
+				@ui2.Link("/compliance", templ.Attributes{"class": "ops-button"}) {
 					{ locale.T(ctx, "action_cancel") }
-				</a>
+				}
 			</div>
 		</form>
 		if req != nil {
@@ -367,22 +327,21 @@ templ ImportForm(frameworkID string, flash, flashType string, result *ImportResu
 		</section>
 
 		<form method="POST" action={ templ.SafeURL("/compliance/frameworks/" + frameworkID + "/requirements/import") } enctype="multipart/form-data" class="ops-form-inline">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 			<div>
 				<label for="csv_file" class="ops-label">
 					CSV file <span aria-hidden="true" class="ops-error">*</span>
 				</label>
-				<input type="file" id="csv_file" name="csv_file" accept=".csv,text/csv" required
-					class="ops-input ops-file"/>
+				@ui2.Input(templ.Attributes{"type": "file", "id": "csv_file", "name": "csv_file", "accept": ".csv,text/csv", "required": true, "class": "ops-input ops-file"})
 			</div>
 			<div class="ops-inline">
-				<button type="submit">
+				@ui2.Button(templ.Attributes{"type": "submit"}) {
 					@ui.IconSVG("upload", 13)
 					{ locale.T(ctx, "action_import_requirements") }
-				</button>
-				<a href="/compliance" class="ops-button">
+				}
+				@ui2.Link("/compliance", templ.Attributes{"class": "ops-button"}) {
 					{ locale.T(ctx, "action_cancel") }
-				</a>
+				}
 			</div>
 		</form>
 	</div>
@@ -394,22 +353,21 @@ templ ImportForm(frameworkID string, flash, flashType string, result *ImportResu
 templ RequirementDetail(vm RequirementDetailVM) {
 	@ui2.Page("ui2-compliance") {
 	<div class="ops-toolbar ops-spaced">
-		<a href={ templ.SafeURL("/compliance/frameworks/" + vm.Requirement.FrameworkID.String()) } class="ops-link">
+		@ui2.Link(templ.SafeURL("/compliance/frameworks/"+vm.Requirement.FrameworkID.String()), templ.Attributes{"class": "ops-link"}) {
 			@ui.IconSVG("chevron", 13)
 			{ vm.FrameworkShort }
-		</a>
+		}
 		if vm.CanEdit {
 			<div class="ops-inline">
-				<a href={ templ.SafeURL("/compliance/requirements/" + vm.Requirement.ID.String() + "/edit") }
-					class="ops-button">
+				@ui2.Link(templ.SafeURL("/compliance/requirements/"+vm.Requirement.ID.String()+"/edit"), templ.Attributes{"class": "ops-button"}) {
 					Edit requirement
-				</a>
+				}
 				<form method="POST" action={ templ.SafeURL("/compliance/requirements/" + vm.Requirement.ID.String() + "/delete") }
 					onsubmit="return confirm('Delete this requirement?')">
-					<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-					<button type="submit" data-tone="danger" class="ops-button">
+					@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+					@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "class": "ops-button"}) {
 						{ locale.T(ctx, "action_delete") }
-					</button>
+					}
 				</form>
 			</div>
 		} else {
@@ -468,7 +426,7 @@ templ RequirementDetail(vm RequirementDetailVM) {
 						for _, m := range vm.Measures {
 							<tr >
 								<td >
-									<a href={ templ.SafeURL("/measures/" + m.ID.String()) } class="ops-link">{ m.Name }</a>
+									@ui2.Link(templ.SafeURL("/measures/"+m.ID.String()), templ.Attributes{"class": "ops-link"}) { { m.Name } }
 									if m.Category != "" {
 										<p class="ops-muted">{ m.Category }</p>
 									}
@@ -534,8 +492,8 @@ templ requirementLinksSection(vm RequirementEditVM) {
 								<td > m.Owner </td>
 								<td class="ops-align-end">
 									<form method="POST" action={ templ.SafeURL("/compliance/requirements/" + vm.Requirement.ID.String() + "/measures/" + m.ID.String() + "/delete") }>
-										<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-										<button type="submit" data-tone="danger" aria-label={ "Remove measure " + m.Name } class="ops-danger-link">remove</button>
+										@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+										@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "aria-label": "Remove measure " + m.Name, "class": "ops-danger-link"}) { remove }
 									</form>
 								</td>
 							</tr>
@@ -546,11 +504,7 @@ templ requirementLinksSection(vm RequirementEditVM) {
 		}
 		<div class="ops-stack">
 			<label for="measure-link-search" class="ops-label">Search and link measure</label>
-			<input id="measure-link-search" type="text" name="q" placeholder="Type measure name..." class="ops-input"
-				hx-get={ "/compliance/requirements/" + vm.Requirement.ID.String() + "/measures/search" }
-				hx-trigger="input delay:250ms, search"
-				hx-target={ "#requirement-measure-search-results-" + vm.Requirement.ID.String() }
-				hx-swap="innerHTML"/>
+			@ui2.Input(templ.Attributes{"id": "measure-link-search", "type": "text", "name": "q", "placeholder": "Type measure name...", "class": "ops-input", "hx-get": "/compliance/requirements/" + vm.Requirement.ID.String() + "/measures/search", "hx-trigger": "input delay:250ms, search", "hx-target": "#requirement-measure-search-results-" + vm.Requirement.ID.String(), "hx-swap": "innerHTML"})
 			@RequirementMeasureSearchResults(vm.Requirement.ID.String(), nil, "")
 		</div>
 	</section>
@@ -577,9 +531,9 @@ templ RequirementMeasureSearchResults(requirementID string, measures []db.Measur
 								<td>@measureStatusBadge(m.Status)</td>
 								<td class="ops-align-end">
 									<form method="POST" action={ templ.SafeURL("/compliance/requirements/" + requirementID + "/measures") }>
-										<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-										<input type="hidden" name="measure_id" value={ m.ID.String() }/>
-										<button type="submit" class="ops-link">{ locale.T(ctx, "action_link_measure") }</button>
+										@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+										@ui2.Input(templ.Attributes{"type": "hidden", "name": "measure_id", "value": m.ID.String()})
+										@ui2.Button(templ.Attributes{"type": "submit", "class": "ops-link"}) { { locale.T(ctx, "action_link_measure") } }
 									</form>
 								</td>
 							</tr>
@@ -601,14 +555,14 @@ templ inputField(labelKey, name, placeholder, value string, required bool) {
 				<span aria-hidden="true">*</span>
 			}
 		</label>
-		<input id={ name } name={ name } type="text" value={ value } placeholder={ placeholder } required?={ required } class="ops-input"/>
+		@ui2.Input(templ.Attributes{"id": name, "name": name, "type": "text", "value": value, "placeholder": placeholder, "required": required, "class": "ops-input"})
 	</div>
 }
 
 templ textareaField(labelKey, name, placeholder, value string) {
 	<div>
 		<label for={ name } class="ops-label">{ locale.T(ctx, labelKey) }</label>
-		<textarea id={ name } name={ name } placeholder={ placeholder } rows="3" class="ops-input">{ value }</textarea>
+		@ui2.Textarea(templ.Attributes{"id": name, "name": name, "placeholder": placeholder, "rows": "3", "class": "ops-input"}) { { value } }
 	</div>
 }
 
@@ -659,15 +613,14 @@ func measureStatusTone(status string) string {
 templ FrameworkDetail(vm FrameworkDetailVM) {
 	@ui2.Page("ui2-compliance") {
 	<div class="ops-toolbar ops-spaced">
-		<a href="/compliance" class="ops-link">
+		@ui2.Link("/compliance", templ.Attributes{"class": "ops-link"}) {
 			@ui.IconSVG("chevron", 13)
 			Compliance
-		</a>
+		}
 		if vm.CanEdit {
-			<a href={ templ.SafeURL("/compliance/frameworks/" + vm.Framework.ID.String() + "/edit") }
-				class="ops-button">
+			@ui2.Link(templ.SafeURL("/compliance/frameworks/"+vm.Framework.ID.String()+"/edit"), templ.Attributes{"class": "ops-button"}) {
 				Edit framework
-			</a>
+			}
 		} else {
 			<span class="ops-muted" title="You don't have permission to edit">
 				Edit framework
@@ -699,8 +652,8 @@ templ FrameworkDetail(vm FrameworkDetailVM) {
 	if len(vm.Requirements) > 0 {
 		<nav aria-label="Framework sections" class="ops-spaced">
 			<span class="ops-overline">Quick links</span>
-			<a href="#implementation-mapping" class="ops-button">Implementation mapping</a>
-			<a href="#statement-of-applicability" class="ops-button">SOA</a>
+			@ui2.Link("#implementation-mapping", templ.Attributes{"class": "ops-button"}) { Implementation mapping }
+			@ui2.Link("#statement-of-applicability", templ.Attributes{"class": "ops-button"}) { SOA }
 		</nav>
 	}
 
@@ -723,7 +676,7 @@ templ FrameworkDetail(vm FrameworkDetailVM) {
 							<tr >
 								<td class="ops-reference"> { row.Requirement.Ref } </td>
 								<td>
-									<a href={ templ.SafeURL("/compliance/requirements/" + row.Requirement.ID.String()) } class="ops-link">{ row.Requirement.Title }</a>
+									@ui2.Link(templ.SafeURL("/compliance/requirements/"+row.Requirement.ID.String()), templ.Attributes{"class": "ops-link"}) { { row.Requirement.Title } }
 								</td>
 								<td>
 									if len(row.Measures) == 0 {
@@ -732,7 +685,7 @@ templ FrameworkDetail(vm FrameworkDetailVM) {
 										<ul class="ops-list">
 											for _, m := range row.Measures {
 												<li class="ops-list-item">
-													<a href={ templ.SafeURL("/measures/" + m.ID.String()) } class="ops-link">{ m.Name }</a>
+													@ui2.Link(templ.SafeURL("/measures/"+m.ID.String()), templ.Attributes{"class": "ops-link"}) { { m.Name } }
 													@measureStatusBadge(m.Status)
 												</li>
 											}
@@ -754,7 +707,7 @@ templ FrameworkDetail(vm FrameworkDetailVM) {
 		if len(vm.Requirements) == 0 {
 			<p class="ops-muted">No requirements yet.
 				if vm.CanEdit {
-					<a href={ templ.SafeURL("/compliance/frameworks/" + vm.Framework.ID.String() + "/requirements/new") } class="ops-link">Add one →</a>
+					@ui2.Link(templ.SafeURL("/compliance/frameworks/"+vm.Framework.ID.String()+"/requirements/new"), templ.Attributes{"class": "ops-link"}) { Add one → }
 				}
 			</p>
 		} else {
@@ -773,7 +726,7 @@ templ FrameworkDetail(vm FrameworkDetailVM) {
 							<tr >
 								<td class="ops-reference"> { req.Ref } </td>
 								<td>
-									<a href={ templ.SafeURL("/compliance/requirements/" + req.ID.String()) } class="ops-link">{ req.Title }</a>
+									@ui2.Link(templ.SafeURL("/compliance/requirements/"+req.ID.String()), templ.Attributes{"class": "ops-link"}) { { req.Title } }
 									if req.Description != "" {
 										<p class="ops-muted ops-truncate">{ req.Description }</p>
 									}

@@ -61,15 +61,15 @@ templ MeasureList(measures []MeasureVM, filter, q, sort, dir string, mine bool, 
 
 	<div class="ops-toolbar">
 		<p data-testid="measure-count" class="ops-muted">{ locale.TN(ctx, "measures_count", len(measures), map[string]any{"Count": len(measures)}) }</p>
-		<a href="/measures/new" class="ops-button">
+		@ui2.Link("/measures/new", templ.Attributes{"class": "ops-button"}) {
 			@ui.IconSVG("plus", 13)
 			{ locale.T(ctx, "action_add_measure") }
-		</a>
+		}
 	</div>
 
 	@ui2.FilterBar(ui2.FilterBarProps{ID: "measures-filters", Action: "/measures", Target: "#measures-table"}) {
-		<input type="hidden" name="sort" value={ sort }/>
-		<input type="hidden" name="dir" value={ dir }/>
+		@ui2.Input(templ.Attributes{"type": "hidden", "name": "sort", "value": sort})
+		@ui2.Input(templ.Attributes{"type": "hidden", "name": "dir", "value": dir})
 		@ui2.FilterSearch(ui2.FilterSearchProps{
 			Value:   q,
 			Columns: []string{"label_name", "label_owner"},
@@ -94,12 +94,10 @@ templ MeasureList(measures []MeasureVM, filter, q, sort, dir string, mine bool, 
 
 templ MeasuresTable(measures []MeasureVM, hasMore bool, pageSize int32, filter, q, sort, dir string, mine bool) {
 	if len(measures) == 0 {
-		<p data-testid="no-measures-empty">{ locale.T(ctx, "measures_none_yet") } <a href="/measures/new">Add your first measure →</a></p>
+		<p data-testid="no-measures-empty">{ locale.T(ctx, "measures_none_yet") } @ui2.Link("/measures/new", nil) { Add your first measure → }</p>
 	} else {
-		<section role="region" aria-label="Measures table" tabindex="0" class="ops-table">
-			<table class="ops-data-table">
-					<caption class="sr-only">Measures</caption>
-					<thead class="ops-table-head">
+		@ui2.Table(locale.T(ctx, "nav_measures")) {
+					<thead>
 						<tr>
 							@ui2.SortTh(locale.T(ctx, "label_measure"), "name", ui2.SortState{Col: sort, Dir: dir}, "/measures", "#measures-table", "measures-filters", "ops-sort-heading")
 							@ui2.SortTh(locale.T(ctx, "label_status"), "status", ui2.SortState{Col: sort, Dir: dir}, "/measures", "#measures-table", "measures-filters", "ops-sort-heading")
@@ -111,8 +109,7 @@ templ MeasuresTable(measures []MeasureVM, hasMore bool, pageSize int32, filter, 
 					<tbody>
 						@MeasureRows(measures, hasMore, pageSize, filter, q, sort, dir, mine)
 					</tbody>
-			</table>
-		</section>
+		}
 	}
 }
 
@@ -124,7 +121,7 @@ templ MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, 
 					if mvm.Measure.RefNum.Valid {
 						<span class="ops-reference">{ measureRef(mvm.Measure.RefNum) }</span>
 					}
-					<a href={ templ.SafeURL("/measures/" + mvm.Measure.ID.String()) } class="ops-link ops-truncate">{ mvm.Measure.Name }</a>
+					@ui2.Link(templ.SafeURL("/measures/"+mvm.Measure.ID.String()), templ.Attributes{"class": "ops-link ops-truncate"}) { { mvm.Measure.Name } }
 				</div>
 				if mvm.Measure.Category != "" {
 					<p class="ops-muted">{ mvm.Measure.Category }</p>
@@ -151,24 +148,14 @@ templ MeasureRows(measures []MeasureVM, hasMore bool, nextOffset int32, filter, 
 				</div>
 			</td>
 			<td class="ops-align-end">
-				<a href={ templ.SafeURL("/measures/" + mvm.Measure.ID.String() + "/edit") }
-					aria-label={ "Edit measure " + mvm.Measure.Name }
-					class="ops-link">edit</a>
+				@ui2.Link(templ.SafeURL("/measures/"+mvm.Measure.ID.String()+"/edit"), templ.Attributes{"aria-label": "Edit measure " + mvm.Measure.Name, "class": "ops-link"}) { edit }
 			</td>
 		</tr>
 	}
 	if hasMore {
 		<tr id="load-more-row">
 			<td colspan="5" class="ops-align-center">
-				<a
-					href={ templ.SafeURL("/measures?offset=" + fmt.Sprint(nextOffset) + "&filter=" + filter + "&q=" + q + "&sort=" + sort + "&dir=" + dir + "&mine=" + listMineQueryValue(mine)) }
-					hx-get="/measures"
-					hx-include="#measures-filters"
-					hx-vals={ fmt.Sprintf(`{"offset":"%d"}`, nextOffset) }
-					hx-target="#load-more-row"
-					hx-swap="outerHTML"
-					class="ops-button"
-				>Load more</a>
+				@ui2.Link(templ.SafeURL("/measures?offset="+fmt.Sprint(nextOffset)+"&filter="+filter+"&q="+q+"&sort="+sort+"&dir="+dir+"&mine="+listMineQueryValue(mine)), templ.Attributes{"hx-get": "/measures", "hx-include": "#measures-filters", "hx-vals": fmt.Sprintf(`{"offset":"%d"}`, nextOffset), "hx-target": "#load-more-row", "hx-swap": "outerHTML", "class": "ops-button"}) { Load more }
 			</td>
 		</tr>
 	}
@@ -179,30 +166,6 @@ func listMineQueryValue(mine bool) string {
 		return "on"
 	}
 	return ""
-}
-
-// ── Measure core fields (shared component) ──
-
-// MeasureCoreFields renders name, category, owner, and due-date inputs.
-templ MeasureCoreFields() {
-	<div>
-		<label for="measure-name" class="ops-label">{ locale.T(ctx, "label_name") } <span aria-hidden="true">*</span></label>
-		<input id="measure-name" type="text" name="name" required placeholder="e.g. Patch management process" class="ops-input"/>
-	</div>
-	<div>
-		<label for="measure-category" class="ops-label">{ locale.T(ctx, "label_category") }</label>
-		<input id="measure-category" type="text" name="category" placeholder="e.g. Technical, Organisational" class="ops-input"/>
-	</div>
-	<div>
-		<label for="measure-owner" class="ops-label">{ locale.T(ctx, "label_owner_free_text_name") }</label>
-		<input id="measure-owner" type="text" name="owner" placeholder="Name or team responsible" class="ops-input"/>
-	</div>
-	<div>
-		<label for="measure-due-date" class="ops-label">{ locale.T(ctx, "label_due_date") }</label>
-		<input id="measure-due-date" type="date" name="due_date" class="ops-input"/>
-		<p class="ops-muted">{ locale.T(ctx, "label_due_date_measure_hint") }</p>
-	</div>
-	@measureTextarea("label_description", "description", "Optional detailed description", "")
 }
 
 // ── Measure form ──
@@ -220,7 +183,7 @@ templ measureFormContent(m *db.Measure, users []db.User, flash, flashType string
 
 	<div class="ops-stack ops-narrow">
 		<form method="POST" action={ measureFormAction(m) } class="ops-form-inline">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 			if m == nil {
 				@formstemplates.MeasureCreateFields(users, "measure-create")
 			} else {
@@ -232,7 +195,7 @@ templ measureFormContent(m *db.Measure, users []db.User, flash, flashType string
 
 			<div>
 				<label for="status" class="ops-label">{ locale.T(ctx, "label_status") }</label>
-				<select id="status" name="status" class="ops-input">
+				@ui2.Select(templ.Attributes{"id": "status", "name": "status", "class": "ops-input"}) {
 					for _, opt := range []struct{ Val, Key string }{
 						{"planned", "status_planned"},
 						{"in_progress", "status_in_progress"},
@@ -241,31 +204,24 @@ templ measureFormContent(m *db.Measure, users []db.User, flash, flashType string
 					} {
 						<option value={ opt.Val } selected?={ measureFieldVal(m, "status") == opt.Val }>{ locale.T(ctx, opt.Key) }</option>
 					}
-				</select>
+				}
 			</div>
 
 			<div class="ops-inline">
-				<button type="submit">
+				@ui2.Button(templ.Attributes{"type": "submit"}) {
 					if m == nil {
 						{ locale.T(ctx, "action_create_measure") }
 					} else {
 						{ locale.T(ctx, "action_save_changes") }
 					}
-				</button>
-				<a href="/measures" class="ops-button">
+				}
+				@ui2.Link("/measures", templ.Attributes{"class": "ops-button"}) {
 					{ locale.T(ctx, "action_cancel") }
-				</a>
+				}
 				if m != nil {
-					<button
-						type="submit"
-						formaction={ templ.SafeURL("/measures/" + m.ID.String() + "/delete") }
-						formmethod="POST"
-						onclick="return confirm('Delete this measure?')"
-						data-tone="danger"
-						class="ops-link"
-					>
+					@ui2.Button(templ.Attributes{"type": "submit", "formaction": "/measures/" + m.ID.String() + "/delete", "formmethod": "POST", "onclick": "return confirm('Delete this measure?')", "data-tone": "danger", "class": "ops-link"}) {
 						{ locale.T(ctx, "action_delete") }
-					</button>
+					}
 				}
 			</div>
 		</form>
@@ -306,15 +262,14 @@ func measureFieldVal(m *db.Measure, field string) string {
 templ MeasureDetail(vm MeasureDetailVM) {
 	@ui2.Page("ui2-measures") {
 	<div class="ops-toolbar ops-spaced">
-		<a href="/measures" class="ops-link">
+		@ui2.Link("/measures", templ.Attributes{"class": "ops-link"}) {
 			@ui.IconSVG("chevron", 13)
 			Measures
-		</a>
+		}
 		if vm.CanEdit {
-			<a href={ templ.SafeURL("/measures/" + vm.Measure.ID.String() + "/edit") }
-				class="ops-button">
+			@ui2.Link(templ.SafeURL("/measures/"+vm.Measure.ID.String()+"/edit"), templ.Attributes{"class": "ops-button"}) {
 				Edit measure
-			</a>
+			}
 		} else {
 			<span class="ops-muted" title="You don't have permission to edit">
 				Edit measure
@@ -345,14 +300,13 @@ templ MeasureDetail(vm MeasureDetailVM) {
 			<ul class="ops-list">
 				for _, lnk := range vm.Links {
 					<li class="ops-list-item">
-						<a href={ templ.SafeURL(lnk.Url) } target="_blank" rel="noopener noreferrer"
-							class="ops-link ops-break">
+						@ui2.UntrustedLink(lnk.Url, templ.Attributes{"target": "_blank", "rel": "noopener noreferrer", "class": "ops-link ops-break"}) {
 							if lnk.Label != "" {
 								{ lnk.Label }
 							} else {
 								{ lnk.Url }
 							}
-						</a>
+						}
 					</li>
 				}
 			</ul>
@@ -377,7 +331,7 @@ templ MeasureDetail(vm MeasureDetailVM) {
 								</td>
 								<td class="ops-reference">{ req.Ref }</td>
 								<td>
-									<a href={ templ.SafeURL("/compliance/requirements/" + req.ID.String()) } class="ops-link">{ req.Title }</a>
+									@ui2.Link(templ.SafeURL("/compliance/requirements/"+req.ID.String()), templ.Attributes{"class": "ops-link"}) { { req.Title } }
 								</td>
 							</tr>
 						}
@@ -400,7 +354,7 @@ templ MeasureDetail(vm MeasureDetailVM) {
 						for _, a := range vm.Activities {
 							<tr>
 								<td>
-									<a href={ templ.SafeURL("/activities/" + a.ID.String()) } class="ops-link">{ a.Title }</a>
+									@ui2.Link(templ.SafeURL("/activities/"+a.ID.String()), templ.Attributes{"class": "ops-link"}) { { a.Title } }
 								</td>
 								<td>@measureStatusBadge(a.Status)</td>
 								<td>
@@ -426,27 +380,24 @@ templ MeasureDetail(vm MeasureDetailVM) {
 			<ul class="ops-list-box">
 				for i, risk := range vm.LinkedRisks {
 					<li>
-					<a
-						href={ templ.SafeURL("/risks/" + risk.AssessmentID.String() + "/risks/" + risk.ID.String()) }
-						class={ "ops-risk-link", templ.KV("ops-risk-next", i > 0) }
-					>
+					@ui2.Link(templ.SafeURL("/risks/"+risk.AssessmentID.String()+"/risks/"+risk.ID.String()), templ.Attributes{"class": measureRiskLinkClass(i)}) {
 						<span class="ops-muted ops-truncate">{ risk.Name }</span>
 						<div class="ops-inline">
 							if risk.LikelihoodCurrent.Valid && risk.ConsequenceCurrent.Valid {
-								<div class={ "ops-risk-score", riskScoreBgClass(int(risk.LikelihoodCurrent.Int32)*int(risk.ConsequenceCurrent.Int32)) }>
+								<div class="ops-risk-score" data-tone={ ui2.Tone(int(risk.LikelihoodCurrent.Int32)*int(risk.ConsequenceCurrent.Int32), vm.LowMax, vm.HighMin) }>
 									<span>{ fmt.Sprint(int(risk.LikelihoodCurrent.Int32)*int(risk.ConsequenceCurrent.Int32)) }</span>
 									<span >{ locale.T(ctx, "label_now") }</span>
 								</div>
 							}
 							if risk.LikelihoodTarget.Valid && risk.ConsequenceTarget.Valid {
 								<span class="ops-muted">→</span>
-								<div class={ "ops-risk-score", riskScoreBgClass(int(risk.LikelihoodTarget.Int32)*int(risk.ConsequenceTarget.Int32)) }>
+								<div class="ops-risk-score" data-tone={ ui2.Tone(int(risk.LikelihoodTarget.Int32)*int(risk.ConsequenceTarget.Int32), vm.LowMax, vm.HighMin) }>
 									<span>{ fmt.Sprint(int(risk.LikelihoodTarget.Int32)*int(risk.ConsequenceTarget.Int32)) }</span>
 									<span >{ locale.T(ctx, "label_target_score") }</span>
 								</div>
 							}
 						</div>
-					</a>
+					}
 					</li>
 				}
 			</ul>
@@ -530,8 +481,8 @@ templ measureLinksSection(vm MeasureEditVM) {
 								<td>{ req.Title }</td>
 								<td class="ops-align-end">
 									<form method="POST" action={ templ.SafeURL("/measures/" + vm.Measure.ID.String() + "/requirements/" + req.ID.String() + "/delete") }>
-										<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-										<button type="submit" data-tone="danger" aria-label={ "Remove requirement " + req.Ref + ": " + req.Title } class="ops-danger-link">remove</button>
+										@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+										@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "aria-label": "Remove requirement " + req.Ref + ": " + req.Title, "class": "ops-danger-link"}) { remove }
 									</form>
 								</td>
 							</tr>
@@ -541,11 +492,7 @@ templ measureLinksSection(vm MeasureEditVM) {
 		}
 		<div class="ops-stack">
 			<label for="requirement-link-search" class="ops-label">Search and link requirement</label>
-			<input id="requirement-link-search" type="text" name="q" placeholder="Type ref or title..." class="ops-input"
-				hx-get={ "/measures/" + vm.Measure.ID.String() + "/requirements/search" }
-				hx-trigger="input delay:250ms, search"
-				hx-target={ "#measure-requirement-search-results-" + vm.Measure.ID.String() }
-				hx-swap="innerHTML"/>
+			@ui2.Input(templ.Attributes{"id": "requirement-link-search", "type": "text", "name": "q", "placeholder": "Type ref or title...", "class": "ops-input", "hx-get": "/measures/" + vm.Measure.ID.String() + "/requirements/search", "hx-trigger": "input delay:250ms, search", "hx-target": "#measure-requirement-search-results-" + vm.Measure.ID.String(), "hx-swap": "innerHTML"})
 			@MeasureRequirementSearchResults(vm.Measure.ID.String(), nil, "")
 		</div>
 	</section>
@@ -569,9 +516,9 @@ templ MeasureRequirementSearchResults(measureID string, requirements []db.ListRe
 								<td>{ req.Title }</td>
 								<td class="ops-align-end">
 									<form method="POST" action={ templ.SafeURL("/measures/" + measureID + "/requirements") }>
-										<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-										<input type="hidden" name="requirement_id" value={ req.ID.String() }/>
-										<button type="submit" class="ops-link">{ locale.T(ctx, "action_link_requirement") }</button>
+										@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+										@ui2.Input(templ.Attributes{"type": "hidden", "name": "requirement_id", "value": req.ID.String()})
+										@ui2.Button(templ.Attributes{"type": "submit", "class": "ops-link"}) { { locale.T(ctx, "action_link_requirement") } }
 									</form>
 								</td>
 							</tr>
@@ -590,21 +537,20 @@ templ measureDocSection(vm MeasureEditVM) {
 				for _, lnk := range vm.Links {
 					<li class="ops-list-item">
 						<span >
-							<a href={ templ.SafeURL(lnk.Url) } target="_blank" rel="noopener noreferrer"
-								class="ops-link ops-break">
+							@ui2.UntrustedLink(lnk.Url, templ.Attributes{"target": "_blank", "rel": "noopener noreferrer", "class": "ops-link ops-break"}) {
 								if lnk.Label != "" {
 									{ lnk.Label }
 								} else {
 									{ lnk.Url }
 								}
-							</a>
+							}
 							if lnk.Label != "" {
 								<span class="ops-muted ops-break">{ lnk.Url }</span>
 							}
 						</span>
 						<form method="POST" action={ templ.SafeURL("/measures/" + vm.Measure.ID.String() + "/links/" + lnk.ID.String() + "/delete") } class="ops-form-inline">
-							<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-							<button type="submit" data-tone="danger" aria-label={ "Remove link " + lnk.Url } class="ops-danger-link">remove</button>
+							@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+							@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "aria-label": "Remove link " + lnk.Url, "class": "ops-danger-link"}) { remove }
 						</form>
 					</li>
 				}
@@ -613,13 +559,13 @@ templ measureDocSection(vm MeasureEditVM) {
 			<p class="ops-muted">No documentation links yet.</p>
 		}
 		<form method="POST" action={ templ.SafeURL("/measures/" + vm.Measure.ID.String() + "/links") } class="ops-form-inline">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-			<input id="doc-url" type="url" name="url" placeholder="https://..." required aria-label="URL" class="ops-input"/>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+			@ui2.Input(templ.Attributes{"id": "doc-url", "type": "url", "name": "url", "placeholder": "https://...", "required": true, "aria-label": "URL", "class": "ops-input"})
 			<div class="ops-inline">
-				<input id="doc-label" type="text" name="label" placeholder="Label (optional)" aria-label="Label (optional)" class="ops-input"/>
-				<button type="submit" class="ops-button">
+				@ui2.Input(templ.Attributes{"id": "doc-label", "type": "text", "name": "label", "placeholder": "Label (optional)", "aria-label": "Label (optional)", "class": "ops-input"})
+				@ui2.Button(templ.Attributes{"type": "submit", "class": "ops-button"}) {
 					{ locale.T(ctx, "action_add_link") }
-				</button>
+				}
 			</div>
 		</form>
 	</section>
@@ -635,14 +581,14 @@ templ measureInputField(labelKey, name, placeholder, value string, required bool
 				<span aria-hidden="true">*</span>
 			}
 		</label>
-		<input id={ name } name={ name } type="text" value={ value } placeholder={ placeholder } required?={ required } class="ops-input"/>
+		@ui2.Input(templ.Attributes{"id": name, "name": name, "type": "text", "value": value, "placeholder": placeholder, "required": required, "class": "ops-input"})
 	</div>
 }
 
 templ measureTextarea(labelKey, name, placeholder, value string) {
 	<div>
 		<label for={ name } class="ops-label">{ locale.T(ctx, labelKey) }</label>
-		<textarea id={ name } name={ name } placeholder={ placeholder } rows="3" class="ops-input">{ value }</textarea>
+		@ui2.Textarea(templ.Attributes{"id": name, "name": name, "placeholder": placeholder, "rows": "3", "class": "ops-input"}) { { value } }
 	</div>
 }
 
@@ -650,16 +596,16 @@ templ measureAssigneePicker(m *db.Measure, users []db.User) {
 	<div class="ops-stack">
 		<div>
 			<label for="assignee_id" class="ops-label">{ locale.T(ctx, "label_assignee_registered") }</label>
-			<select id="assignee_id" name="assignee_id" class="ops-input">
+			@ui2.Select(templ.Attributes{"id": "assignee_id", "name": "assignee_id", "class": "ops-input"}) {
 				<option value="">— none —</option>
 				for _, u := range users {
 					<option value={ u.ID.String() } selected?={ measureAssigneeSelected(m, u.ID) }>{ u.Name } ({ u.Email })</option>
 				}
-			</select>
+			}
 		</div>
 		<div>
 			<label for="owner" class="ops-label">{ locale.T(ctx, "label_owner_text_team") }</label>
-			<input id="owner" name="owner" type="search" value={ measureFieldVal(m, "owner") } placeholder="Search user or enter custom owner" list="measure-owner-list" class="ops-input"/>
+			@ui2.Input(templ.Attributes{"id": "owner", "name": "owner", "type": "search", "value": measureFieldVal(m, "owner"), "placeholder": "Search user or enter custom owner", "list": "measure-owner-list", "class": "ops-input"})
 			<datalist id="measure-owner-list">
 				for _, u := range users {
 					<option value={ u.Name } label={ u.Email }></option>
@@ -683,13 +629,9 @@ func measureAssigneePickerData(m *db.Measure) string {
 	return `{ assigneeID: '', owner: '' }`
 }
 
-func riskScoreBgClass(score int) string {
-	switch {
-	case score >= 12:
-		return "ops-risk-high"
-	case score >= 6:
-		return "ops-risk-medium"
-	default:
-		return "ops-risk-low"
+func measureRiskLinkClass(i int) string {
+	if i > 0 {
+		return "ops-risk-link ops-risk-next"
 	}
+	return "ops-risk-link"
 }

@@ -11,15 +11,9 @@ import (
 	"github.com/3lbits/vigil/internal/ui2"
 )
 
-func previewTone(score, lowMax, highMin int) string {
-	return ui2.Tone(score, lowMax, highMin)
-}
-
 templ previewScore(l, c sql.NullInt32, lowMax, highMin int) {
 	if l.Valid && c.Valid {
-		<data value={ fmt.Sprint(l.Int32 * c.Int32) } data-tone={ previewTone(int(l.Int32*c.Int32), lowMax, highMin) }>
-			{ fmt.Sprint(l.Int32 * c.Int32) }
-		</data>
+		@ui2.RiskLevel(int(l.Int32*c.Int32), lowMax, highMin)
 	} else {
 		<span>—</span>
 	}
@@ -76,9 +70,9 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 				}
 			</div>
 			<nav aria-label={ locale.T(ctx, "nav_risk_assessments") }>
-				<a href="/risks">{ locale.T(ctx, "nav_risk_assessments") }</a>
-				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/review") }>{ locale.T(ctx, "action_review") }</a>
-				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") }>{ locale.T(ctx, "action_continue_wizard") }</a>
+				@ui2.Link("/risks", nil) { { locale.T(ctx, "nav_risk_assessments") } }
+				@ui2.Link(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/review"), nil) { { locale.T(ctx, "action_review") } }
+				@ui2.Link(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2"), nil) { { locale.T(ctx, "action_continue_wizard") } }
 			</nav>
 		</header>
 		if vm.Flash != "" {
@@ -93,16 +87,16 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 				<h3>{ locale.T(ctx, "assessment_pending_acceptance_msg") }</h3>
 				<div class="ui2-actions">
 					<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/accept") }>
-						<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-						<button type="submit">{ locale.T(ctx, "action_accept") }</button>
+						@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+						@ui2.Button(templ.Attributes{"type": "submit"}) { { locale.T(ctx, "action_accept") } }
 					</form>
 					<details>
 						<summary>{ locale.T(ctx, "action_decline") }</summary>
 						<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/decline") }>
-							<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+							@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 							<label for="ui2-decline-note">Reason for declining (optional)</label>
-							<textarea id="ui2-decline-note" name="note" rows="3"></textarea>
-							<button type="submit" data-tone="danger">{ locale.T(ctx, "action_return_to_draft") }</button>
+							@ui2.Textarea(templ.Attributes{"id": "ui2-decline-note", "name": "note", "rows": "3"}) {}
+							@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger"}) { { locale.T(ctx, "action_return_to_draft") } }
 						</form>
 					</details>
 				</div>
@@ -113,11 +107,11 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 		}
 		if vm.CanTogglePublic {
 			<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/toggle-public") }>
-				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+				@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 				if vm.Assessment.IsPublic {
-					<button type="submit">Public</button>
+					@ui2.Button(templ.Attributes{"type": "submit"}) { Public }
 				} else {
-					<button type="submit">Private</button>
+					@ui2.Button(templ.Attributes{"type": "submit"}) { Private }
 				}
 			</form>
 		}
@@ -210,7 +204,7 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 				if strings.TrimSpace(vm.Assessment.ThreatInformationFlow) == "" {
 					<p>{ locale.T(ctx, "text_threat_diagram_empty") }</p>
 				} else {
-					<button type="button" @click="render()" :disabled="rendering">{ locale.T(ctx, "action_update_diagram") }</button>
+					@ui2.Button(templ.Attributes{"type": "button", "@click": "render()", ":disabled": "rendering"}) { { locale.T(ctx, "action_update_diagram") } }
 					<span x-show="error" x-text="error" role="alert"></span>
 					<div x-ref="out" class="ui2-diagram"></div>
 				}
@@ -219,7 +213,7 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 		@ui2.Panel() {
 			<h3>{ locale.TN(ctx, "risk_register_count", len(vm.Risks), map[string]any{"Count": len(vm.Risks)}) }</h3>
 			if len(vm.Risks) == 0 {
-				<p>{ locale.T(ctx, "risk_none_identified") } <a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2") }>{ locale.T(ctx, "action_goto_identification") }</a></p>
+				<p>{ locale.T(ctx, "risk_none_identified") } @ui2.Link(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/2"), nil) { { locale.T(ctx, "action_goto_identification") } }</p>
 			} else {
 				@ui2.Table(locale.T(ctx, "label_risks")) {
 					<thead>
@@ -234,12 +228,12 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 						for _, risk := range vm.Risks {
 							<tr>
 								<th scope="row">
-									<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + risk.ID.String()) }>
+									@ui2.Link(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + risk.ID.String()), nil) {
 										if risk.RefNum.Valid {
 											{ riskRef(risk.RefNum) }
 										}
 										{ risk.Name }
-									</a>
+									}
 									if risk.Description != "" {
 										<small>{ risk.Description }</small>
 									}
@@ -263,8 +257,8 @@ templ AssessmentDetailPreview(vm AssessmentDetailVM) {
 			<summary>{ locale.T(ctx, "action_delete_assessment") }</summary>
 			<p>Delete this assessment and all risks?</p>
 			<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/delete") }>
-				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-				<button type="submit" data-tone="danger">{ locale.T(ctx, "action_delete_assessment") }</button>
+				@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+				@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger"}) { { locale.T(ctx, "action_delete_assessment") } }
 			</form>
 		</details>
 	}

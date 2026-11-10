@@ -40,10 +40,10 @@ templ AssetList(assets []db.Asset, q, status, flash, flashType string, hasMore b
 
 	<div class="ops-toolbar">
 		<p class="ops-muted">{ locale.T(ctx, "assets_inventory") }</p>
-		<a href="/assets/new" class="ops-button">
+		@ui2.Link("/assets/new", templ.Attributes{"class": "ops-button"}) {
 			@ui.IconSVG("plus", 13)
 			{ locale.T(ctx, "action_add_asset") }
-		</a>
+		}
 	</div>
 
 	@ui2.FilterBar(ui2.FilterBarProps{Action: "/assets", Target: "#assets-table"}) {
@@ -70,11 +70,9 @@ templ AssetList(assets []db.Asset, q, status, flash, flashType string, hasMore b
 
 templ AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status string) {
 	if len(assets) == 0 {
-		<p>{ locale.T(ctx, "assets_none_found") } <a href="/assets/new">{ locale.T(ctx, "assets_add_first") }</a></p>
+		<p>{ locale.T(ctx, "assets_none_found") } @ui2.Link("/assets/new", nil) { { locale.T(ctx, "assets_add_first") } }</p>
 	} else {
-		<section role="region" aria-label={ locale.T(ctx, "assets_table_aria") } tabindex="0" class="ops-table">
-			<table class="ops-data-table">
-					<caption class="sr-only">{ locale.T(ctx, "assets_table_caption") }</caption>
+		@ui2.Table(locale.T(ctx, "assets_table_caption")) {
 					<thead>
 						<tr>
 							<th scope="col">{ locale.T(ctx, "label_name") }</th>
@@ -89,7 +87,7 @@ templ AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status st
 						for _, a := range assets {
 							<tr>
 								<td>
-									<a href={ templ.SafeURL("/assets/" + a.ID.String()) } class="ops-link">{ a.Name }</a>
+									@ui2.Link(templ.SafeURL("/assets/"+a.ID.String()), templ.Attributes{"class": "ops-link"}) { { a.Name } }
 								</td>
 								<td>{ zeroDash(a.AssetType) }</td>
 								<td>{ zeroDash(a.Owner) }</td>
@@ -100,20 +98,19 @@ templ AssetTable(assets []db.Asset, hasMore bool, nextOffset int32, q, status st
 									<span class={ criticalityClass(a.Criticality) }>{ localizeCriticality(ctx, a.Criticality) }</span>
 								</td>
 								<td>
-									<a href={ templ.SafeURL("/assets/" + a.ID.String() + "/edit") } class="ops-link">{ locale.T(ctx, "action_edit_lower") }</a>
+									@ui2.Link(templ.SafeURL("/assets/"+a.ID.String()+"/edit"), templ.Attributes{"class": "ops-link"}) { { locale.T(ctx, "action_edit_lower") } }
 								</td>
 							</tr>
 						}
 						if hasMore {
 							<tr>
 								<td colspan="6" class="ops-align-center">
-									<a href={ templ.SafeURL("/assets?offset=" + fmt.Sprint(nextOffset) + "&q=" + q + "&status=" + status) } class="ops-button">{ locale.T(ctx, "action_load_more") }</a>
+									@ui2.Link(templ.SafeURL("/assets?offset="+fmt.Sprint(nextOffset)+"&q="+q+"&status="+status), templ.Attributes{"class": "ops-button"}) { { locale.T(ctx, "action_load_more") } }
 								</td>
 							</tr>
 						}
 					</tbody>
-			</table>
-		</section>
+		}
 	}
 }
 
@@ -124,53 +121,47 @@ templ AssetForm(a *db.Asset, flash, flashType string, auditLog []db.ListAuditLog
 	}
 	<div class="ops-stack ops-medium">
 		<form method="POST" action={ assetFormAction(a) } class="ops-form-inline">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-			<div>
-				<label for="asset-name" class="ops-label">{ locale.T(ctx, "label_name") } <span class="ops-error">*</span></label>
-				<input id="asset-name" type="text" name="name" required value={ assetValue(a, "name") } placeholder={ locale.T(ctx, "assets_placeholder_name") } class="ops-input"/>
-			</div>
-			<div>
-				<label for="asset-description" class="ops-label">{ locale.T(ctx, "label_description") }</label>
-				<textarea id="asset-description" name="description" rows="4" class="ops-input">{ assetValue(a, "description") }</textarea>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+			@ui2.Field("asset-name", locale.T(ctx, "label_name"), true) {
+				@ui2.Input(templ.Attributes{"id": "asset-name", "type": "text", "name": "name", "required": true, "value": assetValue(a, "name"), "placeholder": locale.T(ctx, "assets_placeholder_name")})
+			}
+			@ui2.Field("asset-description", locale.T(ctx, "label_description"), false) {
+				@ui2.Textarea(templ.Attributes{"id": "asset-description", "name": "description", "rows": "4"}) { { assetValue(a, "description") } }
+			}
+			<div class="ops-fields">
+				@ui2.Field("asset-type", locale.T(ctx, "label_asset_type"), false) {
+					@ui2.Input(templ.Attributes{"id": "asset-type", "type": "text", "name": "asset_type", "value": assetValue(a, "asset_type"), "placeholder": locale.T(ctx, "assets_placeholder_type")})
+				}
+				@ui2.Field("asset-owner", locale.T(ctx, "label_asset_owner"), false) {
+					@ui2.Input(templ.Attributes{"id": "asset-owner", "type": "text", "name": "owner", "value": assetValue(a, "owner"), "placeholder": locale.T(ctx, "assets_placeholder_owner")})
+				}
 			</div>
 			<div class="ops-fields">
-				<div>
-					<label for="asset-type" class="ops-label">{ locale.T(ctx, "label_asset_type") }</label>
-					<input id="asset-type" type="text" name="asset_type" value={ assetValue(a, "asset_type") } placeholder={ locale.T(ctx, "assets_placeholder_type") } class="ops-input"/>
-				</div>
-				<div>
-					<label for="asset-owner" class="ops-label">{ locale.T(ctx, "label_asset_owner") }</label>
-					<input id="asset-owner" type="text" name="owner" value={ assetValue(a, "owner") } placeholder={ locale.T(ctx, "assets_placeholder_owner") } class="ops-input"/>
-				</div>
-			</div>
-			<div class="ops-fields">
-				<div>
-					<label for="asset-status" class="ops-label">{ locale.T(ctx, "label_status") }</label>
-					<select id="asset-status" name="status" class="ops-input">
+				@ui2.Field("asset-status", locale.T(ctx, "label_status"), false) {
+					@ui2.Select(templ.Attributes{"id": "asset-status", "name": "status"}) {
 						<option value="active" selected?={ assetValue(a, "status") == "active" || assetValue(a, "status") == "" }>{ locale.T(ctx, "status_active") }</option>
 						<option value="planned" selected?={ assetValue(a, "status") == "planned" }>{ locale.T(ctx, "status_planned") }</option>
 						<option value="retired" selected?={ assetValue(a, "status") == "retired" }>{ locale.T(ctx, "status_retired") }</option>
-					</select>
-				</div>
-				<div>
-					<label for="asset-criticality" class="ops-label">{ locale.T(ctx, "assets_criticality") }</label>
-					<select id="asset-criticality" name="criticality" class="ops-input">
+					}
+				}
+				@ui2.Field("asset-criticality", locale.T(ctx, "assets_criticality"), false) {
+					@ui2.Select(templ.Attributes{"id": "asset-criticality", "name": "criticality"}) {
 						<option value="low" selected?={ assetValue(a, "criticality") == "low" }>{ locale.T(ctx, "risk_level_low") }</option>
 						<option value="medium" selected?={ assetValue(a, "criticality") == "medium" || assetValue(a, "criticality") == "" }>{ locale.T(ctx, "risk_level_medium") }</option>
 						<option value="high" selected?={ assetValue(a, "criticality") == "high" }>{ locale.T(ctx, "risk_level_high") }</option>
-					</select>
-				</div>
+					}
+				}
 			</div>
 			<div class="ops-inline">
-				<button type="submit">
+				@ui2.Button(templ.Attributes{"type": "submit"}) {
 					if a == nil {
 						{ locale.T(ctx, "action_create_asset") }
 					} else {
 						{ locale.T(ctx, "action_save_changes") }
 					}
-				</button>
+				}
 				if a != nil {
-					<a href={ templ.SafeURL("/assets/" + a.ID.String()) } class="ops-button">{ locale.T(ctx, "action_cancel") }</a>
+					@ui2.Link(templ.SafeURL("/assets/"+a.ID.String()), templ.Attributes{"class": "ops-button"}) { { locale.T(ctx, "action_cancel") } }
 				}
 			</div>
 		</form>
@@ -197,7 +188,7 @@ templ AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []
 					</div>
 				</div>
 				if canEdit {
-					<a href={ templ.SafeURL("/assets/" + a.ID.String() + "/edit") } class="ops-button">{ locale.T(ctx, "action_edit") }</a>
+					@ui2.Link(templ.SafeURL("/assets/"+a.ID.String()+"/edit"), templ.Attributes{"class": "ops-button"}) { { locale.T(ctx, "action_edit") } }
 				}
 			</header>
 			<div class="ops-fields ops-spaced">
@@ -221,8 +212,8 @@ templ AssetDetail(a db.Asset, canEdit bool, flash, flashType string, auditLog []
 		}
 		if canEdit {
 			<form method="POST" action={ templ.SafeURL("/assets/" + a.ID.String() + "/delete") } onsubmit="return confirm('Delete this asset?')">
-				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-				<button type="submit" data-tone="danger" class="ops-link">{ locale.T(ctx, "action_delete_asset") }</button>
+				@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+				@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "class": "ops-link"}) { { locale.T(ctx, "action_delete_asset") } }
 			</form>
 		}
 		@assetRecentChanges(auditLog, "")

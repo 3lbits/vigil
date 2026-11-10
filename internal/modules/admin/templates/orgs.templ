@@ -17,14 +17,12 @@ templ OrgsPage(orgs []db.Organization, flash, flashType string) {
 	<section>
 		<h2>{ locale.T(ctx, "action_add_org_unit") }</h2>
 		<form method="POST" action="/admin/orgs">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-			<div>
-				<label for="org_name">{ locale.T(ctx, "label_name") } <span aria-hidden="true">*</span></label>
-				<input id="org_name" name="name" type="text" required placeholder={ locale.T(ctx, "admin_org_placeholder") }/>
-			</div>
-			<div>
-				<label for="parent_id">{ locale.T(ctx, "admin_parent_unit") }</label>
-				<select id="parent_id" name="parent_id">
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+			@ui2.Field("org_name", locale.T(ctx, "label_name"), true) {
+				@ui2.Input(templ.Attributes{"id": "org_name", "name": "name", "type": "text", "required": true, "placeholder": locale.T(ctx, "admin_org_placeholder")})
+			}
+			@ui2.Field("parent_id", locale.T(ctx, "admin_parent_unit"), false) {
+				@ui2.Select(templ.Attributes{"id": "parent_id", "name": "parent_id"}) {
 					<option value="">— { locale.T(ctx, "admin_top_level") } —</option>
 					for _, o := range orgs {
 						if !o.ParentID.Valid {
@@ -36,12 +34,12 @@ templ OrgsPage(orgs []db.Organization, flash, flashType string) {
 							}
 						}
 					}
-				</select>
-			</div>
+				}
+			}
 			<div>
-				<button type="submit">
+				@ui2.Button(templ.Attributes{"type": "submit"}) {
 					{ locale.T(ctx, "action_add") }
-				</button>
+				}
 			</div>
 		</form>
 	</section>
@@ -75,8 +73,8 @@ templ orgRow(o db.Organization, depth int, all []db.Organization) {
 			{ o.Name }
 		</span>
 		<form method="POST" action={ templ.SafeURL("/admin/orgs/" + o.ID.String() + "/delete") } onsubmit="return confirm('Delete this org unit? This may affect linked assessments.')">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-			<button type="submit" data-tone="danger" aria-label={ locale.T(ctx, "action_delete") + " " + o.Name }>×</button>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+			@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "aria-label": locale.T(ctx, "action_delete") + " " + o.Name}) { × }
 		</form>
 	</div>
 	if orgHasChildren(o, all) {
@@ -115,19 +113,17 @@ templ RiskSettingsPage(acceptanceCriteria, flash, flashType string) {
 	@ui2.Page("ui2-admin") {
 	@adminFlash(flash, flashType)
 	<section>
-		<h2 class="admin-visually-hidden">{ locale.T(ctx, "tab_risk_settings") }</h2>
+		<h2 class="sr-only">{ locale.T(ctx, "tab_risk_settings") }</h2>
 		<p>{ locale.T(ctx, "admin_risk_settings_help") }</p>
 		<form method="POST" action="/admin/risk-settings">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+			@ui2.Field("acceptance_criteria", locale.T(ctx, "label_acceptance_criteria"), false) {
+				@ui2.Textarea(templ.Attributes{"id": "acceptance_criteria", "name": "acceptance_criteria", "rows": "5", "placeholder": locale.T(ctx, "admin_acceptance_criteria_placeholder")}) { { acceptanceCriteria } }
+			}
 			<div>
-				<label for="acceptance_criteria">{ locale.T(ctx, "label_acceptance_criteria") }</label>
-				<textarea id="acceptance_criteria" name="acceptance_criteria" rows="5"
-					placeholder={ locale.T(ctx, "admin_acceptance_criteria_placeholder") }>{ acceptanceCriteria }</textarea>
-			</div>
-			<div>
-				<button type="submit">
+				@ui2.Button(templ.Attributes{"type": "submit"}) {
 					{ locale.T(ctx, "action_save") }
-				</button>
+				}
 			</div>
 		</form>
 	</section>

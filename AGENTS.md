@@ -104,6 +104,11 @@ If you need to change generated output, change the source (`.templ` file,
 - Compose shared page markup from `internal/ui2` (layout entry point, page,
   panels, grids, notices, metrics, badges and tables). Module templates own
   their feature-specific forms, data rows, links and conditional content.
+- Keep UI2 small: use its existing controls for interactive elements, but leave
+  feature-specific structure as native HTML. Add a component only when it is
+  reused across pages or enforces a shared invariant; do not wrap every tag.
+- Use `ui2.Link` for app-built trusted URLs and `ui2.UntrustedLink` for
+  stored or user-supplied URLs so templ can sanitize them.
 - UI2's layout reuses the existing document/navigation shell in
   `internal/ui/layout` for its auth, locale and CSP wiring; don't copy it.
   The login page has its own document shell because it has no session navigation.

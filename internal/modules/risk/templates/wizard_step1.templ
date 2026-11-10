@@ -4,6 +4,7 @@ import (
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui2"
 	"github.com/google/uuid"
 )
 
@@ -15,13 +16,13 @@ templ WizardStep1(vm WizardStep1VM) {
 		action={ templ.SafeURL(wizardPostAction(vm.IsNew, vm.Assessment.ID.String(), "")) }
 		class="risk-form-width"
 	>
-		<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+		@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 		<section class="ui2-panel">
 			<h2>{ locale.T(ctx, "label_assessment") }</h2>
 			<div class="risk-fields">
 				<div>
 					<label for="name">{ locale.T(ctx, "label_assessment_name") } *</label>
-					<input id="name" name="name" type="text" required value={ vm.Assessment.Name } placeholder="e.g. ISMS Annual Risk Assessment 2026"/>
+					@ui2.Input(templ.Attributes{"id": "name", "name": "name", "type": "text", "required": true, "value": vm.Assessment.Name, "placeholder": "e.g. ISMS Annual Risk Assessment 2026"})
 				</div>
 				<div class="risk-two-columns">
 					<div class="risk-tight-list">
@@ -42,26 +43,20 @@ templ WizardStep1(vm WizardStep1VM) {
 						{ locale.T(ctx, "label_scope_analysis_object") }
 						@helpIcon("Describe what is being assessed — system, process, or asset — and what&#39;s included/excluded.")
 					</label>
-					<textarea id="scope" name="scope" rows="3" placeholder={ locale.T(ctx, "placeholder_assessment_scope") }>{ vm.Assessment.Scope }</textarea>
+					@ui2.Textarea(templ.Attributes{"id": "scope", "name": "scope", "rows": "3", "placeholder": locale.T(ctx, "placeholder_assessment_scope")}) { { vm.Assessment.Scope } }
 				</div>
 				<div>
 					<label for="security_objectives" class="risk-controls">
 						{ locale.T(ctx, "label_objectives") }
 						@helpIcon("What are you protecting and why? Security concerns and business/compliance drivers.")
 					</label>
-					<textarea id="security_objectives" name="security_objectives" rows="3" placeholder={ locale.T(ctx, "placeholder_assessment_objectives") }>{ vm.Assessment.SecurityObjectives }</textarea>
+					@ui2.Textarea(templ.Attributes{"id": "security_objectives", "name": "security_objectives", "rows": "3", "placeholder": locale.T(ctx, "placeholder_assessment_objectives")}) { { vm.Assessment.SecurityObjectives } }
 				</div>
 			</div>
 		</div>
 		<div class="ui2-panel">
 			<label class="risk-check-option">
-				<input
-					type="checkbox"
-					id="threat_assessment_enabled"
-					name="threat_assessment_enabled"
-					class="risk-check-input"
-					checked?={ vm.ThreatEnabled }
-				/>
+				@ui2.Input(templ.Attributes{"type": "checkbox", "id": "threat_assessment_enabled", "name": "threat_assessment_enabled", "class": "risk-check-input", "checked": vm.ThreatEnabled})
 				<span>
 					<span class="risk-controls">
 						{ locale.T(ctx, "label_enable_threat_assessment") }
@@ -87,17 +82,10 @@ templ WizardStep1(vm WizardStep1VM) {
 					} else {
 						<div class="risk-chip-list">
 							for _, p := range vm.Participants {
-								<button
-									type="submit"
-									data-tone="danger"
-									formmethod="post"
-									formaction={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/participants/" + p.ID.String() + "/remove") }
-									formnovalidate
-									class="risk-participant-chip"
-								>
+								@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "formmethod": "post", "formaction": "/risks/" + vm.Assessment.ID.String() + "/participants/" + p.ID.String() + "/remove", "formnovalidate": true, "class": "risk-participant-chip"}) {
 									<span>{ p.Name }</span>
 									<span aria-hidden="true">×</span>
-								</button>
+								}
 							}
 						</div>
 					}
@@ -105,15 +93,9 @@ templ WizardStep1(vm WizardStep1VM) {
 				<div class="risk-add-section">
 					<h3 class="risk-subheading" style="font-size: 11px; margin-bottom: 0.25rem">Add participant</h3>
 					<div class="risk-controls">
-						<label for="participant-search" class="risk-visually-hidden">{ locale.T(ctx, "label_search_participants") }</label>
-						<input id="participant-search" name="participant_q" type="search" value={ vm.ParticipantQuery } placeholder={ locale.T(ctx, "placeholder_search_name_or_email") }/>
-						<button
-							type="submit"
-							formmethod="get"
-							formaction={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/review/step/1") }
-							formnovalidate
-							class="risk-secondary-button"
-						>{ locale.T(ctx, "action_search") }</button>
+						<label for="participant-search" class="sr-only">{ locale.T(ctx, "label_search_participants") }</label>
+						@ui2.Input(templ.Attributes{"id": "participant-search", "name": "participant_q", "type": "search", "value": vm.ParticipantQuery, "placeholder": locale.T(ctx, "placeholder_search_name_or_email")})
+						@ui2.Button(templ.Attributes{"type": "submit", "formmethod": "get", "formaction": "/risks/" + vm.Assessment.ID.String() + "/review/step/1", "formnovalidate": true, "class": "risk-secondary-button"}) { { locale.T(ctx, "action_search") } }
 					</div>
 					if vm.ParticipantQuery != "" {
 						<div class="risk-results">
@@ -126,13 +108,7 @@ templ WizardStep1(vm WizardStep1VM) {
 											<div class="risk-result-name">{ u.Name }</div>
 											<div class="risk-result-detail">{ u.Email }</div>
 										</div>
-										<button
-											type="submit"
-											formmethod="post"
-											formaction={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/participants/" + u.ID.String() + "/add") }
-											formnovalidate
-											class="risk-small-button"
-										>Add</button>
+										@ui2.Button(templ.Attributes{"type": "submit", "formmethod": "post", "formaction": "/risks/" + vm.Assessment.ID.String() + "/participants/" + u.ID.String() + "/add", "formnovalidate": true, "class": "risk-small-button"}) { Add }
 									</div>
 								}
 							}
@@ -155,17 +131,10 @@ templ WizardStep1(vm WizardStep1VM) {
 					} else {
 						<div class="risk-chip-list">
 							for _, a := range vm.Assets {
-								<button
-									type="submit"
-									data-tone="danger"
-									formmethod="post"
-									formaction={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/assets/" + a.ID.String() + "/remove") }
-									formnovalidate
-									class="risk-asset-chip"
-								>
+								@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "formmethod": "post", "formaction": "/risks/" + vm.Assessment.ID.String() + "/assets/" + a.ID.String() + "/remove", "formnovalidate": true, "class": "risk-asset-chip"}) {
 									<span>{ a.Name }</span>
 									<span aria-hidden="true">×</span>
-								</button>
+								}
 							}
 						</div>
 					}
@@ -173,15 +142,9 @@ templ WizardStep1(vm WizardStep1VM) {
 				<div class="risk-add-section">
 					<h3 class="risk-subheading" style="font-size: 11px; margin-bottom: 0.25rem">Link asset</h3>
 					<div class="risk-controls">
-						<label for="asset-search" class="risk-visually-hidden">{ locale.T(ctx, "label_search_assets") }</label>
-						<input id="asset-search" name="asset_q" type="search" value={ vm.AssetQuery } placeholder={ locale.T(ctx, "placeholder_search_name_or_owner") }/>
-						<button
-							type="submit"
-							formmethod="get"
-							formaction={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/review/step/1") }
-							formnovalidate
-							class="risk-secondary-button"
-						>{ locale.T(ctx, "action_search") }</button>
+						<label for="asset-search" class="sr-only">{ locale.T(ctx, "label_search_assets") }</label>
+						@ui2.Input(templ.Attributes{"id": "asset-search", "name": "asset_q", "type": "search", "value": vm.AssetQuery, "placeholder": locale.T(ctx, "placeholder_search_name_or_owner")})
+						@ui2.Button(templ.Attributes{"type": "submit", "formmethod": "get", "formaction": "/risks/" + vm.Assessment.ID.String() + "/review/step/1", "formnovalidate": true, "class": "risk-secondary-button"}) { { locale.T(ctx, "action_search") } }
 					</div>
 					if vm.AssetQuery != "" {
 						<div class="risk-results">
@@ -196,13 +159,7 @@ templ WizardStep1(vm WizardStep1VM) {
 												<div class="risk-result-detail">{ a.Owner }</div>
 											}
 										</div>
-										<button
-											type="submit"
-											formmethod="post"
-											formaction={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/assets/" + a.ID.String() + "/add") }
-											formnovalidate
-											class="risk-small-button"
-										>Add</button>
+										@ui2.Button(templ.Attributes{"type": "submit", "formmethod": "post", "formaction": "/risks/" + vm.Assessment.ID.String() + "/assets/" + a.ID.String() + "/add", "formnovalidate": true, "class": "risk-small-button"}) { Add }
 									</div>
 								}
 							}
@@ -215,23 +172,23 @@ templ WizardStep1(vm WizardStep1VM) {
 			<section class="ui2-panel">
 				<div class="risk-split">
 					<h2 class="risk-section-heading">{ locale.T(ctx, "label_risk_acceptance_criteria") }</h2>
-					<a href="/admin?tab=risk" class="risk-link-toggle">Edit →</a>
+					@ui2.Link("/admin?tab=risk", templ.Attributes{"class": "risk-link-toggle"}) { Edit → }
 				</div>
 				<p class="risk-preformatted">{ vm.AcceptanceCriteria }</p>
 			</section>
 		} else {
 			<p class="risk-criteria-missing">
-				No global risk acceptance criteria set. <a href="/admin?tab=risk" class="risk-link-toggle">Set criteria in admin →</a>
+				No global risk acceptance criteria set. @ui2.Link("/admin?tab=risk", templ.Attributes{"class": "risk-link-toggle"}) { Set criteria in admin → }
 			</p>
 		}
 		<div class="risk-end-actions">
-			<button type="submit">
+			@ui2.Button(templ.Attributes{"type": "submit"}) {
 				if vm.IsNew {
 					Save and identify risks →
 				} else {
 					Save and continue →
 				}
-			</button>
+			}
 		</div>
 	</form>
 }
@@ -239,7 +196,7 @@ templ WizardStep1(vm WizardStep1VM) {
 // helpIcon renders a keyboard- and pointer-accessible help popover.
 templ helpIcon(text string) {
 	<span class="risk-help">
-		<button type="button" aria-label="Help">?</button>
+		@ui2.Button(templ.Attributes{"type": "button", "aria-label": "Help"}) { ? }
 		<span class="risk-help-text">
 			{ text }
 		</span>
@@ -257,7 +214,7 @@ func isParticipant(id uuid.UUID, participants []db.User) bool {
 
 // orgPicker renders a grouped org select — top-level orgs followed by indented children/grandchildren.
 templ orgPicker(name string, selected uuid.NullUUID, orgs []db.Organization) {
-	<select id={ name } name={ name }>
+	@ui2.Select(templ.Attributes{"id": name, "name": name}) {
 		<option value="">— none —</option>
 		for _, o := range orgs {
 			if !o.ParentID.Valid {
@@ -274,17 +231,17 @@ templ orgPicker(name string, selected uuid.NullUUID, orgs []db.Organization) {
 				}
 			}
 		}
-	</select>
+	}
 }
 
 // userPicker renders a user select matching the pattern used in measures/activities.
 templ userPicker(name string, selected uuid.NullUUID, users []db.User) {
-	<select id={ name } name={ name }>
+	@ui2.Select(templ.Attributes{"id": name, "name": name}) {
 		<option value="">— unassigned —</option>
 		for _, u := range users {
 			<option value={ u.ID.String() } selected?={ selected.Valid && selected.UUID == u.ID }>{ u.Name }</option>
 		}
-	</select>
+	}
 }
 
 func wizardPostAction(isNew bool, id, suffix string) string {

@@ -52,7 +52,7 @@ templ ownedActivitiesCard(rows []db.ListOwnedActivitiesRow) {
 			<ul>
 				for _, row := range rows {
 					<li>
-						<a href={ templ.SafeURL("/activities/" + row.ID.String()) }>{ row.Title }</a>
+						@ui2.Link(templ.SafeURL("/activities/"+row.ID.String()), nil) { { row.Title } }
 						<small>{ row.Status } · { row.Priority }</small>
 						if row.MeasureName != "" {
 							<small>{ row.MeasureName }</small>
@@ -76,7 +76,7 @@ templ ownedMeasuresCard(rows []db.ListOwnedMeasuresRow) {
 			<ul>
 				for _, row := range rows {
 					<li>
-						<a href={ templ.SafeURL("/measures/" + row.ID.String()) }>{ row.Name }</a>
+						@ui2.Link(templ.SafeURL("/measures/"+row.ID.String()), nil) { { row.Name } }
 						<small>{ row.Status }</small>
 						<small>{ locale.T(ctx, "my_last_changed_label") }: { row.UpdatedAt }</small>
 					</li>
@@ -95,7 +95,7 @@ templ ownedRisksCard(rows []db.ListOwnedRisksRow) {
 			<ul>
 				for _, row := range rows {
 					<li>
-						<a href={ templ.SafeURL("/risks/" + row.AssessmentID.String() + "/risks/" + row.ID.String()) }>{ row.Name }</a>
+						@ui2.Link(templ.SafeURL("/risks/"+row.AssessmentID.String()+"/risks/"+row.ID.String()), nil) { { row.Name } }
 						<small>{ fmt.Sprintf("%s #%03d", row.AssessmentName, row.AssessmentRefNum) }</small>
 						<small>{ locale.T(ctx, "my_risk_score_label") }: { fmt.Sprint(row.LikelihoodCurrent*row.ConsequenceCurrent) }</small>
 						<small>{ locale.T(ctx, "my_last_changed_label") }: { row.UpdatedAt }</small>

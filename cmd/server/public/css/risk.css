@@ -20,17 +20,6 @@
 .ui2-risk :is(a, button):is(.risk-secondary-button, .risk-secondary-link, .risk-small-button):hover {
   filter: brightness(.9);
 }
-.ui2-risk .risk-visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
 .ui2-risk :is(.risk-wide, .risk-narrow, .risk-form-width) { width: 100%; }
 .ui2-risk .risk-wide { max-width: 72rem; }
 .ui2-risk .risk-narrow { max-width: 48rem; }
@@ -166,7 +155,7 @@
 .ui2-risk .ui2-panel h2 > button.risk-split { width: 100%; padding: 0; border: 0; background: transparent; color: var(--ui2-fg); text-align: left; cursor: pointer; }
 .ui2-risk .ui2-panel > details > summary.risk-split { padding: .5rem; cursor: pointer; }
 .ui2-risk .risk-score-fields select, .ui2-risk :is(.risk-form-width, .risk-narrow) :is(input:not([type=checkbox], [type=radio], [type=hidden]), select) { width: 100%; }
-.ui2-risk :is(.risk-form-width, .risk-narrow, .risk-wide) label:not(.risk-radio-option, .risk-check-option, .risk-visually-hidden) { display: block; margin-bottom: .25rem; }
+.ui2-risk :is(.risk-form-width, .risk-narrow, .risk-wide) label:not(.risk-radio-option, .risk-check-option, .sr-only) { display: block; margin-bottom: .25rem; }
 .ui2-risk .risk-radio-option, .ui2-risk .risk-check-option { cursor: pointer; }
 .ui2-risk .risk-check-option { display: flex; align-items: flex-start; gap: .75rem; }
 .ui2-risk .risk-check-input { width: 1rem; height: 1rem; margin-top: .125rem; }

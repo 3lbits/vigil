@@ -5,6 +5,7 @@ import (
 	"github.com/3lbits/vigil/internal/csrf"
 	"github.com/3lbits/vigil/internal/db"
 	"github.com/3lbits/vigil/internal/locale"
+	"github.com/3lbits/vigil/internal/ui2"
 )
 
 templ WizardEvaluate(vm EvaluationVM) {
@@ -23,7 +24,7 @@ templ WizardEvaluate(vm EvaluationVM) {
 			}
 		</section>
 		<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/3/evaluate") }>
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 			<div class="ui2-panel">
 				<div class="risk-eval-header">
 					<span>{ locale.T(ctx, "label_risk") }</span>
@@ -35,8 +36,8 @@ templ WizardEvaluate(vm EvaluationVM) {
 				}
 			</div>
 			<div class="risk-split">
-				<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/3") } class="risk-back-link">← { locale.T(ctx, "action_back_to_scoring") }</a>
-				<button type="submit">{ locale.T(ctx, "action_confirm_plan_treatment") } →</button>
+				@ui2.Link(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/step/3"), templ.Attributes{"class": "risk-back-link"}) { ← { locale.T(ctx, "action_back_to_scoring") } }
+				@ui2.Button(templ.Attributes{"type": "submit"}) { { locale.T(ctx, "action_confirm_plan_treatment") } → }
 			</div>
 		</form>
 	</div>
@@ -53,17 +54,11 @@ templ evalRow(risk db.Risk, lowMax, highMin int) {
 			</div>
 			@evalScore(risk.LikelihoodCurrent.Int32, risk.ConsequenceCurrent.Int32, risk.LikelihoodCurrent.Valid, lowMax, highMin)
 			<fieldset>
-				<legend class="risk-visually-hidden">{ locale.T(ctx, "label_decision_for") } { risk.Name }</legend>
+				<legend class="sr-only">{ locale.T(ctx, "label_decision_for") } { risk.Name }</legend>
 				<div class="risk-tight-list">
 					for _, opt := range []struct{ v, key string }{{"accept", "decision_accept"}, {"treat", "decision_treat"}, {"document", "decision_document"}} {
 						<label class="risk-radio-option">
-							<input
-								type="radio"
-								name={ "decision_" + risk.ID.String() }
-								value={ opt.v }
-								class="risk-radio"
-								checked?={ risk.RiskDecision == opt.v }
-							/>
+							@ui2.Input(templ.Attributes{"type": "radio", "name": "decision_" + risk.ID.String(), "value": opt.v, "class": "risk-radio", "checked": risk.RiskDecision == opt.v})
 							<span class={ "risk-decision-option", decisionOptionColor(opt.v) }>{ locale.T(ctx, opt.key) }</span>
 						</label>
 					}
@@ -72,7 +67,7 @@ templ evalRow(risk db.Risk, lowMax, highMin int) {
 		</div>
 		<div class="risk-eval-notes">
 			<label for={ "notes-" + risk.ID.String() }>{ locale.T(ctx, "label_documentation_notes") }</label>
-			<textarea id={ "notes-" + risk.ID.String() } name={ "notes_" + risk.ID.String() } rows="3" placeholder={ locale.T(ctx, "placeholder_decision_notes") }>{ risk.DecisionNotes }</textarea>
+			@ui2.Textarea(templ.Attributes{"id": "notes-" + risk.ID.String(), "name": "notes_" + risk.ID.String(), "rows": "3", "placeholder": locale.T(ctx, "placeholder_decision_notes")}) { { risk.DecisionNotes } }
 			<p class="risk-caption">{ locale.T(ctx, "text_used_when_decision_document") }</p>
 		</div>
 	</section>

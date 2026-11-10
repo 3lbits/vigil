@@ -60,6 +60,14 @@ func TestDashboardUI2_FrameworkCoverageRows(t *testing.T) {
 	if doc.Find(`[data-testid="no-frameworks-message"]`).Length() != 0 {
 		t.Error("should not show no-frameworks-message when frameworks exist")
 	}
+	if doc.Find(`meter[low="50"][high="80"][optimum="100"]`).Length() != 3 ||
+		rows.Eq(0).Find(`meter[value="75"]`).Length() != 1 ||
+		rows.Eq(1).Find(`meter[value="40"]`).Length() != 1 {
+		t.Error("overall and framework coverage must use native meters with visible thresholds")
+	}
+	if rows.Eq(0).Find(".ui2-coverage > span:last-child").Text() != "75 %" {
+		t.Error("coverage percentage must remain visible beside the meter")
+	}
 }
 
 func TestDashboardUI2_RiskAndFilter(t *testing.T) {
@@ -67,7 +75,7 @@ func TestDashboardUI2_RiskAndFilter(t *testing.T) {
 	risk := RiskStats{
 		Total: 1, RedCount: 1, LowMax: 5, HighMin: 12,
 		Matrix:      layout.BuildRiskMatrixCells(map[[2]int]int{{3, 4}: 1}),
-		TopRisks:    []db.ListTopRisksRow{{ID: id, Name: "Important risk", LikelihoodCurrent: sql.NullInt32{Int32: 3, Valid: true}, ConsequenceCurrent: sql.NullInt32{Int32: 4, Valid: true}}},
+		TopRisks:    []db.ListTopRisksRow{{ID: id, AssessmentID: id, Name: "Important risk", LikelihoodCurrent: sql.NullInt32{Int32: 3, Valid: true}, ConsequenceCurrent: sql.NullInt32{Int32: 4, Valid: true}}},
 		OrgOptions:  []OrgFilterOption{{ID: id.String(), Name: "North"}},
 		OrgSelected: id.String(),
 	}
@@ -79,15 +87,18 @@ func TestDashboardUI2_RiskAndFilter(t *testing.T) {
 	if got := doc.Find(`.ui2-matrix-cell[data-tone="danger"]`).Length(); got == 0 {
 		t.Error("expected high-risk matrix cells")
 	}
-	if got := doc.Find(`.ui2-table table caption`).Length(); got != 2 {
-		t.Errorf("labeled tables: got %d, want 2", got)
+	if got := doc.Find(`.ui2-table table caption`).Length(); got != 1 {
+		t.Errorf("labeled matrix tables: got %d, want 1", got)
 	}
 	if doc.Find(`select[name="risk_org_id"] option[selected][value="`+id.String()+`"]`).Length() != 1 ||
 		doc.Find(`a[href="/?framework_type=standard"][aria-current="page"]`).Length() != 1 {
 		t.Error("risk organization or framework filter selection lost")
 	}
-	if doc.Find(`progress[max="100"][value="40"]`).Length() != 2 {
-		t.Error("expected native overall and framework progress")
+	if doc.Find(`meter[value="40"]`).Length() != 2 {
+		t.Error("expected native overall and framework coverage meters")
+	}
+	if doc.Find(`.ui2-dashboard-list li a[href="/risks/`+id.String()+`/risks/`+id.String()+`"]`).Length() != 1 {
+		t.Error("top risk must link to its assessment")
 	}
 	if doc.Find(`.ui2-dashboard-list li a[href="/activities"]`).Length() != 0 {
 		t.Error("activities link shown when module disabled")

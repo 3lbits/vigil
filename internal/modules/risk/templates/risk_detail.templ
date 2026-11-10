@@ -11,12 +11,9 @@ import (
 
 templ RiskDetail(vm RiskDetailVM) {
 	<nav class="risk-detail-back" aria-label="Back to assessment">
-		<a
-			href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String()) }
-			class="risk-back-link"
-		>
+		@ui2.Link(templ.SafeURL("/risks/" + vm.Assessment.ID.String()), templ.Attributes{"class": "risk-back-link"}) {
 			← { vm.Assessment.Name }
-		</a>
+		}
 	</nav>
 	<div class="risk-detail-heading">
 		<header>
@@ -32,12 +29,9 @@ templ RiskDetail(vm RiskDetailVM) {
 		</header>
 		<div class="risk-controls">
 			@previewDecision(vm.Risk.RiskDecision)
-			<a
-				href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/decision/" + vm.Risk.ID.String()) }
-				class="risk-secondary-link"
-			>
+			@ui2.Link(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/decision/" + vm.Risk.ID.String()), templ.Attributes{"class": "risk-secondary-link"}) {
 				Edit decision
-			</a>
+			}
 		</div>
 	</div>
 	@ui2.Grid() {
@@ -120,30 +114,30 @@ templ RiskDetail(vm RiskDetailVM) {
 				</div>
 			}
 			<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + vm.Risk.ID.String() + "/reassess") }>
-				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+				@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 				<div class="risk-two-columns">
 					<div>
 						<label for="assessed-likelihood">{ locale.T(ctx, "label_assessed_likelihood") }</label>
-						<select id="assessed-likelihood" name="assessed_likelihood">
+						@ui2.Select(templ.Attributes{"id": "assessed-likelihood", "name": "assessed_likelihood"}) {
 							<option value="">—</option>
 							for i := 1; i <= 5; i++ {
 								<option value={ fmt.Sprint(i) } selected?={ vm.Risk.LikelihoodCurrent.Valid && int(vm.Risk.LikelihoodCurrent.Int32) == i }>{ fmt.Sprint(i) }</option>
 							}
-						</select>
+						}
 					</div>
 					<div>
 						<label for="assessed-consequence">{ locale.T(ctx, "label_assessed_consequence") }</label>
-						<select id="assessed-consequence" name="assessed_consequence">
+						@ui2.Select(templ.Attributes{"id": "assessed-consequence", "name": "assessed_consequence"}) {
 							<option value="">—</option>
 							for i := 1; i <= 5; i++ {
 								<option value={ fmt.Sprint(i) } selected?={ vm.Risk.ConsequenceCurrent.Valid && int(vm.Risk.ConsequenceCurrent.Int32) == i }>{ fmt.Sprint(i) }</option>
 							}
-						</select>
+						}
 					</div>
 				</div>
 				<label for="assessment-rationale">{ locale.T(ctx, "label_assessment_rationale_optional") }</label>
-				<textarea id="assessment-rationale" name="assessment_rationale" rows="3">{ vm.ReviewRationale }</textarea>
-				<button type="submit">{ locale.T(ctx, "action_save_reassessment") }</button>
+				@ui2.Textarea(templ.Attributes{"id": "assessment-rationale", "name": "assessment_rationale", "rows": "3"}) { { vm.ReviewRationale } }
+				@ui2.Button(templ.Attributes{"type": "submit"}) { { locale.T(ctx, "action_save_reassessment") } }
 			</form>
 		}
 	}
@@ -162,10 +156,7 @@ templ RiskDetail(vm RiskDetailVM) {
 			<p class="risk-empty-list">{ locale.T(ctx, "label_no_measures_linked") }</p>
 		} else {
 			for _, m := range vm.Measures {
-				<a
-					href={ templ.SafeURL("/measures/" + m.ID.String()) }
-					class="risk-linked-row"
-				>
+				@ui2.Link(templ.SafeURL("/measures/" + m.ID.String()), templ.Attributes{"class": "risk-linked-row"}) {
 					<div>
 						<span class="risk-linked-name">{ m.Name }</span>
 						if m.Category != "" {
@@ -173,7 +164,7 @@ templ RiskDetail(vm RiskDetailVM) {
 						}
 					</div>
 					@measureStatusBadge(m.Status)
-				</a>
+				}
 			}
 		}
 	</section>
@@ -193,18 +184,18 @@ templ RiskDetail(vm RiskDetailVM) {
 						}
 					</div>
 					<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + vm.Risk.ID.String() + "/assets/" + a.ID.String() + "/remove") }>
-						<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-						<input type="hidden" name="asset_q" value={ vm.AssetQuery }/>
-						<button type="submit" data-tone="danger" class="risk-small-button">{ locale.T(ctx, "action_remove") }</button>
+						@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+						@ui2.Input(templ.Attributes{"type": "hidden", "name": "asset_q", "value": vm.AssetQuery})
+						@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "class": "risk-small-button"}) { { locale.T(ctx, "action_remove") } }
 					</form>
 				</article>
 			}
 		}
 		<div>
 			<form method="GET" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + vm.Risk.ID.String()) } class="risk-controls">
-				<label for="asset-q" class="risk-visually-hidden">{ locale.T(ctx, "label_search_assets") }</label>
-				<input id="asset-q" name="asset_q" type="search" value={ vm.AssetQuery } placeholder={ locale.T(ctx, "placeholder_search_name_or_owner") }/>
-				<button type="submit" class="risk-secondary-button">{ locale.T(ctx, "action_search") }</button>
+				<label for="asset-q" class="sr-only">{ locale.T(ctx, "label_search_assets") }</label>
+				@ui2.Input(templ.Attributes{"id": "asset-q", "name": "asset_q", "type": "search", "value": vm.AssetQuery, "placeholder": locale.T(ctx, "placeholder_search_name_or_owner")})
+				@ui2.Button(templ.Attributes{"type": "submit", "class": "risk-secondary-button"}) { { locale.T(ctx, "action_search") } }
 			</form>
 			if vm.AssetQuery != "" {
 				<div class="risk-results">
@@ -220,9 +211,9 @@ templ RiskDetail(vm RiskDetailVM) {
 									}
 								</div>
 								<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + vm.Risk.ID.String() + "/assets/" + a.ID.String() + "/add") }>
-									<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-									<input type="hidden" name="asset_q" value={ vm.AssetQuery }/>
-									<button type="submit" class="risk-small-button">{ locale.T(ctx, "action_add") }</button>
+									@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+									@ui2.Input(templ.Attributes{"type": "hidden", "name": "asset_q", "value": vm.AssetQuery})
+									@ui2.Button(templ.Attributes{"type": "submit", "class": "risk-small-button"}) { { locale.T(ctx, "action_add") } }
 								</form>
 							</div>
 						}
@@ -239,10 +230,7 @@ templ RiskDetail(vm RiskDetailVM) {
 			<p class="risk-empty-list">{ locale.T(ctx, "label_no_activities_linked") }</p>
 		} else {
 			for _, a := range vm.Activities {
-				<a
-					href={ templ.SafeURL("/activities/" + a.ID.String()) }
-					class="risk-linked-row"
-				>
+				@ui2.Link(templ.SafeURL("/activities/" + a.ID.String()), templ.Attributes{"class": "risk-linked-row"}) {
 					<div>
 						<span class="risk-linked-name">{ a.Title }</span>
 						if a.Owner != "" {
@@ -255,16 +243,16 @@ templ RiskDetail(vm RiskDetailVM) {
 						}
 						@activityStatusBadge(a.Status)
 					</div>
-				</a>
+				}
 			}
 		}
 	</section>
 	<div class="risk-detail-delete">
 		<form method="POST" action={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/risks/" + vm.Risk.ID.String() + "/delete") } onsubmit="return confirm('Delete this risk and all its links?')">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-			<button type="submit" data-tone="danger" class="risk-delete-button">
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+			@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "class": "risk-delete-button"}) {
 				{ locale.T(ctx, "action_delete_risk") }
-			</button>
+			}
 		</form>
 	</div>
 }

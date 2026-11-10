@@ -170,8 +170,11 @@ body.ui2-shell { color: var(--ui2-fg); background: var(--ui2-bg); }
   background: var(--ui2-card);
   color: var(--ui2-fg);
 }
-.ui2 :is(input[type="checkbox"], input[type="radio"], progress, meter) { accent-color: var(--ui2-link); }
+.ui2 :is(input[type="checkbox"], input[type="radio"], progress) { accent-color: var(--ui2-link); }
 .ui2 progress { max-width: 100%; height: .75rem; }
+.ui2 .ui2-coverage { display: grid; grid-template-columns: minmax(6rem, 9rem) minmax(0, 1fr) 3rem; align-items: center; gap: .75rem; font-variant-numeric: tabular-nums; }
+.ui2 .ui2-coverage meter { width: 100%; min-width: 0; }
+.ui2 .ui2-coverage > :last-child { text-align: right; }
 .ui2 button[type="submit"]:not([class], [data-tone]) {
   padding: .5rem 1rem;
   border: 0;
@@ -237,22 +240,35 @@ body.ui2-shell { color: var(--ui2-fg); background: var(--ui2-bg); }
 .ui2 .ui2-diagram :is(svg, iframe) { max-width: 100%; }
 .ui2 .ui2-metric { padding: 1rem 1.25rem; border: 1px solid var(--ui2-border); border-radius: var(--ui2-radius); background: var(--ui2-card); }
 .ui2 .ui2-metric data { display: block; width: fit-content; padding: 0; border-radius: 0; background: transparent; color: var(--ui2-fg); font-size: 2.25rem; line-height: 1.1; font-weight: 600; }
-.ui2-dashboard .ui2-grid section { min-width: 0; }
+.ui2-dashboard .ui2-grid { align-items: start; gap: 1rem 2rem; }
+.ui2-dashboard .ui2-matrix .ui2-table { width: 100%; max-width: 24rem; }
+.ui2-dashboard .ui2-matrix table { width: 100%; }
+.ui2-dashboard .ui2-matrix :is(th, td) { width: auto; height: 3.75rem; }
+.ui2-dashboard .ui2-matrix-cell { width: 100%; height: 100%; }
 .ui2-dashboard .ui2-panel > :not(:last-child), .ui2-dashboard .ui2-metric > :not(:last-child) { margin-bottom: .75rem; }
 .ui2-dashboard h2 { font-size: 1.125rem; font-weight: 600; }
 .ui2-dashboard h3 { font-size: 1rem; font-weight: 600; }
-.ui2-dashboard-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); gap: .75rem; }
+.ui2-dashboard-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr)); gap: 1rem; }
+.ui2-dashboard .ui2-metric { display: flex; flex-direction: column; }
+.ui2-dashboard .ui2-metric data { order: -1; }
+.ui2-dashboard .ui2-metric :is(h2, p) { color: var(--ui2-muted); font-size: .875rem; font-weight: 400; }
+.ui2-dashboard .ui2-metric > :not(:last-child) { margin-bottom: .25rem; }
 .ui2-dashboard .ui2-dashboard-heading, .ui2-dashboard .ui2-dashboard-filter, .ui2-dashboard .ui2-dashboard-filters, .ui2-dashboard .ui2-dashboard-list li {
   display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem;
 }
 .ui2-dashboard .ui2-dashboard-heading { justify-content: space-between; }
-.ui2-dashboard .ui2-dashboard-filter select { min-width: 10rem; max-width: 100%; padding: .5rem; border: 1px solid var(--ui2-input); border-radius: var(--ui2-radius); background: var(--ui2-card); color: var(--ui2-fg); }
+.ui2-dashboard .ui2-dashboard-filter select { min-width: 10rem; }
 .ui2-dashboard .ui2-dashboard-filters a { padding: .25rem .5rem; border-radius: var(--ui2-radius); }
 .ui2-dashboard .ui2-dashboard-filters a[aria-current="page"] { background: var(--ui2-accent); font-weight: 600; }
 .ui2-dashboard .ui2-dashboard-list { list-style: none; padding: 0; }
-.ui2-dashboard .ui2-dashboard-list li { padding: .65rem 0; border-bottom: 1px solid var(--ui2-border); }
+.ui2-dashboard .ui2-dashboard-list li { justify-content: space-between; padding: .65rem 0; border-bottom: 1px solid var(--ui2-border); }
 .ui2-dashboard .ui2-dashboard-list li:last-child { border: 0; }
-.ui2-dashboard .ui2-dashboard-list progress { flex: 1 1 7rem; }
+.ui2-dashboard .ui2-dashboard-list li > span:first-child small { display: block; }
+.ui2-dashboard .ui2-dashboard-risk-score { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; }
+.ui2-dashboard .ui2-dashboard-frameworks { list-style: none; padding: 0; }
+.ui2-dashboard .ui2-dashboard-frameworks li { padding: .5rem 0; border-bottom: 1px solid var(--ui2-border); }
+.ui2-dashboard .ui2-dashboard-frameworks li:last-child { border: 0; }
+.ui2-dashboard .ui2-dashboard-frameworks small { margin-right: .5rem; }
 .ui2-dashboard .ui2-legend { margin-top: .75rem; }
 .ui2-dashboard .ui2-notice a { color: inherit; font-weight: 600; }
 .ui2-avvik a[hx-target="#avvik-tab-panel"] { text-decoration: none; }

@@ -24,7 +24,7 @@ templ wizardShell(assessmentID, assessmentName string, step int, isNew, threatEn
 			for i, item := range wizardSteps(ctx, threatEnabled) {
 				<span>
 					if i+1 < step && !isNew && assessmentID != "" {
-						<a href={ templ.SafeURL(wizardStepHref(assessmentID, item.Key)) }>{ fmt.Sprint(i + 1) }. { item.Label }</a>
+						@ui2.Link(templ.SafeURL(wizardStepHref(assessmentID, item.Key)), nil) { { fmt.Sprint(i + 1) }. { item.Label } }
 					} else if i+1 == step {
 						<strong aria-current="step">{ fmt.Sprint(i + 1) }. { item.Label }</strong>
 					} else {

@@ -3,6 +3,7 @@ package ui2
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"strings"
 	"testing"
 
@@ -22,5 +23,26 @@ func TestMatrixLabelsAxes(t *testing.T) {
 	}
 	if got := strings.Count(out.String(), `class="ui2-matrix-cell"`); got != 25 {
 		t.Errorf("matrix cells: got %d, want 25", got)
+	}
+	if got := strings.Count(out.String(), `<span class="sr-only">0</span>`); got != 25 {
+		t.Errorf("empty cells should hide zero visually but retain it for screen readers: got %d", got)
+	}
+}
+
+func TestRiskLevelMatchesMatrixThresholds(t *testing.T) {
+	for _, tc := range []struct {
+		score int
+		tone  string
+	}{
+		{5, "success"}, {6, "warning"}, {11, "warning"}, {12, "danger"},
+	} {
+		var out bytes.Buffer
+		if err := RiskLevel(tc.score, 5, 12).Render(context.Background(), &out); err != nil {
+			t.Fatal(err)
+		}
+		want := fmt.Sprintf(`<data value="%d" data-tone="%s">%d</data>`, tc.score, tc.tone, tc.score)
+		if !strings.Contains(out.String(), want) {
+			t.Errorf("score %d: got %q, want %q", tc.score, out.String(), want)
+		}
 	}
 }

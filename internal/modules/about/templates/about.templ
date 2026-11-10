@@ -10,7 +10,7 @@ templ About() {
 		@ui2.Panel() {
 			<h2>{ locale.T(ctx, "about_open_source_badge") }</h2>
 			<p>{ locale.T(ctx, "about_intro") }</p>
-			<a href="https://github.com/3lbits/vigil" target="_blank" rel="noopener noreferrer">https://github.com/3lbits/vigil</a>
+			@ui2.Link("https://github.com/3lbits/vigil", templ.Attributes{"target": "_blank", "rel": "noopener noreferrer"}) { https://github.com/3lbits/vigil }
 		}
 
 		<section>
@@ -25,7 +25,7 @@ templ About() {
 			</ul>
 			<p>
 				{ locale.T(ctx, "about_issues_intro") }
-				<a href="https://github.com/3lbits/vigil/issues" target="_blank" rel="noopener noreferrer">https://github.com/3lbits/vigil/issues</a>.
+				@ui2.Link("https://github.com/3lbits/vigil/issues", templ.Attributes{"target": "_blank", "rel": "noopener noreferrer"}) { https://github.com/3lbits/vigil/issues }.
 			</p>
 		</section>
 
@@ -46,7 +46,7 @@ templ About() {
 			<ul>
 				<li>
 					{ locale.T(ctx, "about_security_1_intro") }
-					<a href="https://github.com/3lbits/vigil/blob/main/SECURITY.md" target="_blank" rel="noopener noreferrer">SECURITY.md</a>.
+					@ui2.Link("https://github.com/3lbits/vigil/blob/main/SECURITY.md", templ.Attributes{"target": "_blank", "rel": "noopener noreferrer"}) { SECURITY.md }.
 				</li>
 				<li>{ locale.T(ctx, "about_security_2") }</li>
 				<li>{ locale.T(ctx, "about_security_3") }</li>
@@ -58,11 +58,11 @@ templ About() {
 			<h2>{ locale.T(ctx, "about_section_contributing") }</h2>
 			<p>
 				{ locale.T(ctx, "about_contributing_1_intro") }
-				<a href="https://github.com/3lbits/vigil/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">CONTRIBUTING.md</a>.
+				@ui2.Link("https://github.com/3lbits/vigil/blob/main/CONTRIBUTING.md", templ.Attributes{"target": "_blank", "rel": "noopener noreferrer"}) { CONTRIBUTING.md }.
 			</p>
 			<p>
 				{ locale.T(ctx, "about_contributing_2_intro") }
-				<a href="https://github.com/3lbits/vigil/blob/main/AGENTS.md" target="_blank" rel="noopener noreferrer">AGENTS.md</a>.
+				@ui2.Link("https://github.com/3lbits/vigil/blob/main/AGENTS.md", templ.Attributes{"target": "_blank", "rel": "noopener noreferrer"}) { AGENTS.md }.
 			</p>
 		</section>
 
@@ -70,7 +70,7 @@ templ About() {
 			<h2>{ locale.T(ctx, "about_section_posture") }</h2>
 			<p>
 				{ locale.T(ctx, "about_posture_1_intro") }
-				<a href="https://github.com/3lbits/vigil/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">LICENSE</a>.
+				@ui2.Link("https://github.com/3lbits/vigil/blob/main/LICENSE", templ.Attributes{"target": "_blank", "rel": "noopener noreferrer"}) { LICENSE }.
 				{ locale.T(ctx, "about_posture_1_outro") }
 			</p>
 			<p>{ locale.T(ctx, "about_posture_2") }</p>

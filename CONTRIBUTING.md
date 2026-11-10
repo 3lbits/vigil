@@ -104,8 +104,10 @@ applies equally to everyone, so reach for it when this summary isn't enough.
   treat budgets as guardrails, not targets. Do the cheap improvements and stop
   when the next gain costs more than it saves. Match the existing style.
 - **Compose app pages from `internal/ui2`.** Keep shared page structure
-  there and feature-specific content in module templates. UI2 reuses the
-  existing document/navigation shell; don't duplicate it.
+  there and feature-specific content in native HTML in module templates. Use
+  UI2 controls for interactive elements; add a component only for cross-page
+  reuse or a shared invariant. Use `ui2.UntrustedLink` for stored/user-supplied
+  URLs. UI2 reuses the existing document/navigation shell; don't duplicate it.
 - **Use plain CSS.** Shared styles live in `ui2.css` and feature styles beside
   it; `make css-build` combines them without a CSS framework.
 

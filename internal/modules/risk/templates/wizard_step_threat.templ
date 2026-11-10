@@ -14,7 +14,7 @@ templ WizardStepThreat(vm WizardStepThreatVM) {
 	}
 	@wizardFlash(vm.Flash)
 	<form method="POST" action={ templ.SafeURL(threatStepFormAction(vm.Assessment.ID.String(), vm.IsReview)) } class="risk-narrow">
-		<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+		@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 		<section class="ui2-panel">
 			<h2>{ locale.T(ctx, "heading_threat_context") }</h2>
 			<p class="risk-description">{ locale.T(ctx, "text_threat_context_guidance") }</p>
@@ -79,19 +79,19 @@ templ WizardStepThreat(vm WizardStepThreatVM) {
 			<div class="risk-fields">
 				<div>
 					<label for="threat_app_description">{ locale.T(ctx, "label_threat_app_description") }</label>
-					<textarea id="threat_app_description" name="threat_app_description" rows="5" placeholder={ locale.T(ctx, "placeholder_threat_app_description") }>{ vm.Assessment.ThreatAppDescription }</textarea>
+					@ui2.Textarea(templ.Attributes{"id": "threat_app_description", "name": "threat_app_description", "rows": "5", "placeholder": locale.T(ctx, "placeholder_threat_app_description")}) { { vm.Assessment.ThreatAppDescription } }
 				</div>
 				<div x-data="mermaidPreview()">
 					<label for="threat_information_flow" class="risk-controls">
 						{ locale.T(ctx, "label_threat_information_flow") }
 						@helpIcon(locale.T(ctx, "help_threat_information_flow"))
 					</label>
-					<textarea id="threat_information_flow" name="threat_information_flow" rows="8" x-ref="src" class="risk-monospace" placeholder={ locale.T(ctx, "placeholder_threat_information_flow") }>{ vm.Assessment.ThreatInformationFlow }</textarea>
+					@ui2.Textarea(templ.Attributes{"id": "threat_information_flow", "name": "threat_information_flow", "rows": "8", "x-ref": "src", "class": "risk-monospace", "placeholder": locale.T(ctx, "placeholder_threat_information_flow")}) { { vm.Assessment.ThreatInformationFlow } }
 					<div class="risk-controls">
-						<button type="button" @click="render()" :disabled="rendering" class="risk-secondary-button">
+						@ui2.Button(templ.Attributes{"type": "button", "@click": "render()", ":disabled": "rendering", "class": "risk-secondary-button"}) {
 							<span x-show="!rendering">{ locale.T(ctx, "action_update_diagram") }</span>
 							<span x-show="rendering" x-cloak>{ locale.T(ctx, "label_rendering") }</span>
-						</button>
+						}
 						<span x-show="error" x-text="error" class="risk-error-text"></span>
 					</div>
 					<div class="risk-diagram">
@@ -101,8 +101,8 @@ templ WizardStepThreat(vm WizardStepThreatVM) {
 			</div>
 		</section>
 		<div class="risk-split">
-			<a href={ templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/review/step/1") } class="risk-back-link">← { locale.T(ctx, "action_back_to_framework") }</a>
-			<button type="submit">{ locale.T(ctx, "action_save_continue_identify") } →</button>
+			@ui2.Link(templ.SafeURL("/risks/" + vm.Assessment.ID.String() + "/review/step/1"), templ.Attributes{"class": "risk-back-link"}) { ← { locale.T(ctx, "action_back_to_framework") } }
+			@ui2.Button(templ.Attributes{"type": "submit"}) { { locale.T(ctx, "action_save_continue_identify") } → }
 		</div>
 	</form>
 }

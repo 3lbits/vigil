@@ -32,10 +32,10 @@ templ AvvikList(items []db.Avvik, orgs []db.Organization, q, status, risk, orgUn
 	@ui2.Page("ui2-avvik") {
 	<div class="ops-between">
 		<p class="ops-muted">{ fmt.Sprintf("%d avvik", len(items)) }</p>
-		<a href="/avvik/new" class="ops-button">
+		@ui2.Link("/avvik/new", templ.Attributes{"class": "ops-button"}) {
 			@ui.IconSVG("plus", 13)
 			New Avvik
-		</a>
+		}
 	</div>
 	@ui2.FilterBar(ui2.FilterBarProps{Action: "/avvik", Target: "#avvik-table"}) {
 		@ui2.FilterSearch(ui2.FilterSearchProps{
@@ -90,7 +90,7 @@ templ AvvikTable(items []db.Avvik) {
 					for _, a := range items {
 						<tr>
 							<td>
-								<a href={ "/avvik/" + a.ID.String() } class="ops-link">{ a.Title }</a>
+								@ui2.Link(templ.SafeURL("/avvik/"+a.ID.String()), templ.Attributes{"class": "ops-link"}) { { a.Title } }
 								if a.GdprDeadlineAt.Valid && a.Status != "closed" && time.Now().UTC().After(a.GdprDeadlineAt.Time.Add(-24*time.Hour)) {
 									<p class="ops-error">GDPR clock</p>
 								}
@@ -129,33 +129,33 @@ templ AvvikTable(items []db.Avvik) {
 templ NewAvvikForm(orgs []db.Organization, users []db.User) {
 	@ui2.Page("ui2-avvik") {
 	<form method="POST" action="/avvik" class="ops-form ops-wide">
-		<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+		@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 		<div>
 			<label for="avvik-title" class="ops-label">{ locale.T(ctx, "label_title") } <span aria-hidden="true">*</span></label>
-			<input id="avvik-title" name="title" type="text" required class="ops-input"/>
+			@ui2.Input(templ.Attributes{"id": "avvik-title", "name": "title", "type": "text", "required": true, "class": "ops-input"})
 		</div>
 		<div>
 			<label for="avvik-description" class="ops-label">{ locale.T(ctx, "label_description") }</label>
-			<textarea id="avvik-description" name="description" rows="4"></textarea>
+			@ui2.Textarea(templ.Attributes{"id": "avvik-description", "name": "description", "rows": "4"}) {}
 		</div>
 		<div class="ops-fields">
 			<div>
 				<label for="avvik-discovered-at" class="ops-label">{ locale.T(ctx, "label_when") }</label>
-				<input id="avvik-discovered-at" name="discovered_at" type="date" class="ops-input"/>
+				@ui2.Input(templ.Attributes{"id": "avvik-discovered-at", "name": "discovered_at", "type": "date", "class": "ops-input"})
 			</div>
 			<div>
 				<label for="avvik-risk-level" class="ops-label">{ locale.T(ctx, "label_risk") }</label>
-				<select id="avvik-risk-level" name="risk_level" class="ops-input">
+				@ui2.Select(templ.Attributes{"id": "avvik-risk-level", "name": "risk_level", "class": "ops-input"}) {
 					<option value="low">low</option>
 					<option value="medium" selected>medium</option>
 					<option value="high">high</option>
-				</select>
+				}
 			</div>
 		</div>
 		<div class="ops-fields">
 			<div class="ops-stack">
 				<label for="avvik-reporter-name" class="ops-label">Reporter name</label>
-				<input id="avvik-reporter-name" name="reporter_name" type="search" list="reporter_name_list" placeholder="Search user by name/email or enter custom" class="ops-input"/>
+				@ui2.Input(templ.Attributes{"id": "avvik-reporter-name", "name": "reporter_name", "type": "search", "list": "reporter_name_list", "placeholder": "Search user by name/email or enter custom", "class": "ops-input"})
 				<datalist id="reporter_name_list">
 					for _, u := range users {
 						<option value={ u.Name } label={ u.Email }></option>
@@ -165,36 +165,36 @@ templ NewAvvikForm(orgs []db.Organization, users []db.User) {
 			</div>
 			<div>
 				<label for="avvik-reporter-email" class="ops-label">{ locale.T(ctx, "label_email") }</label>
-				<input id="avvik-reporter-email" name="reporter_email" type="email" class="ops-input"/>
+				@ui2.Input(templ.Attributes{"id": "avvik-reporter-email", "name": "reporter_email", "type": "email", "class": "ops-input"})
 			</div>
 		</div>
 		<div class="ops-fields">
 			<div class="ops-stack">
 				<label for="avvik-assigned-to" class="ops-label">Assigned to</label>
-				<select id="avvik-assigned-to" name="assigned_to" class="ops-input">
+				@ui2.Select(templ.Attributes{"id": "avvik-assigned-to", "name": "assigned_to", "class": "ops-input"}) {
 					<option value="">Unassigned</option>
 					for _, u := range users {
 						<option value={ u.ID.String() }>{ u.Name }</option>
 					}
-				</select>
+				}
 			</div>
 			<div>
 				<label for="avvik-org-unit" class="ops-label">{ locale.T(ctx, "label_org_unit") }</label>
-				<select id="avvik-org-unit" name="org_unit_id" class="ops-input">
+				@ui2.Select(templ.Attributes{"id": "avvik-org-unit", "name": "org_unit_id", "class": "ops-input"}) {
 					<option value="">Not set</option>
 					for _, org := range orgs {
 						<option value={ org.ID.String() }>{ org.Name }</option>
 					}
-				</select>
+				}
 			</div>
 		</div>
 		<div class="ops-fields ops-fields-three">
-			<label class="ops-check-label"><input type="checkbox" name="personal_data" class="ops-input"/> Personal data</label>
-			<label class="ops-check-label"><input type="checkbox" name="ksi" class="ops-input"/> KSI</label>
-			<label class="ops-check-label"><input type="checkbox" name="market_sensitive" class="ops-input"/> Market sensitive</label>
+			<label class="ops-check-label">@ui2.Input(templ.Attributes{"type": "checkbox", "name": "personal_data", "class": "ops-input"}) Personal data</label>
+			<label class="ops-check-label">@ui2.Input(templ.Attributes{"type": "checkbox", "name": "ksi", "class": "ops-input"}) KSI</label>
+			<label class="ops-check-label">@ui2.Input(templ.Attributes{"type": "checkbox", "name": "market_sensitive", "class": "ops-input"}) Market sensitive</label>
 		</div>
 		<div class="ops-end">
-			<button type="submit">Create Avvik</button>
+			@ui2.Button(templ.Attributes{"type": "submit"}) {Create Avvik}
 		</div>
 	</form>
 	}
@@ -297,34 +297,34 @@ templ detailsTab(d DetailData) {
 			<p class="ops-warning-panel">Only admins can triage or update status.</p>
 		} else {
 			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/triage" } class="ops-form-inline">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 			<div class="ops-fields">
-				<select name="risk_level" class="ops-input">
+				@ui2.Select(templ.Attributes{"name": "risk_level", "class": "ops-input"}) {
 					<option value="low" selected?={ d.Avvik.RiskLevel == "low" }>low</option>
 					<option value="medium" selected?={ d.Avvik.RiskLevel == "medium" }>medium</option>
 					<option value="high" selected?={ d.Avvik.RiskLevel == "high" }>high</option>
-				</select>
-				<input type="text" name="ksi_information_owner" value={ d.Avvik.KsiInformationOwner } placeholder="KSI information owner" class="ops-input"/>
+				}
+				@ui2.Input(templ.Attributes{"type": "text", "name": "ksi_information_owner", "value": d.Avvik.KsiInformationOwner, "placeholder": "KSI information owner", "class": "ops-input"})
 			</div>
 			<div class="ops-fields ops-fields-three">
-				<label class="ops-check-label"><input type="checkbox" name="personal_data" checked?={ d.Avvik.PersonalData } class="ops-input"/> Personal data</label>
-				<label class="ops-check-label"><input type="checkbox" name="ksi" checked?={ d.Avvik.Ksi } class="ops-input"/> KSI</label>
-				<label class="ops-check-label"><input type="checkbox" name="market_sensitive" checked?={ d.Avvik.MarketSensitive } class="ops-input"/> Market sensitive</label>
+				<label class="ops-check-label">@ui2.Input(templ.Attributes{"type": "checkbox", "name": "personal_data", "checked": d.Avvik.PersonalData, "class": "ops-input"}) Personal data</label>
+				<label class="ops-check-label">@ui2.Input(templ.Attributes{"type": "checkbox", "name": "ksi", "checked": d.Avvik.Ksi, "class": "ops-input"}) KSI</label>
+				<label class="ops-check-label">@ui2.Input(templ.Attributes{"type": "checkbox", "name": "market_sensitive", "checked": d.Avvik.MarketSensitive, "class": "ops-input"}) Market sensitive</label>
 			</div>
-			<div class="ops-end"><button type="submit" class="ops-button">Save triage</button></div>
+			<div class="ops-end">@ui2.Button(templ.Attributes{"type": "submit", "class": "ops-button"}) {Save triage}</div>
 			</form>
 			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/status" } class="ops-form-inline">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 			<div class="ops-fields">
-				<select name="status" class="ops-input">
+				@ui2.Select(templ.Attributes{"name": "status", "class": "ops-input"}) {
 					<option value="new" selected?={ d.Avvik.Status == "new" }>new</option>
 					<option value="triaging" selected?={ d.Avvik.Status == "triaging" }>triaging</option>
 					<option value="investigating" selected?={ d.Avvik.Status == "investigating" }>investigating</option>
 					<option value="mitigating" selected?={ d.Avvik.Status == "mitigating" }>mitigating</option>
-				</select>
+				}
 				<p class="ops-muted">Use closure tab for final close.</p>
 			</div>
-			<div class="ops-end"><button type="submit" class="ops-button">Update status</button></div>
+			<div class="ops-end">@ui2.Button(templ.Attributes{"type": "submit", "class": "ops-button"}) {Update status}</div>
 			</form>
 		}
 	</div>
@@ -334,9 +334,9 @@ templ timelineTab(d DetailData) {
 	<div class="ops-stack">
 		if d.CanContribute {
 			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/notes" } class="ops-form-inline">
-				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-				<textarea name="note" rows="3" placeholder="Append timeline note..." class="ops-input"></textarea>
-				<div class="ops-end"><button type="submit" class="ops-button">Add note</button></div>
+				@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+				@ui2.Textarea(templ.Attributes{"name": "note", "rows": "3", "placeholder": "Append timeline note...", "class": "ops-input"}) {}
+				<div class="ops-end">@ui2.Button(templ.Attributes{"type": "submit", "class": "ops-button"}) {Add note}</div>
 			</form>
 		}
 		for _, e := range d.Events {
@@ -352,39 +352,32 @@ templ measuresTab(d DetailData) {
 	<div class="ops-stack">
 		if d.CanManage {
 			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/measures" } class="ops-form-inline">
-				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+				@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 				<p class="ops-muted">Link existing measure</p>
 				<div class="ops-fields">
-					<select name="measure_id" class="ops-input">
+					@ui2.Select(templ.Attributes{"name": "measure_id", "class": "ops-input"}) {
 						<option value="">Create new measure below</option>
 						for _, m := range d.AllMeasures {
 							<option value={ m.ID.String() }>{ m.Name }</option>
 						}
-					</select>
-					<select name="relationship" class="ops-input">
+					}
+					@ui2.Select(templ.Attributes{"name": "relationship", "class": "ops-input"}) {
 						<option value="corrective">corrective</option>
 						<option value="preventive">preventive</option>
 						<option value="compensating">compensating</option>
-					</select>
+					}
 				</div>
 				<p class="ops-muted">Or create new measure</p>
 				@formstemplates.MeasureCreateFields(d.AllUsers, "avvik-measure-create")
-				<div class="ops-end"><button type="submit" class="ops-button">Link measure</button></div>
+				<div class="ops-end">@ui2.Button(templ.Attributes{"type": "submit", "class": "ops-button"}) {Link measure}</div>
 			</form>
 		}
 		for _, m := range d.Measures {
 			<article class="ops-card">
 				<div class="ops-between">
-					<h2 class="ops-heading"><a href={ "/measures/" + m.ID.String() } class="ops-link">{ m.Name }</a></h2>
+					<h2 class="ops-heading">@ui2.Link(templ.SafeURL("/measures/"+m.ID.String()), templ.Attributes{"class": "ops-link"}) { { m.Name } }</h2>
 					if d.CanManage {
-						<button
-							hx-delete={ "/avvik/" + d.Avvik.ID.String() + "/measures/" + m.ID.String() }
-							data-tone="danger"
-							hx-target="#avvik-tab-panel"
-							hx-swap="outerHTML"
-							hx-headers='{"X-CSRF-Token": "{{ csrf.TokenFromContext(ctx) }}"}'
-							class="ops-danger-link"
-						>unlink</button>
+						@ui2.Button(templ.Attributes{"hx-delete": "/avvik/" + d.Avvik.ID.String() + "/measures/" + m.ID.String(), "data-tone": "danger", "hx-target": "#avvik-tab-panel", "hx-swap": "outerHTML", "hx-headers": `{"X-CSRF-Token": "{{ csrf.TokenFromContext(ctx) }}"}`, "class": "ops-danger-link"}) { unlink }
 					}
 				</div>
 			</article>
@@ -396,32 +389,25 @@ templ activitiesTab(d DetailData) {
 	<div class="ops-stack">
 		if d.CanManage {
 			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/activities" } class="ops-form-inline">
-				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+				@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 				<p class="ops-muted">Link existing activity</p>
-				<select name="activity_id" class="ops-input">
+				@ui2.Select(templ.Attributes{"name": "activity_id", "class": "ops-input"}) {
 					<option value="">Create new activity below</option>
 					for _, a := range d.AllActivities {
 						<option value={ a.ID.String() }>{ a.Title }</option>
 					}
-				</select>
+				}
 				<p class="ops-muted">Or create new activity</p>
 				@formstemplates.ActivityCreateFields(d.AllMeasures, d.AllUsers, "avvik-activity-create", "Oppfølging avvik #"+d.Avvik.ID.String()[:8])
-				<div class="ops-end"><button type="submit" class="ops-button">Link activity</button></div>
+				<div class="ops-end">@ui2.Button(templ.Attributes{"type": "submit", "class": "ops-button"}) {Link activity}</div>
 			</form>
 		}
 		for _, a := range d.Activities {
 			<article class="ops-card">
 				<div class="ops-between">
-					<h2 class="ops-heading"><a href={ "/activities/" + a.ID.String() } class="ops-link">{ a.Title }</a></h2>
+					<h2 class="ops-heading">@ui2.Link(templ.SafeURL("/activities/"+a.ID.String()), templ.Attributes{"class": "ops-link"}) { { a.Title } }</h2>
 					if d.CanManage {
-						<button
-							hx-delete={ "/avvik/" + d.Avvik.ID.String() + "/activities/" + a.ID.String() }
-							data-tone="danger"
-							hx-target="#avvik-tab-panel"
-							hx-swap="outerHTML"
-							hx-headers='{"X-CSRF-Token": "{{ csrf.TokenFromContext(ctx) }}"}'
-							class="ops-danger-link"
-						>unlink</button>
+						@ui2.Button(templ.Attributes{"hx-delete": "/avvik/" + d.Avvik.ID.String() + "/activities/" + a.ID.String(), "data-tone": "danger", "hx-target": "#avvik-tab-panel", "hx-swap": "outerHTML", "hx-headers": `{"X-CSRF-Token": "{{ csrf.TokenFromContext(ctx) }}"}`, "class": "ops-danger-link"}) { unlink }
 					}
 				</div>
 			</article>
@@ -433,15 +419,15 @@ templ evidenceTab(d DetailData) {
 	<div class="ops-stack">
 		if d.CanContribute {
 			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/attachments" } class="ops-form-inline">
-				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-				<input type="text" name="filename" placeholder="Label / filename" class="ops-input"/>
-				<input type="url" name="storage_key" placeholder="External URL (Confluence etc.)" class="ops-input"/>
-				<div class="ops-end"><button type="submit" class="ops-button">Add evidence link</button></div>
+				@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+				@ui2.Input(templ.Attributes{"type": "text", "name": "filename", "placeholder": "Label / filename", "class": "ops-input"})
+				@ui2.Input(templ.Attributes{"type": "url", "name": "storage_key", "placeholder": "External URL (Confluence etc.)", "class": "ops-input"})
+				<div class="ops-end">@ui2.Button(templ.Attributes{"type": "submit", "class": "ops-button"}) {Add evidence link}</div>
 			</form>
 		}
 		for _, a := range d.Attachments {
 			<article class="ops-card">
-				<h2 class="ops-heading"><a href={ a.StorageKey } class="ops-link">{ a.Filename }</a></h2>
+				<h2 class="ops-heading">@ui2.UntrustedLink(a.StorageKey, templ.Attributes{"class": "ops-link"}) { { a.Filename } }</h2>
 				<p class="ops-muted">{ a.UploadedAt.Format(time.RFC3339) }</p>
 			</article>
 		}
@@ -452,8 +438,8 @@ templ notificationsTab(d DetailData) {
 	<div class="ops-stack">
 		if d.CanManage {
 			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/notifications" } class="ops-form-inline">
-				<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-				<select name="audience" class="ops-input">
+				@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+				@ui2.Select(templ.Attributes{"name": "audience", "class": "ops-input"}) {
 					<option value="reporter">reporter</option>
 					<option value="management">management</option>
 					<option value="organisation">organisation</option>
@@ -462,9 +448,9 @@ templ notificationsTab(d DetailData) {
 					<option value="nve">nve</option>
 					<option value="finanstilsynet">finanstilsynet</option>
 					<option value="bors">bors</option>
-				</select>
-				<textarea name="notes" rows="2" placeholder="Notes" class="ops-input"></textarea>
-				<div class="ops-end"><button type="submit" class="ops-button">Record notification</button></div>
+				}
+				@ui2.Textarea(templ.Attributes{"name": "notes", "rows": "2", "placeholder": "Notes", "class": "ops-input"}) {}
+				<div class="ops-end">@ui2.Button(templ.Attributes{"type": "submit", "class": "ops-button"}) {Record notification}</div>
 			</form>
 		}
 		for _, n := range d.Notifications {
@@ -485,7 +471,7 @@ templ closureTab(d DetailData) {
 			<p class="ops-warning-panel">Only admins can close avvik.</p>
 		} else {
 			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/closure-flags" } class="ops-form-inline">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 			@closureCheckbox("log_qa_done", "Log QA done", d.Avvik.LogQaDone)
 			@closureCheckbox("followups_delegated", "Followups delegated", d.Avvik.FollowupsDelegated)
 			@closureCheckbox("reporter_informed", "Reporter informed", d.Avvik.ReporterInformed)
@@ -493,15 +479,15 @@ templ closureTab(d DetailData) {
 			@closureCheckbox("mgmt_informed", "Management informed", d.Avvik.MgmtInformed)
 			@closureCheckbox("decisions_anchored", "Decisions anchored", d.Avvik.DecisionsAnchored)
 			@closureCheckbox("implementation_deadline_set", "Implementation deadline set", d.Avvik.ImplementationDeadlineSet)
-			<div class="ops-end"><button type="submit" class="ops-button">Save checklist</button></div>
+			<div class="ops-end">@ui2.Button(templ.Attributes{"type": "submit", "class": "ops-button"}) {Save checklist}</div>
 			</form>
 			<form method="POST" action={ "/avvik/" + d.Avvik.ID.String() + "/close" } class="ops-form-inline">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-			<textarea name="closure_summary" rows="2" placeholder="Closure summary" class="ops-input"></textarea>
-			<textarea name="root_cause" rows="2" placeholder="Root cause" class="ops-input"></textarea>
-			<textarea name="lessons_learned" rows="2" placeholder="Lessons learned" class="ops-input"></textarea>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+			@ui2.Textarea(templ.Attributes{"name": "closure_summary", "rows": "2", "placeholder": "Closure summary", "class": "ops-input"}) {}
+			@ui2.Textarea(templ.Attributes{"name": "root_cause", "rows": "2", "placeholder": "Root cause", "class": "ops-input"}) {}
+			@ui2.Textarea(templ.Attributes{"name": "lessons_learned", "rows": "2", "placeholder": "Lessons learned", "class": "ops-input"}) {}
 			<div class="ops-end">
-				<button type="submit" data-tone="danger" disabled?={ !d.CanClose } class={ "ops-button ops-close", buttonCloseClass(d.CanClose) }>Close Avvik</button>
+				@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "disabled": !d.CanClose, "class": "ops-button ops-close " + buttonCloseClass(d.CanClose)}) { Close Avvik }
 			</div>
 			</form>
 		}
@@ -510,19 +496,13 @@ templ closureTab(d DetailData) {
 
 templ closureCheckbox(name, label string, checked bool) {
 	<label class="ops-check-label">
-		<input type="checkbox" name={ name } checked?={ checked } class="ops-input"/>
+		@ui2.Input(templ.Attributes{"type": "checkbox", "name": name, "checked": checked, "class": "ops-input"})
 		{ label }
 	</label>
 }
 
 templ tabLink(id, tab, current string) {
-	<a
-		href={ "/avvik/" + id + "?tab=" + tab }
-		hx-get={ "/avvik/" + id + "?tab=" + tab }
-		hx-target="#avvik-tab-panel"
-		hx-swap="innerHTML"
-		class={ "ops-tab", tabClass(tab == current) }
-	>{ tab }</a>
+	@ui2.Link(templ.SafeURL("/avvik/"+id+"?tab="+tab), templ.Attributes{"hx-get": "/avvik/" + id + "?tab=" + tab, "hx-target": "#avvik-tab-panel", "hx-swap": "innerHTML", "class": "ops-tab " + tabClass(tab == current)}) { { tab } }
 }
 
 func tabClass(active bool) string {

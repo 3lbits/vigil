@@ -2,6 +2,7 @@ package measurestemplates
 
 import (
 	"context"
+	"database/sql"
 	"io"
 	"strings"
 	"testing"
@@ -83,6 +84,9 @@ func TestMeasuresTable_RendersRows(t *testing.T) {
 	if rows.Length() != 2 {
 		t.Errorf("expected 2 table rows, got %d", rows.Length())
 	}
+	if doc.Find(`.ui2-table[role="region"][tabindex="0"] table caption.sr-only`).Length() != 1 {
+		t.Error("measures table must use the accessible UI2 table component")
+	}
 }
 
 func TestMeasuresTable_RendersAllPassedRows(t *testing.T) {
@@ -148,6 +152,35 @@ func TestMeasureLinksSection_RequirementSearchHasHxGet(t *testing.T) {
 	}
 }
 
+func TestMeasureLinksSectionSanitizesStoredURL(t *testing.T) {
+	doc := renderToDoc(t, measureDocSection(MeasureEditVM{
+		Links: []db.MeasureLink{{Url: "javascript:alert(1)"}, {Url: "https://example.org/doc"}},
+	}))
+	if doc.Find(`a[href^="javascript:"]`).Length() != 0 {
+		t.Error("stored documentation URL bypassed templ sanitization")
+	}
+	if doc.Find(`a[href="https://example.org/doc"]`).Length() != 1 {
+		t.Error("valid documentation URL was lost")
+	}
+}
+
+func TestMeasureDetailUsesConfiguredRiskThresholds(t *testing.T) {
+	risk := db.Risk{
+		Name:               "Risk",
+		LikelihoodCurrent:  sql.NullInt32{Int32: 1, Valid: true},
+		ConsequenceCurrent: sql.NullInt32{Int32: 5, Valid: true},
+		LikelihoodTarget:   sql.NullInt32{Int32: 2, Valid: true},
+		ConsequenceTarget:  sql.NullInt32{Int32: 5, Valid: true},
+	}
+	doc := renderToDoc(t, MeasureDetail(MeasureDetailVM{
+		LinkedRisks: []db.Risk{risk}, LowMax: 4, HighMin: 10,
+	}))
+	if doc.Find(`.ops-risk-score[data-tone="warning"]`).Length() != 1 ||
+		doc.Find(`.ops-risk-score[data-tone="danger"]`).Length() != 1 {
+		t.Error("linked risk scores do not use configured thresholds")
+	}
+}
+
 func TestMeasureForm_KeepsFieldsAndErrorAlert(t *testing.T) {
 	id := uuid.New()
 	doc := renderToDoc(t, MeasureForm(&db.Measure{ID: id, Name: "MFA", Status: "planned"}, nil, "Save failed", "error"))
@@ -156,6 +189,9 @@ func TestMeasureForm_KeepsFieldsAndErrorAlert(t *testing.T) {
 	}
 	if doc.Find(`input[name="name"][value="MFA"]`).Length() != 1 || doc.Find(`select[name="status"] option[value="planned"][selected]`).Length() != 1 {
 		t.Error("measure edit fields lost their values")
+	}
+	if doc.Find(`button[formaction="/measures/`+id.String()+`/delete"][formmethod="POST"]`).Length() != 1 {
+		t.Error("delete button lost its form override")
 	}
 	if doc.Find(`[role="alert"][data-tone="danger"]`).Text() != "Save failed" {
 		t.Error("error flash must remain an alert")

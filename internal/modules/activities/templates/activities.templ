@@ -131,18 +131,15 @@ templ ActivityList(rows []db.FilterActivitiesRow, filter, kind, q, sort, dir str
 
 	<div class="ops-toolbar">
 		<p class="ops-muted">{ locale.T(ctx, "nav_activities") }</p>
-		<a
-			href="/activities/new"
-			class="ops-button"
-		>
+		@ui2.Link("/activities/new", templ.Attributes{"class": "ops-button"}) {
 			@ui.IconSVG("plus", 13)
 			{ locale.T(ctx, "action_add_activity") }
-		</a>
+		}
 	</div>
 
 	@ui2.FilterBar(ui2.FilterBarProps{ID: "activity-filters", Action: "/activities", Target: "#activities-table"}) {
-		<input type="hidden" name="sort" value={ sort }/>
-		<input type="hidden" name="dir" value={ dir }/>
+		@ui2.Input(templ.Attributes{"type": "hidden", "name": "sort", "value": sort})
+		@ui2.Input(templ.Attributes{"type": "hidden", "name": "dir", "value": dir})
 		@ui2.FilterSearch(ui2.FilterSearchProps{
 			Value:   q,
 			Columns: []string{"label_activity", "label_owner"},
@@ -176,12 +173,10 @@ templ ActivityList(rows []db.FilterActivitiesRow, filter, kind, q, sort, dir str
 
 templ ActivityTable(rows []db.FilterActivitiesRow, hasMore bool, pageSize int32, filter, kind, q, sort, dir string, mine bool) {
 	if len(rows) == 0 {
-		<p>{ locale.T(ctx, "activities_none_found") } <a href="/activities/new">Add your first activity →</a></p>
+		<p>{ locale.T(ctx, "activities_none_found") } @ui2.Link("/activities/new", nil) { Add your first activity → }</p>
 	} else {
-		<section role="region" aria-label="Activities table" tabindex="0" class="ops-table">
-			<table class="ops-data-table">
-					<caption class="sr-only">Activities</caption>
-					<thead class="ops-table-head">
+		@ui2.Table(locale.T(ctx, "nav_activities")) {
+					<thead>
 						<tr>
 							@ui2.SortTh(locale.T(ctx, "label_activity"), "title", ui2.SortState{Col: sort, Dir: dir}, "/activities", "#activities-table", "activity-filters", "ops-sort-heading")
 							<th scope="col" >{ locale.T(ctx, "label_measure") }</th>
@@ -197,8 +192,7 @@ templ ActivityTable(rows []db.FilterActivitiesRow, hasMore bool, pageSize int32,
 					<tbody>
 						@ActivityRows(rows, hasMore, pageSize, filter, kind, q, sort, dir, mine)
 					</tbody>
-			</table>
-		</section>
+		}
 	}
 }
 
@@ -210,7 +204,7 @@ templ ActivityRows(rows []db.FilterActivitiesRow, hasMore bool, nextOffset int32
 					if a.RefNum.Valid {
 						<span class="ops-reference">{ activityRef(a.RefNum) }</span>
 					}
-					<a href={ templ.SafeURL("/activities/" + a.ID.String()) } class="ops-link ops-truncate">{ a.Title }</a>
+					@ui2.Link(templ.SafeURL("/activities/"+a.ID.String()), templ.Attributes{"class": "ops-link ops-truncate"}) { { a.Title } }
 				</div>
 			</td>
 			<td class="ops-truncate">
@@ -250,26 +244,14 @@ templ ActivityRows(rows []db.FilterActivitiesRow, hasMore bool, nextOffset int32
 				@statusBadge(a.Status)
 			</td>
 			<td class="ops-align-end">
-				<a
-					href={ templ.SafeURL("/activities/" + a.ID.String()) }
-					aria-label={ "View activity: " + a.Title }
-					class="ops-link"
-				>view</a>
+				@ui2.Link(templ.SafeURL("/activities/"+a.ID.String()), templ.Attributes{"aria-label": "View activity: " + a.Title, "class": "ops-link"}) { view }
 			</td>
 		</tr>
 	}
 	if hasMore {
 		<tr id="load-more-row">
 			<td colspan="9" class="ops-align-center">
-				<a
-					href={ templ.SafeURL("/activities?offset=" + fmt.Sprint(nextOffset) + "&filter=" + filter + "&kind=" + kind + "&q=" + q + "&sort=" + sort + "&dir=" + dir + "&mine=" + listMineQueryValue(mine)) }
-					hx-get="/activities"
-					hx-include="#activity-filters"
-					hx-vals={ fmt.Sprintf(`{"offset":"%d"}`, nextOffset) }
-					hx-target="#load-more-row"
-					hx-swap="outerHTML"
-					class="ops-button"
-				>Load more</a>
+				@ui2.Link(templ.SafeURL("/activities?offset="+fmt.Sprint(nextOffset)+"&filter="+filter+"&kind="+kind+"&q="+q+"&sort="+sort+"&dir="+dir+"&mine="+listMineQueryValue(mine)), templ.Attributes{"hx-get": "/activities", "hx-include": "#activity-filters", "hx-vals": fmt.Sprintf(`{"offset":"%d"}`, nextOffset), "hx-target": "#load-more-row", "hx-swap": "outerHTML", "class": "ops-button"}) { Load more }
 			</td>
 		</tr>
 	}
@@ -292,18 +274,14 @@ templ ActivityForm(measures []db.Measure, users []db.User, a *db.GetActivityRow,
 
 	<div class="ops-stack ops-narrow">
 		<form method="POST" action={ activityFormAction(a) } class="ops-form-inline">
-			<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+			@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 			if a == nil {
 				@formstemplates.ActivityCreateFields(measures, users, "activity-create", "")
 			} else {
 				<!-- Measure selector (optional) -->
 				<div class="ops-stack">
 					<label for="measure_id" class="ops-label">Measure</label>
-					<select
-						id="measure_id"
-						name="measure_id"
-						class="ops-input"
-					>
+					@ui2.Select(templ.Attributes{"id": "measure_id", "name": "measure_id", "class": "ops-input"}) {
 						<option value="">— none —</option>
 						for _, m := range measures {
 							<option
@@ -311,7 +289,7 @@ templ ActivityForm(measures []db.Measure, users []db.User, a *db.GetActivityRow,
 								selected?={ selectedMeasure(a, m.ID.String(), preselectedMeasureID) }
 							>{ m.Name }</option>
 						}
-					</select>
+					}
 				</div>
 
 				@activityInputField("Title", "title", "e.g. Annual penetration test", activityFieldVal(a, "title"), true)
@@ -321,30 +299,22 @@ templ ActivityForm(measures []db.Measure, users []db.User, a *db.GetActivityRow,
 				<!-- Type -->
 					<div class="ops-stack">
 					<label for="activity_type" class="ops-label">{ locale.T(ctx, "label_type") }</label>
-					<select
-						id="activity_type"
-						name="activity_type"
-						class="ops-input"
-					>
+					@ui2.Select(templ.Attributes{"id": "activity_type", "name": "activity_type", "class": "ops-input"}) {
 						<option value="one_off" selected?={ activityFieldVal(a, "activity_type") != "recurring" }>{ locale.T(ctx, "label_one_off") }</option>
 						<option value="recurring" selected?={ activityFieldVal(a, "activity_type") == "recurring" }>{ locale.T(ctx, "type_recurring") }</option>
-					</select>
+					}
 					</div>
 
 					<!-- Recurrence -->
 					<div class="ops-stack">
 					<label for="recurrence" class="ops-label">{ locale.T(ctx, "label_recurrence") }</label>
-					<select
-						id="recurrence"
-						name="recurrence"
-						class="ops-input"
-					>
+					@ui2.Select(templ.Attributes{"id": "recurrence", "name": "recurrence", "class": "ops-input"}) {
 						<option value="none" selected?={ activityFieldVal(a, "recurrence") == "none" || activityFieldVal(a, "recurrence") == "" }>{ locale.T(ctx, "recurrence_none") }</option>
 						<option value="monthly" selected?={ activityFieldVal(a, "recurrence") == "monthly" }>{ locale.T(ctx, "recurrence_monthly") }</option>
 						<option value="tertially" selected?={ activityFieldVal(a, "recurrence") == "tertially" }>{ locale.T(ctx, "recurrence_tertially") }</option>
 						<option value="annual" selected?={ activityFieldVal(a, "recurrence") == "annual" }>{ locale.T(ctx, "recurrence_annual") }</option>
 						<option value="ad_hoc" selected?={ activityFieldVal(a, "recurrence") == "ad_hoc" }>{ locale.T(ctx, "recurrence_ad_hoc") }</option>
-					</select>
+					}
 					</div>
 				</div>
 
@@ -352,32 +322,24 @@ templ ActivityForm(measures []db.Measure, users []db.User, a *db.GetActivityRow,
 				<!-- Kind -->
 					<div class="ops-stack">
 					<label for="kind" class="ops-label">{ locale.T(ctx, "label_kind") }</label>
-					<select
-						id="kind"
-						name="kind"
-						class="ops-input"
-					>
+					@ui2.Select(templ.Attributes{"id": "kind", "name": "kind", "class": "ops-input"}) {
 						<option value="training" selected?={ activityFieldVal(a, "kind") == "training" }>{ locale.T(ctx, "kind_training") }</option>
 						<option value="exercise" selected?={ activityFieldVal(a, "kind") == "exercise" }>{ locale.T(ctx, "kind_exercise") }</option>
 						<option value="assessment" selected?={ activityFieldVal(a, "kind") == "assessment" }>{ locale.T(ctx, "kind_assessment") }</option>
 						<option value="audit" selected?={ activityFieldVal(a, "kind") == "audit" }>{ locale.T(ctx, "kind_audit") }</option>
 						<option value="remediation" selected?={ activityFieldVal(a, "kind") == "remediation" }>{ locale.T(ctx, "kind_remediation") }</option>
 						<option value="review" selected?={ activityFieldVal(a, "kind") == "review" || activityFieldVal(a, "kind") == "" }>{ locale.T(ctx, "kind_review") }</option>
-					</select>
+					}
 					</div>
 
 					<!-- Priority -->
 					<div class="ops-stack">
 					<label for="priority" class="ops-label">{ locale.T(ctx, "label_priority") }</label>
-					<select
-						id="priority"
-						name="priority"
-						class="ops-input"
-					>
+					@ui2.Select(templ.Attributes{"id": "priority", "name": "priority", "class": "ops-input"}) {
 						<option value="low" selected?={ activityFieldVal(a, "priority") == "low" }>{ locale.T(ctx, "priority_low") }</option>
 						<option value="medium" selected?={ activityFieldVal(a, "priority") == "medium" || activityFieldVal(a, "priority") == "" }>{ locale.T(ctx, "priority_medium") }</option>
 						<option value="high" selected?={ activityFieldVal(a, "priority") == "high" }>{ locale.T(ctx, "priority_high") }</option>
-					</select>
+					}
 					</div>
 				</div>
 
@@ -389,17 +351,14 @@ templ ActivityForm(measures []db.Measure, users []db.User, a *db.GetActivityRow,
 			}
 
 			<div class="ops-inline">
-				<button type="submit">
+				@ui2.Button(templ.Attributes{"type": "submit"}) {
 					if a == nil {
 						{ locale.T(ctx, "action_create_activity") }
 					} else {
 						{ locale.T(ctx, "action_save_changes") }
 					}
-				</button>
-				<a
-					href="/activities"
-					class="ops-button"
-				>{ locale.T(ctx, "action_cancel") }</a>
+				}
+				@ui2.Link("/activities", templ.Attributes{"class": "ops-button"}) { { locale.T(ctx, "action_cancel") } }
 			</div>
 		</form>
 		if a != nil {
@@ -464,15 +423,7 @@ templ activityInputField(label, name, placeholder, value string, required bool) 
 				<span class="ops-error">*</span>
 			}
 		</label>
-		<input
-			id={ name }
-			name={ name }
-			type={ inputType(name) }
-			placeholder={ placeholder }
-			value={ value }
-			required?={ required }
-			class="ops-input"
-		/>
+		@ui2.Input(templ.Attributes{"id": name, "name": name, "type": inputType(name), "placeholder": placeholder, "value": value, "required": required, "class": "ops-input"})
 	</div>
 }
 
@@ -490,31 +441,16 @@ templ activityAssigneePicker(a *db.GetActivityRow, users []db.User) {
 	>
 		<div class="ops-stack">
 			<label for="assignee_id" class="ops-label">Assignee (registered user)</label>
-			<select
-				id="assignee_id"
-				name="assignee_id"
-				x-model="assigneeID"
-				@change="if (assigneeID !== '') { owner = $el.options[$el.selectedIndex].dataset.name } else { owner = '' }"
-				class="ops-input"
-			>
+			@ui2.Select(templ.Attributes{"id": "assignee_id", "name": "assignee_id", "x-model": "assigneeID", "@change": "if (assigneeID !== '') { owner = $el.options[$el.selectedIndex].dataset.name } else { owner = '' }", "class": "ops-input"}) {
 				<option value="">— or enter name below —</option>
 				for _, u := range users {
 					<option value={ u.ID.String() } data-name={ u.Name } selected?={ activityAssigneeSelected(a, u.ID) }>{ u.Name } ({ u.Email })</option>
 				}
-			</select>
+			}
 		</div>
 		<div class="ops-stack">
 			<label for="owner" class="ops-label">Owner / free-text name</label>
-			<input
-				id="owner"
-				name="owner"
-				type="text"
-				x-model="owner"
-				:disabled="assigneeID !== ''"
-				value={ activityFieldVal(a, "owner") }
-				placeholder="e.g. security team"
-				class="ops-input"
-			/>
+			@ui2.Input(templ.Attributes{"id": "owner", "name": "owner", "type": "text", "x-model": "owner", ":disabled": "assigneeID !== ''", "value": activityFieldVal(a, "owner"), "placeholder": "e.g. security team", "class": "ops-input"})
 		</div>
 	</div>
 }
@@ -536,13 +472,7 @@ func activityAssigneePickerData(a *db.GetActivityRow) string {
 templ activityTextareaField(label, name, placeholder, value string) {
 	<div class="ops-stack">
 		<label for={ name } class="ops-label">{ label }</label>
-		<textarea
-			id={ name }
-			name={ name }
-			placeholder={ placeholder }
-			rows="3"
-			class="ops-input"
-		>{ value }</textarea>
+		@ui2.Textarea(templ.Attributes{"id": name, "name": name, "placeholder": placeholder, "rows": "3", "class": "ops-input"}) { { value } }
 	</div>
 }
 
@@ -551,53 +481,40 @@ templ completedByField(users []db.User) {
 		x-data="{ selectedUser: '', completedBy: '' }"
 		class="ops-stack"
 	>
-		<input type="hidden" name="completed_by" :value="completedBy"/>
+		@ui2.Input(templ.Attributes{"type": "hidden", "name": "completed_by", ":value": "completedBy"})
 		<div class="ops-stack">
 			<label for="completed_by_user" class="ops-label">Completed by (registered user)</label>
-			<select
-				id="completed_by_user"
-				x-model="selectedUser"
-				@change="if (selectedUser !== '') { completedBy = $el.options[$el.selectedIndex].dataset.name } else { completedBy = '' }"
-				class="ops-input"
-			>
+			@ui2.Select(templ.Attributes{"id": "completed_by_user", "x-model": "selectedUser", "@change": "if (selectedUser !== '') { completedBy = $el.options[$el.selectedIndex].dataset.name } else { completedBy = '' }", "class": "ops-input"}) {
 				<option value="">— or enter name below —</option>
 				for _, u := range users {
 					<option value={ u.ID.String() } data-name={ u.Name }>{ u.Name } ({ u.Email })</option>
 				}
-			</select>
+			}
 		</div>
 		<div class="ops-stack">
 			<label for="completed_by" class="ops-label">Name / free-text</label>
-			<input
-				id="completed_by"
-				type="text"
-				x-model="completedBy"
-				:disabled="selectedUser !== ''"
-				placeholder="Your name or team"
-				class="ops-input"
-			/>
+			@ui2.Input(templ.Attributes{"id": "completed_by", "type": "text", "x-model": "completedBy", ":disabled": "selectedUser !== ''", "placeholder": "Your name or team", "class": "ops-input"})
 		</div>
 	</div>
 }
 
 // ── Activity detail ───────────────────────────────────────────────────────────
 
-templ ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string, users []db.User, auditLog []db.ListAuditLogForActivityRow, linkedRisks []db.Risk) {
+templ ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string, users []db.User, auditLog []db.ListAuditLogForActivityRow, linkedRisks []db.Risk, lowMax, highMin int) {
 	@ui2.Page("ui2-activities") {
 	if flash != "" {
 		<p role={ flashRole(flashType) } data-tone={ flashTone(flashType) }>{ flash }</p>
 	}
 
 	<div class="ops-toolbar">
-		<a href="/activities" class="ops-link">
+		@ui2.Link("/activities", templ.Attributes{"class": "ops-link"}) {
 			@ui.IconSVG("chevron", 13)
 			Activities
-		</a>
+		}
 		if canEdit {
-			<a href={ templ.SafeURL("/activities/" + a.ID.String() + "/edit") }
-				class="ops-button">
+			@ui2.Link(templ.SafeURL("/activities/"+a.ID.String()+"/edit"), templ.Attributes{"class": "ops-button"}) {
 				Edit activity
-			</a>
+			}
 		} else {
 			<span class="ops-muted" title="You don't have permission to edit">
 				Edit activity
@@ -681,14 +598,14 @@ templ ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string,
 				if a.EvidenceUrl != "" {
 					<div class="ops-success-panel ops-separated">
 						<h3 class="ops-heading">Evidence</h3>
-						<a href={ templ.SafeURL(a.EvidenceUrl) } class="ops-link ops-break" target="_blank" rel="noopener noreferrer">{ a.EvidenceUrl }</a>
+						@ui2.UntrustedLink(a.EvidenceUrl, templ.Attributes{"class": "ops-link ops-break", "target": "_blank", "rel": "noopener noreferrer"}) { { a.EvidenceUrl } }
 					</div>
 				}
 				if canEdit {
 					<div class="ops-success-panel ops-separated">
 						<form method="POST" action={ templ.SafeURL("/activities/" + a.ID.String() + "/reopen") } onsubmit="return confirm('Reopen this activity?')">
-							<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-							<button type="submit" class="ops-button">{ locale.T(ctx, "action_reopen") }</button>
+							@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+							@ui2.Button(templ.Attributes{"type": "submit", "class": "ops-button"}) {{ locale.T(ctx, "action_reopen") }}
 						</form>
 					</div>
 				}
@@ -701,32 +618,19 @@ templ ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string,
 				<div class="ops-inline">
 					if a.Status == "planned" {
 						<form method="POST" action={ templ.SafeURL("/activities/" + a.ID.String() + "/start") }>
-							<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-							<button
-								type="submit"
-								class="ops-button"
-							>{ locale.T(ctx, "action_mark_in_progress") }</button>
+							@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+							@ui2.Button(templ.Attributes{"type": "submit", "class": "ops-button"}) { { locale.T(ctx, "action_mark_in_progress") } }
 						</form>
 					}
-					<button
-						type="button"
-						aria-controls="complete-form-panel"
-						:aria-expanded="showComplete ? 'true' : 'false'"
-						@click="toggle()"
-						class="ops-confirm"
-					>{ locale.T(ctx, "action_mark_complete") }</button>
+					@ui2.Button(templ.Attributes{"type": "button", "aria-controls": "complete-form-panel", ":aria-expanded": "showComplete ? 'true' : 'false'", "@click": "toggle()", "class": "ops-confirm"}) { { locale.T(ctx, "action_mark_complete") } }
 					<form
 						method="POST"
 						action={ templ.SafeURL("/activities/" + a.ID.String() + "/delete") }
 						onsubmit="return confirm('Delete this activity?')"
 						class="ops-form-inline"
 					>
-						<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
-						<button
-							type="submit"
-							data-tone="danger"
-							class="ops-button"
-						>{ locale.T(ctx, "action_delete") }</button>
+						@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
+						@ui2.Button(templ.Attributes{"type": "submit", "data-tone": "danger", "class": "ops-button"}) { { locale.T(ctx, "action_delete") } }
 					</form>
 				</div>
 
@@ -740,20 +644,13 @@ templ ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string,
 				>
 					<h2 class="ops-heading">{ locale.T(ctx, "section_complete_activity") }</h2>
 					<form method="POST" action={ templ.SafeURL("/activities/" + a.ID.String() + "/complete") } class="ops-form-inline">
-						<input type="hidden" name="_csrf" value={ csrf.TokenFromContext(ctx) }/>
+						@ui2.Input(templ.Attributes{"type": "hidden", "name": "_csrf", "value": csrf.TokenFromContext(ctx)})
 						@completedByField(users)
 						@activityTextareaField("Notes", "notes", "What was done, any findings…", "")
 						@activityInputField("Evidence URL", "evidence_url", "https://… or file path", "", false)
 						<div class="ops-inline">
-							<button
-								type="submit"
-								class="ops-confirm"
-							>{ locale.T(ctx, "action_confirm_completion") }</button>
-							<button
-								type="button"
-								@click="showComplete = false"
-								class="ops-button"
-							>{ locale.T(ctx, "action_cancel") }</button>
+							@ui2.Button(templ.Attributes{"type": "submit", "class": "ops-confirm"}) { { locale.T(ctx, "action_confirm_completion") } }
+							@ui2.Button(templ.Attributes{"type": "button", "@click": "showComplete = false", "class": "ops-button"}) { { locale.T(ctx, "action_cancel") } }
 						</div>
 					</form>
 				</div>
@@ -770,27 +667,24 @@ templ ActivityDetail(a db.GetActivityRow, canEdit bool, flash, flashType string,
 				<ul>
 				for i, risk := range linkedRisks {
 					<li>
-					<a
-						href={ templ.SafeURL("/risks/" + risk.AssessmentID.String() + "/risks/" + risk.ID.String()) }
-						class={ "ops-risk-link", templ.KV("ops-risk-next", i > 0) }
-					>
+					@ui2.Link(templ.SafeURL("/risks/"+risk.AssessmentID.String()+"/risks/"+risk.ID.String()), templ.Attributes{"class": activityRiskLinkClass(i)}) {
 						<span class="ops-muted ops-truncate">{ risk.Name }</span>
 						<div class="ops-inline">
 							if risk.LikelihoodCurrent.Valid && risk.ConsequenceCurrent.Valid {
-								<div class={ "ops-risk-score", activityRiskScoreBgClass(int(risk.LikelihoodCurrent.Int32)*int(risk.ConsequenceCurrent.Int32)) }>
+								<div class="ops-risk-score" data-tone={ ui2.Tone(int(risk.LikelihoodCurrent.Int32)*int(risk.ConsequenceCurrent.Int32), lowMax, highMin) }>
 									<span>{ fmt.Sprint(int(risk.LikelihoodCurrent.Int32)*int(risk.ConsequenceCurrent.Int32)) }</span>
 									<span >now</span>
 								</div>
 							}
 							if risk.LikelihoodTarget.Valid && risk.ConsequenceTarget.Valid {
 								<span class="ops-muted">→</span>
-								<div class={ "ops-risk-score", activityRiskScoreBgClass(int(risk.LikelihoodTarget.Int32)*int(risk.ConsequenceTarget.Int32)) }>
+								<div class="ops-risk-score" data-tone={ ui2.Tone(int(risk.LikelihoodTarget.Int32)*int(risk.ConsequenceTarget.Int32), lowMax, highMin) }>
 									<span>{ fmt.Sprint(int(risk.LikelihoodTarget.Int32)*int(risk.ConsequenceTarget.Int32)) }</span>
 									<span >target</span>
 								</div>
 							}
 						</div>
-					</a>
+					}
 					</li>
 				}
 				</ul>
@@ -853,13 +747,9 @@ func dueDateClass(status string) string {
 	return "ops-due"
 }
 
-func activityRiskScoreBgClass(score int) string {
-	switch {
-	case score >= 12:
-		return "ops-risk-high"
-	case score >= 6:
-		return "ops-risk-medium"
-	default:
-		return "ops-risk-low"
+func activityRiskLinkClass(index int) string {
+	if index > 0 {
+		return "ops-risk-link ops-risk-next"
 	}
+	return "ops-risk-link"
 }
