@@ -50,11 +50,11 @@ body.ui2-shell { color: var(--ui2-fg); background: var(--ui2-bg); }
 .sidebar-overlay { position: fixed; inset: 0; z-index: 30; background: #0003; }
 .app-sidebar {
   position: fixed; inset: 0 auto 0 0; z-index: 40; display: flex; flex-direction: column;
-  width: 15rem; padding-block: 1rem; transform: translateX(-100%);
+  width: 15rem; padding-block: 1rem; transform: translateX(-100%); visibility: hidden;
   background: var(--ui2-accent); border-right: 1px solid var(--ui2-border);
-  transition: transform .2s ease;
+  transition: transform .2s ease, visibility .2s;
 }
-.app-sidebar.is-open { transform: translateX(0); }
+.app-sidebar.is-open { transform: translateX(0); visibility: visible; }
 .sidebar-brand {
   display: flex; align-items: center; gap: .5rem;
   padding: 1.25rem 1rem; border-bottom: 1px solid var(--ui2-border);
@@ -129,7 +129,7 @@ body.ui2-shell { color: var(--ui2-fg); background: var(--ui2-bg); }
 .app-page-header p { color: var(--ui2-muted); font-size: .875rem; }
 .app-menu-button { display: none; border: 1px solid var(--ui2-border); }
 @media (min-width: 64rem) {
-  .app-sidebar { position: static; z-index: auto; transform: none; }
+  .app-sidebar { position: static; z-index: auto; transform: none; visibility: visible; }
   .sidebar-overlay, .sidebar-close { display: none !important; }
 }
 @media (max-width: 63.999rem) { .app-menu-button { display: block; } }

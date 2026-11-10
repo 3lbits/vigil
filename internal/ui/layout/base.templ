@@ -127,6 +127,7 @@ templ layoutFrame(title string, subtitle string, activePage string, user middlew
 			<!-- Sidebar -->
 			<aside
 				aria-label="Sidebar"
+				id="app-sidebar"
 				:class="sidebarOpen ? 'is-open' : ''"
 				class="app-sidebar"
 			>
@@ -253,7 +254,7 @@ templ layoutFrame(title string, subtitle string, activePage string, user middlew
 				<div class="app-content">
 					<!-- Page header -->
 					<header class="app-page-header">
-						<button type="button" aria-label={ locale.T(ctx, "action_open_menu") } @click="sidebarOpen = true" class="app-menu-button">
+						<button type="button" x-ref="openBtn" aria-label={ locale.T(ctx, "action_open_menu") } aria-controls="app-sidebar" :aria-expanded="sidebarOpen.toString()" @click="sidebarOpen = true" class="app-menu-button">
 							@ui.IconSVG("menu", 16)
 						</button>
 						<div>

@@ -74,3 +74,27 @@ test("risk table scrolls without widening the page on mobile", async ({ page }) 
   expect(widths.mainScroll).toBeLessThanOrEqual(widths.main);
   expect(widths.tableScroll).toBeGreaterThan(widths.table);
 });
+
+test("closed mobile navigation is not keyboard reachable", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(process.env.BASE_URL ?? "http://localhost:8080");
+  const menu = page.getByRole("button", { name: "Open menu" });
+  const sidebar = page.locator(".app-sidebar");
+
+  await expect(sidebar).toBeHidden();
+  await expect(menu).toHaveAttribute("aria-expanded", "false");
+  await menu.focus();
+  await page.keyboard.press("Shift+Tab");
+  await expect(page.getByRole("link", { name: "Skip to main content" })).toBeFocused();
+
+  await page.keyboard.press("Tab");
+  await expect(menu).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(sidebar).toBeVisible();
+  await expect(menu).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("button", { name: "Close menu" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(sidebar).toBeHidden();
+  await expect(menu).toBeFocused();
+  await expect(menu).toHaveAttribute("aria-expanded", "false");
+});

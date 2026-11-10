@@ -65,6 +65,7 @@ document.addEventListener('alpine:init', () => {
         init() {
             this.$watch('sidebarOpen', v => {
                 if (v) this.$nextTick(() => this.$refs.closeBtn && this.$refs.closeBtn.focus());
+                else this.$nextTick(() => this.$refs.openBtn && this.$refs.openBtn.focus());
             });
             this.$watch('darkMode', v => {
                 document.documentElement.classList.toggle('dark', v);
@@ -81,16 +82,14 @@ document.addEventListener('alpine:init', () => {
         c: initC,
         score() { return this.l * this.c; },
         level(s) { return s >= highMin ? 'red' : s > lowMax ? 'yellow' : 'green'; },
-        label(s) { return s >= highMin ? 'High' : s > lowMax ? 'Medium' : 'Low'; },
-        bgClass(s) { return s >= highMin ? 'bg-red-500' : s > lowMax ? 'bg-amber-400' : 'bg-green-500'; }
+        label(s) { return s >= highMin ? 'High' : s > lowMax ? 'Medium' : 'Low'; }
     }));
 
     // Treatment scoring panel (wizard step 4 — target risk).
     Alpine.data('treatmentScorer', (initL, initC, highMin, lowMax) => ({
         tl: initL,
         tc: initC,
-        label(s) { return s >= highMin ? 'High' : s > lowMax ? 'Medium' : 'Low'; },
-        bgClass(s) { return s >= highMin ? 'bg-red-500' : s > lowMax ? 'bg-amber-400' : 'bg-green-500'; }
+        label(s) { return s >= highMin ? 'High' : s > lowMax ? 'Medium' : 'Low'; }
     }));
 
     // Activity completion toggle — $nextTick callback needs registered component.
