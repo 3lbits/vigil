@@ -98,6 +98,27 @@ func TestRiskControlShape(t *testing.T) {
 	checkRiskAttr(t, decision, `button[name="submit_assessment"][value="1"]`, "type", "submit")
 }
 
+func TestTreatmentSearchUsesNativeDisclosure(t *testing.T) {
+	bundle, err := locale.NewBundle()
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx := locale.SetLocalizer(context.Background(), i18n.NewLocalizer(bundle, locale.LangEN), locale.LangEN)
+	risk := db.Risk{ID: uuid.New()}
+	html := renderRiskTest(t, ctx, treatmentPanel(risk, nil, nil, nil, uuid.New(), false, 5, 15))
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := doc.Find("details > summary").Length(); got != 2 {
+		t.Errorf("search disclosures: got %d, want 2", got)
+	}
+	if got := doc.Find("details form input[hx-get]").Length(); got != 2 {
+		t.Errorf("HTMX search inputs: got %d, want 2", got)
+	}
+	requireAbsent(t, html, "showMeasureSearch", "showActivitySearch")
+}
+
 func TestRiskUI2PagesAndFragments(t *testing.T) {
 	bundle, err := locale.NewBundle()
 	if err != nil {

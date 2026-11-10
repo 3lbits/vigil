@@ -125,12 +125,10 @@ templ treatmentPanel(risk db.Risk, measures []db.Measure, activities []db.Activi
 				</form>
 			</div>
 		</div>
-		<div x-data="{ showMeasureSearch: false, showActivitySearch: false }" class="risk-fields">
-			<div>
-				@ui2.Button(templ.Attributes{"type": "button", "@click": "showMeasureSearch=!showMeasureSearch", "class": "risk-link-toggle"}) {
-					<span x-text="showMeasureSearch ? '↑ Hide' : '+ Link existing measure'"></span>
-				}
-				<div x-show="showMeasureSearch" class="risk-following">
+		<div class="risk-fields">
+			<details>
+				<summary>Link existing measure</summary>
+				<div class="risk-following">
 					<form method="GET" action={ templ.SafeURL("/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/measures/search") } class="risk-controls">
 						<label for={ "measure-search-" + risk.ID.String() } class="sr-only">{ locale.T(ctx, "label_search_measures") }</label>
 						@ui2.Input(templ.Attributes{"id": "measure-search-" + risk.ID.String(), "name": "q", "type": "text", "placeholder": locale.T(ctx, "placeholder_search_measures"), "hx-get": "/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/measures/search", "hx-trigger": "input changed delay:300ms", "hx-target": "#measure-results-" + risk.ID.String()})
@@ -138,20 +136,18 @@ templ treatmentPanel(risk db.Risk, measures []db.Measure, activities []db.Activi
 					</form>
 					<div id={ "measure-results-" + risk.ID.String() } class="risk-following" aria-live="polite" aria-atomic="false"></div>
 				</div>
-			</div>
-			<div>
-				@ui2.Button(templ.Attributes{"type": "button", "@click": "showActivitySearch=!showActivitySearch", "class": "risk-link-toggle"}) {
-					<span x-text="showActivitySearch ? '↑ Hide' : '+ Link existing activity'"></span>
-				}
-				<div x-show="showActivitySearch" class="risk-following">
+			</details>
+			<details>
+				<summary>Link existing activity</summary>
+				<div class="risk-following">
 					<form method="GET" action={ templ.SafeURL("/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/activities/search") } class="risk-controls">
 						<label for={ "activity-search-" + risk.ID.String() } class="sr-only">{ locale.T(ctx, "label_search_activities") }</label>
 						@ui2.Input(templ.Attributes{"id": "activity-search-" + risk.ID.String(), "name": "q", "type": "text", "placeholder": locale.T(ctx, "placeholder_search_activities"), "hx-get": "/risks/" + assessmentID.String() + "/risks/" + risk.ID.String() + "/activities/search", "hx-trigger": "input changed delay:300ms", "hx-target": "#activity-results-" + risk.ID.String()})
 						@ui2.Button(templ.Attributes{"type": "submit", "class": "risk-secondary-button"}) { { locale.T(ctx, "action_search") } }
 					</form>
 					<div id={ "activity-results-" + risk.ID.String() } class="risk-following" aria-live="polite" aria-atomic="false"></div>
-				</div>
-			</div>
+					</div>
+				</details>
 		</div>
 	</section>
 }
