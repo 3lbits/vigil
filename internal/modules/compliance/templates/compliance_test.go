@@ -65,8 +65,8 @@ func TestFrameworkList_ShowsCount(t *testing.T) {
 func TestFrameworkDetail_CoverageMeter(t *testing.T) {
 	vm := FrameworkDetailVM{Requirements: []db.Requirement{{}, {}}, CoveredReqs: 1}
 	doc := renderToDoc(t, FrameworkDetail(vm))
-	if doc.Find(`meter[value="50"][max="100"]`).Length() != 1 {
-		t.Error("framework detail should show 50% coverage in a meter")
+	if doc.Find(`meter[value="50"][max="100"][low="50"][high="80"][optimum="100"]`).Length() != 1 {
+		t.Error("framework detail should show 50% coverage with shared meter thresholds")
 	}
 }
 

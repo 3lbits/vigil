@@ -62,7 +62,7 @@ templ frameworkAccordion(fw FrameworkVM, expandID string) {
 					</span>
 					<span >
 						<span >
-							<meter min="0" max="100" low="50" high="80" optimum="100" value={ fmt.Sprint(fw.Coverage) } aria-label={ locale.T(ctx, "label_coverage") }>{ fmt.Sprintf("%d%%", fw.Coverage) }</meter>
+							@ui2.CoverageGauge(locale.T(ctx, "label_coverage"), fw.Coverage)
 						</span>
 						<span class="ops-muted ops-align-end">{ fmt.Sprintf("%d%%", fw.Coverage) }</span>
 					</span>
@@ -644,7 +644,7 @@ templ FrameworkDetail(vm FrameworkDetailVM) {
 			<span class="ops-muted">{ fmt.Sprint(vm.CoveredReqs) } / { fmt.Sprint(len(vm.Requirements)) } requirements covered</span>
 			if len(vm.Requirements) > 0 {
 				<span >
-					<meter min="0" max="100" low="50" high="80" optimum="100" value={ fmt.Sprint(int(vm.CoveredReqs * 100 / int64(len(vm.Requirements)))) } aria-label={ locale.T(ctx, "label_coverage") }>{ fmt.Sprintf("%d%%", int(vm.CoveredReqs * 100 / int64(len(vm.Requirements)))) }</meter>
+					@ui2.CoverageGauge(locale.T(ctx, "label_coverage"), int(vm.CoveredReqs * 100 / int64(len(vm.Requirements))))
 				</span>
 			}
 		</dd>
