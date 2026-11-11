@@ -805,6 +805,40 @@ other = "Konsekvens"
 other = "Akseptansekriterier"
 
 # Dashboard labels
+[dash_action_required]
+other = "Krever handling"
+
+[dash_kpi_high_risks]
+other = "Høye risikoer"
+
+[dash_kpi_measures_implemented]
+other = "Implementerte tiltak"
+
+[dash_kpi_of_total]
+other = "av {{.Total}} totalt"
+
+[dash_kpi_coverage]
+other = "av {{.Total}} krav · {{.Pct}} % dekning"
+
+[dash_decision_missing]
+other = "Ingen beslutning registrert"
+
+[dash_framework_requirement_count]
+one = "{{.Count}} krav"
+other = "{{.Count}} krav"
+
+[dash_no_frameworks_match]
+other = "Ingen rammeverk passer dette filteret."
+
+[dash_filter_regulations]
+other = "Regelverk"
+
+[dash_filter_standards]
+other = "Standarder"
+
+[dash_filter_directives]
+other = "Direktiver"
+
 [action_view]
 other = "Se →"
 

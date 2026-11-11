@@ -38,15 +38,8 @@ func (s Stats) UncoveredRequirementsCount() int64 {
 	return s.RequirementsCount - s.CoveredRequirementsCount
 }
 
-func typeBadgeLabel(t string) string {
-	switch t {
-	case "standard":
-		return "Std"
-	case "directive":
-		return "Dir"
-	default:
-		return "Reg"
-	}
+func riskDisplayName(name, assessment string) string {
+	return strings.TrimPrefix(name, assessment+": ")
 }
 
 func zeroFrameworkCount(fws []FrameworkSummary) int {

@@ -30,6 +30,10 @@ templ dashboardDecision(decision string) {
 			@ui2.Badge("danger") {
 				{ locale.T(ctx, "decision_escalate") }
 			}
+		case "":
+			@ui2.Badge("warning") {
+				{ locale.T(ctx, "dash_decision_missing") }
+			}
 		default:
 			<span>—</span>
 	}
@@ -37,45 +41,112 @@ templ dashboardDecision(decision string) {
 
 templ DashboardUI2(stats Stats, frameworks []FrameworkSummary, frameworkFilter string, frameworkTotal, frameworkRegCount, frameworkStdCount, frameworkDirCount int, recentActivities []db.ListRecentActivitiesRow, myActivities []db.ListActivitiesForUserRow, myMeasures []db.Measure, riskStats RiskStats, flags middleware.ModuleFlags) {
 	@ui2.Page("ui2-dashboard") {
-		if flags.ActivitiesEnabled && stats.OverdueActivitiesCount > 0 {
-			@ui2.Notice("info") {
-				{ locale.TN(ctx, "label_overdue_count", int(stats.OverdueActivitiesCount), map[string]any{"Count": stats.OverdueActivitiesCount}) }
-				{ locale.T(ctx, "dash_overdue_desc") }
-				@ui2.Link("/activities?filter=overdue", nil) {{ locale.T(ctx, "action_view") }}
-			}
-		}
-		if flags.ComplianceEnabled && zeroFrameworkCount(frameworks) > 0 {
-			@ui2.Notice("warning") {
-				{ locale.TN(ctx, "dash_zero_coverage_count", zeroFrameworkCount(frameworks), map[string]any{"Count": zeroFrameworkCount(frameworks), "Total": len(frameworks)}) }
-				{ locale.T(ctx, "dash_zero_coverage_hint") }
-				@ui2.Link("/compliance", nil) {{ locale.T(ctx, "action_view") }}
+		if (flags.ActivitiesEnabled && stats.OverdueActivitiesCount > 0) || (flags.ComplianceEnabled && zeroFrameworkCount(frameworks) > 0) {
+			@ui2.Panel() {
+				<h2>{ locale.T(ctx, "dash_action_required") }</h2>
+				<div class="ui2-dashboard-actions">
+					if flags.ActivitiesEnabled && stats.OverdueActivitiesCount > 0 {
+						@ui2.Notice("danger") {
+							<strong>{ locale.TN(ctx, "label_overdue_count", int(stats.OverdueActivitiesCount), map[string]any{"Count": stats.OverdueActivitiesCount}) }</strong>
+							<span>{ locale.T(ctx, "dash_overdue_desc") }</span>
+							@ui2.Link("/activities?filter=overdue", nil) {
+								{ locale.T(ctx, "action_view") }
+							}
+						}
+					}
+					if flags.ComplianceEnabled && zeroFrameworkCount(frameworks) > 0 {
+						@ui2.Notice("warning") {
+							<strong>{ locale.TN(ctx, "dash_zero_coverage_count", zeroFrameworkCount(frameworks), map[string]any{"Count": zeroFrameworkCount(frameworks), "Total": len(frameworks)}) }</strong>
+							<span>{ locale.T(ctx, "dash_zero_coverage_hint") }</span>
+							@ui2.Link("/compliance", nil) {
+								{ locale.T(ctx, "action_view") }
+							}
+						}
+					}
+				</div>
 			}
 		}
 		<div class="ui2-dashboard-metrics">
-			@ui2.Metric(locale.T(ctx, "kpi_frameworks_requirements"), stats.RequirementsCount,
-				locale.T(ctx, "dash_fw_type_counts", map[string]any{"Total": stats.FrameworksCount, "Reg": frameworkRegCount, "Std": frameworkStdCount, "Dir": frameworkDirCount}))
-			@ui2.Metric(locale.T(ctx, "kpi_requirements_covered"), stats.CoveredRequirementsCount,
-				locale.T(ctx, "dash_overall_coverage", map[string]any{"Pct": stats.CoveredPct()}))
-			@ui2.Metric(locale.T(ctx, "kpi_measures_defined"), stats.MeasuresCount,
-				locale.T(ctx, "dash_reqs_without_measure", map[string]any{"Count": stats.UncoveredRequirementsCount()}))
 			if flags.RiskEnabled {
-				<article class="ui2-metric">
-					<h2>{ locale.T(ctx, "kpi_risk_register") }</h2>
-					<data value={ fmt.Sprint(riskStats.Total) }>{ fmt.Sprint(riskStats.Total) }</data>
-					if riskStats.Total == 0 {
-						<p>@ui2.Link("/risks", nil) {{ locale.T(ctx, "risk_none_logged") }}</p>
-					} else {
-						<p>{ locale.T(ctx, "dash_risk_level_summary", map[string]any{"Red": riskStats.RedCount, "Yellow": riskStats.YellowCount, "Green": riskStats.GreenCount}) }</p>
-					}
-				</article>
+				@ui2.Metric(locale.T(ctx, "dash_kpi_high_risks"), riskStats.RedCount,
+					locale.T(ctx, "dash_kpi_of_total", map[string]any{"Total": riskStats.Total}))
 			}
+			@ui2.Metric(locale.T(ctx, "kpi_requirements_covered"), stats.CoveredRequirementsCount,
+				locale.T(ctx, "dash_kpi_coverage", map[string]any{"Total": stats.RequirementsCount, "Pct": stats.CoveredPct()}))
+			@ui2.Metric(locale.T(ctx, "dash_kpi_measures_implemented"), stats.ImplementedCount,
+				locale.T(ctx, "dash_kpi_of_total", map[string]any{"Total": stats.MeasuresCount}))
 		</div>
-		@ui2.Grid() {
-			if flags.RiskEnabled {
+		if (flags.ActivitiesEnabled && len(myActivities) > 0) || len(myMeasures) > 0 {
+			@ui2.Grid() {
+				if flags.ActivitiesEnabled {
+					@ui2.Panel() {
+						<header class="ui2-dashboard-heading">
+							<h2>{ locale.T(ctx, "section_my_activities") }</h2>@ui2.Link("/activities", nil) {
+	{ locale.T(ctx, "action_view_all") }
+}
+						</header>
+						if len(myActivities) == 0 {
+							<p>{ locale.T(ctx, "activities_none_assigned") }</p>
+						} else {
+							<ul class="ui2-dashboard-list">
+								for _, a := range myActivities {
+									<li>
+										@ui2.Link(templ.SafeURL("/activities/"+a.ID.String()), nil) {
+											{ a.Title }
+										}
+										if a.Status == "overdue" {
+											@ui2.Badge("danger") {
+												{ locale.T(ctx, "status_overdue") }
+											}
+										}
+										if a.MeasureName != "" {
+											<small>{ a.MeasureName }</small>
+										}
+										if a.DueDate.Valid {
+											<time datetime={ a.DueDate.Time.Format("2006-01-02") }>{ formatActivityTime(a.DueDate.Time) }</time>
+										}
+									</li>
+								}
+							</ul>
+						}
+					}
+				}
+				@ui2.Panel() {
+					<header class="ui2-dashboard-heading">
+						<h2>{ locale.T(ctx, "section_my_measures") }</h2>@ui2.Link("/measures", nil) {
+	{ locale.T(ctx, "action_view_all") }
+}
+					</header>
+					if len(myMeasures) == 0 {
+						<p>{ locale.T(ctx, "measures_none_assigned") }</p>
+					} else {
+						<ul class="ui2-dashboard-list">
+							for _, m := range myMeasures {
+								<li>
+									@ui2.Link(templ.SafeURL("/measures/"+m.ID.String()), nil) {
+										{ m.Name }
+									}
+									if m.Category != "" {
+										<small>{ m.Category }</small>
+									}
+									@ui2.Badge("") {
+										{ locale.T(ctx, "status_"+m.Status) }
+									}
+								</li>
+							}
+						</ul>
+					}
+				}
+			}
+		}
+		if flags.RiskEnabled {
+			@ui2.Grid() {
 				@ui2.Panel() {
 					<header class="ui2-dashboard-heading">
 						<h2>{ locale.T(ctx, "dash_current_risk_map") }</h2>
-						@ui2.Link("/risks", nil) {{ locale.T(ctx, "nav_risk_register") }}
+						@ui2.Link("/risks", nil) {
+							{ locale.T(ctx, "nav_risk_register") }
+						}
 					</header>
 					<form class="ui2-dashboard-filter" method="GET" action="/">
 						@ui2.Input(templ.Attributes{"type": "hidden", "name": "framework_type", "value": frameworkFilter})
@@ -86,13 +157,19 @@ templ DashboardUI2(stats Stats, frameworks []FrameworkSummary, frameworkFilter s
 								<option value={ opt.ID } selected?={ riskStats.OrgSelected == opt.ID }>{ orgFilterOptionLabel(opt) }</option>
 							}
 						}
-						@ui2.Button(templ.Attributes{"type": "submit"}) {{ locale.T(ctx, "action_search") }}
+						@ui2.Button(templ.Attributes{"type": "submit"}) {
+							{ locale.T(ctx, "action_search") }
+						}
 					</form>
 					if riskStats.OrgName != "" {
 						<p>{ locale.T(ctx, "dash_risk_org_filter_selected", map[string]any{"Org": riskStats.OrgName}) }</p>
 					}
 					if riskStats.Total == 0 {
-						<p>{ locale.T(ctx, "risk_none_assessed") } @ui2.Link("/risks/new", nil) {{ locale.T(ctx, "dash_start_first_assessment") }}</p>
+						<p>
+							{ locale.T(ctx, "risk_none_assessed") } @ui2.Link("/risks/new", nil) {
+	{ locale.T(ctx, "dash_start_first_assessment") }
+}
+						</p>
 					} else {
 						@ui2.Matrix(locale.T(ctx, "dash_current_risk_map"), riskStats.Matrix, riskStats.LowMax, riskStats.HighMin)
 						<p class="ui2-legend">
@@ -113,7 +190,9 @@ templ DashboardUI2(stats Stats, frameworks []FrameworkSummary, frameworkFilter s
 							<ul>
 								for _, item := range riskStats.ReviewQueue {
 									<li>
-										@ui2.Link(templ.SafeURL("/risks/" + item.AssessmentID + "/risks/" + item.RiskID + "/reassess"), nil) {{ item.Name } · { item.AssessmentName }}
+										@ui2.Link(templ.SafeURL("/risks/"+item.AssessmentID+"/risks/"+item.RiskID+"/reassess"), nil) {
+											{ item.Name } · { item.AssessmentName }
+										}
 										if item.HasCurrentScore {
 											<data value={ fmt.Sprint(item.CurrentScore) }>{ fmt.Sprint(item.CurrentScore) }</data>
 										}
@@ -123,213 +202,144 @@ templ DashboardUI2(stats Stats, frameworks []FrameworkSummary, frameworkFilter s
 									</li>
 								}
 							</ul>
-							@ui2.Link("/risks", nil) {{ locale.T(ctx, "action_view_all") }}
+							@ui2.Link("/risks", nil) {
+								{ locale.T(ctx, "action_view_all") }
+							}
 						</section>
 					}
 				}
-			}
-			@ui2.Panel() {
-				if flags.ComplianceEnabled {
-					<header class="ui2-dashboard-heading"><h2>{ locale.T(ctx, "section_regulations_standards") }</h2>@ui2.Link("/compliance/frameworks/new", nil) {{ locale.T(ctx, "action_add") }}</header>
-				} else {
-					<h2>{ locale.T(ctx, "kpi_requirements_covered") }</h2>
-				}
-				@ui2.CoverageMeter(locale.T(ctx, "kpi_requirements_covered"), stats.CoveredPct()) {
-					{ locale.T(ctx, "kpi_requirements_covered") }
-				}
-				if flags.ComplianceEnabled {
-					<nav aria-label={ locale.T(ctx, "section_regulations_standards") } class="ui2-dashboard-filters">
-						@ui2.Link("/", frameworkFilterAttrs(frameworkFilter == "all")) { { locale.T(ctx, "fw_filter_all") } ({ fmt.Sprint(frameworkTotal) }) }
-						@ui2.Link("/?framework_type=regulation", frameworkFilterAttrs(frameworkFilter == "regulation")) { { locale.T(ctx, "fw_filter_reg") } ({ fmt.Sprint(frameworkRegCount) }) }
-						@ui2.Link("/?framework_type=standard", frameworkFilterAttrs(frameworkFilter == "standard")) { { locale.T(ctx, "fw_filter_std") } ({ fmt.Sprint(frameworkStdCount) }) }
-						@ui2.Link("/?framework_type=directive", frameworkFilterAttrs(frameworkFilter == "directive")) { { locale.T(ctx, "fw_filter_dir") } ({ fmt.Sprint(frameworkDirCount) }) }
-					</nav>
-					if len(frameworks) == 0 {
-						<p data-testid="no-frameworks-message">{ locale.T(ctx, "frameworks_none_yet") } @ui2.Link("/compliance/frameworks/new", nil) {{ locale.T(ctx, "action_add") }}</p>
+				@ui2.Panel() {
+					<h2>{ locale.T(ctx, "dash_top_risks_title") }</h2>
+					if len(riskStats.TopRisks) == 0 {
+						<p>{ locale.T(ctx, "risk_none_scored") }</p>
 					} else {
-						<ul class="ui2-dashboard-frameworks">
-							for _, fw := range frameworks {
-								<li data-testid="framework-coverage-row">
-									@ui2.CoverageMeter(fw.Name, fw.Coverage) {
-										@ui2.Link(templ.SafeURL("/compliance?expand=" + fw.ID), nil) {{ fw.Name }}
-									}
-									if fw.Ref != "" {
-										<small>{ fw.Ref }</small>
-									}
-									<small>{ typeBadgeLabel(fw.Type) } · { fmt.Sprint(fw.Total) }</small>
+						<ul class="ui2-dashboard-list">
+							for _, risk := range riskStats.TopRisks {
+								<li>
+									<span>
+										@ui2.Link(templ.SafeURL("/risks/"+risk.AssessmentID.String()+"/risks/"+risk.ID.String()), nil) {
+											{ riskDisplayName(risk.Name, risk.AssessmentName) }
+										}
+										<small>{ risk.AssessmentName }</small>
+									</span>
+									<span class="ui2-dashboard-risk-score">
+										if risk.LikelihoodCurrent.Valid && risk.ConsequenceCurrent.Valid {
+											@ui2.RiskLevel(int(risk.LikelihoodCurrent.Int32*risk.ConsequenceCurrent.Int32), riskStats.LowMax, riskStats.HighMin)
+										}
+										@dashboardDecision(risk.RiskDecision)
+									</span>
 								</li>
 							}
 						</ul>
 					}
 				}
-				<dl>
-					<dt>{ locale.T(ctx, "label_total_controls") }</dt>
-					<dd>{ fmt.Sprint(stats.MeasuresCount) }</dd>
-					<dt>{ locale.T(ctx, "dash_reqs_mapped") }</dt>
-					<dd>{ fmt.Sprint(stats.CoveredRequirementsCount) } / { fmt.Sprint(stats.RequirementsCount) }</dd>
-					<dt>{ locale.T(ctx, "dash_measures_verified") }</dt>
-					<dd>{ fmt.Sprint(stats.ImplementedCount) } / { fmt.Sprint(stats.MeasuresCount) }</dd>
-				</dl>
 			}
 		}
-		if flags.RiskEnabled || flags.ActivitiesEnabled {
-			@ui2.Grid() {
-				if flags.RiskEnabled {
-					@ui2.Panel() {
-						<h2>{ locale.T(ctx, "dash_top_risks_title") }</h2>
-						if len(riskStats.TopRisks) == 0 {
-							<p>{ locale.T(ctx, "risk_none_scored") }</p>
-						} else {
-							<ul class="ui2-dashboard-list">
-								for _, risk := range riskStats.TopRisks {
-									<li>
-										<span>
-											@ui2.Link(templ.SafeURL("/risks/" + risk.AssessmentID.String() + "/risks/" + risk.ID.String()), nil) {{ risk.Name }}
-											<small>{ risk.AssessmentName }</small>
-										</span>
-										<span class="ui2-dashboard-risk-score">
-											if risk.LikelihoodCurrent.Valid && risk.ConsequenceCurrent.Valid {
-												@ui2.RiskLevel(int(risk.LikelihoodCurrent.Int32*risk.ConsequenceCurrent.Int32), riskStats.LowMax, riskStats.HighMin)
-											}
-											@dashboardDecision(risk.RiskDecision)
-										</span>
-									</li>
-								}
-							</ul>
-						}
-						<p>{ locale.T(ctx, "dash_risk_total_summary", map[string]any{"Total": riskStats.Total, "Red": riskStats.RedCount, "Yellow": riskStats.YellowCount, "Green": riskStats.GreenCount}) }</p>
+		if flags.ComplianceEnabled {
+			@ui2.Panel() {
+				<header class="ui2-dashboard-heading">
+					<h2>{ locale.T(ctx, "section_regulations_standards") }</h2>
+					@ui2.Link("/compliance", nil) {
+						{ locale.T(ctx, "action_view_all") }
 					}
-				}
-				if flags.ActivitiesEnabled {
-					@ui2.Panel() {
-						<header class="ui2-dashboard-heading">
-							<h2>{ locale.T(ctx, "section_recent_activity") }</h2>
-							<nav aria-label={ locale.T(ctx, "section_recent_activity") }>
-								if stats.OverdueActivitiesCount > 0 {
-									@ui2.Link("/activities?filter=overdue", nil) {{ locale.TN(ctx, "label_overdue_count", int(stats.OverdueActivitiesCount), map[string]any{"Count": stats.OverdueActivitiesCount}) }}
-								}
-								if stats.ActivitiesDueThisWeekCount > 0 {
-									@ui2.Link("/activities?filter=planned", nil) {{ locale.TN(ctx, "label_due_this_week_count", int(stats.ActivitiesDueThisWeekCount), map[string]any{"Count": stats.ActivitiesDueThisWeekCount}) }}
-								}
-								@ui2.Link("/activities", nil) {{ locale.T(ctx, "action_view_all") }}
-							</nav>
-						</header>
-						if len(recentActivities) == 0 {
-							<p>{ locale.T(ctx, "dash_activities_none_yet") } @ui2.Link("/activities/new", nil) {{ locale.T(ctx, "dash_add_one") }}</p>
+				</header>
+				<nav aria-label={ locale.T(ctx, "section_regulations_standards") } class="ui2-dashboard-filters">
+					@ui2.Link("/", frameworkFilterAttrs(frameworkFilter == "all")) {
+						{ locale.T(ctx, "fw_filter_all") } ({ fmt.Sprint(frameworkTotal) })
+					}
+					if frameworkRegCount > 0 || frameworkFilter == "regulation" {
+						@ui2.Link("/?framework_type=regulation", frameworkFilterAttrs(frameworkFilter == "regulation")) {
+							{ locale.T(ctx, "dash_filter_regulations") } ({ fmt.Sprint(frameworkRegCount) })
+						}
+					}
+					if frameworkStdCount > 0 || frameworkFilter == "standard" {
+						@ui2.Link("/?framework_type=standard", frameworkFilterAttrs(frameworkFilter == "standard")) {
+							{ locale.T(ctx, "dash_filter_standards") } ({ fmt.Sprint(frameworkStdCount) })
+						}
+					}
+					if frameworkDirCount > 0 || frameworkFilter == "directive" {
+						@ui2.Link("/?framework_type=directive", frameworkFilterAttrs(frameworkFilter == "directive")) {
+							{ locale.T(ctx, "dash_filter_directives") } ({ fmt.Sprint(frameworkDirCount) })
+						}
+					}
+				</nav>
+				if len(frameworks) == 0 {
+					<p data-testid="no-frameworks-message">
+						if frameworkTotal == 0 {
+							{ locale.T(ctx, "frameworks_none_yet") }
+							@ui2.Link("/compliance/frameworks/new", nil) {
+								{ locale.T(ctx, "action_add") }
+							}
 						} else {
-							<ul class="ui2-dashboard-list">
-								for _, a := range recentActivities {
-									<li>
-										@ui2.Link(templ.SafeURL("/activities/" + a.ID.String()), nil) {{ a.Title }}
+							{ locale.T(ctx, "dash_no_frameworks_match") }
+							@ui2.Link("/", nil) {
+								{ locale.T(ctx, "fw_filter_all") }
+							}
+						}
+					</p>
+				} else {
+					<ul class="ui2-dashboard-frameworks">
+						for _, fw := range frameworks {
+							<li data-testid="framework-coverage-row">
+								<span>
+									@ui2.Link(templ.SafeURL("/compliance?expand="+fw.ID), nil) {
+										{ fw.Name }
+									}
+									<small>
+										if fw.Ref != "" {
+											{ fw.Ref } ·
+										}
+										{ locale.TN(ctx, "dash_framework_requirement_count", int(fw.Total), map[string]any{"Count": fw.Total}) }
+									</small>
+								</span>
+								@ui2.CoverageGauge(fw.Name, fw.Coverage)
+								<data value={ fmt.Sprint(fw.Coverage) }>{ fmt.Sprintf("%d %%", fw.Coverage) }</data>
+							</li>
+						}
+					</ul>
+				}
+			}
+		}
+		if flags.ActivitiesEnabled {
+			@ui2.Panel() {
+				<details>
+					<summary>{ locale.T(ctx, "section_recent_activity") }</summary>
+					if len(recentActivities) == 0 {
+						<p>
+							{ locale.T(ctx, "dash_activities_none_yet") } @ui2.Link("/activities/new", nil) {
+	{ locale.T(ctx, "dash_add_one") }
+}
+						</p>
+					} else {
+						<ul class="ui2-dashboard-list">
+							for _, a := range recentActivities {
+								<li>
+									@ui2.Link(templ.SafeURL("/activities/"+a.ID.String()), nil) {
+										{ a.Title }
+									}
+									if a.Status == "overdue" {
+										@ui2.Badge("danger") {
+											{ locale.T(ctx, "status_overdue") }
+										}
+									} else {
 										@ui2.Badge("") {
 											{ locale.T(ctx, "status_"+a.Status) }
 										}
-										if a.MeasureName != "" {
-											<small>{ a.MeasureName }</small>
-										}
-										if a.Owner != "" {
-											<small>{ a.Owner }</small>
-										}
-										if a.Status == "completed" && a.CompletedAt.Valid {
-											<time datetime={ a.CompletedAt.Time.Format("2006-01-02") }>{ formatActivityTime(a.CompletedAt.Time) }</time>
-										} else if a.DueDate.Valid {
-											<time datetime={ a.DueDate.Time.Format("2006-01-02") }>{ formatActivityTime(a.DueDate.Time) }</time>
-										} else {
-											<time datetime={ a.UpdatedAt.Format("2006-01-02") }>{ formatActivityTime(a.UpdatedAt) }</time>
-										}
-									</li>
-								}
-							</ul>
-						}
-					}
-				}
-			}
-		}
-		if (flags.ActivitiesEnabled && len(myActivities) > 0) || len(myMeasures) > 0 {
-			@ui2.Grid() {
-				if flags.ActivitiesEnabled {
-					@ui2.Panel() {
-						<header class="ui2-dashboard-heading"><h2>{ locale.T(ctx, "section_my_activities") }</h2>@ui2.Link("/activities", nil) {{ locale.T(ctx, "action_view_all") }}</header>
-						if len(myActivities) == 0 {
-							<p>{ locale.T(ctx, "activities_none_assigned") }</p>
-						} else {
-							<ul class="ui2-dashboard-list">
-								for _, a := range myActivities {
-									<li>
-										@ui2.Link(templ.SafeURL("/activities/" + a.ID.String()), nil) {{ a.Title }}
-										if a.MeasureName != "" {
-											<small>{ a.MeasureName }</small>
-										}
-										if a.DueDate.Valid {
-											<time datetime={ a.DueDate.Time.Format("2006-01-02") }>{ formatActivityTime(a.DueDate.Time) }</time>
-										}
-									</li>
-								}
-							</ul>
-						}
-					}
-				}
-				@ui2.Panel() {
-					<header class="ui2-dashboard-heading"><h2>{ locale.T(ctx, "section_my_measures") }</h2>@ui2.Link("/measures", nil) {{ locale.T(ctx, "action_view_all") }}</header>
-					if len(myMeasures) == 0 {
-						<p>{ locale.T(ctx, "measures_none_assigned") }</p>
-					} else {
-						<ul class="ui2-dashboard-list">
-							for _, m := range myMeasures {
-								<li>
-									@ui2.Link(templ.SafeURL("/measures/" + m.ID.String()), nil) {{ m.Name }}
-									if m.Category != "" {
-										<small>{ m.Category }</small>
 									}
-									@ui2.Badge("") {
-										{ locale.T(ctx, "status_"+m.Status) }
+									if a.MeasureName != "" {
+										<small>{ a.MeasureName }</small>
 									}
+									if a.Owner != "" {
+										<small>{ a.Owner }</small>
+									}
+									<time datetime={ a.UpdatedAt.Format("2006-01-02") }>{ formatActivityTime(a.UpdatedAt) }</time>
 								</li>
 							}
 						</ul>
 					}
-				}
+					<p>@ui2.Link("/activities", nil) {{ locale.T(ctx, "action_view_all") }}</p>
+				</details>
 			}
-		}
-		@ui2.Panel() {
-			<h2>{ locale.T(ctx, "section_quick_navigation") }</h2>
-			<ul class="ui2-dashboard-list">
-				if flags.ComplianceEnabled {
-					<li>
-						@ui2.Link("/compliance", nil) {{ locale.T(ctx, "nav_compliance") }}
-						<small>{ locale.T(ctx, "dash_compliance_desc") }</small>
-						@ui2.Badge("") {
-							{ locale.TN(ctx, "label_count_unmapped", int(stats.UncoveredRequirementsCount()), map[string]any{"Count": stats.UncoveredRequirementsCount()}) }
-						}
-					</li>
-				}
-				<li>
-					@ui2.Link("/measures", nil) {{ locale.T(ctx, "nav_measures") }}
-					<small>{ locale.T(ctx, "dash_measures_desc") }</small>
-					@ui2.Badge("") {
-						{ locale.TN(ctx, "label_count_defined", int(stats.MeasuresCount), map[string]any{"Count": stats.MeasuresCount}) }
-					}
-				</li>
-				if flags.ActivitiesEnabled {
-					<li>
-						@ui2.Link("/activities", nil) {{ locale.T(ctx, "nav_activities") }}<small>{ locale.T(ctx, "dash_activities_desc") }</small>
-						if stats.OverdueActivitiesCount > 0 {
-							@ui2.Badge("danger") {
-								{ locale.TN(ctx, "label_overdue_count", int(stats.OverdueActivitiesCount), map[string]any{"Count": stats.OverdueActivitiesCount}) }
-							}
-						}
-					</li>
-				}
-				if flags.ComplianceEnabled {
-					<li>
-						@ui2.Link("/compliance", nil) {{ locale.T(ctx, "dash_overlap_analysis") }}
-						<small>{ locale.T(ctx, "dash_overlap_desc") }</small>
-						@ui2.Badge("warning") {
-							{ locale.T(ctx, "label_coming") }
-						}
-					</li>
-				}
-			</ul>
 		}
 	}
 }

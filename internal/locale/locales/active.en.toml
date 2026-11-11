@@ -805,6 +805,40 @@ other = "Consequence"
 other = "Acceptance criteria"
 
 # Dashboard labels
+[dash_action_required]
+other = "Needs attention"
+
+[dash_kpi_high_risks]
+other = "High risks"
+
+[dash_kpi_measures_implemented]
+other = "Measures implemented"
+
+[dash_kpi_of_total]
+other = "of {{.Total}} total"
+
+[dash_kpi_coverage]
+other = "of {{.Total}} requirements · {{.Pct}}% coverage"
+
+[dash_decision_missing]
+other = "No decision recorded"
+
+[dash_framework_requirement_count]
+one = "{{.Count}} requirement"
+other = "{{.Count}} requirements"
+
+[dash_no_frameworks_match]
+other = "No frameworks match this filter."
+
+[dash_filter_regulations]
+other = "Regulations"
+
+[dash_filter_standards]
+other = "Standards"
+
+[dash_filter_directives]
+other = "Directives"
+
 [action_view]
 other = "View →"
 
