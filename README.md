@@ -42,7 +42,7 @@ Rego (`cmd/server/policies/authz.rego`), not hardcoded role checks in handlers.
 
 | Layer | Technology |
 |---|---|
-| Backend | Go 1.27.3+ (`net/http`) |
+| Backend | Go 1.27.4+ (`net/http`) |
 | HTML | [templ](https://templ.guide/) |
 | CSS / JS | Tailwind CSS v4 CLI, htmx, Alpine.js (CSP build) |
 | Data | PostgreSQL + pgx/v5 + sqlc |

@@ -143,7 +143,7 @@ jobs:
 
       # Static analysis plus working-tree secret detection. --error fails the
       # job on any finding; the SARIF report is written first, so the upload
-      # step still runs (if: always) and findings reach the Security tab.
+      # step still runs when a report exists and findings reach the Security tab.
       - name: Semgrep
         run: |
           python3 -m pip install --quiet --user "semgrep==${SEMGREP_VERSION}"
@@ -154,7 +154,7 @@ jobs:
             --config p/owasp-top-ten \
             --config p/supply-chain
       - name: Upload Semgrep SARIF
-        if: always()
+        if: ${{ always() && hashFiles('semgrep.sarif') != '' }}
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: semgrep.sarif
